@@ -1,0 +1,25 @@
+{% extends 'registration/_card.html' %}
+{% block title %}Accept terms{% endblock %}
+{% block width %}max-w-xl{% endblock %}
+{% block card %}
+<div><div class="mono text-[11px] text-teal-700 font-bold">BEFORE YOU CONTINUE</div><h1 class="text-xl font-bold text-slate-900">Please review and accept our policies</h1></div>
+<div class="text-sm text-slate-600 space-y-2">
+  <p>{% if user.consent_version %}Our policies were updated on {{ POLICY_EFFECTIVE }}.{% else %}This is your first sign-in.{% endif %} In short:</p>
+  <ul class="list-disc pl-5 text-xs space-y-1">
+    <li>We store your name, roll number, college, e-mail (if given) and your experiment submissions and marks.</li>
+    <li>Your faculty and college admin can see your submissions and marks. Nobody else can.</li>
+    <li>We do not sell your data, show ads, or use tracking cookies.</li>
+    <li>You can download your data or request deletion at any time from <b>My data</b>.</li>
+    <li>Simulations are teaching aids only and must not be used for real dosing decisions.</li>
+  </ul>
+  <p class="text-xs">Read in full: <a href="{% url 'privacy' %}" target="_blank" class="text-teal-700 underline">Privacy Policy</a> • <a href="{% url 'terms' %}" target="_blank" class="text-teal-700 underline">Terms of Service</a> • <a href="{% url 'conditions' %}" target="_blank" class="text-teal-700 underline">Conditions of Use</a></p>
+</div>
+<form method="post" class="space-y-3">{% csrf_token %}
+  <input type="hidden" name="next" value="{{ next }}">
+  {% include 'registration/_fields.html' %}
+  <div class="flex justify-between items-center pt-1">
+    <button class="px-5 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow">Accept and continue</button>
+  </div>
+</form>
+<form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="text-xs text-slate-500 hover:underline">I do not accept: sign me out</button></form>
+{% endblock %}

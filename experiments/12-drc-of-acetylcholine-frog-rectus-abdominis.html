@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exp 12: DRC of Acetylcholine: Frog Rectus Abdominis • XPRISM</title>
+  <meta name="description" content="Graded contractions on a kymograph; log dose–response curve and EC50.">
+    <meta name="theme-color" content="#0a1f44">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
+  <link rel="stylesheet" href="../assets/css/tailwind.css">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <script src="../assets/js/tone.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #f1f5f9; color: #0a1f44; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .seg { font-family: 'DSEG7', 'JetBrains Mono', monospace; }
+    .svg-btn { cursor: pointer; }
+    .chip { padding: 2px 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff; font-size: 11px; font-weight: 600; color: #334155; transition: all .12s; }
+    .chip:hover { border-color: #9b33d9; }
+    .chip.on { background: #7e13b5; border-color: #7e13b5; color: #fff; }
+    .chip:disabled { opacity: .45; cursor: not-allowed; }
+    .btn { border-radius: 8px; font-size: 12px; font-weight: 600; transition: all .12s; }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+    .obs-table th, .obs-table td { padding: 4px 6px; border-bottom: 1px solid #e2e8f0; }
+    .obs-table thead th { background: #f8fafc; color: #475569; font-weight: 600; }
+    .scroll-thin::-webkit-scrollbar { height: 8px; width: 8px; }
+    .scroll-thin::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+    #viewExperiment svg text { user-select: none; }
+    
+    @media print {
+      header, #subHeader, #viewTask, #viewExperiment, .no-print { display: none !important; }
+      #viewObservation { display: flex !important; box-shadow: none; border: none; }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-100 overflow-x-hidden">
+
+  <!-- TOP BRANDING BAR (XPRISM Header) -->
+  <header class="site-header bg-white border-b border-slate-200 px-4 md:px-6 py-2 flex items-center justify-between gap-3 shadow-sm shrink-0">
+    <div class="flex items-center gap-3 min-w-0">
+    <a href="../index.html" title="Back to Lab Home" class="shrink-0"><img src="../assets/img/xprism-lockup.png" alt="XPRISM" class="h-11 w-auto" width="146" height="49"></a>
+      <div class="min-w-0 border-l border-slate-200 pl-3">
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="text-[10px] uppercase font-bold bg-teal-50 text-teal-700 px-2 py-0.5 rounded-full border border-teal-200 font-display tracking-wide">Virtual Lab</span>
+        <a href="../index.html" class="text-[11px] font-semibold text-teal-700 hover:underline">← All experiments</a>
+      </div>
+      <p class="text-xs text-slate-500">Aaron Innovations • Experimental Pharmacology Research &amp; Interactive Student Module</p>
+    </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="hidden md:block text-right">
+        <div class="text-xs font-semibold text-slate-800 flex items-center justify-end space-x-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Dr. Vara Prasad Saka</span>
+        </div>
+        <div class="text-[11px] text-slate-500 font-mono">ID: 8019152501 • Dept. of Pharmacology</div>
+      </div>
+      <div class="flex items-center gap-2 border-l pl-4 border-slate-200">
+        <a class="site-nav-btn" href="11-anxiolytic-activity-elevated-plus-maze.html" title="Previous: Exp #11 Anxiolytic Activity: Elevated Plus Maze">‹</a><a class="site-nav-btn" href="13-physostigmine-and-atropine-on-ach-drc-rat-ileum.html" title="Next: Exp #13 Physostigmine &amp; Atropine on ACh DRC (Rat Ileum)">›</a>
+        <button id="audioToggleBtn" class="p-2 rounded-lg bg-teal-100 hover:bg-teal-200 text-teal-800 transition" title="Toggle sound feedback" aria-label="Toggle sound feedback">
+          <svg id="soundIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+        </button>
+        <span class="hidden sm:inline bg-indigo-100 text-indigo-800 text-xs px-2.5 py-1 rounded-md font-medium border border-indigo-200 whitespace-nowrap">Exp #12</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- SUB-HEADER / VIEW TABS -->
+
+  <div id="subHeader" class="site-subheader bg-slate-800 text-white px-4 md:px-6 py-2 flex flex-wrap items-center justify-between gap-3 shadow shrink-0">
+    <div class="text-sm font-semibold tracking-wide flex items-center space-x-2 min-w-0">
+      <span class="text-teal-400 font-mono text-xs px-1.5 py-0.5 rounded bg-teal-950/80 border border-teal-500/40 shrink-0">MODULE 12</span>
+      <span>Examination 12: To Record the Dose–Response Curve of Acetylcholine Using the Isolated Frog Rectus Abdominis Muscle</span>
+    </div>
+    <div class="flex items-center space-x-1.5 bg-slate-900/80 p-1 rounded-lg border border-slate-700" role="tablist">
+      <button id="tabTask" onclick="switchTab('task')" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white transition">Task Description</button>
+      <button id="tabExperiment" onclick="switchTab('experiment')" class="px-3.5 py-1.5 rounded-md text-xs font-semibold bg-teal-500 text-white shadow transition">Experiment Bench</button>
+      <button id="tabObservation" onclick="switchTab('observation')" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white transition">Observation Sheet &amp; Graphs</button>
+    </div>
+  </div>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-5 flex flex-col min-h-0">
+
+    <!-- TAB 1: TASK DESCRIPTION -->
+    <div id="viewTask" class="hidden flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between overflow-y-auto">
+      <div class="max-w-5xl space-y-6">
+        <div class="border-b pb-4">
+          <div class="inline-block px-2.5 py-1 rounded bg-teal-50 text-teal-800 text-xs font-bold font-mono mb-2">EXPERIMENT OBJECTIVE</div>
+          <h2 class="text-xl font-bold text-slate-900">Graded Dose–Response Curve of Acetylcholine on the Isolated Frog Rectus Abdominis</h2>
+          <p class="text-sm text-slate-600 mt-2 leading-relaxed">Record graded contractions of the isolated <strong>frog rectus abdominis</strong> muscle to increasing doses of <strong>acetylcholine (ACh)</strong> on a kymograph. Plot the response against dose and against <strong>log dose</strong>, find the <strong>EC50</strong>, and see how <strong>physostigmine</strong> (left shift) and <strong>d-tubocurarine</strong> (parallel right shift) change the curve.</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-4">
+          <div class="p-4 rounded-xl bg-sky-50/70 border border-sky-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-sky-500 text-white flex items-center justify-center font-bold text-sm shadow">1</div>
+            <h3 class="text-sm font-bold text-sky-950">Principle</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">The rectus abdominis of the frog contains <strong>multiply-innervated (tonic) fibres</strong> with nicotinic N<sub>M</sub> receptors spread over the whole fibre. ACh causes a slow, sustained <strong>contracture</strong> instead of a twitch, and the height is graded with the dose.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-amber-50/70 border border-amber-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center font-bold text-sm shadow">2</div>
+            <h3 class="text-sm font-bold text-amber-950">Time cycle</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">The response is <strong>slow</strong>, so each dose stays in contact for <strong>90 s</strong>. Then wash 2–3 times and rest for <strong>5 min</strong> before the next dose. Shorter cycles cause <strong>desensitisation</strong> and falsely small responses.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-emerald-50/70 border border-emerald-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center font-bold text-sm shadow">3</div>
+            <h3 class="text-sm font-bold text-emerald-950">Analysis</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">Response (mm) vs dose gives a <strong>rectangular hyperbola</strong>; vs log dose gives a <strong>sigmoid</strong> with a linear middle part (20–80%). EC50 is the dose giving 50% of the maximal response. A competitive antagonist shifts the log-DRC to the right in parallel.</p>
+          </div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Requirements</h4>
+            <ul class="text-xs text-slate-600 space-y-1 list-disc pl-4"><li>Frog (<i>Rana tigrina</i>), pithed; dissecting board and instruments</li><li>Student organ bath (20 mL), aerator, Frog Ringer solution at room temperature</li><li>Frontal writing lever (≈ 1 g tension, 5–7× magnification), Sherrington kymograph with smoked paper</li><li>Acetylcholine chloride 10 µg/mL and 100 µg/mL; Physostigmine 1 µg/mL bath; d-Tubocurarine 1 µg/mL bath</li><li>Tuberculin syringes, wash bottle</li></ul>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Procedure</h4>
+            <ol class="text-xs text-slate-600 space-y-1 list-decimal pl-4"><li>Pith the frog, expose the rectus abdominis and mount one belly (≈ 3 cm) in the bath with thread to the lever.</li><li>Load with 1 g, aerate, and equilibrate for 30–45 min with washes every 10 min.</li><li>Record a baseline, then give ACh in doubling doses (0.5, 1, 2, 4 … µg), 90 s contact each, then wash and rest 5 min.</li><li>Continue until the response reaches its maximum (two doses give the same height).</li><li>Optional: add physostigmine or d-tubocurarine to the Ringer, equilibrate 10 min and repeat the series.</li><li>Tabulate, plot dose vs response and log dose vs % response, and read the EC50.</li></ol>
+          </div>
+        </div>
+
+      </div>
+      <div class="pt-6 border-t flex justify-end mt-6">
+        <button onclick="switchTab('experiment')" class="px-6 py-2.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-semibold text-sm shadow flex items-center space-x-2 transition">
+          <span>Go to Experiment Stage</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 2: EXPERIMENT BENCH -->
+    <div id="viewExperiment" class="flex-1 flex flex-col lg:flex-row gap-4 min-h-[620px]">
+      <div class="flex-1 min-w-0 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col relative overflow-hidden">
+        <div class="p-3 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 z-10 shrink-0">
+          <div class="flex flex-wrap items-center gap-2">
+            <label class="text-xs font-bold text-slate-600">Bath solution:</label>
+            <select id="modSelect" onchange="OB.requestMod(this.value)" class="bg-white border border-slate-300 text-slate-800 text-xs rounded-lg px-3 py-1.5 font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
+              <option value="none">Frog Ringer (control series)</option>
+              <option value="physo">+ Physostigmine 1 µg/mL (anticholinesterase)</option>
+              <option value="dtc">+ d-Tubocurarine 1 µg/mL (NM blocker)</option>
+            </select>
+            <span id="modBadge" class="text-[11px] px-2.5 py-0.5 rounded font-mono font-semibold bg-indigo-100 text-indigo-800">Control</span>
+
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-medium text-slate-500">Speed:</span>
+            <div class="flex rounded-lg border border-slate-300 bg-white p-0.5 shadow-sm" id="speedBtns"></div>
+            <button onclick="if(confirm('Discard all recorded data and start a new experiment?')) newExperiment()" class="px-3 py-1 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-medium shadow transition">New Experiment</button>
+          </div>
+        </div>
+        <div id="stepper" class="px-3 py-2 bg-white border-b border-slate-200 flex flex-wrap gap-1.5 text-[11px] font-semibold shrink-0"></div>
+        <div id="benchArea" class="flex-1 relative flex flex-col overflow-hidden" style="background:#e9eef2">
+          <div id="waitCard" class="hidden absolute top-3 right-3 z-20 bg-slate-900/90 text-white rounded-xl px-4 py-3 shadow-xl border border-slate-700 backdrop-blur w-60">
+            <div id="waitTitle" class="text-[10px] uppercase tracking-wider text-amber-300 font-bold font-mono">Waiting</div>
+            <div id="waitClock" class="seg text-3xl text-amber-400 mt-1" style="text-shadow:0 0 10px rgba(251,191,36,.6)">00:00</div>
+            <div class="h-1.5 bg-slate-700 rounded mt-2 overflow-hidden"><div id="waitBar" class="h-full bg-amber-400 w-0"></div></div>
+            <button onclick="skipWait()" class="mt-2 w-full py-1 text-[11px] rounded bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold">⏩ Skip waiting</button>
+          </div>
+          <svg id="scene" viewBox="0 0 1000 400" preserveAspectRatio="xMidYMid meet" class="w-full block flex-1 min-h-0"></svg>
+          <div class="mx-2 mb-2 rounded-lg bg-slate-900 border border-slate-700 shrink-0"><div class="px-3 pt-1.5 text-[10px] uppercase tracking-wider text-slate-400 font-bold flex justify-between"><span>Kymograph record (dose in µg under each response)</span><span>scroll →</span></div><div id="kymoStrip" class="overflow-x-auto scroll-thin"></div></div>
+
+          <div id="actionFeedback" class="m-2 mt-0 bg-slate-900/90 text-white py-2 px-4 rounded-lg text-xs flex items-center justify-between shadow-lg border border-slate-700 shrink-0">
+            <div class="flex items-center space-x-2">
+              <span id="feedbackIcon" class="text-teal-400 font-bold text-sm">ℹ</span>
+              <span id="feedbackText">Ready.</span>
+            </div>
+            <span id="phaseIndicator" class="text-[11px] font-mono text-slate-400 hidden sm:inline"></span>
+          </div>
+        </div>
+      </div>
+      <div class="w-full lg:w-80 bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-col gap-3 shrink-0 overflow-y-auto">
+        <div id="obPanel" class="flex flex-col gap-2"></div>
+        <div>
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Responses (current series)</h3>
+          <div class="mt-1.5 border border-slate-200 rounded-lg overflow-hidden max-h-48 overflow-y-auto">
+            <table class="w-full text-[11px] text-center"><thead class="bg-slate-50 text-slate-500 sticky top-0"><tr><th class="p-1">#</th><th class="p-1">Dose µg</th><th class="p-1">mL</th><th class="p-1">Ht mm</th></tr></thead><tbody id="liveTable" class="font-mono divide-y divide-slate-100"></tbody></table>
+          </div>
+        </div>
+        <div class="p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-[11px] text-amber-900 leading-snug">
+          <b>How to:</b> choose the stock and volume, press <b>Add to bath</b>. After the 90-s contact the bath is washed; wait for the recovery timer, then give the next (doubled) dose. Stop when two doses give the same height (maximum).
+        </div>
+        <div class="pt-2 border-t border-slate-200 space-y-2 mt-auto">
+          <button onclick="runSeries()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow transition">⚡ Record full doubling series (this bath solution)</button>
+          <button onclick="runAll()" class="w-full py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-medium transition">Complete all three series</button>
+          <button onclick="switchTab('observation')" class="w-full py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium transition">Open Observation Sheet →</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 3: OBSERVATION SHEET -->
+    <div id="viewObservation" class="hidden flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between overflow-y-auto">
+      <div class="space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b pb-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Observation Table: Contractions of Frog Rectus Abdominis to Acetylcholine</h2>
+            <p class="text-xs text-slate-500">Bath 20 mL Frog Ringer • aerated, room temperature • contact 90 s • time cycle 6.5 min</p>
+          </div>
+          <div class="flex items-center space-x-3 no-print">
+            <button onclick="if(confirm('Discard all recorded data?')) newExperiment()" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50 text-xs font-medium text-slate-700 transition">Reset Data</button>
+            <button onclick="loadReferenceDataset()" class="px-3.5 py-1.5 rounded-lg bg-teal-50 border border-teal-300 hover:bg-teal-100 text-teal-800 text-xs font-semibold transition">Load Textbook Reference Dataset</button>
+          </div>
+        </div>
+        <div class="grid xl:grid-cols-3 gap-4" id="obsTables"></div>
+        <div class="grid lg:grid-cols-3 gap-4">
+          <div class="border border-slate-200 rounded-xl p-3 shadow-sm">
+            <div class="text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">Response vs Dose (control): hyperbola</div>
+            <svg id="chartLin" viewBox="0 0 420 250" class="w-full"></svg>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-3 shadow-sm">
+            <div class="text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">% Max Response vs log Dose: sigmoid</div>
+            <svg id="chartLog" viewBox="0 0 420 250" class="w-full"></svg>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+            <div class="text-[10px] text-slate-500 uppercase font-semibold font-mono">Inference</div>
+            <div id="lblInference" class="text-sm font-bold text-slate-800">Pending</div>
+            <p id="lblInferenceDetail" class="text-[11px] text-slate-600 leading-relaxed">Record the control series up to the maximal response.</p>
+          </div>
+        </div>
+
+      </div>
+      <div class="pt-6 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 mt-6 no-print">
+        <div class="text-xs text-slate-500 font-mono">XPRISM • Frog Rectus Abdominis DRC Practical Evaluation</div>
+        <div class="flex items-center space-x-3">
+          <button onclick="openModal('modalQuestions')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow transition">Answer Viva Questions</button>
+          <button onclick="openResultsModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow transition">Results & Summary</button>
+          <button onclick="window.print()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg shadow transition">Print Report</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer no-print border-t border-slate-200 bg-white shrink-0">
+    <div class="max-w-7xl mx-auto px-6 py-3 text-xs text-slate-500 font-mono flex justify-between flex-wrap gap-2">
+      <span>XPRISM • Exp #12 • © 2026 Aaron Innovations • Dr. Vara Prasad Saka</span>
+      <span>Simulations are teaching aids that reduce animal use, in line with CCSEA 3Rs guidance. • <a href="../index.html" class="text-teal-700 hover:underline">All experiments</a></span>
+    </div>
+  </footer>
+
+  <!-- MODAL: VIVA -->
+  <div id="modalQuestions" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-base font-bold text-slate-800">Frog Rectus Abdominis: Viva-Voce</h3>
+        <button onclick="closeModal('modalQuestions')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+      <div id="quizScore" class="hidden p-2.5 rounded-lg text-xs font-semibold"></div>
+      <div id="quizBody" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2 text-xs text-slate-700"></div>
+      <div class="pt-3 border-t flex justify-end space-x-2">
+        <button onclick="renderQuiz()" class="px-4 py-2 border rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">Reset</button>
+        <button onclick="evaluateQuestions()" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-lg shadow">Submit Answers</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: RESULTS -->
+  <div id="modalResults" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-base font-bold text-slate-800">Laboratory Results Summary</h3>
+        <button onclick="closeModal('modalResults')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+      <div id="resBody" class="space-y-2 text-xs"></div>
+      <div id="resExplanation" class="p-3 rounded-lg bg-teal-50 border border-teal-200 text-teal-900 leading-relaxed text-[11px]"></div>
+      <div class="pt-3 border-t flex justify-end">
+        <button onclick="closeModal('modalResults')" class="px-6 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg shadow">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =====================================================================
+    // XPRISM shared simulation toolkit (tabs, sound, stats, charts, viva)
+    // =====================================================================
+    const $ = id => document.getElementById(id);
+    const svgNS = "http://www.w3.org/2000/svg";
+    function el(tag, attrs = {}, parent) {
+      const e = document.createElementNS(svgNS, tag);
+      for (const k in attrs) e.setAttribute(k, attrs[k]);
+      if (parent) parent.appendChild(e);
+      return e;
+    }
+    function svgPoint(svg, evt) {
+      const pt = svg.createSVGPoint();
+      const src = evt.touches ? evt.touches[0] : evt;
+      pt.x = src.clientX; pt.y = src.clientY;
+      return pt.matrixTransform(svg.getScreenCTM().inverse());
+    }
+    function gauss() {
+      let u = 0, v = 0;
+      while (u === 0) u = Math.random();
+      while (v === 0) v = Math.random();
+      return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    }
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+    const shuffle = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+    const mean = a => a.length ? a.reduce((s, x) => s + x, 0) / a.length : NaN;
+    const sd = a => { if (a.length < 2) return 0; const m = mean(a); return Math.sqrt(a.reduce((s, x) => s + (x - m) ** 2, 0) / (a.length - 1)); };
+    const sem = a => a.length < 2 ? 0 : sd(a) / Math.sqrt(a.length);
+    const fx = (v, d = 1) => (v === null || v === undefined || !isFinite(v)) ? '—' : (+v).toFixed(d);
+    const fmtMS = s => { s = Math.max(0, Math.round(s)); return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
+    const fmtHMS = s => { s = Math.max(0, Math.round(s)); const h = Math.floor(s / 3600); return `${h}:${String(Math.floor(s % 3600 / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
+    const log10 = Math.log10;
+
+    // ---- t-distribution (two-tailed p) via regularised incomplete beta ----
+    function betacf(a, b, x) {
+      let qab = a + b, qap = a + 1, qam = a - 1, c = 1, d = 1 - qab * x / qap;
+      if (Math.abs(d) < 1e-30) d = 1e-30; d = 1 / d; let h = d;
+      for (let m = 1; m <= 200; m++) {
+        const m2 = 2 * m; let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+        d = 1 + aa * d; if (Math.abs(d) < 1e-30) d = 1e-30; c = 1 + aa / c; if (Math.abs(c) < 1e-30) c = 1e-30; d = 1 / d; h *= d * c;
+        aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+        d = 1 + aa * d; if (Math.abs(d) < 1e-30) d = 1e-30; c = 1 + aa / c; if (Math.abs(c) < 1e-30) c = 1e-30; d = 1 / d;
+        const del = d * c; h *= del; if (Math.abs(del - 1) < 3e-7) break;
+      }
+      return h;
+    }
+    function gammaln(x) {
+      const c = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5];
+      let y = x, t = x + 5.5; t -= (x + 0.5) * Math.log(t); let s = 1.000000000190015;
+      for (let j = 0; j < 6; j++) s += c[j] / ++y;
+      return -t + Math.log(2.5066282746310005 * s / x);
+    }
+    function betai(a, b, x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      const bt = Math.exp(gammaln(a + b) - gammaln(a) - gammaln(b) + a * Math.log(x) + b * Math.log(1 - x));
+      return x < (a + 1) / (a + b + 2) ? bt * betacf(a, b, x) / a : 1 - bt * betacf(b, a, 1 - x) / b;
+    }
+    function tTest(a, b) { // unpaired Student's t (pooled variance)
+      if (a.length < 2 || b.length < 2) return { t: NaN, df: NaN, p: NaN };
+      const df = a.length + b.length - 2;
+      const sp2 = ((a.length - 1) * sd(a) ** 2 + (b.length - 1) * sd(b) ** 2) / df;
+      const se = Math.sqrt(sp2 * (1 / a.length + 1 / b.length));
+      const t = se === 0 ? (mean(a) === mean(b) ? 0 : 99) : (mean(a) - mean(b)) / se;
+      return { t, df, p: betai(df / 2, 0.5, df / (df + t * t)) };
+    }
+    const pLabel = p => !isFinite(p) ? '—' : p < 0.001 ? 'p < 0.001' : p < 0.01 ? 'p < 0.01' : p < 0.05 ? 'p < 0.05' : 'p > 0.05 (ns)';
+    const stars = p => !isFinite(p) ? '' : p < 0.001 ? '***' : p < 0.01 ? '**' : p < 0.05 ? '*' : 'ns';
+    function linreg(xs, ys) {
+      const n = xs.length; if (n < 2) return null;
+      const mx = mean(xs), my = mean(ys);
+      let sxy = 0, sxx = 0, syy = 0;
+      for (let i = 0; i < n; i++) { sxy += (xs[i] - mx) * (ys[i] - my); sxx += (xs[i] - mx) ** 2; syy += (ys[i] - my) ** 2; }
+      const slope = sxy / sxx, intercept = my - slope * mx;
+      return { slope, intercept, r2: syy === 0 ? 1 : (sxy * sxy) / (sxx * syy) };
+    }
+    // log-linear interpolation of the dose giving response `target` on an ascending curve [[dose, resp], ...]
+    function interpDose(pts, target) {
+      const s = pts.filter(p => p[0] > 0).slice().sort((a, b) => a[0] - b[0]);
+      for (let i = 0; i < s.length - 1; i++) {
+        const [d1, r1] = s[i], [d2, r2] = s[i + 1];
+        if ((r1 <= target && r2 >= target) && r2 !== r1) {
+          const f = (target - r1) / (r2 - r1);
+          return Math.pow(10, log10(d1) + f * (log10(d2) - log10(d1)));
+        }
+      }
+      return NaN;
+    }
+
+    // ---- Sound ----
+    let soundOn = true, synth = null;
+    function beep(type = 'click') {
+      if (!soundOn || typeof Tone === 'undefined') return;
+      try {
+        if (!synth) { Tone.start(); synth = new Tone.PolySynth(Tone.Synth).toDestination(); synth.volume.value = -16; }
+        const n = { click: 'C6', ok: 'E5', warn: 'A3', done: 'G5', tick: 'C7', low: 'E3' }[type] || 'C6';
+        synth.triggerAttackRelease(n, type === 'done' ? '8n' : '32n');
+      } catch (e) { /* audio optional */ }
+    }
+
+    // ---- Feedback / stepper ----
+    function showFeedback(msg, isAlert = false) {
+      $('feedbackText').innerHTML = msg;
+      const icon = $('feedbackIcon');
+      icon.innerText = isAlert ? "⚠️" : "ℹ";
+      icon.className = isAlert ? "text-amber-400 font-bold" : "text-teal-400 font-bold";
+      if (isAlert) beep('warn');
+    }
+    function setPhase(t) { $('phaseIndicator').innerText = t || ''; }
+    function renderSteps(steps) {
+      let active = steps.findIndex(s => !s.done);
+      $('stepper').innerHTML = steps.map((s, i) => {
+        const cls = s.done ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : i === active ? 'bg-amber-50 text-amber-800 border-amber-300 ring-1 ring-amber-200' : 'bg-slate-50 text-slate-400 border-slate-200';
+        return `<span class="px-2 py-1 rounded-md border ${cls}">${s.done ? '✓' : (i + 1)} ${s.t}</span>`;
+      }).join('');
+    }
+
+    // ---- Speed ----
+    let SPEED = 1, SPEEDS = [1, 5, 20, 60];
+    function renderSpeed() {
+      $('speedBtns').innerHTML = SPEEDS.map(s => `<button onclick="setSpeed(${s})" class="px-2 py-0.5 text-[11px] rounded font-mono font-semibold ${s === SPEED ? 'bg-teal-600 text-white' : 'text-slate-600 hover:bg-slate-100'}">${s}×</button>`).join('');
+    }
+    function setSpeed(s) { SPEED = s; renderSpeed(); beep('tick'); }
+
+    // ---- Generic wait timer (simulated seconds) ----
+    let WAIT = null;
+    function startWait(title, seconds, onDone) {
+      WAIT = { title, total: seconds, left: seconds, onDone };
+      $('waitTitle').innerText = title; $('waitCard').classList.remove('hidden');
+    }
+    function skipWait() { if (WAIT) WAIT.left = 0; }
+    function cancelWait() { WAIT = null; $('waitCard').classList.add('hidden'); }
+    function tickWait(dtSim) {
+      if (!WAIT) return;
+      WAIT.left -= dtSim;
+      $('waitClock').innerText = WAIT.total >= 3600 ? fmtHMS(WAIT.left) : fmtMS(WAIT.left);
+      $('waitBar').style.width = `${clamp(100 * (1 - WAIT.left / WAIT.total), 0, 100)}%`;
+      if (WAIT.left <= 0) { const w = WAIT; WAIT = null; $('waitCard').classList.add('hidden'); beep('done'); w.onDone && w.onDone(); }
+    }
+    let _lastTs = null;
+    function startLoop(cb) {
+      const f = ts => {
+        if (_lastTs === null) _lastTs = ts;
+        const dtR = Math.min(0.1, Math.max(0, (ts - _lastTs) / 1000)); _lastTs = ts;
+        tickWait(dtR * SPEED);
+        cb && cb(dtR * SPEED, dtR);
+        requestAnimationFrame(f);
+      };
+      requestAnimationFrame(f);
+    }
+
+    // ---- Tabs / modals ----
+    function openModal(id) { $(id).classList.remove('hidden'); }
+    function closeModal(id) { $(id).classList.add('hidden'); }
+    function switchTab(tabId) {
+      const map = { task: ['viewTask', 'tabTask'], experiment: ['viewExperiment', 'tabExperiment'], observation: ['viewObservation', 'tabObservation'] };
+      Object.values(map).forEach(([v, t]) => {
+        $(v).classList.add('hidden');
+        const b = $(t); b.classList.remove('bg-teal-500', 'text-white', 'shadow'); b.classList.add('text-slate-300');
+      });
+      $(map[tabId][0]).classList.remove('hidden');
+      $(map[tabId][1]).classList.add('bg-teal-500', 'text-white', 'shadow');
+      if (tabId === 'observation') renderObservation();
+    }
+
+    // ---- Viva ----
+    function renderQuiz() {
+      $('quizScore').classList.add('hidden');
+      $('quizBody').innerHTML = QUIZ.map((q, i) => `<div class="space-y-1.5" id="qwrap${i}">
+        <p class="font-semibold text-slate-800">${i + 1}. ${q.q}</p>
+        ${q.o.map((o, j) => `<label class="flex items-start gap-2 p-1.5 rounded hover:bg-slate-50 cursor-pointer"><input type="radio" name="q${i}" value="${j}" class="mt-0.5 accent-teal-600"><span>${o}</span></label>`).join('')}
+        <p id="qexp${i}" class="hidden text-[11px] p-2 rounded"></p></div>`).join('');
+    }
+    function evaluateQuestions() {
+      const ans = QUIZ.map((_, i) => document.querySelector(`input[name="q${i}"]:checked`)?.value);
+      if (ans.some(a => a === undefined)) { const s = $('quizScore'); s.className = 'p-2.5 rounded-lg text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200'; s.innerText = `Please answer all ${QUIZ.length} questions before submitting.`; return; }
+      let score = 0;
+      QUIZ.forEach((q, i) => {
+        const ok = +ans[i] === q.a; if (ok) score++;
+        const e = $('qexp' + i); e.classList.remove('hidden');
+        e.className = `text-[11px] p-2 rounded ${ok ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-rose-50 text-rose-800 border border-rose-200'}`;
+        e.innerHTML = `${ok ? '✓ Correct.' : `✗ Correct answer: <b>${q.o[q.a]}</b>.`} ${q.e || ''}`;
+      });
+      const s = $('quizScore'); s.className = `p-2.5 rounded-lg text-xs font-semibold ${score / QUIZ.length >= 0.6 ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-amber-50 text-amber-800 border border-amber-200'}`;
+      s.innerText = `Viva score: ${score}/${QUIZ.length} (${Math.round(score / QUIZ.length * 100)}%)`;
+      beep(score / QUIZ.length >= 0.6 ? 'done' : 'warn');
+      $('quizBody').scrollTop = 0;
+    }
+
+    // ---- Results modal ----
+    function openResultsModal() {
+      const r = buildResults();
+      $('resBody').innerHTML = r.rows.map(([k, v]) => `<div class="flex justify-between gap-3 border-b border-slate-100 pb-1"><span class="text-slate-500">${k}</span><span class="font-semibold text-slate-800 text-right">${v}</span></div>`).join('');
+      $('resExplanation').innerHTML = r.text;
+      openModal('modalResults');
+    }
+    // numeric answer verification (bioassays / unknowns)
+    function verifyNumber(inputId, outId, truth, tolPct, unit, explain) {
+      const v = parseFloat($(inputId).value), o = $(outId);
+      if (!isFinite(v)) { o.className = 'text-xs font-semibold text-amber-700'; o.innerText = 'Enter a number first.'; return; }
+      const err = Math.abs(v - truth) / truth * 100;
+      const ok = err <= tolPct;
+      o.className = `text-xs font-semibold ${ok ? 'text-emerald-700' : 'text-rose-700'}`;
+      o.innerHTML = ok ? `✓ Accepted (${fx(err, 1)}% from the true value of ${fx(truth, 3)} ${unit}). ${explain || ''}` : `✗ ${fx(err, 0)}% away from the true value. Re-check your matching/calculation (accepted within ±${tolPct}%).`;
+      beep(ok ? 'done' : 'warn');
+    }
+
+    // ---- SVG charts ----
+    const PALETTE = { teal: '#7e13b5', indigo: '#4f46e5', rose: '#e11d48', amber: '#d97706', slate: '#475569', emerald: '#059669', sky: '#0284c7', violet: '#7c3aed' };
+    function niceTicks(min, max, n = 5) {
+      if (!(max > min)) { max = min + 1; }
+      const span = max - min, step0 = span / n, mag = Math.pow(10, Math.floor(log10(step0)));
+      const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => span / s <= n) || mag * 10;
+      const out = []; for (let v = Math.ceil(min / step - 1e-9) * step; v <= max + 1e-9; v += step) out.push(+v.toFixed(10));
+      return out;
+    }
+    function chartFrame(svg, o) {
+      svg.innerHTML = '';
+      const W = +(svg.getAttribute('viewBox').split(' ')[2]), H = +(svg.getAttribute('viewBox').split(' ')[3]);
+      const m = { l: 46, r: 12, t: 12, b: 38 };
+      const X = v => m.l + (v - o.xMin) / (o.xMax - o.xMin) * (W - m.l - m.r);
+      const Y = v => H - m.b - (v - o.yMin) / (o.yMax - o.yMin) * (H - m.t - m.b);
+      const yt = o.yTicks || niceTicks(o.yMin, o.yMax, 5);
+      yt.forEach(v => { el('line', { x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), stroke: '#e2e8f0' }, svg); const t = el('text', { x: m.l - 5, y: Y(v) + 3, 'text-anchor': 'end', 'font-size': 9, fill: '#64748b' }, svg); t.textContent = o.yFmt ? o.yFmt(v) : +v.toFixed(3); });
+      const xt = o.xTicks || niceTicks(o.xMin, o.xMax, 6).map(v => [v, o.xFmt ? o.xFmt(v) : +v.toFixed(3)]);
+      xt.forEach(([v, lab]) => { el('line', { x1: X(v), x2: X(v), y1: H - m.b, y2: H - m.b + 4, stroke: '#94a3b8' }, svg); const t = el('text', { x: X(v), y: H - m.b + 14, 'text-anchor': 'middle', 'font-size': 9, fill: '#64748b' }, svg); t.textContent = lab; });
+      el('line', { x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b, stroke: '#475569' }, svg);
+      el('line', { x1: m.l, x2: m.l, y1: m.t, y2: H - m.b, stroke: '#475569' }, svg);
+      if (o.xLabel) { const t = el('text', { x: (m.l + W - m.r) / 2, y: H - 6, 'text-anchor': 'middle', 'font-size': 10, fill: '#334155', 'font-weight': 600 }, svg); t.textContent = o.xLabel; }
+      if (o.yLabel) { const t = el('text', { x: 11, y: (m.t + H - m.b) / 2, 'text-anchor': 'middle', 'font-size': 10, fill: '#334155', 'font-weight': 600, transform: `rotate(-90 11 ${(m.t + H - m.b) / 2})` }, svg); t.textContent = o.yLabel; }
+      return { X, Y, W, H, m };
+    }
+    function emptyChart(svg, msg) {
+      svg.innerHTML = '';
+      const vb = svg.getAttribute('viewBox').split(' ');
+      const t = el('text', { x: vb[2] / 2, y: vb[3] / 2, 'text-anchor': 'middle', 'font-size': 11, fill: '#94a3b8' }, svg); t.textContent = msg || 'No data yet';
+    }
+    // series: [{name, color, pts:[[x,y,err?]], dash, noLine, line:{slope,intercept,x1,x2}}]
+    function lineChart(id, o) {
+      const svg = $(id);
+      const all = o.series.flatMap(s => s.pts);
+      if (!all.length) { emptyChart(svg, o.empty); return; }
+      const xs = all.map(p => p[0]), ys = all.map(p => p[1] + (p[2] || 0));
+      const xMin = o.xMin ?? Math.min(...xs), xMax = o.xMax ?? Math.max(...xs);
+      const pad = (xMax - xMin) * 0.05 || 1;
+      const f = chartFrame(svg, { ...o, xMin: o.xMin ?? xMin - pad, xMax: o.xMax ?? xMax + pad, yMin: o.yMin ?? Math.min(0, ...all.map(p => p[1])), yMax: o.yMax ?? (Math.max(...ys) * 1.12 || 1) });
+      (o.hlines || []).forEach(h => { el('line', { x1: f.m.l, x2: f.W - f.m.r, y1: f.Y(h.y), y2: f.Y(h.y), stroke: h.color || '#94a3b8', 'stroke-dasharray': '4 3' }, svg); if (h.label) { const t = el('text', { x: f.W - f.m.r - 2, y: f.Y(h.y) - 3, 'text-anchor': 'end', 'font-size': 8.5, fill: h.color || '#64748b' }, svg); t.textContent = h.label; } });
+      (o.vlines || []).forEach(h => { el('line', { x1: f.X(h.x), x2: f.X(h.x), y1: f.m.t, y2: f.H - f.m.b, stroke: h.color || '#94a3b8', 'stroke-dasharray': '3 3' }, svg); if (h.label) { const t = el('text', { x: f.X(h.x) + 3, y: f.m.t + 9, 'font-size': 8.5, fill: h.color || '#64748b' }, svg); t.textContent = h.label; } });
+      o.series.forEach(s => {
+        const pts = s.pts.slice().sort((a, b) => a[0] - b[0]);
+        if (s.line) { el('line', { x1: f.X(s.line.x1), y1: f.Y(s.line.slope * s.line.x1 + s.line.intercept), x2: f.X(s.line.x2), y2: f.Y(s.line.slope * s.line.x2 + s.line.intercept), stroke: s.color, 'stroke-width': 1.5, 'stroke-dasharray': '5 3' }, svg); }
+        if (!s.noLine && pts.length > 1) el('polyline', { points: pts.map(p => `${f.X(p[0])},${f.Y(p[1])}`).join(' '), fill: 'none', stroke: s.color, 'stroke-width': 2, 'stroke-dasharray': s.dash || '' }, svg);
+        pts.forEach(p => {
+          if (p[2]) { el('line', { x1: f.X(p[0]), x2: f.X(p[0]), y1: f.Y(p[1] - p[2]), y2: f.Y(p[1] + p[2]), stroke: s.color }, svg); [-1, 1].forEach(k => el('line', { x1: f.X(p[0]) - 3, x2: f.X(p[0]) + 3, y1: f.Y(p[1] + k * p[2]), y2: f.Y(p[1] + k * p[2]), stroke: s.color }, svg)); }
+          el('circle', { cx: f.X(p[0]), cy: f.Y(p[1]), r: 3.2, fill: s.hollow ? '#fff' : s.color, stroke: s.color, 'stroke-width': 1.5 }, svg);
+        });
+      });
+      // legend
+      const named = o.series.filter(s => s.name);
+      named.forEach((s, i) => { const x = f.m.l + 8, y = f.m.t + 8 + i * 12; el('rect', { x, y: y - 6, width: 10, height: 4, fill: s.color }, svg); const t = el('text', { x: x + 14, y: y - 1, 'font-size': 9, fill: '#334155' }, svg); t.textContent = s.name; });
+    }
+    // bars: [{label, v, e, color, note}]
+    function barChart(id, o) {
+      const svg = $(id);
+      const bars = o.bars.filter(b => isFinite(b.v));
+      if (!bars.length) { emptyChart(svg, o.empty); return; }
+      const top = Math.max(...bars.map(b => b.v + (b.e || 0))) * 1.2 || 1;
+      const n = o.bars.length;
+      const f = chartFrame(svg, { ...o, xMin: 0, xMax: n, yMin: o.yMin ?? 0, yMax: o.yMax ?? top, xTicks: [] });
+      const bw = (f.X(1) - f.X(0)) * 0.56;
+      o.bars.forEach((b, i) => {
+        const cx = f.X(i + 0.5);
+        const t = el('text', { x: cx, y: f.H - f.m.b + 13, 'text-anchor': 'middle', 'font-size': 9, fill: '#334155' }, svg); t.textContent = b.label;
+        if (!isFinite(b.v)) return;
+        el('rect', { x: cx - bw / 2, y: f.Y(Math.max(b.v, 0)), width: bw, height: Math.abs(f.Y(0) - f.Y(b.v)), fill: b.color || PALETTE.teal, rx: 2, opacity: .9 }, svg);
+        if (b.e) { el('line', { x1: cx, x2: cx, y1: f.Y(b.v), y2: f.Y(b.v + b.e), stroke: '#0a1f44' }, svg); el('line', { x1: cx - 5, x2: cx + 5, y1: f.Y(b.v + b.e), y2: f.Y(b.v + b.e), stroke: '#0a1f44' }, svg); }
+        if (b.note) { const s = el('text', { x: cx, y: f.Y(b.v + (b.e || 0)) - 4, 'text-anchor': 'middle', 'font-size': 10, 'font-weight': 700, fill: '#0a1f44' }, svg); s.textContent = b.note; }
+      });
+    }
+    // ---- small HTML helpers ----
+    function tableHTML(head, rows, cls = '') {
+      return `<table class="obs-table w-full text-[11px] text-center ${cls}"><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody class="font-mono">${rows.length ? rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${head.length}" class="text-slate-400 py-3 font-sans">No readings yet</td></tr>`}</tbody></table>`;
+    }
+    $('audioToggleBtn') && $('audioToggleBtn').addEventListener('click', () => {
+      soundOn = !soundOn;
+      $('audioToggleBtn').className = `p-2 rounded-lg transition ${soundOn ? 'bg-teal-100 hover:bg-teal-200 text-teal-800' : 'bg-slate-200 text-slate-500'}`;
+      if (soundOn) beep('ok');
+    });
+    window.addEventListener('DOMContentLoaded', () => { renderSpeed(); renderQuiz(); init(); });
+
+  </script>
+  <script>
+    // =====================================================================
+    // Organ bath + frontal writing lever + kymograph engine (isolated tissue)
+    // =====================================================================
+    const OB = {
+      cfg: null, phase: 'idle', phaseT: 0, h: 0, h0: 0, target: 0, x: 0, trace: [[0, 0]], marks: [], responses: [], mods: [],
+      restLeft: 0, mod: 'none', stock: null, vol: null, sens: 1, washAnim: 0, syrAnim: 0, autoWash: true, pending: null, waitKind: null,
+
+      init(cfg) {
+        this.cfg = cfg;
+        const wc = $('waitCard'); wc.style.left = '12px'; wc.style.right = 'auto';
+        this.stock = cfg.stocks[0].k; this.vol = cfg.volumes[Math.min(2, cfg.volumes.length - 1)];
+        this.reset();
+        this.buildScene();
+        this.renderPanel();
+      },
+      reset() {
+        cancelWait();
+        Object.assign(this, { phase: 'idle', phaseT: 0, h: 0, target: 0, x: 0, trace: [[0, 0]], marks: [], responses: [], mods: [], restLeft: 0, mod: 'none', pending: null, waitKind: null });
+        this.sens = 0.93 + Math.random() * 0.14;
+        this.drawStrip();
+      },
+      stockOf(k) { return this.cfg.stocks.find(s => s.k === k); },
+      modOf(k) { return this.cfg.mods[k || this.mod]; },
+      doseUg(sk, vol) { return this.stockOf(sk).conc * vol; },
+      bathConc(sk, vol) { return this.doseUg(sk, vol) / this.cfg.bathMl; },
+      // true (model) height in mm for a dose, before noise
+      model(sk, vol, mk) {
+        const s = this.stockOf(sk), m = this.modOf(mk), c = this.cfg;
+        const conc = s.conc * (s.eq ?? 1) * vol / c.bathMl;          // agonist-equivalent bath conc (µg/mL)
+        const ec = c.ec50 * (m.shift ?? 1), n = c.hill ?? 1;
+        return c.emax * (m.emax ?? 1) * Math.pow(conc, n) / (Math.pow(conc, n) + Math.pow(ec, n));
+      },
+      noisy(h) { return Math.max(0, h * this.sens * (1 + gauss() * (this.cfg.noise ?? 0.025))); },
+      busy() { return this.phase !== 'idle'; },
+
+      // ---------- actions ----------
+      add(sk = this.stock, vol = this.vol) {
+        if (this.phase === 'equil') { showFeedback('Wait for the antagonist/drug equilibration period to finish (or skip it).', true); return false; }
+        if (this.busy()) { showFeedback(this.phase === 'hold' ? 'Wash the tissue before giving the next dose.' : 'A response is being recorded. Wait for the contact time to finish.', true); return false; }
+        if (!(vol > 0)) { showFeedback('Choose a volume to inject.', true); return false; }
+        if (vol > this.cfg.maxVol) { showFeedback(`Volume too large: keep injections ≤ ${this.cfg.maxVol} mL (≤ 10% of the ${this.cfg.bathMl} mL bath).`, true); return false; }
+        let flag = '';
+        if (this.restLeft > 1) { flag = 'early'; showFeedback(`⚠ Dose given only ${fmtMS(this.cfg.rest - this.restLeft)} after washing: the tissue had not recovered, so the response is reduced. Respect the time cycle.`, true); }
+        const s = this.stockOf(sk);
+        let h = this.noisy(this.model(sk, vol));
+        if (flag) h *= 0.78;
+        this.restLeft = 0; cancelWait();
+        this.pending = { sk, vol, h, flag, x0: this.x, mod: this.mod };
+        this.pushFlat(this.cfg.gap ?? 8);
+        this.pending.xd = this.x;
+        this.target = h; this.h0 = 0; this.phase = 'contact'; this.phaseT = 0; this.syrAnim = 1;
+        this.waitKind = 'contact';
+        startWait(`Contact time: ${s.short} ${vol} mL`, this.cfg.contact, () => this.endContact());
+        beep('click'); setPhase('Recording response…');
+        if (!flag) showFeedback(`${s.short} ${vol} mL added to the bath. Recording the contraction for the ${this.cfg.contact}-s contact time.`);
+        this.renderPanel();
+        return true;
+      },
+      endContact() {
+        const c = this.cfg;
+        this.advance(c.contact - this.phaseT, true);
+        this.h = this.target; this.trace.push([this.x, this.h]);
+        this.phase = 'hold'; this.waitKind = null;
+        const p = this.pending, s = this.stockOf(p.sk);
+        const r = { n: this.responses.length + 1, sk: p.sk, vol: p.vol, dose: s.hidden ? null : this.doseUg(p.sk, p.vol), conc: s.hidden ? null : this.bathConc(p.sk, p.vol), h: +p.h.toFixed(1), mod: p.mod, flag: p.flag, x0: p.x0, xd: p.xd, x1: null, group: s.group || s.k };
+        r.label = c.labelFor ? c.labelFor(r) : `${p.vol}`;
+        this.responses.push(r); this.pending = r;
+        c.onResponse && c.onResponse(r);
+        if (this.autoWash) this.wash();
+        else { showFeedback(`Response: <b>${r.h} mm</b>. Press <b>Wash</b> to drain the bath and refill with fresh ${c.pss}.`); setPhase('Contact over: wash'); }
+        this.renderPanel(); c.onUpdate && c.onUpdate();
+      },
+      wash() {
+        if (this.phase !== 'hold') { if (this.phase === 'idle') { this.washAnim = 1; this.restLeft = 0; showFeedback('Bath rinsed with fresh solution.'); } return; }
+        this.phase = 'wash'; this.phaseT = 0; this.h0 = this.h; this.washAnim = 1;
+        beep('low'); setPhase('Washing…');
+      },
+      endWash() {
+        this.h = 0; this.trace.push([this.x, 0]);
+        if (this.pending) { this.pending.x1 = this.x; this.marks.push({ x: (this.pending.xd + this.pending.x1) / 2, xd: this.pending.xd, label: this.pending.label, flag: this.pending.flag }); }
+        this.pending = null; this.phase = 'idle';
+        this.restLeft = this.cfg.rest; this.waitKind = 'rest';
+        startWait('Tissue recovery (time cycle)', this.cfg.rest, () => { this.restLeft = 0; this.waitKind = null; showFeedback('Tissue has recovered. Give the next dose.'); this.renderPanel(); });
+        showFeedback(`Washed. Allow the ${fmtMS(this.cfg.rest)} recovery period before the next dose.`);
+        setPhase('Resting'); this.drawStrip(); this.renderPanel(); this.cfg.onUpdate && this.cfg.onUpdate();
+      },
+      requestMod(mk) {
+        if (mk === this.mod) return;
+        if (this.busy() && this.phase !== 'equil') { showFeedback('Finish the current response (and wash) before changing the bath solution.', true); this.cfg.onModSync && this.cfg.onModSync(); return; }
+        const m = this.modOf(mk);
+        this.mod = mk; cancelWait(); this.restLeft = 0;
+        this.pushFlat(10);
+        this.mods.push({ x: this.x, label: m.tag || m.label });
+        this.pushFlat(6);
+        if (m.equil) {
+          this.phase = 'equil'; this.waitKind = 'equil';
+          startWait(`Equilibration: ${m.tag || m.label}`, m.equil, () => { this.phase = 'idle'; this.waitKind = null; showFeedback(`${m.label}: equilibrated. Repeat the dose series now.`); this.renderPanel(); this.cfg.onUpdate && this.cfg.onUpdate(); });
+          showFeedback(`Bath now contains ${m.label}. Allow ${fmtMS(m.equil)} equilibration before re-testing the agonist.`);
+        } else showFeedback(`Bath solution changed to ${m.label}.`);
+        this.washAnim = 1; this.drawStrip(); this.renderPanel(); this.cfg.onUpdate && this.cfg.onUpdate();
+      },
+      // bring the bath to a quiet idle state immediately (finishes any running response)
+      settle() {
+        if (this.phase === 'contact') { cancelWait(); this.endContact(); }
+        if (this.phase === 'hold') { this.phase = 'wash'; this.h0 = this.h; this.phaseT = 0; }
+        if (this.phase === 'wash') { this.x += 10 * (1 - this.phaseT / 8); this.trace.push([this.x, 0]); this.endWash(); }
+        if (this.phase === 'equil') this.phase = 'idle';
+        cancelWait(); this.restLeft = 0; this.waitKind = null; this.h = 0;
+      },
+      // instant (non-animated) response, used by planned runs & reference datasets
+      instant(sk, vol, hOverride) {
+        const c = this.cfg, s = this.stockOf(sk);
+        this.settle();
+        const h = hOverride ?? this.noisy(this.model(sk, vol));
+        const x0 = this.x; this.pushFlat(c.gap ?? 8); const xd = this.x;
+        const cw = c.contactW ?? 22, tau = c.tau / c.contact;
+        for (let i = 1; i <= 12; i++) this.trace.push([xd + cw * i / 12, h * (1 - Math.exp(-(i / 12) / tau))]);
+        this.x = xd + cw; this.trace.push([this.x, h]);
+        for (let i = 1; i <= 6; i++) this.trace.push([this.x + 10 * i / 6, h * Math.exp(-i * 0.9)]);
+        this.x += 10; this.trace.push([this.x, 0]);
+        const r = { n: this.responses.length + 1, sk, vol, dose: s.hidden ? null : this.doseUg(sk, vol), conc: s.hidden ? null : this.bathConc(sk, vol), h: +h.toFixed(1), mod: this.mod, flag: '', x0, xd, x1: this.x, group: s.group || s.k };
+        r.label = c.labelFor ? c.labelFor(r) : `${vol}`;
+        this.responses.push(r); this.marks.push({ x: (xd + this.x) / 2, xd, label: r.label });
+        c.onResponse && c.onResponse(r);
+        return r;
+      },
+      instantMod(mk) { this.settle(); const m = this.modOf(mk); this.mod = mk; this.pushFlat(10); this.mods.push({ x: this.x, label: m.tag || m.label }); this.pushFlat(6); },
+      finishInstant() { this.phase = 'idle'; this.h = 0; this.drawStrip(); this.renderPanel(); this.cfg.onUpdate && this.cfg.onUpdate(); },
+      removeLast() {
+        if (this.busy() && this.phase !== 'equil') { showFeedback('Wait until the current response is complete.', true); return; }
+        const r = this.responses.pop(); if (!r) return;
+        this.marks.pop();
+        this.trace = this.trace.filter(p => p[0] <= r.x0); this.x = r.x0;
+        this.mods = this.mods.filter(m => m.x <= r.x0);
+        if (!this.trace.length) this.trace = [[0, 0]];
+        this.restLeft = 0; cancelWait();
+        showFeedback(`Response #${r.n} (${r.label}) discarded.`);
+        this.drawStrip(); this.renderPanel(); this.cfg.onUpdate && this.cfg.onUpdate();
+      },
+      pushFlat(w) { this.trace.push([this.x, 0]); this.x += w; this.trace.push([this.x, 0]); },
+      advance(dt, silentPush) {
+        const c = this.cfg;
+        const rate = (c.contactW ?? 22) / c.contact;
+        this.x += rate * Math.max(0, dt);
+        if (silentPush) return;
+        const last = this.trace[this.trace.length - 1];
+        if (this.x - last[0] >= 0.35) this.trace.push([this.x, this.h]);
+      },
+
+      // ---------- per-frame ----------
+      tick(dt, dtR) {
+        const c = this.cfg;
+        if (this.phase === 'contact') {
+          const dtc = Math.min(dt, c.contact - this.phaseT);
+          this.phaseT += dtc;
+          this.h = this.target * (1 - Math.exp(-this.phaseT / c.tau));
+          this.advance(dtc);
+          if (Math.random() < dtR * 3) this.drawStrip();
+        } else if (this.phase === 'wash') {
+          const dur = 8; const dtc = Math.min(dt, dur - this.phaseT);
+          this.phaseT += dtc;
+          this.h = this.h0 * Math.exp(-this.phaseT / 1.6);
+          this.x += 10 / dur * dtc;
+          const last = this.trace[this.trace.length - 1];
+          if (this.x - last[0] >= 0.35) this.trace.push([this.x, this.h]);
+          if (this.phaseT >= dur) this.endWash();
+        }
+        if (this.restLeft > 0 && this.waitKind === 'rest') this.restLeft = WAIT ? WAIT.left : 0;
+        this.washAnim = Math.max(0, this.washAnim - dtR * 0.6);
+        this.syrAnim = Math.max(0, this.syrAnim - dtR * 0.8);
+        this.drawScene(dtR);
+      },
+
+      // ---------- scene ----------
+      buildScene() {
+        const c = this.cfg, svg = $('scene');
+        svg.innerHTML = `
+          <defs>
+            <linearGradient id="glass" x1="0" x2="1"><stop offset="0" stop-color="#cfe8f5" stop-opacity=".55"/><stop offset=".5" stop-color="#ffffff" stop-opacity=".25"/><stop offset="1" stop-color="#9cc9df" stop-opacity=".6"/></linearGradient>
+            <linearGradient id="drumG" x1="0" x2="1"><stop offset="0" stop-color="#0b1220"/><stop offset=".45" stop-color="#253043"/><stop offset=".55" stop-color="#2b3649"/><stop offset="1" stop-color="#0b1220"/></linearGradient>
+            <linearGradient id="metal" x1="0" x2="1"><stop offset="0" stop-color="#64748b"/><stop offset=".5" stop-color="#e2e8f0"/><stop offset="1" stop-color="#64748b"/></linearGradient>
+            <clipPath id="drumClip"><rect x="690" y="34" width="250" height="300" rx="6"/></clipPath>
+            <clipPath id="bathClip"><rect x="324" y="132" width="72" height="214" rx="8"/></clipPath>
+          </defs>
+          <rect x="0" y="370" width="1000" height="40" fill="#1f2a37"/>
+          <rect x="0" y="366" width="1000" height="6" fill="#334155"/>
+          <!-- stand -->
+          <rect x="250" y="20" width="10" height="350" fill="url(#metal)"/>
+          <rect x="220" y="360" width="80" height="10" rx="2" fill="#475569"/>
+          <rect x="256" y="78" width="200" height="6" fill="url(#metal)"/>
+          <!-- reservoir -->
+          <g>
+            <rect x="70" y="40" width="110" height="130" rx="18" fill="url(#glass)" stroke="#7aa7c0" stroke-width="2"/>
+            <rect id="resFluid" x="74" y="70" width="102" height="96" rx="14" fill="${c.fluid || '#d9f2ff'}" opacity=".85"/>
+            <rect x="110" y="26" width="30" height="16" rx="3" fill="#94a3b8"/>
+            <text x="125" y="110" text-anchor="middle" font-size="12" font-weight="700" fill="#0c4a6e">${c.pss}</text>
+            <text x="125" y="126" text-anchor="middle" font-size="10" fill="#075985">${c.temp}</text>
+            <path d="M125 170 L125 200 L230 200 L230 352 L360 352 L360 346" fill="none" stroke="#9cc9df" stroke-width="5"/>
+            <circle cx="230" cy="250" r="9" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/><rect id="tap" x="222" y="247" width="16" height="6" rx="2" fill="#475569"/>
+            <text x="230" y="276" text-anchor="middle" font-size="9" fill="#475569">inlet tap</text>
+          </g>
+          <!-- O2 line -->
+          <path d="M40 360 L40 300 Q40 290 50 290 L170 290" fill="none" stroke="#22c55e" stroke-width="3"/>
+          <text x="40" y="380" font-size="9" fill="#94a3b8" text-anchor="middle">${c.gas || 'Air'}</text>
+          <!-- bath jacket -->
+          <rect x="304" y="112" width="112" height="252" rx="14" fill="${c.jacket ? '#bae6fd' : 'none'}" opacity="${c.jacket ? .35 : 0}" stroke="${c.jacket ? '#7aa7c0' : 'none'}" stroke-width="2"/>
+          <rect x="322" y="128" width="76" height="220" rx="10" fill="url(#glass)" stroke="#7aa7c0" stroke-width="2"/>
+          <g clip-path="url(#bathClip)">
+            <rect id="bathFluid" x="322" y="150" width="76" height="200" fill="${c.fluid || '#d9f2ff'}" opacity=".8"/>
+            <rect id="bathTint" x="322" y="150" width="76" height="200" fill="#a78bfa" opacity="0"/>
+            <g id="bubbles"></g>
+          </g>
+          <text x="360" y="392" text-anchor="middle" font-size="10" fill="#cbd5e1">${c.bathMl} mL bath${c.jacket ? ' • 37 °C jacket' : ''}</text>
+          <!-- aerator tube + tissue holder -->
+          <path d="M346 84 L346 328 Q346 336 354 336 L366 336" fill="none" stroke="#cbd5e1" stroke-width="4"/>
+          <path d="M170 290 Q300 290 300 100 Q300 84 346 84" fill="none" stroke="#22c55e" stroke-width="2.5" opacity=".7"/>
+          <g id="tissue"></g>
+          <line id="thread" stroke="#475569" stroke-width="1.2"/>
+          <!-- lever -->
+          <rect x="440" y="60" width="14" height="40" rx="3" fill="url(#metal)"/>
+          <line id="lever" stroke="#334155" stroke-width="3" stroke-linecap="round"/>
+          <circle id="pivot" cx="447" cy="84" r="5" fill="#334155" stroke="#e2e8f0"/>
+          <circle id="counterW" r="5" fill="#64748b"/>
+          <!-- syringe -->
+          <g id="syringe" opacity="0">
+            <rect x="380" y="10" width="14" height="70" rx="3" fill="#f8fafc" stroke="#64748b"/>
+            <rect id="syrFluid" x="382" y="30" width="10" height="48" fill="#a78bfa" opacity=".7"/>
+            <rect id="syrPl" x="384" y="0" width="6" height="30" fill="#94a3b8"/>
+            <line x1="387" y1="80" x2="387" y2="140" stroke="#64748b" stroke-width="1.5"/>
+          </g>
+          <!-- kymograph drum -->
+          <rect x="800" y="336" width="30" height="34" fill="#475569"/>
+          <rect x="760" y="12" width="110" height="14" rx="4" fill="#475569"/>
+          <rect x="690" y="34" width="250" height="300" rx="6" fill="url(#drumG)" stroke="#0a1f44" stroke-width="2"/>
+          <g clip-path="url(#drumClip)"><g id="drumStripes"></g><polyline id="drumTrace" fill="none" stroke="#f8fafc" stroke-width="1.6"/><g id="drumMarks"></g></g>
+          <rect x="690" y="34" width="250" height="300" rx="6" fill="none" stroke="#000" stroke-opacity=".4" stroke-width="2"/>
+          <text x="815" y="360" text-anchor="middle" font-size="10" fill="#cbd5e1">Sherrington kymograph (smoked paper)</text>
+          <text id="drumLabel" x="935" y="50" text-anchor="end" font-size="10" fill="#94a3b8" font-family="JetBrains Mono">drum stopped</text>
+          <circle id="penTip" r="3" fill="#fbbf24"/>
+        `;
+        const st = $('drumStripes');
+        for (let i = 0; i < 14; i++) el('rect', { x: 690 + i * 20, y: 34, width: 2, height: 300, fill: '#ffffff', opacity: .03 }, st);
+        const b = $('bubbles');
+        this.bub = [];
+        for (let i = 0; i < 9; i++) { const cb = el('circle', { r: 1.5 + Math.random() * 2, fill: '#fff', opacity: .7 }, b); this.bub.push({ e: cb, y: 340 - Math.random() * 180, x: 348 + Math.random() * 6, v: 30 + Math.random() * 30 }); }
+        this.drawScene(0);
+      },
+      penAt(h) { return [815, 270 - h * 2.1]; },
+      drawScene(dtR) {
+        const P = [447, 84], [px, py] = this.penAt(this.h);
+        const dx = px - P[0], dy = py - P[1], L = Math.hypot(dx, dy);
+        const A = [P[0] - dx / L * 60, P[1] - dy / L * 60];
+        $('lever').setAttribute('x1', A[0]); $('lever').setAttribute('y1', A[1]); $('lever').setAttribute('x2', px); $('lever').setAttribute('y2', py);
+        $('counterW').setAttribute('cx', A[0] - dx / L * 12); $('counterW').setAttribute('cy', A[1] - dy / L * 12);
+        $('penTip').setAttribute('cx', px); $('penTip').setAttribute('cy', py);
+        // tissue: hangs from hook (366,336) up to top that shortens with contraction
+        const L0 = this.cfg.tissueLen ?? 120, sh = this.h * 0.32;
+        const top = 336 - (L0 - sh), w = (this.cfg.tissueW ?? 9) * (1 + sh / L0 * 1.2);
+        $('tissue').innerHTML = `<path d="M366 336 C ${366 - w} ${336 - (L0 - sh) * 0.3}, ${366 - w} ${top + (L0 - sh) * 0.3}, 366 ${top} C ${366 + w} ${top + (L0 - sh) * 0.3}, ${366 + w} ${336 - (L0 - sh) * 0.3}, 366 336 Z" fill="${this.cfg.tissueColor || '#f0a3a3'}" stroke="#b45309" stroke-opacity=".35"/>
+          ${[0.25, 0.5, 0.75].map(f => `<line x1="${366 - w * 0.6}" x2="${366 + w * 0.6}" y1="${336 - (L0 - sh) * f}" y2="${336 - (L0 - sh) * f}" stroke="#9f1239" stroke-opacity=".25"/>`).join('')}`;
+        $('thread').setAttribute('x1', 366); $('thread').setAttribute('y1', top); $('thread').setAttribute('x2', A[0]); $('thread').setAttribute('y2', A[1]);
+        // fluid level during wash
+        const lvl = this.washAnim > 0 ? 150 + Math.sin(this.washAnim * Math.PI) * 150 : 150;
+        $('bathFluid').setAttribute('y', lvl); $('bathTint').setAttribute('y', lvl);
+        const m = this.modOf();
+        $('bathTint').setAttribute('fill', m.color || '#a78bfa');
+        $('bathTint').setAttribute('opacity', (this.mod !== 'none' ? 0.18 : 0) + (this.phase === 'contact' || this.phase === 'hold' ? 0.12 : 0));
+        $('tap').setAttribute('transform', this.washAnim > 0 ? 'rotate(90 230 250)' : '');
+        this.bub.forEach(b => { b.y -= b.v * dtR; if (b.y < lvl + 4) b.y = 340; b.e.setAttribute('cx', b.x + Math.sin(b.y / 9) * 2); b.e.setAttribute('cy', b.y); });
+        const sy = $('syringe');
+        sy.setAttribute('opacity', this.syrAnim > 0 ? 1 : 0);
+        $('syrPl').setAttribute('y', 0 + (1 - this.syrAnim) * 30); $('syrFluid').setAttribute('height', 48 * this.syrAnim);
+        // drum trace window (pen at x=815, older trace to the left)
+        const running = this.phase === 'contact' || this.phase === 'wash';
+        const pts = []; const sx = 1.6;
+        for (let i = this.trace.length - 1; i >= 0; i--) { const [x, h] = this.trace[i]; const X = 815 - (this.x - x) * sx; if (X < 680) { pts.push(`${X},${270 - h * 2.1}`); break; } pts.push(`${X},${270 - h * 2.1}`); }
+        if (running) pts.unshift(`${815},${py}`);
+        $('drumTrace').setAttribute('points', pts.join(' '));
+        $('drumMarks').innerHTML = this.marks.filter(mk => this.x - mk.xd < 90).map(mk => { const X = 815 - (this.x - mk.xd) * sx; return `<line x1="${X}" x2="${X}" y1="282" y2="292" stroke="#fbbf24"/><text x="${X}" y="304" font-size="10" fill="#fde68a" text-anchor="middle" font-family="JetBrains Mono">${mk.label}</text>`; }).join('') +
+          this.mods.filter(mk => this.x - mk.x < 90).map(mk => { const X = 815 - (this.x - mk.x) * sx; return `<line x1="${X}" x2="${X}" y1="60" y2="300" stroke="#c4b5fd" stroke-dasharray="4 3"/>`; }).join('');
+        $('drumStripes').setAttribute('transform', `translate(${-((this.x * sx) % 20)} 0)`);
+        $('drumLabel').textContent = running ? 'drum running ▸' : 'drum stopped';
+      },
+      drawStrip() {
+        const box = $('kymoStrip'); if (!box) return;
+        const H = 170, base = 132, sy = 1.15, sx = 2.2;
+        const W = Math.max(box.clientWidth || 800, this.x * sx + 60);
+        const pts = this.trace.map(([x, h]) => `${20 + x * sx},${base - h * sy}`).join(' ');
+        const marks = this.marks.map(mk => `<line x1="${20 + mk.xd * sx}" x2="${20 + mk.xd * sx}" y1="${base + 4}" y2="${base + 12}" stroke="#fbbf24"/><text x="${20 + mk.x * sx}" y="${base + 26}" font-size="10" text-anchor="middle" fill="${mk.flag ? '#fca5a5' : '#fde68a'}" font-family="JetBrains Mono">${mk.label}</text>`).join('');
+        const mods = this.mods.map(mk => `<line x1="${20 + mk.x * sx}" x2="${20 + mk.x * sx}" y1="14" y2="${base + 8}" stroke="#c4b5fd" stroke-dasharray="4 3"/><text x="${24 + mk.x * sx}" y="22" font-size="10" fill="#ddd6fe" font-family="Inter">${mk.label}</text>`).join('');
+        const grid = []; for (let y = 0; y <= 100; y += 20) grid.push(`<line x1="0" x2="${W}" y1="${base - y * sy}" y2="${base - y * sy}" stroke="#ffffff" stroke-opacity=".05"/><text x="4" y="${base - y * sy - 2}" font-size="8" fill="#64748b">${y}</text>`);
+        box.innerHTML = `<svg width="${W}" height="${H}" style="display:block">${grid.join('')}<polyline points="${pts}" fill="none" stroke="#f8fafc" stroke-width="1.4"/>${marks}${mods}<text x="${W - 8}" y="${H - 6}" text-anchor="end" font-size="9" fill="#64748b">time cycle ${fmtMS(this.cfg.contact + this.cfg.rest)} • contact ${this.cfg.contact} s • heights in mm</text></svg>`;
+        if (this.phase !== 'idle' || this._scrollEnd !== false) box.scrollLeft = box.scrollWidth;
+      },
+
+      // ---------- dose panel ----------
+      renderPanel() {
+        const c = this.cfg, box = $('obPanel'); if (!box) return;
+        const s = this.stockOf(this.stock);
+        const dose = s.hidden ? null : this.doseUg(this.stock, this.vol);
+        const unit = c.unit || 'µg';
+        const stocks = c.stocks.filter(x => !x.only || x.only()).map(x => `<button class="chip ${x.k === this.stock ? 'on' : ''}" onclick="OB.stock='${x.k}';OB.renderPanel()" title="${x.label}">${x.chip || x.label}</button>`).join(' ');
+        const vols = c.volumes.map(v => `<button class="chip ${v === this.vol ? 'on' : ''}" onclick="OB.vol=${v};OB.renderPanel()">${v}</button>`).join(' ');
+        const canAdd = this.phase === 'idle';
+        box.innerHTML = `
+          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-600">Drug solution</div>
+          <div class="flex flex-wrap gap-1">${stocks}</div>
+          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-600 mt-1">Volume to inject (mL)</div>
+          <div class="flex flex-wrap gap-1 items-center">${vols}
+            <input id="obVolIn" type="number" step="0.05" min="0.01" max="${c.maxVol}" value="${this.vol}" class="w-16 text-[11px] border border-slate-300 rounded px-1 py-0.5 font-mono" onchange="OB.vol=Math.round(parseFloat(this.value)*100)/100||OB.vol;OB.renderPanel()">
+          </div>
+          <div class="p-2 rounded-lg bg-slate-50 border border-slate-200 text-[11px] font-mono text-slate-700">${s.label} × ${this.vol} mL<br>${dose === null ? '= test dose (unknown strength)' : `= ${fx(dose, dose < 1 ? 3 : 2)} ${unit} → bath ${fx(dose / c.bathMl, 4)} ${unit}/mL`}</div>
+          <div class="grid grid-cols-2 gap-2">
+            <button class="btn py-2 bg-indigo-600 hover:bg-indigo-700 text-white shadow" ${canAdd ? '' : 'disabled'} onclick="OB.add()">💉 Add to bath</button>
+            <button class="btn py-2 bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200" ${this.phase === 'hold' ? '' : 'disabled'} onclick="OB.wash()">🚿 Wash</button>
+          </div>
+          <div class="flex items-center justify-between">
+            <label class="flex items-center gap-1.5 text-[11px] text-slate-600"><input type="checkbox" ${this.autoWash ? 'checked' : ''} onchange="OB.autoWash=this.checked" class="accent-teal-600"> Auto-wash after contact</label>
+            <button class="text-[11px] text-rose-600 hover:underline" onclick="OB.removeLast()">↶ Discard last</button>
+          </div>`;
+        c.onPanel && c.onPanel();
+      }
+    };
+    // standard bench markup helpers for organ-bath modules
+    function obRespTable(rows) {
+      return rows.map(r => `<tr class="${r.flag ? 'bg-rose-50' : ''}"><td class="p-1">${r.n}</td><td class="p-1">${r.label}</td><td class="p-1">${r.vol}</td><td class="p-1 font-semibold">${fx(r.h, 1)}</td></tr>`).join('') || `<tr><td colspan="4" class="p-2 text-slate-400 font-sans">No responses yet</td></tr>`;
+    }
+
+    // mean response per dose for responses passing `f`: [{dose, vol, h, sem, n}]
+    function drcSeries(f, key = 'dose') {
+      const map = new Map();
+      OB.responses.filter(r => !r.flag && f(r)).forEach(r => { const k = +(+r[key]).toPrecision(6); if (!map.has(k)) map.set(k, []); map.get(k).push(r.h); });
+      return [...map.entries()].sort((a, b) => a[0] - b[0]).map(([d, hs]) => ({ dose: d, h: mean(hs), sem: sem(hs), n: hs.length }));
+    }
+    const ec50Of = (ser, maxRef) => interpDose(ser.map(p => [p.dose, p.h]), maxRef / 2);
+    const OB_BENCH = true;
+
+    const MODS = {
+      none:  { label: 'Frog Ringer', tag: 'Ringer', short: 'Control', shift: 1, color: '#a78bfa' },
+      physo: { label: 'Physostigmine 1 µg/mL', tag: '+ Physostigmine 1 µg/mL', short: 'Physostigmine', shift: 0.28, equil: 600, color: '#22c55e' },
+      dtc:   { label: 'd-Tubocurarine 1 µg/mL', tag: '+ d-Tubocurarine 1 µg/mL', short: 'd-Tubocurarine', shift: 6.5, equil: 600, color: '#f97316' }
+    };
+    const SER_COL = { none: PALETTE.teal, physo: PALETTE.indigo, dtc: PALETTE.rose };
+    const SERIES_DOSES = [0.5, 1, 2, 4, 8, 16, 32, 64, 128];
+    function stockFor(d) { return d <= 16 ? ['A10', d / 10] : d <= 160 ? ['A100', d / 100] : ['A1000', d / 1000]; }
+    const dosesFor = m => m === 'dtc' ? SERIES_DOSES.concat([256, 512]) : SERIES_DOSES;
+
+    function init() {
+      OB.init({
+        tissue: 'Frog rectus abdominis', pss: 'Frog Ringer', temp: 'room temp • aerated', gas: 'Air', bathMl: 20, jacket: false,
+        contact: 90, rest: 300, tau: 24, emax: 86, hill: 1.15, ec50: 0.24, maxVol: 2, noise: 0.03, tissueColor: '#f3b0a8', tissueLen: 130, tissueW: 11,
+        stocks: [{ k: 'A10', label: 'ACh 10 µg/mL', chip: 'ACh 10 µg/mL', short: 'ACh', conc: 10 }, { k: 'A100', label: 'ACh 100 µg/mL', chip: 'ACh 100 µg/mL', short: 'ACh', conc: 100 }, { k: 'A1000', label: 'ACh 1 mg/mL', chip: 'ACh 1 mg/mL', short: 'ACh', conc: 1000 }],
+        volumes: [0.05, 0.1, 0.2, 0.4, 0.8, 1.6], mods: MODS,
+        labelFor: r => fx(r.dose, r.dose < 1 ? 1 : 0),
+        onUpdate: renderAll, onModSync: () => { $('modSelect').value = OB.mod; }
+      });
+      showFeedback('The rectus is mounted and equilibrated in Frog Ringer. Start the ACh series: 0.05 mL of 10 µg/mL (= 0.5 µg).');
+      renderAll();
+      startLoop((dt, dtR) => OB.tick(dt, dtR));
+    }
+    function runSeries() {
+      dosesFor(OB.mod).forEach(d => { const [k, v] = stockFor(d); OB.instant(k, +v.toFixed(3)); });
+      OB.finishInstant(); showFeedback(`Full doubling series recorded in ${MODS[OB.mod].label}.`);
+    }
+    function runAll() {
+      ['none', 'physo', 'dtc'].forEach(m => { if (!OB.responses.some(r => r.mod === m)) { if (OB.mod !== m) OB.instantMod(m); dosesFor(m).forEach(d => { const [k, v] = stockFor(d); OB.instant(k, +v.toFixed(3)); }); } });
+      OB.finishInstant(); $('modSelect').value = OB.mod; showFeedback('All three series recorded. Open the Observation Sheet.');
+    }
+    function newExperiment() { OB.reset(); OB.renderPanel(); $('modSelect').value = 'none'; showFeedback('New tissue mounted. Begin the control ACh series.'); renderAll(); }
+    function loadReferenceDataset() {
+      OB.reset();
+      const ref = { none: [4, 9, 17, 30, 47, 63, 76, 83, 85], physo: [12, 24, 41, 59, 73, 81, 85, 86, 86], dtc: [0, 1, 2, 4, 9, 17, 30, 46, 61, 73, 80] };
+      ['none', 'physo', 'dtc'].forEach(m => { if (m !== 'none') OB.instantMod(m); dosesFor(m).forEach((d, i) => { const [k, v] = stockFor(d); OB.instant(k, +v.toFixed(3), ref[m][i]); }); });
+      OB.finishInstant(); $('modSelect').value = OB.mod; renderObservation();
+      showFeedback('Textbook reference dataset loaded (3 series).');
+    }
+
+    function renderAll() {
+      const b = $('modBadge'); b.innerText = MODS[OB.mod].short;
+      const cur = OB.responses.filter(r => r.mod === OB.mod);
+      $('liveTable').innerHTML = obRespTable(cur.slice().reverse());
+      const hasCtrl = drcSeries(r => r.mod === 'none');
+      const maxReached = hasCtrl.length >= 3 && Math.abs(hasCtrl[hasCtrl.length - 1].h - hasCtrl[hasCtrl.length - 2].h) < 0.06 * hasCtrl[hasCtrl.length - 1].h;
+      renderSteps([
+        { t: 'Tissue mounted & equilibrated', done: true },
+        { t: 'First ACh response', done: OB.responses.length > 0 },
+        { t: 'Control series to maximum', done: maxReached },
+        { t: 'Modified series (physostigmine / d-TC)', done: OB.responses.some(r => r.mod !== 'none') },
+        { t: 'Observation sheet', done: false }
+      ]);
+    }
+
+    function analysis() {
+      const ctrl = drcSeries(r => r.mod === 'none');
+      const max = ctrl.length ? Math.max(...ctrl.map(p => p.h)) : NaN;
+      const out = {};
+      ['none', 'physo', 'dtc'].forEach(m => { const s = drcSeries(r => r.mod === m); out[m] = { s, ec50: isFinite(max) ? ec50Of(s, max) : NaN }; });
+      return { ctrl, max, out };
+    }
+    function renderObservation() {
+      const A = analysis();
+      $('obsTables').innerHTML = ['none', 'physo', 'dtc'].map(m => {
+        const s = A.out[m].s;
+        const rows = s.map((p, i) => [i + 1, fx(p.dose, p.dose < 1 ? 2 : 1), fx(p.dose / 20, 3), fx(log10(p.dose), 2), fx(p.h, 1) + (p.n > 1 ? `<span class="text-slate-400"> (n${p.n})</span>` : ''), isFinite(A.max) ? fx(p.h / A.max * 100, 0) : '—']);
+        return `<div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm"><div class="px-3 py-2 text-xs font-bold text-white" style="background:${SER_COL[m]}">${m === 'none' ? 'Series A: ACh alone (Frog Ringer)' : m === 'physo' ? 'Series B: ACh + Physostigmine 1 µg/mL' : 'Series C: ACh + d-Tubocurarine 1 µg/mL'}</div>
+          ${tableHTML(['#', 'Dose µg', 'Bath µg/mL', 'log dose', 'Ht mm', '% max'], rows)}
+          <div class="px-3 py-1.5 text-[11px] bg-slate-50 border-t font-mono">EC50 ≈ <b>${fx(A.out[m].ec50, 2)} µg</b> ${isFinite(A.out[m].ec50) ? `(${fx(A.out[m].ec50 / 20, 3)} µg/mL bath)` : ''}</div></div>`;
+      }).join('');
+      lineChart('chartLin', { series: [{ color: SER_COL.none, pts: A.ctrl.map(p => [p.dose, p.h]) }], xLabel: 'Dose of ACh (µg)', yLabel: 'Height (mm)', xMin: 0, yMin: 0, empty: 'Record the control series' });
+      lineChart('chartLog', {
+        series: ['none', 'physo', 'dtc'].map(m => ({ name: MODS[m].short, color: SER_COL[m], pts: A.out[m].s.map(p => [log10(p.dose), p.h / A.max * 100]) })).filter(s => s.pts.length),
+        xLabel: 'log dose ACh (µg)', yLabel: '% of maximal response', yMin: 0, yMax: 110, hlines: [{ y: 50, label: '50%' }],
+        vlines: ['none', 'physo', 'dtc'].filter(m => isFinite(A.out[m].ec50)).map(m => ({ x: log10(A.out[m].ec50), color: SER_COL[m] })), empty: 'Record the control series'
+      });
+      const e0 = A.out.none.ec50;
+      if (!isFinite(e0)) { $('lblInference').innerText = 'Pending'; $('lblInferenceDetail').innerText = 'Record the control series past 50% of the maximum to read the EC50.'; return; }
+      let d = `Control EC50 ≈ ${fx(e0, 2)} µg ACh (${fx(e0 / 20, 3)} µg/mL in the bath). The curve vs dose is hyperbolic and vs log dose is sigmoid.`;
+      if (isFinite(A.out.physo.ec50)) d += ` Physostigmine shifted the curve to the LEFT (EC50 ÷ ${fx(e0 / A.out.physo.ec50, 1)}) by preventing ACh hydrolysis by cholinesterase (potentiation).`;
+      if (A.out.dtc.s.length) d += isFinite(A.out.dtc.ec50) ? ` d-Tubocurarine shifted it to the RIGHT in parallel (dose ratio ≈ ${fx(A.out.dtc.ec50 / e0, 1)}) with the same maximum: competitive N<sub>M</sub> antagonism.` : ' d-Tubocurarine shifted the curve to the right; extend the doses to show the maximum is surmountable.';
+      $('lblInference').innerText = `EC50 (control) ≈ ${fx(e0, 2)} µg`;
+      $('lblInferenceDetail').innerHTML = d;
+    }
+    function buildResults() {
+      const A = analysis();
+      return {
+        rows: [['Tissue', 'Frog rectus abdominis (20 mL Ringer)'], ['Responses recorded', OB.responses.length], ['Maximal response', isFinite(A.max) ? fx(A.max, 1) + ' mm' : '—'],
+          ['EC50 control', fx(A.out.none.ec50, 2) + ' µg'], ['EC50 + physostigmine', fx(A.out.physo.ec50, 2) + ' µg'], ['EC50 + d-tubocurarine', fx(A.out.dtc.ec50, 2) + ' µg'],
+          ['Inadequate-rest doses', OB.responses.filter(r => r.flag).length]],
+        text: 'ACh produced graded, dose-dependent contractures of the frog rectus abdominis. The response–dose plot is a rectangular hyperbola and the response–log dose plot is sigmoid, with the linear part between 20% and 80% of maximum. Physostigmine potentiates ACh (left shift) and d-tubocurarine antagonises it competitively (parallel right shift, same maximum).'
+      };
+    }
+    const QUIZ = [
+      { q: 'Why does the frog rectus abdominis give a slow, sustained contracture to ACh rather than a twitch?', o: ['It contains smooth muscle', 'It has multiply-innervated tonic fibres with diffusely distributed nicotinic receptors', 'ACh acts on muscarinic receptors', 'Ringer contains no calcium'], a: 1, e: 'Tonic (slow) fibres have N<sub>M</sub> receptors along the whole fibre and respond with a graded, non-propagated depolarisation.' },
+      { q: 'Which receptor mediates the ACh response in this preparation?', o: ['M3 muscarinic', 'Nicotinic N<sub>M</sub> (muscle type)', 'Nicotinic N<sub>N</sub>', 'β2 adrenergic'], a: 1 },
+      { q: 'The plot of response against log dose is typically:', o: ['A rectangular hyperbola', 'Linear throughout', 'Sigmoid (S-shaped)', 'Bell-shaped'], a: 2, e: 'Log transformation spreads the low-dose region and gives a sigmoid curve whose middle part is nearly linear.' },
+      { q: 'Physostigmine shifts the ACh DRC to the left because it:', o: ['Is a nicotinic agonist', 'Inhibits acetylcholinesterase, so less ACh is hydrolysed', 'Blocks ACh release', 'Increases receptor number'], a: 1 },
+      { q: 'A parallel rightward shift with the same maximum indicates:', o: ['Non-competitive antagonism', 'Competitive (surmountable) antagonism', 'Physiological antagonism', 'Potentiation'], a: 1 },
+      { q: 'Why is a 90-s contact time with a 5-min rest used for this tissue?', o: ['The tissue contracts very slowly and desensitises if re-dosed too early', 'To save drug', 'Because Ringer evaporates', 'Because ACh is stable for 90 s only'], a: 0 },
+      { q: 'Which physiological salt solution is used for frog tissues?', o: ['Tyrode', 'Krebs–Henseleit', 'Frog Ringer', 'De Jalon'], a: 2 }
+    ];
+
+  </script>
+  <script src="../assets/js/viva.js"></script>
+</body>
+</html>

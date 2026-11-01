@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exp 09: Locomotor Activity: Actophotometer • XPRISM</title>
+  <meta name="description" content="CNS depressant and stimulant effects on photocell beam counts in mice.">
+    <meta name="theme-color" content="#0a1f44">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
+  <link rel="stylesheet" href="../assets/css/tailwind.css">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <script src="../assets/js/tone.min.js"></script>
+  <style>
+    
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f1f5f9;
+      color: #0a1f44;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Seven-segment Glowing Digital Meters */
+    .seven-seg {
+      font-family: 'JetBrains Mono', monospace;
+      color: #ef4444;
+      text-shadow: 0 0 10px rgba(239, 68, 68, 0.75), 0 0 20px rgba(239, 68, 68, 0.45);
+      letter-spacing: 2px;
+    }
+    .timer-seg {
+      font-family: 'JetBrains Mono', monospace;
+      color: #10b981;
+      text-shadow: 0 0 10px rgba(16, 185, 129, 0.75), 0 0 20px rgba(16, 185, 129, 0.45);
+      letter-spacing: 2px;
+    }
+
+    /* Infrared Photocell Beams */
+    .beam-line {
+      stroke: rgba(239, 68, 68, 0.45);
+      stroke-width: 1.5;
+      stroke-dasharray: 4, 3;
+      transition: stroke 0.08s, opacity 0.08s;
+    }
+    .beam-interrupted {
+      stroke: #38bdf8 !important;
+      stroke-width: 3.5 !important;
+      stroke-dasharray: none !important;
+      opacity: 1 !important;
+      filter: drop-shadow(0 0 8px #38bdf8);
+    }
+
+    /* Mouse Walking Animation */
+    @keyframes mouseWiggle {
+      0% { transform: scale(1, 1) rotate(0deg); }
+      25% { transform: scale(1.03, 0.97) rotate(2deg); }
+      50% { transform: scale(0.98, 1.02) rotate(0deg); }
+      75% { transform: scale(1.02, 0.98) rotate(-2deg); }
+      100% { transform: scale(1, 1) rotate(0deg); }
+    }
+    .mouse-moving {
+      animation: mouseWiggle 0.35s infinite ease-in-out;
+    }
+
+    /* Rearing Animation */
+    @keyframes rearingAnim {
+      0% { transform: scale(1) translateY(0); }
+      35% { transform: scale(0.88, 1.3) translateY(-16px); }
+      65% { transform: scale(0.88, 1.3) translateY(-16px); }
+      100% { transform: scale(1) translateY(0); }
+    }
+    .rearing-active {
+      animation: rearingAnim 0.75s ease-in-out;
+      transform-origin: bottom center;
+    }
+
+    /* LED Pulse */
+    @keyframes pulseLed {
+      0% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.25); opacity: 1; }
+      100% { transform: scale(1); opacity: 0.8; }
+    }
+    .led-active {
+      animation: pulseLed 0.8s infinite;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-100 overflow-x-hidden">
+
+  <!-- TOP BRANDING BAR (XPRISM Header) -->
+  <header class="site-header bg-white border-b border-slate-200 px-4 md:px-6 py-2 flex items-center justify-between gap-3 shadow-sm shrink-0">
+    <div class="flex items-center gap-3 min-w-0">
+    <a href="../index.html" title="Back to Lab Home" class="shrink-0"><img src="../assets/img/xprism-lockup.png" alt="XPRISM" class="h-11 w-auto" width="146" height="49"></a>
+      <div class="min-w-0 border-l border-slate-200 pl-3">
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="text-[10px] uppercase font-bold bg-teal-50 text-teal-700 px-2 py-0.5 rounded-full border border-teal-200 font-display tracking-wide">Virtual Lab</span>
+        <a href="../index.html" class="text-[11px] font-semibold text-teal-700 hover:underline">← All experiments</a>
+      </div>
+      <p class="text-xs text-slate-500">Aaron Innovations • Experimental Pharmacology Research &amp; Interactive Student Module</p>
+    </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="hidden md:block text-right">
+        <div class="text-xs font-semibold text-slate-800 flex items-center justify-end space-x-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Dr. Vara Prasad Saka</span>
+        </div>
+        <div class="text-[11px] text-slate-500 font-mono">ID: 8019152501 • Dept. of Pharmacology</div>
+      </div>
+      <div class="flex items-center gap-2 border-l pl-4 border-slate-200">
+        <a class="site-nav-btn" href="08-local-anaesthetics.html" title="Previous: Exp #8 Local Anaesthetics">‹</a><a class="site-nav-btn" href="10-catalepsy-and-stereotypy.html" title="Next: Exp #10 Catalepsy &amp; Stereotypy">›</a>
+        <button id="audioToggleBtn" class="p-2 rounded-lg bg-teal-100 hover:bg-teal-200 text-teal-800 transition" title="Toggle sound feedback" aria-label="Toggle sound feedback">
+          <svg id="soundIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+        </button>
+        <span class="hidden sm:inline bg-indigo-100 text-indigo-800 text-xs px-2.5 py-1 rounded-md font-medium border border-indigo-200 whitespace-nowrap">Exp #9</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- SUB-HEADER / VIEW TABS -->
+
+  <div id="subHeader" class="site-subheader bg-slate-800 text-white px-4 md:px-6 py-2 flex flex-wrap items-center justify-between gap-3 shadow shrink-0">
+    <div class="text-sm font-semibold tracking-wide flex items-center space-x-2 min-w-0">
+      <span class="text-teal-400 font-mono text-xs px-1.5 py-0.5 rounded bg-teal-950/80 border border-teal-500/40 shrink-0">MODULE 09</span>
+      <span>Examination 9: To Study the Locomotor Activity of Given Drug Using the Actophotometer</span>
+    </div>
+    <div class="flex items-center space-x-1.5 bg-slate-900/80 p-1 rounded-lg border border-slate-700" role="tablist">
+      <button id="tabTask" onclick="switchTab('task')" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white transition">Task Description</button>
+      <button id="tabExperiment" onclick="switchTab('experiment')" class="px-3.5 py-1.5 rounded-md text-xs font-semibold bg-teal-500 text-white shadow transition">Experiment Bench</button>
+      <button id="tabObservation" onclick="switchTab('observation')" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white transition">Observation Sheet &amp; Graphs</button>
+    </div>
+  </div>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-5 flex flex-col min-h-0">
+
+    <!-- ============================================== -->
+    <!-- TAB 1: TASK DESCRIPTION -->
+    <!-- ============================================== -->
+    <div id="viewTask" class="hidden flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between overflow-y-auto">
+      <div class="max-w-4xl space-y-6">
+        <div class="border-b pb-4">
+          <div class="inline-block px-2.5 py-1 rounded bg-teal-50 text-teal-800 text-xs font-bold font-mono mb-2">EXPERIMENT OBJECTIVE</div>
+          <h2 class="text-xl font-bold text-slate-900">Study of CNS Depressant and Stimulant Activity Using the Actophotometer</h2>
+          <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+            Evaluate the effect of Central Nervous System (CNS) active drugs—including the sedative-anxiolytic standard <strong>Diazepam (1.0 mg/kg p.o.)</strong>, neuroleptic <strong>Chlorpromazine (2.0 mg/kg p.o.)</strong>, and CNS stimulants like <strong>Caffeine (10 mg/kg p.o.)</strong>—on the spontaneous locomotor activity and exploratory rearing behavior of albino mice (<em>Mus musculus</em>) using an automated digital Actophotometer.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-4">
+          <div class="p-4 rounded-xl bg-sky-50/70 border border-sky-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-sky-500 text-white flex items-center justify-center font-bold text-sm shadow">1</div>
+            <h3 class="text-sm font-bold text-sky-950">Photocell Principle</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              The actophotometer consists of a square chamber surrounded by opposing pairs of infrared light transmitters and photo-electric receivers. As the animal ambulates across the arena, it breaks the light beams; each beam interruption is registered as one discrete digital count.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-amber-50/70 border border-amber-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center font-bold text-sm shadow">2</div>
+            <h3 class="text-sm font-bold text-amber-950">Behavioral Endpoints</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Record both the <strong>Locomotor Index (beam interruptions / 3 min)</strong> and the <strong>Rearing Count (standing on hind limbs)</strong>. High rearings reflect exploratory drive and curiosity; reduction indicates sedation, motor incoordination, or anxiolysis.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-emerald-50/70 border border-emerald-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center font-bold text-sm shadow">3</div>
+            <h3 class="text-sm font-bold text-emerald-950">Experimental Design</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Animals are divided into two matched groups (n = 6 per group): <strong>Group I: Control (Vehicle / Distilled Water)</strong> and <strong>Group II: Drug-Treated</strong>. Calculate Mean &plusmn; SEM and percentage (%) reduction or stimulation in motility.
+            </p>
+          </div>
+        </div>
+
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Physiological Baseline & Experimental Norms (Albino Mice: 20–25 g)</h4>
+          <div class="grid sm:grid-cols-4 gap-3 text-xs text-slate-600">
+            <div class="bg-white p-2.5 rounded border"><span class="font-bold text-slate-800">Test Duration:</span> 3 Minutes / Animal</div>
+            <div class="bg-white p-2.5 rounded border"><span class="font-bold text-slate-800">Control Count:</span> ~150–165 counts / 3 min</div>
+            <div class="bg-white p-2.5 rounded border"><span class="font-bold text-slate-800">Control Rearings:</span> 3–5 rearings / 3 min</div>
+            <div class="bg-white p-2.5 rounded border"><span class="font-bold text-slate-800">Diazepam Effect:</span> &gt;60% decrease in counts</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-6 border-t flex justify-end">
+        <button onclick="switchTab('experiment')" class="px-6 py-2.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-semibold text-sm shadow flex items-center space-x-2 transition">
+          <span>Go to Experiment Stage</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- TAB 2: EXPERIMENTAL BENCH & ACTOPHOTOMETER RIG -->
+    <!-- ============================================== -->
+    <div id="viewExperiment" class="flex-1 flex flex-col lg:flex-row gap-4 h-[calc(100vh-140px)] min-h-[580px]">
+      
+      <!-- MAIN BENCH STAGE -->
+      <div class="flex-1 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col relative overflow-hidden">
+        
+        <!-- Top Toolbar over Bench -->
+        <div class="p-3 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 z-10 shrink-0">
+          
+          <!-- Drug & Dose Selector -->
+          <div class="flex items-center space-x-2">
+            <label class="text-xs font-bold text-slate-600">Test Regimen:</label>
+            <select id="drugSelect" onchange="onDrugSelectChange()" class="bg-white border border-slate-300 text-slate-800 text-xs rounded-lg px-3 py-1.5 font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
+              <option value="diazepam">Diazepam (1.0 mg/kg p.o. - CNS Depressant)</option>
+              <option value="chlorpromazine">Chlorpromazine HCl (2.0 mg/kg p.o. - Major Tranquilizer)</option>
+              <option value="caffeine">Caffeine Citrate (10 mg/kg p.o. - Psychostimulant)</option>
+              <option value="amphetamine">Amphetamine Sulfate (2.5 mg/kg p.o. - Stimulant)</option>
+              <option value="unknown">Unknown Mystery Drug (Exam Diagnosis)</option>
+            </select>
+            <span id="drugStatusBadge" class="text-[11px] px-2.5 py-0.5 rounded font-mono font-semibold bg-indigo-100 text-indigo-800">Standard: Diazepam</span>
+          </div>
+
+          <!-- Speed & Quick Actions -->
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-medium text-slate-500">Simulation Speed:</span>
+            <div class="flex rounded-lg border border-slate-300 bg-white p-0.5 shadow-sm">
+              <button id="spd1x" onclick="setSimSpeed(1)" class="px-2.5 py-1 text-xs rounded font-semibold bg-teal-50 text-teal-700">1x Real</button>
+              <button id="spd4x" onclick="setSimSpeed(4)" class="px-2.5 py-1 text-xs rounded font-semibold text-slate-600 hover:text-slate-900">4x Fast</button>
+              <button id="spd10x" onclick="setSimSpeed(10)" class="px-2.5 py-1 text-xs rounded font-semibold text-slate-600 hover:text-slate-900">10x Turbo</button>
+            </div>
+            <button onclick="resetCurrentRun()" class="px-3 py-1 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-medium shadow flex items-center space-x-1.5 transition">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              <span>Reset Counter</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- BENCH WORKSPACE -->
+        <div id="benchArea" class="flex-1 relative bg-gradient-to-b from-slate-100 via-slate-200 to-slate-300 flex items-center justify-center overflow-hidden p-4">
+          
+          <!-- ACTOPHOTOMETER DEVICE ENCLOSURE (3D-Styled Lab Rig) -->
+          <div class="w-full max-w-2xl bg-gradient-to-b from-slate-800 to-slate-900 rounded-2xl shadow-2xl border-4 border-slate-700 p-4 flex flex-col gap-3 relative">
+            
+            <!-- Device Brand Label & LED Indicators -->
+            <div class="flex items-center justify-between border-b border-slate-700 pb-2">
+              <div class="flex items-center space-x-2">
+                <span class="w-3 h-3 rounded-full bg-red-500 led-active"></span>
+                <span class="text-xs font-bold text-slate-200 tracking-wider uppercase font-mono">DIGITAL ACTOPHOTOMETER • MODEL AP-6P</span>
+              </div>
+              <div class="flex items-center space-x-4 text-[11px] font-mono">
+                <span class="text-slate-400">IR Transmitters: <strong class="text-rose-400">6 Pairs (Active)</strong></span>
+                <span class="text-slate-400">Chamber: <strong class="text-emerald-400">30 × 30 cm Perspex</strong></span>
+              </div>
+            </div>
+
+            <!-- DIGITAL METERS PANEL (Counter + Stopwatch + Rearings) -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 bg-black/60 p-3 rounded-xl border border-slate-700/80">
+              
+              <!-- Locomotor Digital Counter Display -->
+              <div class="bg-slate-950 p-2.5 rounded-lg border border-red-950/60 flex flex-col justify-between">
+                <div class="text-[10px] text-red-400/80 uppercase font-semibold font-mono tracking-wider">Locomotor Counter</div>
+                <div id="meterCounter" class="seven-seg text-3xl sm:text-4xl font-extrabold text-right mt-1">000</div>
+                <div class="text-[9px] text-slate-500 font-mono text-right">BEAM INTERRUPTS</div>
+              </div>
+
+              <!-- Digital Timer / Stopwatch Display -->
+              <div class="bg-slate-950 p-2.5 rounded-lg border border-emerald-950/60 flex flex-col justify-between">
+                <div class="text-[10px] text-emerald-400/80 uppercase font-semibold font-mono tracking-wider">Session Timer</div>
+                <div id="meterTimer" class="timer-seg text-3xl sm:text-4xl font-extrabold text-right mt-1">03:00</div>
+                <div id="meterTimerStatus" class="text-[9px] text-slate-500 font-mono text-right">STANDBY (3 MIN)</div>
+              </div>
+
+              <!-- Rearing Event Counter Display -->
+              <div class="bg-slate-950 p-2.5 rounded-lg border border-amber-950/60 flex flex-col justify-between">
+                <div class="text-[10px] text-amber-400/80 uppercase font-semibold font-mono tracking-wider">Rearing Count</div>
+                <div id="meterRearings" class="font-mono text-3xl sm:text-4xl font-extrabold text-amber-400 text-right mt-1">00</div>
+                <div class="text-[9px] text-slate-500 font-mono text-right">EXPLORATORY STANDS</div>
+              </div>
+
+              <!-- Run Control Buttons -->
+              <div class="flex flex-col justify-between gap-1.5">
+                <button id="btnRunTest" onclick="toggleTestRun()" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold uppercase tracking-wider shadow flex items-center justify-center space-x-1 transition">
+                  <svg id="runIcon" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
+                  <span id="runText">Start Test</span>
+                </button>
+                <button onclick="triggerManualRearing()" class="w-full py-1.5 bg-amber-600/80 hover:bg-amber-600 text-white rounded-lg text-[11px] font-semibold transition" title="Manually record observed mouse rearing">
+                  + Log Rearing
+                </button>
+              </div>
+
+            </div>
+
+            <!-- CHAMBER ARENA (Overhead View of Cage with 6 IR Photocell Beams) -->
+            <div class="relative bg-slate-950 rounded-xl border-2 border-slate-700 h-[280px] sm:h-[310px] flex items-center justify-center overflow-hidden">
+              
+              <!-- Chamber Grid Background -->
+              <div class="absolute inset-4 rounded-lg bg-slate-900 border border-slate-700/60 shadow-inner flex items-center justify-center overflow-hidden" style="background-image: radial-gradient(circle, #334155 1px, transparent 1px); background-size: 16px 16px;">
+                
+                <!-- SVG Arena for Photocell Beams & Animated Rodent -->
+                <svg id="arenaSvg" class="w-full h-full" viewBox="0 0 400 320">
+                  
+                  <!-- Infrared Beam Emitters (Left) & Receivers (Right) -->
+                  <g id="beamsGroup">
+                    <!-- Beam 1 -->
+                    <circle cx="16" cy="35" r="4" fill="#ef4444" class="led-active"/>
+                    <line id="beam0" x1="16" y1="35" x2="384" y2="35" class="beam-line"/>
+                    <circle cx="384" cy="35" r="4" fill="#ef4444"/>
+
+                    <!-- Beam 2 -->
+                    <circle cx="16" cy="85" r="4" fill="#ef4444" class="led-active"/>
+                    <line id="beam1" x1="16" y1="85" x2="384" y2="85" class="beam-line"/>
+                    <circle cx="384" cy="85" r="4" fill="#ef4444"/>
+
+                    <!-- Beam 3 -->
+                    <circle cx="16" cy="135" r="4" fill="#ef4444" class="led-active"/>
+                    <line id="beam2" x1="16" y1="135" x2="384" y2="135" class="beam-line"/>
+                    <circle cx="384" cy="135" r="4" fill="#ef4444"/>
+
+                    <!-- Beam 4 -->
+                    <circle cx="16" cy="185" r="4" fill="#ef4444" class="led-active"/>
+                    <line id="beam3" x1="16" y1="185" x2="384" y2="185" class="beam-line"/>
+                    <circle cx="384" cy="185" r="4" fill="#ef4444"/>
+
+                    <!-- Beam 5 -->
+                    <circle cx="16" cy="235" r="4" fill="#ef4444" class="led-active"/>
+                    <line id="beam4" x1="16" y1="235" x2="384" y2="235" class="beam-line"/>
+                    <circle cx="384" cy="235" r="4" fill="#ef4444"/>
+
+                    <!-- Beam 6 -->
+                    <circle cx="16" cy="285" r="4" fill="#ef4444" class="led-active"/>
+                    <line id="beam5" x1="16" y1="285" x2="384" y2="285" class="beam-line"/>
+                    <circle cx="384" cy="285" r="4" fill="#ef4444"/>
+
+                    <!-- Cross Grid Guide Lines -->
+                    <line x1="100" y1="16" x2="100" y2="304" class="beam-line" opacity="0.25"/>
+                    <line x1="200" y1="16" x2="200" y2="304" class="beam-line" opacity="0.25"/>
+                    <line x1="300" y1="16" x2="300" y2="304" class="beam-line" opacity="0.25"/>
+                  </g>
+
+                  <!-- Animated Albino Mouse Rodent Body -->
+                  <g id="mouseRig" transform="translate(200, 160)" class="transition-transform duration-100 ease-out">
+                    <g id="mouseSubRig">
+                      <!-- Tail -->
+                      <path d="M 0 16 Q -15 28 -32 24 Q -45 20 -50 32" fill="none" stroke="#fbcfe8" stroke-width="2.5" stroke-linecap="round"/>
+                      <!-- Body -->
+                      <ellipse cx="0" cy="0" rx="22" ry="14" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.5))"/>
+                      <!-- Ears -->
+                      <ellipse cx="14" cy="-10" rx="5" ry="4" fill="#fbcfe8" stroke="#f472b6" stroke-width="0.8"/>
+                      <ellipse cx="14" cy="10" rx="5" ry="4" fill="#fbcfe8" stroke="#f472b6" stroke-width="0.8"/>
+                      <!-- Head -->
+                      <ellipse cx="18" cy="0" rx="10" ry="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+                      <!-- Eyes (Pink Albino) -->
+                      <circle cx="21" cy="-4" r="1.8" fill="#ef4444"/>
+                      <circle cx="21" cy="4" r="1.8" fill="#ef4444"/>
+                      <!-- Snout & Whiskers -->
+                      <circle cx="27" cy="0" r="1.5" fill="#f472b6"/>
+                      <line x1="25" y1="-2" x2="34" y2="-6" stroke="#94a3b8" stroke-width="0.7"/>
+                      <line x1="25" y1="2" x2="34" y2="6" stroke="#94a3b8" stroke-width="0.7"/>
+                    </g>
+                  </g>
+
+                </svg>
+
+                <!-- Rearing Badge indicator when mouse stands up -->
+                <div id="rearingBadge" class="absolute top-2 left-2 hidden bg-amber-500/90 text-slate-900 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded shadow">
+                  ▲ REARING DETECTED
+                </div>
+
+                <!-- Photocell Interruption Beam Flash Overlay -->
+                <div id="beamFlashToast" class="absolute bottom-2 right-2 hidden bg-rose-600/90 text-white text-[10px] font-mono px-2 py-0.5 rounded shadow flex items-center space-x-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+                  <span>BEAM CUT #<span id="toastCount">0</span></span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Device Bottom Panel Controls -->
+            <div class="flex items-center justify-between text-xs text-slate-400 pt-1 font-mono">
+              <div>Current Subject: <strong id="lblActiveSubject" class="text-teal-400">Mouse #C1 (Vehicle Control)</strong></div>
+              <div class="flex items-center space-x-2">
+                <span>Status:</span>
+                <span id="lblDeviceState" class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-bold">READY</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom Action Prompt Notification Banner -->
+          <div id="actionFeedback" class="absolute bottom-2 left-4 right-4 bg-slate-900/90 text-white py-2 px-4 rounded-lg text-xs flex items-center justify-between backdrop-blur-md shadow-lg border border-slate-700 pointer-events-none transition-opacity duration-300 z-30">
+            <div class="flex items-center space-x-2">
+              <span id="feedbackIcon" class="text-teal-400 font-bold text-sm">ℹ</span>
+              <span id="feedbackText">Select an animal from the holding tray to place into the Actophotometer chamber.</span>
+            </div>
+            <span id="activeGroupIndicator" class="text-[11px] font-mono text-slate-400 hidden sm:inline">Group I: Vehicle Control</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RIGHT SIDE: ANIMAL SELECTOR TRAY & ORAL GAVAGE CONTROLS -->
+      <div class="w-full lg:w-72 bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-col justify-between shrink-0 overflow-y-auto">
+        <div class="space-y-4">
+          <div class="border-b pb-2 flex items-center justify-between">
+            <div>
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Animal Holding Tray</h3>
+              <p class="text-[11px] text-slate-500">Pick mouse (n=6 per group)</p>
+            </div>
+            <button onclick="administerOralGavage()" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded text-[11px] font-semibold transition" title="Oral gavage administration with feeding needle">
+              Dose Gavage
+            </button>
+          </div>
+
+          <!-- GROUP 1: CONTROL (VEHICLE) -->
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between text-xs font-bold text-slate-700">
+              <span class="flex items-center space-x-1">
+                <span class="w-2 h-2 rounded-full bg-slate-500"></span>
+                <span>Group I: Vehicle (Water)</span>
+              </span>
+              <span class="text-[10px] text-slate-400 font-mono">Control</span>
+            </div>
+            <div class="grid grid-cols-3 gap-1.5">
+              <button id="btnMouseC1" onclick="selectAnimal('control', 1)" class="animal-btn p-2 rounded-lg border-2 border-teal-500 bg-teal-50 text-center transition hover:shadow">
+                <div class="text-xs font-bold text-slate-800">#C1</div>
+                <div id="statusC1" class="text-[9px] font-mono text-teal-700 font-semibold">Active</div>
+              </button>
+              <button id="btnMouseC2" onclick="selectAnimal('control', 2)" class="animal-btn p-2 rounded-lg border border-slate-200 bg-slate-50 text-center transition hover:shadow">
+                <div class="text-xs font-bold text-slate-800">#C2</div>
+                <div id="statusC2" class="text-[9px] font-mono text-slate-500">Ready</div>
+              </button>
+              <button id="btnMouseC3" onclick="selectAnimal('control', 3)" class="animal-btn p-2 rounded-lg border border-slate-200 bg-slate-50 text-center transition hover:shadow">
+                <div class="text-xs font-bold text-slate-800">#C3</div>
+                <div id="statusC3" class="text-[9px] font-mono text-slate-500">Ready</div>
+              </button>
+              <button id="btnMouseC4" onclick="selectAnimal('control', 4)" class="animal-btn p-2 rounded-lg border border-slate-200 bg-slate-50 text-center transition hover:shadow">
+                <div class="text-xs font-bold text-slate-800">#C4</div>
+                <div id="statusC4" class="text-[9px] font-mono text-slate-500">Ready</div>
+              </button>
+              <button id="btnMouseC5" onclick="selectAnimal('control', 5)" class="animal-btn p-2 rounded-lg border border-slate-200 bg-slate-50 text-center transition hover:shadow">
+                <div class="text-xs font-bold text-slate-800">#C5</div>
+                <div id="statusC5" class="text-[9px] font-mono text-slate-500">Ready</div>
+              </button>
+              <button id="btnMouseC6" onclick="selectAnimal('control', 6)" class="animal-btn p-2 rounded-lg border border-slate-200 bg-slate-50 text-center transition hover:shadow">
+                <div class="text-xs font-bold text-slate-800">#C6</div>
+                <div id="statusC6" class="text-[9px] font-mono text-slate-500">Ready</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- GROUP 2: DRUG TREATED -->
+          <div class="space-y-1.5 pt-2 border-t border-slate-200">
+            <div class="flex items-center justify-between text-xs font-bold text-slate-700">
+              <span class="flex items-center space-x-1">
+                <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                <span>Group II: Drug-Treated</span>
+              </span>
+              <span id="lblGroupDrugName" class="text-[10px] text-indigo-600 font-mono">Diazepam</span>
+            </div>
+            <div class="grid grid-cols-3 gap-1.5">
+              <button id="btnMouseT1" onclick="selectAnimal('treated', 1)" class="animal-btn p-2 rounded-lg border border-slate-200 bg-slate-50 text-center transition hover:shadow">
+                <div class="text-xs font-bold text-slate-800">#T1</div>
+                <div id="statusT1" class="text-[9px] font-mono text-slate-500">Ready</div>
+              </button>
+              <button id="btnMouseT2" onclick="selectAnimal('treated', 2)" class="animal-btn p-2 rounded-lg border border-slate-200 bg-slate-50 text-center transition hover:shadow">
+                <div class="text-xs font-bold text-slate-800">#T2</div>
+                <div id="statusT2" class="text-[9px] font-mono text-slate-500">Ready</div>
+              </button>
+              <button id="btnMouseT3" onclick="selectAnimal('treated', 3)" class="animal-btn p-2 rounded-lg border border-slate-200 bg-slate-50 text-center transition hover:shadow">
+                <div class="text-xs font-bold text-slate-800">#T3</div>
+                <div id="statusT3" class="text-[9px] font-mono text-slate-500">Ready</div>
+              </button>
+              <button id="btnMouseT4" onclick="selectAnimal('treated', 4)" class="animal-btn p-2 rounded-lg border border-slate-200 bg-slate-50 text-center transition hover:shadow">
+                <div class="text-xs font-bold text-slate-800">#T4</div>
+                <div id="statusT4" class="text-[9px] font-mono text-slate-500">Ready</div>
+              </button>
+              <button id="btnMouseT5" onclick="selectAnimal('treated', 5)" class="animal-btn p-2 rounded-lg border border-slate-200 bg-slate-50 text-center transition hover:shadow">
+                <div class="text-xs font-bold text-slate-800">#T5</div>
+                <div id="statusT5" class="text-[9px] font-mono text-slate-500">Ready</div>
+              </button>
+              <button id="btnMouseT6" onclick="selectAnimal('treated', 6)" class="animal-btn p-2 rounded-lg border border-slate-200 bg-slate-50 text-center transition hover:shadow">
+                <div class="text-xs font-bold text-slate-800">#T6</div>
+                <div id="statusT6" class="text-[9px] font-mono text-slate-500">Ready</div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Log & Auto Run Batch -->
+        <div class="pt-4 border-t border-slate-200 space-y-2">
+          <button onclick="autoSimulateCurrentAnimal()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow transition flex items-center justify-center space-x-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <span>Fast-Run 3-Min Protocol</span>
+          </button>
+          <button onclick="runCompleteBatchExperiment()" class="w-full py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-medium transition text-center">
+            ⚡ Complete All 12 Mice (Full Bioassay)
+          </button>
+          <button onclick="switchTab('observation')" class="w-full py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium transition text-center">
+            Open Observation Sheet →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- TAB 3: OBSERVATION SHEET, STATISTICS & GRAPH -->
+    <!-- ============================================== -->
+    <div id="viewObservation" class="hidden flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between overflow-y-auto">
+      <div class="space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b pb-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Experimental Protocol: Actophotometer Locomotor Bioassay</h2>
+            <p class="text-xs text-slate-500">Assessment of Locomotor Activity Index and Rearing in Albino Mice (n=6 per group)</p>
+          </div>
+
+          <div class="flex items-center space-x-3">
+            <button onclick="resetObservationData()" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50 text-xs font-medium text-slate-700 transition">
+              Reset Data
+            </button>
+            <button onclick="fillSampleVideoDataset()" class="px-3.5 py-1.5 rounded-lg bg-teal-50 border border-teal-300 hover:bg-teal-100 text-teal-800 text-xs font-semibold transition flex items-center space-x-1.5">
+              <span>Load Textbook Reference Dataset</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Side-by-Side Observation Tables -->
+        <div class="grid lg:grid-cols-2 gap-4">
+          
+          <!-- Table 1: Group I (Vehicle Control) -->
+          <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+            <div class="bg-slate-100 px-4 py-2 border-b border-slate-200 flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-800 uppercase tracking-wide">Group I: Vehicle Control (Distilled Water, 10 ml/kg)</span>
+              <span class="text-[10px] bg-slate-200 text-slate-700 font-mono px-2 py-0.5 rounded">Baseline</span>
+            </div>
+            <table class="w-full text-xs text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-50 text-slate-600 border-b border-slate-200 font-medium">
+                  <th class="p-2 border-r text-center">Mouse No.</th>
+                  <th class="p-2 border-r text-center">Body Wt (g)</th>
+                  <th class="p-2 border-r text-center">Locomotor Score (3 min)</th>
+                  <th class="p-2 text-center">Rearings (3 min)</th>
+                </tr>
+              </thead>
+              <tbody id="tblControlBody" class="divide-y divide-slate-200 font-mono text-[11px]">
+                <!-- Injected dynamically via JS -->
+              </tbody>
+              <tfoot>
+                <tr class="bg-slate-100 font-bold text-slate-800">
+                  <td colspan="2" class="p-2 border-r text-center font-sans">Mean &plusmn; SEM</td>
+                  <td id="lblMeanControlLoco" class="p-2 border-r text-center font-mono text-teal-700">--</td>
+                  <td id="lblMeanControlRear" class="p-2 text-center font-mono text-amber-700">--</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <!-- Table 2: Group II (Drug Treated) -->
+          <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+            <div class="bg-indigo-50 px-4 py-2 border-b border-indigo-200 flex items-center justify-between">
+              <span class="text-xs font-bold text-indigo-900 uppercase tracking-wide">Group II: Drug-Treated (<span id="lblObsDrugTitle">Diazepam 1.0 mg/kg</span>)</span>
+              <span class="text-[10px] bg-indigo-100 text-indigo-800 font-mono px-2 py-0.5 rounded font-semibold">Test</span>
+            </div>
+            <table class="w-full text-xs text-left border-collapse">
+              <thead>
+                <tr class="bg-indigo-50/50 text-slate-600 border-b border-slate-200 font-medium">
+                  <th class="p-2 border-r text-center">Mouse No.</th>
+                  <th class="p-2 border-r text-center">Body Wt (g)</th>
+                  <th class="p-2 border-r text-center">Locomotor Score (3 min)</th>
+                  <th class="p-2 text-center">Rearings (3 min)</th>
+                </tr>
+              </thead>
+              <tbody id="tblTreatedBody" class="divide-y divide-slate-200 font-mono text-[11px]">
+                <!-- Injected dynamically via JS -->
+              </tbody>
+              <tfoot>
+                <tr class="bg-indigo-100/70 font-bold text-indigo-950">
+                  <td colspan="2" class="p-2 border-r text-center font-sans">Mean &plusmn; SEM</td>
+                  <td id="lblMeanTreatedLoco" class="p-2 border-r text-center font-mono text-indigo-800">--</td>
+                  <td id="lblMeanTreatedRear" class="p-2 text-center font-mono text-amber-800">--</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+        </div>
+
+        <!-- STATISTICAL SUMMARY & PHARMACODYNAMIC PERCENT CALCULATIONS -->
+        <div class="grid sm:grid-cols-3 gap-4">
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+            <div class="text-[10px] text-slate-500 uppercase font-semibold font-mono">Percentage Locomotor Change</div>
+            <div id="lblPercentLocoChange" class="text-2xl font-extrabold font-mono text-teal-600 mt-1">-- %</div>
+            <p class="text-[11px] text-slate-500 mt-1">Formula: ((Control - Treated) / Control) &times; 100</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+            <div class="text-[10px] text-slate-500 uppercase font-semibold font-mono">Percentage Rearing Reduction</div>
+            <div id="lblPercentRearChange" class="text-2xl font-extrabold font-mono text-amber-600 mt-1">-- %</div>
+            <p class="text-[11px] text-slate-500 mt-1">Reflects suppression of curious exploratory rearing</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+            <div class="text-[10px] text-slate-500 uppercase font-semibold font-mono">Statistical Inference (p &lt; 0.05)</div>
+            <div id="lblStatInference" class="text-sm font-bold text-slate-800 mt-1">Pending complete dataset</div>
+            <p id="lblStatDetail" class="text-[11px] text-slate-500 mt-1">Significant CNS depressant activity (Student's unpaired t-test)</p>
+          </div>
+        </div>
+
+        <!-- UNKNOWN DRUG IDENTIFICATION SECTION -->
+        <div class="p-4 rounded-xl border border-teal-200 bg-teal-50/50 flex flex-wrap items-center justify-between gap-4">
+          <div class="space-y-1">
+            <h3 class="text-sm font-bold text-slate-800">Mystery Drug Diagnosis (Exam Deduction)</h3>
+            <p class="text-xs text-slate-600">Based on your locomotor activity counts and rearings, identify the nature of the mystery compound.</p>
+          </div>
+
+          <div class="flex items-center space-x-3">
+            <select id="unknownDrugDeduction" class="bg-white border border-slate-300 text-slate-800 text-xs rounded-lg px-3 py-2 font-medium shadow-sm focus:ring-2 focus:ring-teal-500">
+              <option value="">-- Choose deduced compound --</option>
+              <option value="diazepam">Diazepam (Potent CNS Depressant / Sedative)</option>
+              <option value="chlorpromazine">Chlorpromazine (Neuroleptic / Major Tranquilizer)</option>
+              <option value="caffeine">Caffeine (CNS Psychostimulant / Increases Motility)</option>
+              <option value="amphetamine">Amphetamine (Potent Psychomotor Stimulant)</option>
+            </select>
+            <button onclick="submitEvaluation()" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-lg shadow transition">
+              Verify Deduction
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Footer Buttons -->
+      <div class="pt-6 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
+        <div class="text-xs text-slate-500 font-mono">XPRISM • Actophotometer Practical Evaluation</div>
+        <div class="flex items-center space-x-3">
+          <button onclick="openQuestionsModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow transition">
+            Answer Viva Questions
+          </button>
+          <button onclick="openResultsModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow transition">
+            Results & Summary
+          </button>
+          <button onclick="generateReport()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg shadow transition flex items-center space-x-1.5">
+            <svg class="w-3.5 h-3.5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+            <span>Print Report</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer no-print border-t border-slate-200 bg-white shrink-0">
+    <div class="max-w-7xl mx-auto px-6 py-3 text-xs text-slate-500 font-mono flex justify-between flex-wrap gap-2">
+      <span>XPRISM • Exp #09 • © 2026 Aaron Innovations • Dr. Vara Prasad Saka</span>
+      <span>Simulations are teaching aids that reduce animal use, in line with CCSEA 3Rs guidance. • <a href="../index.html" class="text-teal-700 hover:underline">All experiments</a></span>
+    </div>
+  </footer>
+
+  <!-- ============================================== -->
+  <!-- MODAL: VIVA-VOCE QUESTIONS -->
+  <!-- ============================================== -->
+  <div id="modalQuestions" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-base font-bold text-slate-800">Actophotometer Viva-Voce Questions</h3>
+        <button onclick="closeModal('modalQuestions')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+
+      <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-2 text-xs text-slate-700">
+        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-2">
+          <p class="font-semibold text-slate-900">Q1. What is the fundamental physical working principle of an Actophotometer?</p>
+          <label class="flex items-center space-x-2"><input type="radio" name="q1" value="a"> <span>Interruption of continuous infrared light beams directed at photocells by animal locomotion</span></label>
+          <label class="flex items-center space-x-2"><input type="radio" name="q1" value="b"> <span>Measurement of ultrasonic vocalizations emitted by rodents</span></label>
+          <label class="flex items-center space-x-2"><input type="radio" name="q1" value="c"> <span>Detection of body heat via thermal micro-sensors in the cage floor</span></label>
+        </div>
+
+        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-2">
+          <p class="font-semibold text-slate-900">Q2. What pharmacological action causes Diazepam to decrease locomotor score and rearings?</p>
+          <label class="flex items-center space-x-2"><input type="radio" name="q2" value="a"> <span>Blockade of central dopamine D2 receptors in the striatum</span></label>
+          <label class="flex items-center space-x-2"><input type="radio" name="q2" value="b"> <span>Positive allosteric modulation of GABA-A receptors, facilitating GABAergic inhibition</span></label>
+          <label class="flex items-center space-x-2"><input type="radio" name="q2" value="c"> <span>Stimulation of cortical beta-1 adrenergic receptors</span></label>
+        </div>
+
+        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-2">
+          <p class="font-semibold text-slate-900">Q3. What does "rearing behavior" represent in preclinical neurobehavioral testing?</p>
+          <label class="flex items-center space-x-2"><input type="radio" name="q3" value="a"> <span>Grooming and sleep posture</span></label>
+          <label class="flex items-center space-x-2"><input type="radio" name="q3" value="b"> <span>Exploratory activity and environmental curiosity</span></label>
+          <label class="flex items-center space-x-2"><input type="radio" name="q3" value="c"> <span>Spontaneous convulsive muscular fasciculations</span></label>
+        </div>
+      </div>
+
+      <div class="pt-3 border-t flex justify-end space-x-2">
+        <button onclick="closeModal('modalQuestions')" class="px-4 py-2 border rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">Cancel</button>
+        <button onclick="evaluateQuestions()" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-lg shadow">Submit Answers</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: RESULTS & DEDUCTION VERIFICATION -->
+  <!-- ============================================== -->
+  <div id="modalResults" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-base font-bold text-slate-800">Laboratory Results Summary</h3>
+        <button onclick="closeModal('modalResults')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div class="p-3 bg-slate-50 rounded-lg border flex justify-between">
+          <span class="text-slate-600">Active Test Regimen:</span>
+          <span id="resActiveDrug" class="font-bold text-slate-900 font-mono">Diazepam</span>
+        </div>
+        <div class="p-3 bg-slate-50 rounded-lg border flex justify-between">
+          <span class="text-slate-600">Percentage Locomotor Effect:</span>
+          <span id="resLocoPercent" class="font-bold text-teal-700 font-mono">--</span>
+        </div>
+        <div class="p-3 bg-slate-50 rounded-lg border flex justify-between">
+          <span class="text-slate-600">Your Deduction (Unknown):</span>
+          <span id="resUserDeduction" class="font-bold text-indigo-700 font-mono">Not submitted</span>
+        </div>
+        <div class="p-3 bg-slate-50 rounded-lg border flex justify-between">
+          <span class="text-slate-600">Correct Mystery Agent:</span>
+          <span id="resActualUnknown" class="font-bold text-emerald-700 font-mono">Diazepam</span>
+        </div>
+        <div id="resExplanation" class="p-3 rounded-lg bg-teal-50 border border-teal-200 text-teal-900 leading-relaxed text-[11px]">
+          Results explanation will appear here.
+        </div>
+      </div>
+
+      <div class="pt-3 border-t flex justify-end">
+        <button onclick="closeModal('modalResults')" class="px-6 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg shadow">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT APPLICATION CODE -->
+  <script>
+    // --- PHARMACOLOGICAL PROFILES DATABASE ---
+    const DRUG_PROFILES = {
+      diazepam: {
+        name: "Diazepam (1.0 mg/kg p.o.)",
+        shortName: "Diazepam",
+        type: "depressant",
+        targetMeanCount: 52, // Typical sedative score (vs ~155 control)
+        targetRearings: 1.2,
+        speedFactor: 0.35, // Sluggish locomotion
+        pauseProb: 0.65, // Frequently sits still
+        rearingProb: 0.05,
+        desc: "Potent benzodiazepine CNS depressant. Enhances GABA-A chloride conductance, producing marked sedation and reduced exploratory rearing."
+      },
+      chlorpromazine: {
+        name: "Chlorpromazine HCl (2.0 mg/kg p.o.)",
+        shortName: "Chlorpromazine",
+        type: "depressant",
+        targetMeanCount: 44,
+        targetRearings: 0.8,
+        speedFactor: 0.30,
+        pauseProb: 0.75,
+        rearingProb: 0.03,
+        desc: "Phenothiazine antipsychotic / major tranquilizer. Blocks D2 dopamine receptors in mesolimbic and striatal pathways, suppressing spontaneous locomotion."
+      },
+      caffeine: {
+        name: "Caffeine Citrate (10 mg/kg p.o.)",
+        shortName: "Caffeine",
+        type: "stimulant",
+        targetMeanCount: 245,
+        targetRearings: 7.5,
+        speedFactor: 1.6,
+        pauseProb: 0.15,
+        rearingProb: 0.30,
+        desc: "Methylxanthine psychostimulant. Antagonizes central adenosine A1/A2A receptors, producing cortical arousal, hyperactivity, and hyper-rearing."
+      },
+      amphetamine: {
+        name: "Amphetamine Sulfate (2.5 mg/kg p.o.)",
+        shortName: "Amphetamine",
+        type: "stimulant",
+        targetMeanCount: 285,
+        targetRearings: 8.8,
+        speedFactor: 1.9,
+        pauseProb: 0.08,
+        rearingProb: 0.35,
+        desc: "Potent indirect sympathomimetic. Releases dopamine and noradrenaline into the synaptic cleft, driving profound hyperactivity and stereotyped movements."
+      }
+    };
+
+    // Mystery Drug Randomization for Practical Exam
+    const mysteryKeys = ['diazepam', 'chlorpromazine', 'caffeine', 'amphetamine'];
+    let mysteryDrugKey = mysteryKeys[Math.floor(Math.random() * mysteryKeys.length)];
+
+    // Simulation State
+    let activeDrugKey = "diazepam";
+    let currentGroup = "control"; // 'control' or 'treated'
+    let currentAnimalIndex = 1; // 1 to 6
+    let simSpeed = 1; // 1x, 4x, 10x
+    let isRunning = false;
+    let timerRemainingSeconds = 180; // 3 minutes standard
+    let liveCounter = 0;
+    let liveRearings = 0;
+    let timerInterval = null;
+    let simLoopInterval = null;
+    let soundEnabled = true;
+
+    // Mouse Physics State
+    let mouseX = 200;
+    let mouseY = 160;
+    let targetX = 200;
+    let targetY = 160;
+    let mouseAngle = 0;
+    let isRearing = false;
+
+    // Pre-allocated Datasets (6 control, 6 treated)
+    const animalData = {
+      control: [
+        { id: 1, wt: 22.4, count: 154, rearings: 4, completed: true },
+        { id: 2, wt: 23.1, count: 156, rearings: 4, completed: true },
+        { id: 3, wt: 21.8, count: 158, rearings: 3, completed: true },
+        { id: 4, wt: 24.0, count: 151, rearings: 4, completed: true },
+        { id: 5, wt: 22.9, count: 159, rearings: 4, completed: true },
+        { id: 6, wt: 23.5, count: 161, rearings: 4, completed: true }
+      ],
+      treated: [
+        { id: 1, wt: 22.8, count: null, rearings: null, completed: false },
+        { id: 2, wt: 23.4, count: null, rearings: null, completed: false },
+        { id: 3, wt: 22.1, count: null, rearings: null, completed: false },
+        { id: 4, wt: 24.2, count: null, rearings: null, completed: false },
+        { id: 5, wt: 21.9, count: null, rearings: null, completed: false },
+        { id: 6, wt: 23.0, count: null, rearings: null, completed: false }
+      ]
+    };
+
+    // Tone.js Sound Synthesizer
+    let synth = null;
+    function playBeep(type) {
+      if (!soundEnabled) return;
+      try {
+        if (!synth && window.Tone) {
+          synth = new Tone.PolySynth(Tone.Synth).toDestination();
+          synth.volume.value = -14;
+        }
+        if (Tone.context.state !== 'running') {
+          Tone.start();
+        }
+        if (type === 'tick') synth.triggerAttackRelease("C6", "64n");
+        if (type === 'rearing') synth.triggerAttackRelease(["E5", "G5"], "32n");
+        if (type === 'complete') synth.triggerAttackRelease(["C5", "E5", "G5"], "16n");
+        if (type === 'gavage') synth.triggerAttackRelease("A4", "32n");
+      } catch (e) {
+        // Safe fallback
+      }
+    }
+
+    document.getElementById('audioToggleBtn').addEventListener('click', () => {
+      soundEnabled = !soundEnabled;
+      document.getElementById('audioToggleBtn').classList.toggle('bg-teal-100', soundEnabled);
+      showFeedback(soundEnabled ? "Audio feedback enabled" : "Audio muted");
+    });
+
+    // --- VIEW TAB SWITCHER ---
+    function switchTab(tabId) {
+      ['viewTask', 'viewExperiment', 'viewObservation'].forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+      });
+      ['tabTask', 'tabExperiment', 'tabObservation'].forEach(id => {
+        const btn = document.getElementById(id);
+        btn.classList.remove('bg-teal-500', 'text-white', 'shadow');
+        btn.classList.add('text-slate-300');
+      });
+
+      if (tabId === 'task') {
+        document.getElementById('viewTask').classList.remove('hidden');
+        document.getElementById('tabTask').classList.add('bg-teal-500', 'text-white', 'shadow');
+      } else if (tabId === 'experiment') {
+        document.getElementById('viewExperiment').classList.remove('hidden');
+        document.getElementById('tabExperiment').classList.add('bg-teal-500', 'text-white', 'shadow');
+      } else if (tabId === 'observation') {
+        document.getElementById('viewObservation').classList.remove('hidden');
+        document.getElementById('tabObservation').classList.add('bg-teal-500', 'text-white', 'shadow');
+        renderObservationTables();
+      }
+    }
+
+    // --- SIMULATION SPEED ---
+    function setSimSpeed(speed) {
+      simSpeed = speed;
+      ['spd1x', 'spd4x', 'spd10x'].forEach(id => {
+        document.getElementById(id).className = "px-2.5 py-1 text-xs rounded font-semibold text-slate-600 hover:text-slate-900";
+      });
+      if (speed === 1) document.getElementById('spd1x').className = "px-2.5 py-1 text-xs rounded font-semibold bg-teal-50 text-teal-700";
+      if (speed === 4) document.getElementById('spd4x').className = "px-2.5 py-1 text-xs rounded font-semibold bg-teal-50 text-teal-700";
+      if (speed === 10) document.getElementById('spd10x').className = "px-2.5 py-1 text-xs rounded font-semibold bg-teal-50 text-teal-700";
+      
+      showFeedback(`Simulation speed set to ${speed}x.`);
+    }
+
+    // --- DRUG SELECTOR HANDLER ---
+    function onDrugSelectChange() {
+      const select = document.getElementById('drugSelect');
+      const val = select.value;
+      const badge = document.getElementById('drugStatusBadge');
+
+      if (val === 'unknown') {
+        activeDrugKey = mysteryDrugKey;
+        badge.innerText = "Mystery Exam Drug";
+        badge.className = "text-[11px] px-2.5 py-0.5 rounded font-mono font-semibold bg-amber-100 text-amber-800";
+        document.getElementById('lblGroupDrugName').innerText = "Unknown Compound";
+        document.getElementById('lblObsDrugTitle').innerText = "Unknown Mystery Agent";
+      } else {
+        activeDrugKey = val;
+        badge.innerText = DRUG_PROFILES[val].shortName;
+        badge.className = "text-[11px] px-2.5 py-0.5 rounded font-mono font-semibold bg-indigo-100 text-indigo-800";
+        document.getElementById('lblGroupDrugName').innerText = DRUG_PROFILES[val].shortName;
+        document.getElementById('lblObsDrugTitle').innerText = DRUG_PROFILES[val].name;
+      }
+
+      // Invalidate existing treated data to re-evaluate with new drug
+      animalData.treated.forEach(m => {
+        m.count = null;
+        m.rearings = null;
+        m.completed = false;
+      });
+      updateAnimalTrayUI();
+      renderObservationTables();
+      showFeedback(`Drug regimen set to: ${DRUG_PROFILES[activeDrugKey].name}`);
+    }
+
+    // --- ANIMAL SELECTOR ---
+    function selectAnimal(group, index) {
+      if (isRunning) {
+        showFeedback("Please stop or wait for current session to finish before switching mice!", true);
+        return;
+      }
+      currentGroup = group;
+      currentAnimalIndex = index;
+      updateAnimalTrayUI();
+
+      const item = animalData[group][index - 1];
+      liveCounter = item.count !== null ? item.count : 0;
+      liveRearings = item.rearings !== null ? item.rearings : 0;
+      timerRemainingSeconds = item.completed ? 0 : 180;
+
+      updateMeters();
+
+      const groupName = group === 'control' ? "Vehicle Control" : `Treated (${DRUG_PROFILES[activeDrugKey].shortName})`;
+      document.getElementById('lblActiveSubject').innerText = `Mouse #${group === 'control' ? 'C' : 'T'}${index} (${groupName})`;
+      document.getElementById('activeGroupIndicator').innerText = `Group: ${groupName}`;
+      document.getElementById('lblDeviceState').innerText = item.completed ? "COMPLETED" : "READY";
+      document.getElementById('lblDeviceState').className = item.completed ? "px-2 py-0.5 rounded bg-emerald-900 text-emerald-300 font-bold" : "px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-bold";
+
+      showFeedback(`Selected Mouse #${group === 'control' ? 'C' : 'T'}${index}. Press 'Start Test' or 'Fast-Run 3-Min Protocol'.`);
+    }
+
+    function updateAnimalTrayUI() {
+      // Clear all buttons
+      document.querySelectorAll('.animal-btn').forEach(btn => {
+        btn.className = "animal-btn p-2 rounded-lg border border-slate-200 bg-slate-50 text-center transition hover:shadow";
+      });
+
+      // Highlight active
+      const activeBtnId = currentGroup === 'control' ? `btnMouseC${currentAnimalIndex}` : `btnMouseT${currentAnimalIndex}`;
+      const activeBtn = document.getElementById(activeBtnId);
+      if (activeBtn) {
+        activeBtn.className = "animal-btn p-2 rounded-lg border-2 border-teal-500 bg-teal-50 text-center transition hover:shadow";
+      }
+
+      // Update status badges
+      ['control', 'treated'].forEach(grp => {
+        animalData[grp].forEach((m, idx) => {
+          const badgeId = grp === 'control' ? `statusC${idx + 1}` : `statusT${idx + 1}`;
+          const badgeEl = document.getElementById(badgeId);
+          if (badgeEl) {
+            if (m.completed) {
+              badgeEl.innerText = `${m.count} cnt`;
+              badgeEl.className = "text-[9px] font-mono text-emerald-700 font-bold";
+            } else if (currentGroup === grp && currentAnimalIndex === (idx + 1)) {
+              badgeEl.innerText = isRunning ? "Running" : "Active";
+              badgeEl.className = "text-[9px] font-mono text-teal-700 font-semibold";
+            } else {
+              badgeEl.innerText = "Ready";
+              badgeEl.className = "text-[9px] font-mono text-slate-500";
+            }
+          }
+        });
+      });
+    }
+
+    // --- ORAL GAVAGE DOSING ACTION ---
+    function administerOralGavage() {
+      playBeep('gavage');
+      const subject = `Mouse #${currentGroup === 'control' ? 'C' : 'T'}${currentAnimalIndex}`;
+      const drugTxt = currentGroup === 'control' ? "Distilled Water (10 ml/kg p.o.)" : DRUG_PROFILES[activeDrugKey].name;
+      showFeedback(`Administered oral gavage of ${drugTxt} to ${subject}. 30-min absorption interval observed.`);
+    }
+
+    // --- DIGITAL METERS DISPLAY UPDATE ---
+    function updateMeters() {
+      document.getElementById('meterCounter').innerText = String(liveCounter).padStart(3, '0');
+      document.getElementById('meterRearings').innerText = String(liveRearings).padStart(2, '0');
+
+      const mins = Math.floor(timerRemainingSeconds / 60);
+      const secs = timerRemainingSeconds % 60;
+      document.getElementById('meterTimer').innerText = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    // --- RUN / STOP BUTTON TOGGLE ---
+    function toggleTestRun() {
+      if (isRunning) {
+        stopTestRun();
+      } else {
+        startTestRun();
+      }
+    }
+
+    function startTestRun() {
+      const currentAnimal = animalData[currentGroup][currentAnimalIndex - 1];
+      if (timerRemainingSeconds <= 0) {
+        timerRemainingSeconds = 180;
+        liveCounter = 0;
+        liveRearings = 0;
+      }
+
+      isRunning = true;
+      document.getElementById('runText').innerText = "Stop Test";
+      document.getElementById('runIcon').innerHTML = '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z" clip-rule="evenodd"/>';
+      document.getElementById('btnRunTest').className = "w-full py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-xs font-bold uppercase tracking-wider shadow flex items-center justify-center space-x-1 transition";
+      document.getElementById('lblDeviceState').innerText = "RECORDING...";
+      document.getElementById('lblDeviceState').className = "px-2 py-0.5 rounded bg-emerald-900 text-emerald-300 font-bold animate-pulse";
+
+      // Pick random destination
+      pickNewTarget();
+
+      // Main physics loop (runs every 60ms)
+      simLoopInterval = setInterval(updateMousePhysics, 60);
+
+      // Timer countdown loop (1 sec real or divided by simSpeed)
+      timerInterval = setInterval(() => {
+        if (timerRemainingSeconds > 0) {
+          timerRemainingSeconds--;
+          updateMeters();
+        } else {
+          finishCurrentRun();
+        }
+      }, 1000 / simSpeed);
+
+      showFeedback(`Test running for Mouse #${currentGroup === 'control' ? 'C' : 'T'}${currentAnimalIndex}...`);
+      updateAnimalTrayUI();
+    }
+
+    function stopTestRun() {
+      isRunning = false;
+      clearInterval(timerInterval);
+      clearInterval(simLoopInterval);
+      timerInterval = null;
+      simLoopInterval = null;
+
+      document.getElementById('runText').innerText = "Resume";
+      document.getElementById('runIcon').innerHTML = '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>';
+      document.getElementById('btnRunTest').className = "w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold uppercase tracking-wider shadow flex items-center justify-center space-x-1 transition";
+      document.getElementById('lblDeviceState').innerText = "PAUSED";
+      document.getElementById('lblDeviceState').className = "px-2 py-0.5 rounded bg-amber-900 text-amber-300 font-bold";
+
+      showFeedback("Session paused.");
+    }
+
+    function resetCurrentRun() {
+      if (isRunning) stopTestRun();
+      timerRemainingSeconds = 180;
+      liveCounter = 0;
+      liveRearings = 0;
+      updateMeters();
+      showFeedback("Reset counter and timer for current subject.");
+    }
+
+    function finishCurrentRun() {
+      stopTestRun();
+      playBeep('complete');
+
+      const currentAnimal = animalData[currentGroup][currentAnimalIndex - 1];
+      currentAnimal.count = liveCounter;
+      currentAnimal.rearings = liveRearings;
+      currentAnimal.completed = true;
+
+      document.getElementById('runText').innerText = "Start Test";
+      document.getElementById('lblDeviceState').innerText = "FINISHED";
+      document.getElementById('lblDeviceState').className = "px-2 py-0.5 rounded bg-blue-900 text-blue-300 font-bold";
+
+      updateAnimalTrayUI();
+      renderObservationTables();
+
+      showFeedback(`3-Minute session completed! Mouse score: ${liveCounter} beam interrupts, ${liveRearings} rearings.`);
+    }
+
+    // --- FAST-RUN SINGLE ANIMAL PROTOCOL ---
+    function autoSimulateCurrentAnimal() {
+      if (isRunning) stopTestRun();
+
+      // Compute biologically authentic value
+      let expectedCount = 156;
+      let expectedRearings = 4;
+
+      if (currentGroup === 'control') {
+        expectedCount = Math.round(152 + Math.random() * 10);
+        expectedRearings = Math.round(3 + Math.random() * 2);
+      } else {
+        const prof = DRUG_PROFILES[activeDrugKey];
+        expectedCount = Math.round(prof.targetMeanCount + (Math.random() * 14 - 7));
+        expectedRearings = Math.max(0, Math.round(prof.targetRearings + (Math.random() * 1.6 - 0.8)));
+      }
+
+      liveCounter = expectedCount;
+      liveRearings = expectedRearings;
+      timerRemainingSeconds = 0;
+      updateMeters();
+
+      const animal = animalData[currentGroup][currentAnimalIndex - 1];
+      animal.count = liveCounter;
+      animal.rearings = liveRearings;
+      animal.completed = true;
+
+      playBeep('complete');
+      updateAnimalTrayUI();
+      renderObservationTables();
+      showFeedback(`Fast-run complete for Mouse #${currentGroup === 'control' ? 'C' : 'T'}${currentAnimalIndex}: ${liveCounter} counts, ${liveRearings} rearings.`);
+    }
+
+    // --- COMPLETE ALL 12 MICE (BATCH PROTOCOL) ---
+    function runCompleteBatchExperiment() {
+      if (isRunning) stopTestRun();
+
+      const prof = DRUG_PROFILES[activeDrugKey];
+
+      // Fill remaining control mice if not done
+      animalData.control.forEach(m => {
+        if (!m.completed) {
+          m.count = Math.round(152 + Math.random() * 10);
+          m.rearings = Math.round(3 + Math.random() * 2);
+          m.completed = true;
+        }
+      });
+
+      // Fill treated mice
+      animalData.treated.forEach(m => {
+        m.count = Math.round(prof.targetMeanCount + (Math.random() * 14 - 7));
+        m.rearings = Math.max(0, Math.round(prof.targetRearings + (Math.random() * 1.6 - 0.8)));
+        m.completed = true;
+      });
+
+      playBeep('complete');
+      updateAnimalTrayUI();
+      renderObservationTables();
+      switchTab('observation');
+      showFeedback("Complete bioassay for all 12 animals executed and logged into Observation Sheet!");
+    }
+
+    // --- MOUSE PHYSICS & PHOTOCELL BEAM CUT SIMULATION ---
+    function pickNewTarget() {
+      targetX = 45 + Math.random() * 310;
+      targetY = 45 + Math.random() * 230;
+    }
+
+    function updateMousePhysics() {
+      const isControl = currentGroup === 'control';
+      const prof = isControl ? { speedFactor: 1.0, pauseProb: 0.25, rearingProb: 0.15 } : DRUG_PROFILES[activeDrugKey];
+
+      // Occasional pause or rearing behavior
+      if (Math.random() < prof.pauseProb * 0.08) {
+        if (!isRearing && Math.random() < prof.rearingProb * 0.4) {
+          triggerMouseRearing();
+        }
+        return;
+      }
+
+      // Movement vector toward target
+      const dx = targetX - mouseX;
+      const dy = targetY - mouseY;
+      const dist = Math.hypot(dx, dy);
+
+      if (dist < 15) {
+        pickNewTarget();
+        return;
+      }
+
+      // Speed calculation
+      const step = (3.5 * prof.speedFactor * (simSpeed >= 4 ? 2.2 : 1.0));
+      const moveX = (dx / dist) * Math.min(dist, step);
+      const moveY = (dy / dist) * Math.min(dist, step);
+
+      const oldY = mouseY;
+      mouseX += moveX;
+      mouseY += moveY;
+
+      // Calculate angle of motion
+      mouseAngle = Math.atan2(moveY, moveX) * (180 / Math.PI);
+
+      // Check if mouse crossed any of the 6 horizontal beams (y = 35, 85, 135, 185, 235, 285)
+      const beamYPositions = [35, 85, 135, 185, 235, 285];
+      beamYPositions.forEach((by, idx) => {
+        if ((oldY < by && mouseY >= by) || (oldY > by && mouseY <= by)) {
+          triggerBeamCut(idx);
+        }
+      });
+
+      // Update SVG Mouse Rig position
+      const rig = document.getElementById('mouseRig');
+      rig.setAttribute('transform', `translate(${mouseX}, ${mouseY}) rotate(${mouseAngle})`);
+    }
+
+    function triggerBeamCut(beamIndex) {
+      liveCounter++;
+      updateMeters();
+      playBeep('tick');
+
+      // Visual beam highlight
+      const beamEl = document.getElementById(`beam${beamIndex}`);
+      if (beamEl) {
+        beamEl.classList.add('beam-interrupted');
+        setTimeout(() => beamEl.classList.remove('beam-interrupted'), 140);
+      }
+
+      // Toast indicator
+      const toast = document.getElementById('beamFlashToast');
+      document.getElementById('toastCount').innerText = liveCounter;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 250);
+    }
+
+    function triggerMouseRearing() {
+      if (isRearing) return;
+      isRearing = true;
+      liveRearings++;
+      updateMeters();
+      playBeep('rearing');
+
+      const subRig = document.getElementById('mouseSubRig');
+      const badge = document.getElementById('rearingBadge');
+
+      subRig.classList.add('rearing-active');
+      badge.classList.remove('hidden');
+
+      setTimeout(() => {
+        subRig.classList.remove('rearing-active');
+        badge.classList.add('hidden');
+        isRearing = false;
+      }, 750);
+    }
+
+    function triggerManualRearing() {
+      triggerMouseRearing();
+      showFeedback("Logged exploratory rearing event (+1).");
+    }
+
+    // --- OBSERVATION TABLES & PHARMACODYNAMIC CALCULATIONS ---
+    function renderObservationTables() {
+      // 1. Render Group I (Control)
+      const cBody = document.getElementById('tblControlBody');
+      let cHtml = '';
+      let cLocoSum = 0, cLocoCount = 0;
+      let cRearSum = 0, cRearCount = 0;
+
+      animalData.control.forEach(m => {
+        const cVal = m.count !== null ? m.count : '--';
+        const rVal = m.rearings !== null ? m.rearings : '--';
+        if (m.count !== null) { cLocoSum += m.count; cLocoCount++; }
+        if (m.rearings !== null) { cRearSum += m.rearings; cRearCount++; }
+
+        cHtml += `
+          <tr class="hover:bg-slate-50">
+            <td class="p-2 border-r text-center font-bold text-slate-700">#C${m.id}</td>
+            <td class="p-2 border-r text-center">${m.wt.toFixed(1)}</td>
+            <td class="p-2 border-r text-center font-bold text-teal-700">${cVal}</td>
+            <td class="p-2 text-center text-amber-700">${rVal}</td>
+          </tr>
+        `;
+      });
+      cBody.innerHTML = cHtml;
+
+      const cLocoMean = cLocoCount > 0 ? (cLocoSum / cLocoCount) : null;
+      const cRearMean = cRearCount > 0 ? (cRearSum / cRearCount) : null;
+      document.getElementById('lblMeanControlLoco').innerText = cLocoMean !== null ? `${cLocoMean.toFixed(1)} ± 1.5` : '--';
+      document.getElementById('lblMeanControlRear').innerText = cRearMean !== null ? `${cRearMean.toFixed(1)} ± 0.3` : '--';
+
+      // 2. Render Group II (Treated)
+      const tBody = document.getElementById('tblTreatedBody');
+      let tHtml = '';
+      let tLocoSum = 0, tLocoCount = 0;
+      let tRearSum = 0, tRearCount = 0;
+
+      animalData.treated.forEach(m => {
+        const cVal = m.count !== null ? m.count : '--';
+        const rVal = m.rearings !== null ? m.rearings : '--';
+        if (m.count !== null) { tLocoSum += m.count; tLocoCount++; }
+        if (m.rearings !== null) { tRearSum += m.rearings; tRearCount++; }
+
+        tHtml += `
+          <tr class="hover:bg-indigo-50/40">
+            <td class="p-2 border-r text-center font-bold text-indigo-900">#T${m.id}</td>
+            <td class="p-2 border-r text-center">${m.wt.toFixed(1)}</td>
+            <td class="p-2 border-r text-center font-bold text-indigo-700">${cVal}</td>
+            <td class="p-2 text-center text-amber-800">${rVal}</td>
+          </tr>
+        `;
+      });
+      tBody.innerHTML = tHtml;
+
+      const tLocoMean = tLocoCount > 0 ? (tLocoSum / tLocoCount) : null;
+      const tRearMean = tRearCount > 0 ? (tRearSum / tRearCount) : null;
+      document.getElementById('lblMeanTreatedLoco').innerText = tLocoMean !== null ? `${tLocoMean.toFixed(1)} ± 1.8` : '--';
+      document.getElementById('lblMeanTreatedRear').innerText = tRearMean !== null ? `${tRearMean.toFixed(1)} ± 0.2` : '--';
+
+      // 3. Compute Percentages & Statistical Inference
+      if (cLocoMean !== null && tLocoMean !== null && tLocoCount === 6) {
+        const diffPercent = ((cLocoMean - tLocoMean) / cLocoMean) * 100;
+        const rearDiffPercent = cRearMean > 0 ? (((cRearMean - tRearMean) / cRearMean) * 100) : 0;
+
+        const isDepressant = diffPercent > 0;
+        document.getElementById('lblPercentLocoChange').innerText = `${Math.abs(diffPercent).toFixed(1)}% ${isDepressant ? 'Decrease (Sedation)' : 'Increase (Stimulation)'}`;
+        document.getElementById('lblPercentLocoChange').className = isDepressant ? "text-2xl font-extrabold font-mono text-teal-600 mt-1" : "text-2xl font-extrabold font-mono text-rose-600 mt-1";
+
+        document.getElementById('lblPercentRearChange').innerText = `${Math.abs(rearDiffPercent).toFixed(1)}% ${rearDiffPercent > 0 ? 'Suppression' : 'Elevation'}`;
+
+        document.getElementById('lblStatInference').innerText = isDepressant ? "Statistically Significant CNS Depression (p < 0.001)" : "Statistically Significant CNS Stimulation (p < 0.001)";
+        document.getElementById('lblStatDetail').innerText = `Comparison between Control (n=6) and ${DRUG_PROFILES[activeDrugKey].shortName} (n=6) reveals prominent alteration in spontaneous motor coordination.`;
+      } else {
+        document.getElementById('lblPercentLocoChange').innerText = "-- %";
+        document.getElementById('lblPercentRearChange').innerText = "-- %";
+        document.getElementById('lblStatInference').innerText = "Incomplete treated dataset";
+        document.getElementById('lblStatDetail').innerText = "Please complete tests on all 6 treated mice to calculate significance.";
+      }
+    }
+
+    function resetObservationData() {
+      animalData.treated.forEach(m => {
+        m.count = null;
+        m.rearings = null;
+        m.completed = false;
+      });
+      updateAnimalTrayUI();
+      renderObservationTables();
+      showFeedback("Treated observation table cleared.");
+    }
+
+    function fillSampleVideoDataset() {
+      // Replicate textbook data demonstrated in Solution-Pharmacy video
+      animalData.control[0].count = 154; animalData.control[0].rearings = 4;
+      animalData.control[1].count = 156; animalData.control[1].rearings = 4;
+      animalData.control[2].count = 158; animalData.control[2].rearings = 3;
+      animalData.control[3].count = 151; animalData.control[3].rearings = 4;
+      animalData.control[4].count = 159; animalData.control[4].rearings = 4;
+      animalData.control[5].count = 161; animalData.control[5].rearings = 4;
+
+      animalData.treated[0].count = 54; animalData.treated[0].rearings = 1;
+      animalData.treated[1].count = 51; animalData.treated[1].rearings = 1;
+      animalData.treated[2].count = 49; animalData.treated[2].rearings = 2;
+      animalData.treated[3].count = 58; animalData.treated[3].rearings = 1;
+      animalData.treated[4].count = 50; animalData.treated[4].rearings = 1;
+      animalData.treated[5].count = 52; animalData.treated[5].rearings = 1;
+
+      animalData.control.forEach(m => m.completed = true);
+      animalData.treated.forEach(m => m.completed = true);
+
+      updateAnimalTrayUI();
+      renderObservationTables();
+      showFeedback("Loaded reference standard dataset (Diazepam 1.0 mg/kg vs Vehicle Control).");
+    }
+
+    // --- EVALUATION & DEDUCTION MODAL ---
+    function submitEvaluation() {
+      const userChoice = document.getElementById('unknownDrugDeduction').value;
+      if (!userChoice) {
+        showFeedback("Please select your deduction compound first!", true);
+        return;
+      }
+      openResultsModal();
+    }
+
+    function openResultsModal() {
+      const userChoice = document.getElementById('unknownDrugDeduction').value;
+      const actualDrug = DRUG_PROFILES[mysteryDrugKey].name;
+
+      document.getElementById('resActiveDrug').innerText = DRUG_PROFILES[activeDrugKey].name;
+      document.getElementById('resLocoPercent').innerText = document.getElementById('lblPercentLocoChange').innerText;
+      document.getElementById('resUserDeduction').innerText = userChoice ? (DRUG_PROFILES[userChoice]?.name || userChoice) : "Not submitted";
+      document.getElementById('resActualUnknown').innerText = actualDrug;
+
+      const isCorrect = userChoice === mysteryDrugKey;
+      const expl = document.getElementById('resExplanation');
+
+      if (isCorrect) {
+        expl.className = "p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900 leading-relaxed text-[11px]";
+        expl.innerHTML = `<strong>CORRECT DIAGNOSIS!</strong> You accurately deduced <strong>${actualDrug}</strong>. Your behavioral evaluation of locomotor score reduction, rearing inhibition, and sedation index matches pharmacological standards.`;
+      } else {
+        expl.className = "p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-900 leading-relaxed text-[11px]";
+        expl.innerHTML = `<strong>INCORRECT DEDUCTION.</strong> The mystery drug was <strong>${actualDrug}</strong>.<br>Note: ${DRUG_PROFILES[mysteryDrugKey].desc}`;
+      }
+
+      document.getElementById('modalResults').classList.remove('hidden');
+    }
+
+    function openQuestionsModal() {
+      document.getElementById('modalQuestions').classList.remove('hidden');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    function evaluateQuestions() {
+      const q1 = document.querySelector('input[name="q1"]:checked')?.value;
+      const q2 = document.querySelector('input[name="q2"]:checked')?.value;
+      const q3 = document.querySelector('input[name="q3"]:checked')?.value;
+
+      if (!q1 || !q2 || !q3) {
+        showFeedback("Please answer all 3 questions before submitting!", true);
+        return;
+      }
+
+      let score = 0;
+      if (q1 === 'a') score++;
+      if (q2 === 'b') score++;
+      if (q3 === 'b') score++;
+
+      mcpVivaResult(score, 3, {"q1": "a", "q2": "b", "q3": "b"});
+    }
+
+    function generateReport() {
+      window.print();
+    }
+
+    // --- TOAST FEEDBACK ---
+    function showFeedback(msg, isAlert = false) {
+      const el = document.getElementById('actionFeedback');
+      const txt = document.getElementById('feedbackText');
+      const icon = document.getElementById('feedbackIcon');
+
+      txt.innerText = msg;
+      icon.innerText = isAlert ? "⚠️" : "ℹ";
+      icon.className = isAlert ? "text-amber-400 font-bold" : "text-teal-400 font-bold";
+
+      el.style.opacity = "1";
+    }
+
+    // Initial boot
+    window.addEventListener('DOMContentLoaded', () => {
+      selectAnimal('control', 1);
+      renderObservationTables();
+    });
+  </script>
+  <script src="../assets/js/viva.js"></script>
+</body>
+</html>

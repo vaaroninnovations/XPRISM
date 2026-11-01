@@ -1,0 +1,13 @@
+{% extends 'registration/_card.html' %}
+{% block title %}Start your free trial{% endblock %}
+{% block width %}max-w-lg{% endblock %}
+{% block card %}
+<div><div class="mono text-[11px] text-amber-700 font-bold">FREE TRIAL</div><h1 class="text-xl font-bold text-slate-900">Explore every experiment once, free</h1>
+<p class="text-xs text-slate-500 mt-1">All 25 pharmacology simulations: in-vivo, isolated tissue and bioassays. Each module can be opened once; after you leave it, it is available by subscription. We store only your name, e-mail, institution and which modules you have explored (<a href="{% url 'privacy' %}" target="_blank" class="underline">Privacy Policy</a>).</p></div>
+<form method="post" class="space-y-3" novalidate>{% csrf_token %}
+  {{ form.non_field_errors }}
+  {% include 'registration/_fields.html' %}
+  <button class="w-full py-2.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-900 text-sm font-bold shadow">Create free-trial account</button>
+</form>
+<p class="text-xs text-slate-500">Have an account? <a href="{% url 'login' %}" class="text-teal-700 hover:underline">Sign in</a> • Student with a class code? <a href="{% url 'signup' %}" class="text-teal-700 hover:underline">Join your class</a></p>
+{% endblock %}

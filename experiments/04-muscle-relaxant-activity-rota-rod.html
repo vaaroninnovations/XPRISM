@@ -1,0 +1,1943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exp 04: Muscle Relaxant Activity: Rota-Rod • XPRISM</title>
+  <meta name="description" content="Fall-off time of mice on a rotating rod before and after diazepam.">
+    <meta name="theme-color" content="#0a1f44">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
+  <link rel="stylesheet" href="../assets/css/tailwind.css">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <script src="../assets/js/tone.min.js"></script>
+  <style>
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f1f5f9;
+      color: #0a1f44;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .seg {
+      font-family: 'DSEG7', 'JetBrains Mono', monospace;
+    }
+
+    .svg-btn { cursor: pointer; }
+    .svg-btn:active { transform: translateY(1.5px); }
+    .mouse-fade { transition: opacity 0.9s ease; }
+
+    @keyframes syringePush {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-8px); }
+    }
+    .syringe-anim { animation: syringePush 0.25s ease-in-out 2 alternate; }
+
+    @media print {
+      header, #subHeader, #viewTask, #viewExperiment, .no-print { display: none !important; }
+      #viewObservation { display: flex !important; box-shadow: none; border: none; }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-100 overflow-x-hidden">
+
+  <!-- TOP BRANDING BAR (XPRISM Header) -->
+  <header class="site-header bg-white border-b border-slate-200 px-4 md:px-6 py-2 flex items-center justify-between gap-3 shadow-sm shrink-0">
+    <div class="flex items-center gap-3 min-w-0">
+    <a href="../index.html" title="Back to Lab Home" class="shrink-0"><img src="../assets/img/xprism-lockup.png" alt="XPRISM" class="h-11 w-auto" width="146" height="49"></a>
+      <div class="min-w-0 border-l border-slate-200 pl-3">
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="text-[10px] uppercase font-bold bg-teal-50 text-teal-700 px-2 py-0.5 rounded-full border border-teal-200 font-display tracking-wide">Virtual Lab</span>
+        <a href="../index.html" class="text-[11px] font-semibold text-teal-700 hover:underline">← All experiments</a>
+      </div>
+      <p class="text-xs text-slate-500">Aaron Innovations • Experimental Pharmacology Research &amp; Interactive Student Module</p>
+    </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="hidden md:block text-right">
+        <div class="text-xs font-semibold text-slate-800 flex items-center justify-end space-x-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Dr. Vara Prasad Saka</span>
+        </div>
+        <div class="text-[11px] text-slate-500 font-mono">ID: 8019152501 • Dept. of Pharmacology</div>
+      </div>
+      <div class="flex items-center gap-2 border-l pl-4 border-slate-200">
+        <a class="site-nav-btn" href="03-anticonvulsant-activity-mes-electroconvulsometer.html" title="Previous: Exp #3 Anticonvulsant Activity: MES (Electroconvulsometer)">‹</a><a class="site-nav-btn" href="05-anticonvulsant-activity-ptz-induced-seizures.html" title="Next: Exp #5 Anticonvulsant Activity: PTZ-Induced Seizures">›</a>
+        <button id="audioToggleBtn" class="p-2 rounded-lg bg-teal-100 hover:bg-teal-200 text-teal-800 transition" title="Toggle sound feedback" aria-label="Toggle sound feedback">
+          <svg id="soundIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+        </button>
+        <span class="hidden sm:inline bg-indigo-100 text-indigo-800 text-xs px-2.5 py-1 rounded-md font-medium border border-indigo-200 whitespace-nowrap">Exp #4</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- SUB-HEADER / VIEW TABS -->
+
+  <div id="subHeader" class="site-subheader bg-slate-800 text-white px-4 md:px-6 py-2 flex flex-wrap items-center justify-between gap-3 shadow shrink-0">
+    <div class="text-sm font-semibold tracking-wide flex items-center space-x-2 min-w-0">
+      <span class="text-teal-400 font-mono text-xs px-1.5 py-0.5 rounded bg-teal-950/80 border border-teal-500/40 shrink-0">MODULE 04</span>
+      <span>Examination 4: To Study the Muscle Relaxant Activity of a Given Drug Using the Rota-Rod Apparatus</span>
+    </div>
+    <div class="flex items-center space-x-1.5 bg-slate-900/80 p-1 rounded-lg border border-slate-700" role="tablist">
+      <button id="tabTask" onclick="switchTab('task')" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white transition">Task Description</button>
+      <button id="tabExperiment" onclick="switchTab('experiment')" class="px-3.5 py-1.5 rounded-md text-xs font-semibold bg-teal-500 text-white shadow transition">Experiment Bench</button>
+      <button id="tabObservation" onclick="switchTab('observation')" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white transition">Observation Sheet &amp; Graphs</button>
+    </div>
+  </div>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-5 flex flex-col min-h-0">
+
+    <!-- ============================================== -->
+    <!-- TAB 1: TASK DESCRIPTION -->
+    <!-- ============================================== -->
+    <div id="viewTask" class="hidden flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between overflow-y-auto">
+      <div class="max-w-4xl space-y-6">
+        <div class="border-b pb-4">
+          <div class="inline-block px-2.5 py-1 rounded bg-teal-50 text-teal-800 text-xs font-bold font-mono mb-2">EXPERIMENT OBJECTIVE</div>
+          <h2 class="text-xl font-bold text-slate-900">Evaluation of Skeletal Muscle Relaxant Activity &amp; Motor Coordination Using the Rota-Rod</h2>
+          <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+            Assess the effect of centrally acting muscle relaxants and CNS depressants—the benzodiazepine standard <strong>Diazepam (4 mg/kg i.p.)</strong>, the phenothiazine <strong>Chlorpromazine (3 mg/kg i.p.)</strong> and the barbiturate <strong>Phenobarbitone sodium (40 mg/kg i.p.)</strong>—on the motor coordination (grip strength and balance) of albino mice placed on a rotating rod. <strong>Caffeine (10 mg/kg i.p.)</strong> serves as a negative comparator.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-4">
+          <div class="p-4 rounded-xl bg-sky-50/70 border border-sky-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-sky-500 text-white flex items-center justify-center font-bold text-sm shadow">1</div>
+            <h3 class="text-sm font-bold text-sky-950">Principle</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              A normal mouse keeps its balance on a slowly rotating knurled rod (≈3 cm diameter, 20–25 rpm) indefinitely by walking against the rotation. Drugs that relax skeletal muscle or impair motor coordination reduce grip and balance, so the animal <strong>falls off sooner</strong>. The time to fall (fall-off time) is the index of muscle relaxant activity.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-amber-50/70 border border-amber-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center font-bold text-sm shadow">2</div>
+            <h3 class="text-sm font-bold text-amber-950">Screening &amp; Design</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Only mice that remain on the rod for the full <strong>cut-off time (180 s)</strong> during the basal trial are accepted. Each mouse acts as its own control: the <strong>basal fall-off time</strong> is recorded, the drug is injected i.p., and the <strong>post-drug fall-off time</strong> is recorded 30 min later (n = 6).
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-emerald-50/70 border border-emerald-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center font-bold text-sm shadow">3</div>
+            <h3 class="text-sm font-bold text-emerald-950">Calculation</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              % Decrease in motor coordination = <strong>((Basal − Post-drug) / Basal) × 100</strong>. Report Mean ± SEM and compare basal vs post-drug values by Student's <strong>paired t-test</strong> (df = n − 1).
+            </p>
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Requirements</h4>
+            <ul class="text-xs text-slate-600 space-y-1 list-disc pl-4">
+              <li><strong>Apparatus:</strong> Rota-rod (6 compartments, knurled rod 3 cm, variable 5–40 rpm, trip-plate timers)</li>
+              <li><strong>Animals:</strong> Albino mice, 20–28 g, either sex (n = 6)</li>
+              <li><strong>Drugs:</strong> Diazepam injection (1 mg/mL), Chlorpromazine (0.5 mg/mL), Phenobarbitone sodium (4 mg/mL), Caffeine (1 mg/mL)</li>
+              <li><strong>Others:</strong> 1 mL tuberculin syringe, 26G needle, weighing balance, stopwatch</li>
+            </ul>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Procedure</h4>
+            <ol class="text-xs text-slate-600 space-y-1 list-decimal pl-4">
+              <li>Switch ON the rota-rod and set the speed to 20–25 rpm.</li>
+              <li>Weigh and number the mice; place one mouse in each compartment.</li>
+              <li>Press START and note the basal fall-off time (cut-off 180 s).</li>
+              <li>Inject the test drug i.p. (dose volume from body weight).</li>
+              <li>After 30 min, repeat the trial at the same speed.</li>
+              <li>Tabulate, calculate % decrease, apply the paired t-test.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-6 border-t flex justify-end">
+        <button onclick="switchTab('experiment')" class="px-6 py-2.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-semibold text-sm shadow flex items-center space-x-2 transition">
+          <span>Go to Experiment Stage</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- TAB 2: EXPERIMENT BENCH & ROTA-ROD RIG -->
+    <!-- ============================================== -->
+    <div id="viewExperiment" class="flex-1 flex flex-col lg:flex-row gap-4 min-h-[620px]">
+
+      <!-- MAIN BENCH STAGE -->
+      <div class="flex-1 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col relative overflow-hidden">
+
+        <!-- Top Toolbar over Bench -->
+        <div class="p-3 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 z-10 shrink-0">
+          <div class="flex items-center space-x-2">
+            <label class="text-xs font-bold text-slate-600">Test Drug:</label>
+            <select id="drugSelect" onchange="onDrugSelectChange()" class="bg-white border border-slate-300 text-slate-800 text-xs rounded-lg px-3 py-1.5 font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
+              <option value="diazepam">Diazepam (4 mg/kg i.p. - Standard Muscle Relaxant)</option>
+              <option value="chlorpromazine">Chlorpromazine HCl (3 mg/kg i.p. - Neuroleptic)</option>
+              <option value="phenobarbitone">Phenobarbitone Sodium (40 mg/kg i.p. - Barbiturate)</option>
+              <option value="caffeine">Caffeine Citrate (10 mg/kg i.p. - CNS Stimulant)</option>
+              <option value="unknown">Unknown Mystery Drug (Exam Diagnosis)</option>
+            </select>
+            <span id="drugStatusBadge" class="text-[11px] px-2.5 py-0.5 rounded font-mono font-semibold bg-indigo-100 text-indigo-800">Standard: Diazepam</span>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-medium text-slate-500">Sim Speed:</span>
+            <div class="flex rounded-lg border border-slate-300 bg-white p-0.5 shadow-sm">
+              <button id="spd1" onclick="setSimSpeed(1)" class="px-2.5 py-1 text-xs rounded font-semibold bg-teal-50 text-teal-700">1x Real</button>
+              <button id="spd5" onclick="setSimSpeed(5)" class="px-2.5 py-1 text-xs rounded font-semibold text-slate-600 hover:text-slate-900">5x Fast</button>
+              <button id="spd15" onclick="setSimSpeed(15)" class="px-2.5 py-1 text-xs rounded font-semibold text-slate-600 hover:text-slate-900">15x Turbo</button>
+            </div>
+            <button onclick="newExperiment()" class="px-3 py-1 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-medium shadow flex items-center space-x-1.5 transition">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              <span>New Experiment</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Protocol stepper -->
+        <div id="stepper" class="px-3 py-2 bg-white border-b border-slate-200 flex flex-wrap gap-1.5 text-[11px] font-semibold shrink-0"></div>
+
+        <!-- BENCH WORKSPACE -->
+        <div id="benchArea" class="flex-1 relative flex items-end justify-center overflow-hidden pb-12" style="background: linear-gradient(to bottom, #e9eef2 calc(100% - 48px), #0e1318 calc(100% - 48px));">
+
+          <!-- Absorption timer card -->
+          <div id="absorbCard" class="hidden absolute top-3 left-3 z-20 bg-slate-900/90 text-white rounded-xl px-4 py-3 shadow-xl border border-slate-700 backdrop-blur w-60">
+            <div class="text-[10px] uppercase tracking-wider text-amber-300 font-bold font-mono">Absorption Period (i.p.)</div>
+            <div id="absorbClock" class="seg text-3xl text-amber-400 mt-1" style="text-shadow:0 0 10px rgba(251,191,36,.6)">30:00</div>
+            <div class="h-1.5 bg-slate-700 rounded mt-2 overflow-hidden"><div id="absorbBar" class="h-full bg-amber-400 w-0"></div></div>
+            <button onclick="skipAbsorption()" class="mt-2 w-full py-1 text-[11px] rounded bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold">⏩ Skip waiting</button>
+          </div>
+
+          <!-- LAB SCENE: wall, bench, rota-rod, home cage, wall clock, dosing tray (SVG) -->
+          <svg id="rig" viewBox="0 0 1300 640" preserveAspectRatio="xMidYMax meet" class="w-full relative z-10 block">
+            <defs>
+              <!-- Room -->
+              <pattern id="tiles" width="64" height="64" patternUnits="userSpaceOnUse">
+                <rect width="64" height="64" fill="#e9eef2"/>
+                <rect x="1" y="1" width="62" height="62" fill="#eef2f5"/>
+                <path d="M0 0.5H64M0.5 0V64" stroke="#cfd7de" stroke-width="1.5"/>
+              </pattern>
+              <radialGradient id="roomLight" cx="0.3" cy="0" r="1.1">
+                <stop offset="0" stop-color="#fff" stop-opacity="0.55"/>
+                <stop offset="0.6" stop-color="#fff" stop-opacity="0"/>
+                <stop offset="1" stop-color="#334155" stop-opacity="0.25"/>
+              </radialGradient>
+              <linearGradient id="benchTop" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#3d4754"/>
+                <stop offset="0.35" stop-color="#2a323d"/>
+                <stop offset="1" stop-color="#171d25"/>
+              </linearGradient>
+              <linearGradient id="benchSheen" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+                <stop offset="0.3" stop-color="#fff" stop-opacity="0.07"/>
+                <stop offset="0.55" stop-color="#fff" stop-opacity="0"/>
+              </linearGradient>
+              <radialGradient id="contactShadow" cx="0.5" cy="0.5" r="0.5">
+                <stop offset="0" stop-color="#000" stop-opacity="0.55"/>
+                <stop offset="1" stop-color="#000" stop-opacity="0"/>
+              </radialGradient>
+              <radialGradient id="wallShadow" cx="0.5" cy="0.5" r="0.5">
+                <stop offset="0" stop-color="#13294f" stop-opacity="0.28"/>
+                <stop offset="1" stop-color="#13294f" stop-opacity="0"/>
+              </radialGradient>
+              <pattern id="brushed" width="256" height="256" patternUnits="userSpaceOnUse">
+                <image id="brushedImg" width="256" height="256" href=""/>
+              </pattern>
+
+              <!-- Apparatus materials -->
+              <linearGradient id="cabinetGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#eef1f5"/>
+                <stop offset="0.45" stop-color="#d5dbe3"/>
+                <stop offset="1" stop-color="#a9b3c0"/>
+              </linearGradient>
+              <linearGradient id="cabTopGrad" x1="0" y1="1" x2="0" y2="0">
+                <stop offset="0" stop-color="#f4f6f9"/>
+                <stop offset="1" stop-color="#d9dfe6"/>
+              </linearGradient>
+              <linearGradient id="cabSideGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#9aa4b1"/>
+                <stop offset="1" stop-color="#7d8794"/>
+              </linearGradient>
+              <linearGradient id="panelGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#3b4655"/>
+                <stop offset="1" stop-color="#1c2430"/>
+              </linearGradient>
+              <linearGradient id="wallGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#b9c2cd"/>
+                <stop offset="0.1" stop-color="#e3e8ee"/>
+                <stop offset="0.75" stop-color="#d8dee6"/>
+                <stop offset="1" stop-color="#bcc5d0"/>
+              </linearGradient>
+              <linearGradient id="sideWallL" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#8b95a3"/>
+                <stop offset="1" stop-color="#b7c0cb"/>
+              </linearGradient>
+              <linearGradient id="sideWallR" x1="1" y1="0" x2="0" y2="0">
+                <stop offset="0" stop-color="#7d8795"/>
+                <stop offset="1" stop-color="#aeb8c4"/>
+              </linearGradient>
+              <linearGradient id="floorGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#6b7584"/>
+                <stop offset="1" stop-color="#3b4452"/>
+              </linearGradient>
+              <pattern id="knurl" width="7" height="7" patternUnits="userSpaceOnUse">
+                <path d="M0 0L7 7M7 0L0 7M-1 6L1 8M6 -1L8 1" stroke="#2c333c" stroke-width="0.8" stroke-opacity="0.5"/>
+              </pattern>
+              <linearGradient id="rodShade" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#000" stop-opacity="0.6"/>
+                <stop offset="0.2" stop-color="#fff" stop-opacity="0"/>
+                <stop offset="0.33" stop-color="#fff" stop-opacity="0.75"/>
+                <stop offset="0.46" stop-color="#fff" stop-opacity="0"/>
+                <stop offset="0.8" stop-color="#000" stop-opacity="0.3"/>
+                <stop offset="1" stop-color="#000" stop-opacity="0.7"/>
+              </linearGradient>
+              <linearGradient id="discGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#0a0e13" stop-opacity="0.95"/>
+                <stop offset="0.4" stop-color="#4a5562" stop-opacity="0.9"/>
+                <stop offset="0.55" stop-color="#1b222b" stop-opacity="0.92"/>
+                <stop offset="1" stop-color="#05080c" stop-opacity="0.95"/>
+              </linearGradient>
+              <linearGradient id="collarGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#4b5563"/>
+                <stop offset="0.35" stop-color="#e5e7eb"/>
+                <stop offset="1" stop-color="#374151"/>
+              </linearGradient>
+              <linearGradient id="plateTop" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#aab3be"/>
+                <stop offset="1" stop-color="#dfe4ea"/>
+              </linearGradient>
+              <linearGradient id="plateFront" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#8a94a1"/>
+                <stop offset="1" stop-color="#5b6470"/>
+              </linearGradient>
+              <linearGradient id="lcdGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#0c1a13"/>
+                <stop offset="1" stop-color="#040a06"/>
+              </linearGradient>
+              <linearGradient id="glassGlare" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#fff" stop-opacity="0.16"/>
+                <stop offset="0.45" stop-color="#fff" stop-opacity="0.04"/>
+                <stop offset="0.5" stop-color="#fff" stop-opacity="0"/>
+              </linearGradient>
+              <radialGradient id="screwGrad" cx="0.35" cy="0.35" r="0.7">
+                <stop offset="0" stop-color="#f8fafc"/><stop offset="1" stop-color="#64748b"/>
+              </radialGradient>
+              <radialGradient id="knobGrad" cx="0.35" cy="0.3" r="0.8">
+                <stop offset="0" stop-color="#6b7280"/>
+                <stop offset="0.6" stop-color="#1f2937"/>
+                <stop offset="1" stop-color="#030712"/>
+              </radialGradient>
+              <radialGradient id="btnGreen" cx="0.35" cy="0.3" r="0.8">
+                <stop offset="0" stop-color="#86efac"/><stop offset="0.55" stop-color="#16a34a"/><stop offset="1" stop-color="#14532d"/>
+              </radialGradient>
+              <radialGradient id="btnRed" cx="0.35" cy="0.3" r="0.8">
+                <stop offset="0" stop-color="#fca5a5"/><stop offset="0.55" stop-color="#dc2626"/><stop offset="1" stop-color="#7f1d1d"/>
+              </radialGradient>
+              <radialGradient id="btnAmber" cx="0.35" cy="0.3" r="0.8">
+                <stop offset="0" stop-color="#fde68a"/><stop offset="0.55" stop-color="#d97706"/><stop offset="1" stop-color="#78350f"/>
+              </radialGradient>
+
+              <!-- Mouse materials -->
+              <radialGradient id="furGrad" cx="0.42" cy="0.32" r="0.78">
+                <stop offset="0" stop-color="#ffffff"/>
+                <stop offset="0.6" stop-color="#f6f3f1"/>
+                <stop offset="1" stop-color="#d8d0cc"/>
+              </radialGradient>
+              <radialGradient id="bodyShade" cx="0.45" cy="0.3" r="0.7">
+                <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+                <stop offset="0.7" stop-color="#fff" stop-opacity="0"/>
+                <stop offset="1" stop-color="#6b5a58" stop-opacity="0.3"/>
+              </radialGradient>
+              <radialGradient id="earGrad" cx="0.5" cy="0.55" r="0.6">
+                <stop offset="0" stop-color="#f9d0d9"/>
+                <stop offset="0.7" stop-color="#f1adbf"/>
+                <stop offset="1" stop-color="#e293a8"/>
+              </radialGradient>
+              <radialGradient id="eyeGrad" cx="0.4" cy="0.35" r="0.7">
+                <stop offset="0" stop-color="#ff5d77"/>
+                <stop offset="0.55" stop-color="#c0142f"/>
+                <stop offset="1" stop-color="#5c0614"/>
+              </radialGradient>
+              <linearGradient id="tailGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#f2c0cc"/>
+                <stop offset="1" stop-color="#e3a2b3"/>
+              </linearGradient>
+
+              <!-- Props -->
+              <linearGradient id="cageTub" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#e2e8f0" stop-opacity="0.35"/>
+                <stop offset="1" stop-color="#cbd5e1" stop-opacity="0.55"/>
+              </linearGradient>
+              <linearGradient id="bedding" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#e9d3a6"/>
+                <stop offset="1" stop-color="#c9a76b"/>
+              </linearGradient>
+              <linearGradient id="steel" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#f1f5f9"/>
+                <stop offset="0.5" stop-color="#9ca3af"/>
+                <stop offset="1" stop-color="#e5e7eb"/>
+              </linearGradient>
+              <linearGradient id="vialGlass" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#cbd5e1" stop-opacity="0.7"/>
+                <stop offset="0.3" stop-color="#fff" stop-opacity="0.9"/>
+                <stop offset="1" stop-color="#94a3b8" stop-opacity="0.7"/>
+              </linearGradient>
+
+              <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="2.2" result="b"/>
+                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <filter id="softBlur" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+              <clipPath id="chamberClip"><rect x="70" y="64" width="820" height="262" rx="4"/></clipPath>
+              <clipPath id="rodClip"><rect x="84" y="135" width="792" height="30"/></clipPath>
+            </defs>
+
+            <!-- ========== ROOM ========== -->
+            <rect x="0" y="0" width="1300" height="432" fill="url(#tiles)"/>
+            <rect x="0" y="0" width="1300" height="432" fill="url(#roomLight)"/>
+            <rect x="0" y="412" width="1300" height="20" fill="#cdd5dd"/>
+            <rect x="0" y="412" width="1300" height="2" fill="#fff" opacity="0.6"/>
+            <polygon points="0,432 1300,432 1300,612 0,612" fill="url(#benchTop)"/>
+            <polygon points="0,432 1300,432 1300,612 0,612" fill="url(#benchSheen)"/>
+            <rect x="0" y="612" width="1300" height="28" fill="#0e1318"/>
+            <rect x="0" y="612" width="1300" height="2" fill="#5b6675" opacity="0.6"/>
+
+            <!-- Wall clock -->
+            <g id="wallClock" transform="translate(1150 140)">
+              <ellipse cx="6" cy="10" rx="74" ry="74" fill="url(#wallShadow)"/>
+              <circle r="72" fill="#1f2937"/>
+              <circle r="66" fill="#fbfbf8"/>
+              <circle r="66" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+              <g id="clockTicks"></g>
+              <text y="-26" text-anchor="middle" font-family="Inter" font-size="7" font-weight="700" fill="#64748b" letter-spacing="1">QUARTZ</text>
+              <g id="hourHand"><rect x="-2.5" y="-36" width="5" height="42" rx="2.5" fill="#111827"/></g>
+              <g id="minHand"><rect x="-1.8" y="-54" width="3.6" height="62" rx="1.8" fill="#111827"/></g>
+              <g id="secHand"><rect x="-0.6" y="-58" width="1.2" height="72" fill="#dc2626"/><circle r="3.5" fill="#dc2626"/></g>
+              <circle r="1.4" fill="#fbbf24"/>
+            </g>
+
+            <!-- Ethics notice pinned on wall -->
+            <g transform="translate(1022 250) rotate(-2)">
+              <rect x="3" y="4" width="96" height="120" fill="#000" opacity="0.12"/>
+              <rect width="96" height="120" fill="#fffdf6"/>
+              <circle cx="48" cy="6" r="3.5" fill="#dc2626"/>
+              <text x="48" y="22" text-anchor="middle" font-family="Inter" font-size="7.5" font-weight="800" fill="#0a1f44">IAEC / CCSEA</text>
+              <text x="48" y="32" text-anchor="middle" font-family="Inter" font-size="6" fill="#334155">Approved Protocol</text>
+              <g stroke="#cbd5e1" stroke-width="2"><line x1="10" y1="44" x2="86" y2="44"/><line x1="10" y1="54" x2="80" y2="54"/><line x1="10" y1="64" x2="84" y2="64"/><line x1="10" y1="74" x2="70" y2="74"/><line x1="10" y1="84" x2="82" y2="84"/></g>
+              <text x="48" y="104" text-anchor="middle" font-family="Inter" font-size="6.5" font-weight="700" fill="#681197">Replace • Reduce • Refine</text>
+            </g>
+
+            <!-- ========== ROTA-ROD APPARATUS ========== -->
+            <ellipse cx="500" cy="590" rx="500" ry="26" fill="url(#contactShadow)"/>
+            <g id="app" transform="translate(16 52)">
+              <!-- Power cord -->
+              <path d="M 948 470 C 990 480, 985 520, 1010 536 S 1060 548, 1100 560" fill="none" stroke="#0b0f14" stroke-width="6" stroke-linecap="round"/>
+              <path d="M 948 470 C 990 480, 985 520, 1010 536 S 1060 548, 1100 560" fill="none" stroke="#4b5563" stroke-width="1.2" stroke-linecap="round" opacity="0.6" transform="translate(-1 -1.5)"/>
+
+              <!-- Cabinet: top and side faces give depth -->
+              <polygon points="30,24 930,24 952,6 52,6" fill="url(#cabTopGrad)" stroke="#8b95a3" stroke-width="1"/>
+              <polygon points="86,22 888,22 902,11 100,11" fill="#1e2733"/>
+              <polygon points="930,24 952,6 952,512 930,530" fill="url(#cabSideGrad)" stroke="#6b7583" stroke-width="1"/>
+              <g id="sideVents"></g>
+
+              <!-- Front face -->
+              <rect x="30" y="24" width="900" height="506" rx="6" fill="url(#cabinetGrad)" stroke="#7b8594" stroke-width="1.5"/>
+              <rect x="30" y="24" width="900" height="506" rx="6" fill="url(#brushed)" opacity="0.55"/>
+              <rect x="32" y="26" width="896" height="2" fill="#fff" opacity="0.8"/>
+              <text x="56" y="50" font-family="JetBrains Mono" font-size="12" font-weight="700" fill="#334155" letter-spacing="2">ROTA-ROD TREADMILL • MODEL RR-6C</text>
+              <text x="904" y="50" font-family="JetBrains Mono" font-size="10" fill="#64748b" text-anchor="end" letter-spacing="1">6 COMPARTMENT • 3 cm KNURLED ROD • 5–40 RPM</text>
+
+              <!-- Chamber (recessed box) -->
+              <g clip-path="url(#chamberClip)">
+                <rect x="70" y="64" width="820" height="262" fill="url(#wallGrad)"/>
+                <!-- wall shadow cast by the rod -->
+                <rect x="84" y="168" width="792" height="26" fill="url(#wallShadow)" opacity="0.9"/>
+                <polygon points="70,64 88,78 88,312 70,326" fill="url(#sideWallL)"/>
+                <polygon points="890,64 872,78 872,312 890,326" fill="url(#sideWallR)"/>
+                <polygon points="70,64 890,64 872,78 88,78" fill="#9aa4b1"/>
+                <!-- floor in perspective -->
+                <polygon points="88,290 872,290 890,326 70,326" fill="url(#floorGrad)"/>
+                <g id="laneWalls"></g>
+                <g id="laneBadges"></g>
+                <g id="wallShadows"></g>
+                <g id="plates"></g>
+                <g id="behindLayer"></g>
+                <!-- Rod -->
+                <rect x="84" y="135" width="792" height="30" fill="#bcc4ce"/>
+                <rect id="knurlRect" x="84" y="135" width="792" height="30" fill="url(#knurl)"/>
+                <g id="rodRidges" clip-path="url(#rodClip)"></g>
+                <rect x="84" y="135" width="792" height="30" fill="url(#rodShade)"/>
+                <rect x="70" y="128" width="18" height="44" rx="3" fill="url(#collarGrad)"/>
+                <rect x="872" y="128" width="18" height="44" rx="3" fill="url(#collarGrad)"/>
+                <g id="discs"></g>
+                <g id="miceLayer"></g>
+                <rect x="70" y="64" width="820" height="12" fill="#000" opacity="0.1"/>
+              </g>
+              <rect x="70" y="64" width="820" height="262" rx="4" fill="none" stroke="#6f7988" stroke-width="3"/>
+              <rect x="68" y="62" width="824" height="266" rx="5" fill="none" stroke="#fff" stroke-opacity="0.5" stroke-width="1"/>
+
+              <!-- Caution sticker -->
+              <g transform="translate(838 34)">
+                <rect width="58" height="22" rx="2" fill="#facc15" stroke="#a16207" stroke-width="0.6"/>
+                <path d="M7 17 L13 6 L19 17 Z" fill="none" stroke="#111" stroke-width="1.2"/>
+                <text x="13" y="16" font-family="Inter" font-size="7" font-weight="900" fill="#111" text-anchor="middle">!</text>
+                <text x="39" y="10" font-family="Inter" font-size="5.5" font-weight="800" fill="#111" text-anchor="middle">CAUTION</text>
+                <text x="39" y="17" font-family="Inter" font-size="4.6" fill="#111" text-anchor="middle">MOVING PARTS</text>
+              </g>
+
+              <!-- Front control panel -->
+              <rect x="44" y="334" width="872" height="184" rx="8" fill="url(#panelGrad)" stroke="#0a1f44" stroke-width="1.5"/>
+              <rect x="44" y="334" width="872" height="184" rx="8" fill="url(#brushed)" opacity="0.25"/>
+              <rect x="48" y="337" width="864" height="2" fill="#fff" opacity="0.14"/>
+              <g fill="url(#screwGrad)" stroke="#334155" stroke-width="0.6">
+                <circle cx="56" cy="346" r="4"/><circle cx="904" cy="346" r="4"/><circle cx="56" cy="506" r="4"/><circle cx="904" cy="506" r="4"/>
+              </g>
+              <g stroke="#334155" stroke-width="1">
+                <line x1="53.5" y1="346" x2="58.5" y2="346"/><line x1="901.5" y1="346" x2="906.5" y2="346"/><line x1="53.5" y1="506" x2="58.5" y2="506"/><line x1="901.5" y1="506" x2="906.5" y2="506"/>
+              </g>
+              <g id="lcds"></g>
+              <line x1="60" y1="418" x2="900" y2="418" stroke="#0b1220" stroke-width="2"/>
+              <line x1="60" y1="420" x2="900" y2="420" stroke="#ffffff" stroke-opacity="0.07" stroke-width="1"/>
+
+              <!-- Mains rocker -->
+              <text x="96" y="440" font-family="JetBrains Mono" font-size="9" fill="#94a3b8" text-anchor="middle" letter-spacing="1">MAINS</text>
+              <g class="svg-btn" onclick="togglePower()">
+                <rect x="72" y="448" width="48" height="52" rx="6" fill="#0b0f16" stroke="#475569"/>
+                <rect id="rocker" x="78" y="454" width="36" height="40" rx="3" fill="#7f1d1d"/>
+                <rect id="rockerTop" x="78" y="454" width="36" height="20" rx="3" fill="#ef4444" opacity="0.35"/>
+                <text x="96" y="468" font-family="JetBrains Mono" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">I</text>
+                <text x="96" y="488" font-family="JetBrains Mono" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">O</text>
+              </g>
+              <circle id="pwrLed" cx="140" cy="474" r="5" fill="#334155" stroke="#0a1f44"/>
+              <text x="140" y="494" font-family="JetBrains Mono" font-size="7" fill="#94a3b8" text-anchor="middle">PWR</text>
+
+              <!-- RPM display -->
+              <text x="240" y="440" font-family="JetBrains Mono" font-size="9" fill="#94a3b8" text-anchor="middle" letter-spacing="1">SPEED (RPM)</text>
+              <rect x="178" y="446" width="124" height="56" rx="6" fill="#050505" stroke="#475569" stroke-width="2"/>
+              <text x="286" y="487" class="seg" font-size="30" fill="#ef4444" opacity="0.08" text-anchor="end">88</text>
+              <text id="rpmDisp" x="286" y="487" class="seg" font-size="30" fill="#ef4444" text-anchor="end" filter="url(#glow)"></text>
+              <rect x="181" y="449" width="118" height="50" rx="4" fill="url(#glassGlare)" pointer-events="none"/>
+
+              <!-- Speed knob -->
+              <text x="375" y="436" font-family="JetBrains Mono" font-size="9" fill="#94a3b8" text-anchor="middle" letter-spacing="1">SET SPEED</text>
+              <g id="knobTicks"></g>
+              <g id="knob" style="cursor: grab;">
+                <circle cx="375" cy="476" r="27" fill="#000" opacity="0.35"/>
+                <circle cx="375" cy="474" r="27" fill="url(#knobGrad)" stroke="#0b0f16" stroke-width="2"/>
+                <circle cx="375" cy="474" r="27" fill="none" stroke="#6b7280" stroke-width="2.5" stroke-dasharray="1.6 2.4"/>
+                <circle cx="375" cy="474" r="18" fill="url(#knobGrad)" stroke="#111827"/>
+                <g id="knobInd"><rect x="373.5" y="449" width="3" height="15" rx="1.5" fill="#f8fafc"/></g>
+              </g>
+
+              <!-- Cut-off display -->
+              <text x="500" y="440" font-family="JetBrains Mono" font-size="9" fill="#94a3b8" text-anchor="middle" letter-spacing="1">CUT-OFF (s)</text>
+              <rect x="440" y="446" width="120" height="56" rx="6" fill="#050505" stroke="#475569" stroke-width="2"/>
+              <text x="544" y="487" class="seg" font-size="30" fill="#f59e0b" opacity="0.08" text-anchor="end">888</text>
+              <text id="cutDisp" x="544" y="487" class="seg" font-size="30" fill="#f59e0b" text-anchor="end" filter="url(#glow)"></text>
+              <rect x="443" y="449" width="114" height="50" rx="4" fill="url(#glassGlare)" pointer-events="none"/>
+
+              <!-- Push buttons -->
+              <g class="svg-btn" onclick="startTrial()">
+                <circle cx="615" cy="472" r="25" fill="#0b0f16" stroke="#475569"/>
+                <circle cx="615" cy="472" r="19" fill="url(#btnGreen)"/>
+              </g>
+              <text x="615" y="512" font-family="JetBrains Mono" font-size="9" font-weight="700" fill="#cbd5e1" text-anchor="middle">START</text>
+              <g class="svg-btn" onclick="stopTrial()">
+                <circle cx="685" cy="472" r="25" fill="#0b0f16" stroke="#475569"/>
+                <circle cx="685" cy="472" r="19" fill="url(#btnRed)"/>
+              </g>
+              <text x="685" y="512" font-family="JetBrains Mono" font-size="9" font-weight="700" fill="#cbd5e1" text-anchor="middle">STOP</text>
+              <g class="svg-btn" onclick="resetDevice()">
+                <circle cx="755" cy="472" r="25" fill="#0b0f16" stroke="#475569"/>
+                <circle cx="755" cy="472" r="19" fill="url(#btnAmber)"/>
+              </g>
+              <text x="755" y="512" font-family="JetBrains Mono" font-size="9" font-weight="700" fill="#cbd5e1" text-anchor="middle">RESET</text>
+
+              <!-- Brand plate -->
+              <rect x="806" y="446" width="98" height="56" rx="4" fill="#d6dce3" stroke="#64748b"/>
+              <rect x="806" y="446" width="98" height="56" rx="4" fill="url(#brushed)" opacity="0.6"/>
+              <text x="855" y="466" font-family="Inter" font-size="13" font-weight="800" fill="#681197" text-anchor="middle">XPRISM</text>
+              <text x="855" y="479" font-family="JetBrains Mono" font-size="7" font-weight="700" fill="#334155" text-anchor="middle" letter-spacing="1">INSTRUMENTS</text>
+              <text x="855" y="494" font-family="JetBrains Mono" font-size="6.5" fill="#475569" text-anchor="middle">SR. 2026-0417 • 230V</text>
+
+              <!-- Rubber feet -->
+              <rect x="60" y="528" width="50" height="8" rx="2" fill="#111827"/>
+              <rect x="850" y="528" width="50" height="8" rx="2" fill="#111827"/>
+            </g>
+
+            <!-- ========== HOME CAGE (click to place mice) ========== -->
+            <g id="homeCage" class="svg-btn" onclick="placeMice()" transform="translate(0 -26)">
+              <title>Home cage — click to place mice on the rod</title>
+              <ellipse cx="1140" cy="590" rx="150" ry="14" fill="url(#contactShadow)"/>
+              <!-- back wall of tub -->
+              <polygon points="1008,470 1272,470 1262,582 1018,582" fill="url(#cageTub)" stroke="#94a3b8" stroke-width="1.2"/>
+              <polygon points="1022,548 1258,548 1262,582 1018,582" fill="url(#bedding)"/>
+              <g id="beddingSpeckle"></g>
+              <g id="cageMice"></g>
+              <!-- front glare on polycarbonate -->
+              <polygon points="1030,478 1060,478 1046,578 1026,578" fill="#fff" opacity="0.18"/>
+              <polygon points="1008,470 1272,470 1262,582 1018,582" fill="none" stroke="#e2e8f0" stroke-width="1.5" opacity="0.7"/>
+              <!-- wire lid -->
+              <rect x="1000" y="458" width="280" height="14" rx="3" fill="url(#steel)" stroke="#6b7280"/>
+              <g id="lidBars" stroke="#9ca3af" stroke-width="1.6"></g>
+              <!-- cage card -->
+              <g transform="translate(1176 482)">
+                <rect width="78" height="44" rx="2" fill="#fef3c7" stroke="#d97706" stroke-width="0.8"/>
+                <text x="39" y="11" text-anchor="middle" font-family="Inter" font-size="6.5" font-weight="800" fill="#7c2d12">CAGE RR-04</text>
+                <text x="5" y="22" font-family="JetBrains Mono" font-size="5.5" fill="#451a03">Swiss albino mice</text>
+                <text x="5" y="30" font-family="JetBrains Mono" font-size="5.5" fill="#451a03">n = 6 • 20–28 g</text>
+                <text id="cageCount" x="5" y="38" font-family="JetBrains Mono" font-size="5.5" font-weight="700" fill="#b45309">In cage: 6</text>
+              </g>
+            </g>
+
+            <!-- ========== DOSING TRAY (click syringe to inject) ========== -->
+            <g transform="translate(1062 598)">
+              <ellipse cx="80" cy="12" rx="92" ry="10" fill="url(#contactShadow)"/>
+              <path d="M 0 0 C 0 -14, 40 -14, 80 -8 C 120 -14, 160 -14, 160 0 C 160 14, 120 16, 80 10 C 40 16, 0 14, 0 0 Z" fill="url(#steel)" stroke="#6b7280"/>
+              <!-- vial -->
+              <g transform="translate(22 -44)">
+                <rect x="0" y="0" width="22" height="9" rx="2" fill="#475569"/>
+                <rect x="2" y="9" width="18" height="5" fill="#94a3b8"/>
+                <rect x="0" y="14" width="22" height="34" rx="4" fill="url(#vialGlass)" stroke="#94a3b8" stroke-width="0.8"/>
+                <rect x="1.5" y="30" width="19" height="16" rx="3" fill="#fde68a" opacity="0.55"/>
+                <rect x="0.5" y="18" width="21" height="14" fill="#fff" stroke="#cbd5e1" stroke-width="0.5"/>
+                <text id="vialLabel" x="11" y="24.5" text-anchor="middle" font-family="Inter" font-size="3.9" font-weight="800" fill="#1e3a8a">DIAZEPAM</text>
+                <text id="vialConc" x="11" y="30" text-anchor="middle" font-family="JetBrains Mono" font-size="3.8" fill="#334155">1 mg/mL</text>
+              </g>
+              <!-- syringe -->
+              <g id="traySyringe" class="svg-btn" onclick="injectDrug()" transform="translate(56 -8) rotate(-8)">
+                <title>1 mL syringe — click to inject the drug i.p.</title>
+                <rect x="0" y="-4" width="58" height="8" rx="1.5" fill="#f8fafc" stroke="#94a3b8" stroke-width="0.8" opacity="0.95"/>
+                <g stroke="#64748b" stroke-width="0.5">
+                  <line x1="10" y1="-4" x2="10" y2="-1"/><line x1="20" y1="-4" x2="20" y2="-1"/><line x1="30" y1="-4" x2="30" y2="-1"/><line x1="40" y1="-4" x2="40" y2="-1"/><line x1="50" y1="-4" x2="50" y2="-1"/>
+                </g>
+                <rect id="syrFluid" x="30" y="-3" width="27" height="6" fill="#fbbf24" opacity="0.5"/>
+                <g id="syrPlunger"><rect x="-16" y="-1.5" width="46" height="3" fill="#e2e8f0" stroke="#94a3b8" stroke-width="0.5"/><rect x="-20" y="-6" width="4" height="12" rx="1" fill="#e2e8f0" stroke="#94a3b8" stroke-width="0.5"/><rect x="28" y="-3.5" width="3" height="7" fill="#1f2937"/></g>
+                <rect x="58" y="-2" width="7" height="4" fill="#38bdf8"/>
+                <line x1="65" y1="0" x2="84" y2="0" stroke="#9ca3af" stroke-width="1"/>
+              </g>
+              <!-- cotton swab -->
+              <ellipse cx="128" cy="-2" rx="9" ry="5" fill="#fff" stroke="#e5e7eb"/>
+              <text x="80" y="30" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#94a3b8">DOSING TRAY</text>
+            </g>
+          </svg>
+
+          <!-- Bottom Action Prompt Notification Banner -->
+          <div id="actionFeedback" class="absolute bottom-2 left-4 right-4 bg-slate-900/90 text-white py-2 px-4 rounded-lg text-xs flex items-center justify-between backdrop-blur-md shadow-lg border border-slate-700 pointer-events-none z-30">
+            <div class="flex items-center space-x-2">
+              <span id="feedbackIcon" class="text-teal-400 font-bold text-sm">ℹ</span>
+              <span id="feedbackText">Switch ON the MAINS rocker on the rota-rod front panel to begin.</span>
+            </div>
+            <span id="phaseIndicator" class="text-[11px] font-mono text-slate-400 hidden sm:inline">Phase: Setup</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT SIDE: ANIMAL TRAY & DOSING -->
+      <div class="w-full lg:w-72 bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-col justify-between shrink-0 overflow-y-auto">
+        <div class="space-y-3">
+          <div class="border-b pb-2">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Animal Holding Tray</h3>
+            <p class="text-[11px] text-slate-500">Albino mice, n = 6 (one per compartment)</p>
+          </div>
+
+          <div id="trayCards" class="grid grid-cols-2 gap-1.5"></div>
+
+          <div class="space-y-1.5 pt-2 border-t border-slate-200">
+            <div class="flex items-center justify-between text-[11px]">
+              <span class="text-slate-500">Rod speed</span>
+              <span class="font-mono font-bold text-slate-800"><span id="rpmLabel">20</span> rpm</span>
+            </div>
+            <input id="rpmSlider" type="range" min="5" max="40" value="20" oninput="setRpm(+this.value)" class="w-full accent-teal-600">
+            <div class="flex items-center justify-between text-[11px]">
+              <span class="text-slate-500">Cut-off time</span>
+              <select id="cutSelect" onchange="setCutoff(+this.value)" class="border border-slate-300 rounded px-1.5 py-0.5 text-[11px] font-mono">
+                <option value="180">180 s (3 min)</option>
+                <option value="300">300 s (5 min)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="space-y-1.5 pt-2 border-t border-slate-200">
+            <button onclick="placeMice()" class="w-full py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-xs font-semibold shadow transition">
+              🐁 Place Mice on Rod
+            </button>
+            <button id="btnInject" onclick="injectDrug()" class="w-full py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-lg text-xs font-semibold transition flex items-center justify-center space-x-1.5">
+              <svg id="syringeIcon" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2l4 4M17 7l3-3M19 9l-8.7 8.7a2 2 0 01-2.8 0l-1.2-1.2a2 2 0 010-2.8L15 5M9 11l4 4M5 19l-3 3M14 4l6 6"/></svg>
+              <span>Inject Drug i.p. (all 6)</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-200 space-y-2 mt-3">
+          <button onclick="autoRunTrial()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow transition flex items-center justify-center space-x-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <span>Instant-Run Current Trial</span>
+          </button>
+          <button onclick="runFullProtocol()" class="w-full py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-medium transition text-center">
+            ⚡ Complete Full Protocol
+          </button>
+          <button onclick="switchTab('observation')" class="w-full py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium transition text-center">
+            Open Observation Sheet →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- TAB 3: OBSERVATION SHEET, STATISTICS & GRAPH -->
+    <!-- ============================================== -->
+    <div id="viewObservation" class="hidden flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between overflow-y-auto">
+      <div class="space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b pb-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Observation Table: Rota-Rod Fall-off Time</h2>
+            <p class="text-xs text-slate-500">Drug: <span id="lblObsDrug" class="font-semibold text-indigo-700">Diazepam 4 mg/kg i.p.</span> • Rod speed: <span id="lblObsRpm" class="font-mono">20</span> rpm • Cut-off: <span id="lblObsCut" class="font-mono">180</span> s</p>
+          </div>
+          <div class="flex items-center space-x-3 no-print">
+            <button onclick="resetObservationData()" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50 text-xs font-medium text-slate-700 transition">Reset Data</button>
+            <button onclick="loadReferenceDataset()" class="px-3.5 py-1.5 rounded-lg bg-teal-50 border border-teal-300 hover:bg-teal-100 text-teal-800 text-xs font-semibold transition">Load Textbook Reference Dataset</button>
+          </div>
+        </div>
+
+        <div class="grid lg:grid-cols-5 gap-4">
+          <div class="lg:col-span-3 border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+            <table class="w-full text-xs text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-50 text-slate-600 border-b border-slate-200 font-medium">
+                  <th class="p-2 border-r text-center">Mouse</th>
+                  <th class="p-2 border-r text-center">Body Wt (g)</th>
+                  <th class="p-2 border-r text-center">Dose Vol (mL)</th>
+                  <th class="p-2 border-r text-center">Basal Fall-off (s)</th>
+                  <th class="p-2 border-r text-center">Post-drug Fall-off (s)</th>
+                  <th class="p-2 text-center">% Decrease</th>
+                </tr>
+              </thead>
+              <tbody id="tblBody" class="divide-y divide-slate-200 font-mono text-[11px]"></tbody>
+              <tfoot>
+                <tr class="bg-slate-100 font-bold text-slate-800">
+                  <td colspan="3" class="p-2 border-r text-center font-sans">Mean &plusmn; SEM</td>
+                  <td id="lblMeanBasal" class="p-2 border-r text-center font-mono text-slate-700">--</td>
+                  <td id="lblMeanPost" class="p-2 border-r text-center font-mono text-indigo-700">--</td>
+                  <td id="lblMeanPct" class="p-2 text-center font-mono text-rose-700">--</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <div class="lg:col-span-2 border border-slate-200 rounded-xl p-3 shadow-sm">
+            <div class="text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">Fall-off Time (Mean ± SEM)</div>
+            <svg id="chart" viewBox="0 0 360 250" class="w-full"></svg>
+          </div>
+        </div>
+
+        <div class="grid sm:grid-cols-3 gap-4">
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+            <div class="text-[10px] text-slate-500 uppercase font-semibold font-mono">% Decrease in Motor Coordination</div>
+            <div id="lblPct" class="text-2xl font-extrabold font-mono text-rose-600 mt-1">-- %</div>
+            <p class="text-[11px] text-slate-500 mt-1">((Basal − Post) / Basal) × 100, from group means</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+            <div class="text-[10px] text-slate-500 uppercase font-semibold font-mono">Paired t-test (df = 5)</div>
+            <div id="lblT" class="text-2xl font-extrabold font-mono text-indigo-600 mt-1">t = --</div>
+            <p id="lblP" class="text-[11px] text-slate-500 mt-1">p value pending</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+            <div class="text-[10px] text-slate-500 uppercase font-semibold font-mono">Inference</div>
+            <div id="lblInference" class="text-sm font-bold text-slate-800 mt-1">Pending complete dataset</div>
+            <p id="lblInferenceDetail" class="text-[11px] text-slate-500 mt-1">Record basal and post-drug fall-off times for all 6 mice.</p>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl border border-teal-200 bg-teal-50/50 flex flex-wrap items-center justify-between gap-4 no-print">
+          <div class="space-y-1">
+            <h3 class="text-sm font-bold text-slate-800">Mystery Drug Diagnosis (Exam Deduction)</h3>
+            <p class="text-xs text-slate-600">Run the protocol with "Unknown Mystery Drug" selected, then identify the compound from its effect on fall-off time.</p>
+          </div>
+          <div class="flex items-center space-x-3">
+            <select id="unknownDrugDeduction" class="bg-white border border-slate-300 text-slate-800 text-xs rounded-lg px-3 py-2 font-medium shadow-sm focus:ring-2 focus:ring-teal-500">
+              <option value="">-- Choose deduced compound --</option>
+              <option value="diazepam">Diazepam (Benzodiazepine muscle relaxant)</option>
+              <option value="chlorpromazine">Chlorpromazine (Neuroleptic)</option>
+              <option value="phenobarbitone">Phenobarbitone (Barbiturate)</option>
+              <option value="caffeine">Caffeine (No motor incoordination)</option>
+            </select>
+            <button onclick="submitEvaluation()" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-lg shadow transition">Verify Deduction</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-6 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 mt-6 no-print">
+        <div class="text-xs text-slate-500 font-mono">XPRISM • Rota-Rod Practical Evaluation</div>
+        <div class="flex items-center space-x-3">
+          <button onclick="openModal('modalQuestions')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow transition">Answer Viva Questions</button>
+          <button onclick="openResultsModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow transition">Results & Summary</button>
+          <button onclick="window.print()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg shadow transition flex items-center space-x-1.5">
+            <svg class="w-3.5 h-3.5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+            <span>Print Report</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer no-print border-t border-slate-200 bg-white shrink-0">
+    <div class="max-w-7xl mx-auto px-6 py-3 text-xs text-slate-500 font-mono flex justify-between flex-wrap gap-2">
+      <span>XPRISM • Exp #04 • © 2026 Aaron Innovations • Dr. Vara Prasad Saka</span>
+      <span>Simulations are teaching aids that reduce animal use, in line with CCSEA 3Rs guidance. • <a href="../index.html" class="text-teal-700 hover:underline">All experiments</a></span>
+    </div>
+  </footer>
+
+  <!-- MODAL: VIVA-VOCE QUESTIONS -->
+  <div id="modalQuestions" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-base font-bold text-slate-800">Rota-Rod Viva-Voce Questions</h3>
+        <button onclick="closeModal('modalQuestions')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+      <div id="quizBody" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2 text-xs text-slate-700"></div>
+      <div class="pt-3 border-t flex justify-end space-x-2">
+        <button onclick="closeModal('modalQuestions')" class="px-4 py-2 border rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">Cancel</button>
+        <button onclick="evaluateQuestions()" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-lg shadow">Submit Answers</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: RESULTS -->
+  <div id="modalResults" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-base font-bold text-slate-800">Laboratory Results Summary</h3>
+        <button onclick="closeModal('modalResults')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div class="p-3 bg-slate-50 rounded-lg border flex justify-between"><span class="text-slate-600">Test Drug:</span><span id="resActiveDrug" class="font-bold text-slate-900 font-mono">--</span></div>
+        <div class="p-3 bg-slate-50 rounded-lg border flex justify-between"><span class="text-slate-600">% Decrease in Motor Coordination:</span><span id="resPct" class="font-bold text-rose-700 font-mono">--</span></div>
+        <div class="p-3 bg-slate-50 rounded-lg border flex justify-between"><span class="text-slate-600">Paired t-test:</span><span id="resStat" class="font-bold text-indigo-700 font-mono">--</span></div>
+        <div class="p-3 bg-slate-50 rounded-lg border flex justify-between"><span class="text-slate-600">Your Deduction (Unknown):</span><span id="resUserDeduction" class="font-bold text-indigo-700 font-mono">Not submitted</span></div>
+        <div class="p-3 bg-slate-50 rounded-lg border flex justify-between"><span class="text-slate-600">Correct Mystery Agent:</span><span id="resActualUnknown" class="font-bold text-emerald-700 font-mono">Hidden</span></div>
+        <div id="resExplanation" class="p-3 rounded-lg bg-teal-50 border border-teal-200 text-teal-900 leading-relaxed text-[11px]">Results explanation will appear here.</div>
+      </div>
+      <div class="pt-3 border-t flex justify-end">
+        <button onclick="closeModal('modalResults')" class="px-6 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg shadow">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- PHARMACOLOGICAL PROFILES DATABASE ---
+    // meanPost = typical post-drug fall-off time (s) at 20 rpm; Infinity = no motor deficit
+    const DRUG_PROFILES = {
+      diazepam: {
+        name: "Diazepam (4 mg/kg i.p.)", shortName: "Diazepam",
+        dose: 4, conc: 1.0, meanPost: 42,
+        desc: "Benzodiazepine. Positive allosteric modulator of GABA-A receptors; depresses spinal polysynaptic reflexes and supraspinal motor control, producing marked muscle relaxation and ataxia."
+      },
+      chlorpromazine: {
+        name: "Chlorpromazine HCl (3 mg/kg i.p.)", shortName: "Chlorpromazine",
+        dose: 3, conc: 0.5, meanPost: 61,
+        desc: "Phenothiazine neuroleptic. D2 blockade in the nigrostriatal pathway plus sedation (H1, α1 blockade) impairs motor coordination and grip."
+      },
+      phenobarbitone: {
+        name: "Phenobarbitone Sodium (40 mg/kg i.p.)", shortName: "Phenobarbitone",
+        dose: 40, conc: 4.0, meanPost: 78,
+        desc: "Barbiturate. Prolongs GABA-A chloride channel opening; produces sedation and dose-dependent ataxia, reducing rota-rod performance."
+      },
+      caffeine: {
+        name: "Caffeine Citrate (10 mg/kg i.p.)", shortName: "Caffeine",
+        dose: 10, conc: 1.0, meanPost: Infinity,
+        desc: "Methylxanthine CNS stimulant (adenosine antagonist). Has no muscle relaxant action, so mice keep their balance until the cut-off."
+      }
+    };
+
+    const mysteryKeys = Object.keys(DRUG_PROFILES);
+    const mysteryDrugKey = mysteryKeys[Math.floor(Math.random() * mysteryKeys.length)];
+
+    // --- RIG GEOMETRY (apparatus SVG units; the apparatus group sits at APP_X, APP_Y in the scene) ---
+    const N = 6;
+    const APP_X = 16, APP_Y = 52;
+    const ROD_X0 = 84, ROD_X1 = 876, ROD_TOP = 135, ROD_CY = 150, ROD_R = 15;
+    const LANE_W = (ROD_X1 - ROD_X0) / N;
+    const PLATE_Y = 300;
+    const laneC = i => ROD_X0 + LANE_W * (i + 0.5);
+    const svgNS = "http://www.w3.org/2000/svg";
+
+    // --- STATE ---
+    const S = {
+      power: false,
+      rpm: 20, rpmCur: 0, rodOn: false, rodAngle: 0,
+      cutoff: 180,
+      simSpeed: 1,
+      drugKey: "diazepam", isUnknown: false,
+      phase: "setup",          // setup | basal | dose | absorb | post | done
+      basalRpm: null,
+      absorbLeft: 0,
+      trial: null,             // { phase, t, running }
+      labClock: 10 * 3600 + 14 * 60 + 20,
+      soundOn: true
+    };
+
+    const mice = [24.6, 22.8, 26.1, 23.4, 25.2, 21.9].map((wt, i) => ({
+      id: i + 1, wt, skill: Math.exp(gauss() * 0.1), dosed: false, basal: null, post: null
+    }));
+
+    const lanes = Array.from({ length: N }, (_, i) => ({
+      state: "empty", T: Infinity, tStop: 0, x: 0, y: 0, vy: 0, rot: 0, sy: 1,
+      placeT: 0, slipT: 0, landT: 0, ph: Math.random() * 6.28, dir: 1,
+      scale: 1.22 * Math.cbrt(mice[i].wt / 24)
+    }));
+
+    function gauss() {
+      let u = 0, v = 0;
+      while (u === 0) u = Math.random();
+      while (v === 0) v = Math.random();
+      return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    }
+    // Deterministic RNG so each mouse keeps the same fur pattern
+    function seeded(a) {
+      return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+    }
+
+    // --- AUDIO ---
+    let synth = null, hum = null;
+    function playBeep(type) {
+      if (!S.soundOn || !window.Tone) return;
+      try {
+        if (!synth) { synth = new Tone.PolySynth(Tone.Synth).toDestination(); synth.volume.value = -14; }
+        if (Tone.context.state !== 'running') Tone.start();
+        if (type === 'click') synth.triggerAttackRelease("G5", "64n");
+        if (type === 'fall') synth.triggerAttackRelease(["A5", "E6"], "16n");
+        if (type === 'cut') synth.triggerAttackRelease("C6", "32n");
+        if (type === 'complete') synth.triggerAttackRelease(["C5", "E5", "G5"], "8n");
+        if (type === 'inject') synth.triggerAttackRelease("A4", "32n");
+      } catch (e) { }
+    }
+    function updateHum() {
+      if (!window.Tone || !synth) return;
+      try {
+        if (!hum) { hum = new Tone.Oscillator(60, "sawtooth").toDestination(); hum.volume.value = -80; hum.start(); }
+        const on = S.soundOn && S.rpmCur > 0.5;
+        hum.volume.value = on ? -42 : -80;
+        hum.frequency.value = 40 + S.rpmCur * 3;
+      } catch (e) { }
+    }
+    document.getElementById('audioToggleBtn').addEventListener('click', () => {
+      S.soundOn = !S.soundOn;
+      document.getElementById('audioToggleBtn').classList.toggle('bg-teal-100', S.soundOn);
+      showFeedback(S.soundOn ? "Audio feedback enabled" : "Audio muted");
+    });
+
+    // --- BUILD STATIC SVG PARTS ---
+    function el(tag, attrs, parent) {
+      const e = document.createElementNS(svgNS, tag);
+      for (const k in attrs) e.setAttribute(k, attrs[k]);
+      if (parent) parent.appendChild(e);
+      return e;
+    }
+
+    // Brushed-metal texture drawn once on a canvas (cheaper than an SVG turbulence filter every frame)
+    function makeBrushedTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 256;
+      const ctx = c.getContext('2d');
+      const img = ctx.createImageData(256, 256);
+      for (let y = 0; y < 256; y++) {
+        let row = Math.random();
+        for (let x = 0; x < 256; x++) {
+          row = row * 0.985 + Math.random() * 0.015;
+          const v = row * 0.7 + Math.random() * 0.3;
+          const k = (y * 256 + x) * 4;
+          const g = v > 0.5 ? 255 : 0;
+          img.data[k] = img.data[k + 1] = img.data[k + 2] = g;
+          img.data[k + 3] = Math.abs(v - 0.5) * 70;
+        }
+      }
+      ctx.putImageData(img, 0, 0);
+      document.getElementById('brushedImg').setAttribute('href', c.toDataURL());
+    }
+
+    // Tapered tail with marker-pen identification bands (one band per mouse number)
+    function tailPath(bands) {
+      const P = [[0, -4], [6, 20], [-7, 42], [5, 68]];
+      const bez = t => {
+        const u = 1 - t;
+        return [0, 1].map(k => u * u * u * P[0][k] + 3 * u * u * t * P[1][k] + 3 * u * t * t * P[2][k] + t * t * t * P[3][k]);
+      };
+      const L = [], R = [];
+      for (let s = 0; s <= 24; s++) {
+        const t = s / 24, p = bez(t), q = bez(Math.min(1, t + 0.01)), p0 = bez(Math.max(0, t - 0.01));
+        const dx = q[0] - p0[0], dy = q[1] - p0[1], len = Math.hypot(dx, dy) || 1;
+        const w = 1.9 * (1 - t) + 0.35;
+        L.push([p[0] - dy / len * w, p[1] + dx / len * w]);
+        R.push([p[0] + dy / len * w, p[1] - dx / len * w]);
+      }
+      const pts = L.concat(R.reverse()).map(p => p.map(v => v.toFixed(2)).join(' '));
+      let out = `<path d="M ${pts.join(' L ')} Z" fill="url(#tailGrad)"/>`;
+      for (let b = 0; b < bands; b++) {
+        const t = 0.5 + b * 0.045, p = bez(t), q = bez(t + 0.01);
+        const dx = q[0] - p[0], dy = q[1] - p[1], len = Math.hypot(dx, dy) || 1, w = 1.9 * (1 - t) + 0.6;
+        out += `<line x1="${p[0] - dy / len * w}" y1="${p[1] + dx / len * w}" x2="${p[0] + dy / len * w}" y2="${p[1] - dx / len * w}" stroke="#1f2937" stroke-width="0.9" stroke-opacity="0.75"/>`;
+      }
+      return out;
+    }
+
+    // Albino mouse seen from the front, origin = where the feet meet the rod top
+    function mouseMarkup(i) {
+      const rnd = seeded(97 + i * 13);
+      let fur = '';
+      for (let k = 0; k < 46; k++) {
+        const x = (rnd() * 2 - 1) * 15, y = -6 - rnd() * 30;
+        if ((x / 16.5) ** 2 + ((y + 21) / 16) ** 2 > 0.9) continue;
+        const s = x > 0 ? 1 : -1;
+        fur += `<path d="M ${x.toFixed(1)} ${y.toFixed(1)} q ${(s * 0.9).toFixed(1)} 1 ${(s * 1.6).toFixed(1)} 2.2" />`;
+      }
+      const paw = s => `
+        <g class="${s < 0 ? 'pawL' : 'pawR'}">
+          <path d="M ${s * 9} -9 C ${s * 8.5} -5, ${s * 7.5} -2, ${s * 6} 0.4" stroke="#f1ece9" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+          <ellipse cx="${s * 5.6}" cy="1.3" rx="2.7" ry="1.7" fill="#f2a6b8"/>
+          <circle cx="${s * 7.4}" cy="2.9" r="0.7" fill="#e88ea5"/><circle cx="${s * 6.1}" cy="3.4" r="0.7" fill="#e88ea5"/>
+          <circle cx="${s * 4.7}" cy="3.3" r="0.7" fill="#e88ea5"/><circle cx="${s * 3.6}" cy="2.7" r="0.65" fill="#e88ea5"/>
+        </g>`;
+      const ear = s => `
+        <g transform="rotate(${s * 24} ${s * 10.5} -29)">
+          <ellipse cx="${s * 10.5}" cy="-29" rx="6.6" ry="7.8" fill="#f7eef0" />
+          <ellipse cx="${s * 10.5}" cy="-28.6" rx="5.3" ry="6.5" fill="url(#earGrad)"/>
+          <path d="M ${s * 10.5} -23.5 q ${s * -1} -3 ${s * 0.4} -9 M ${s * 10.5} -26 q ${s * 1.6} -2 ${s * 2.4} -5" stroke="#d97d96" stroke-width="0.35" fill="none" opacity="0.7"/>
+        </g>`;
+      const whiskers = s => [-12.5, -9.5, -6.5, -3.5].map((ty, k) =>
+        `<path d="M ${s * 2} -8.6 Q ${s * 10} ${-9.5 + k * 0.9}, ${s * (18 - k * 0.8)} ${ty}" />`).join('');
+      return `
+        <g class="tailCurl" style="display:none"><path d="M 8 -2 C 16 2, 24 1, 30 4 C 34 6, 37 5, 40 2" fill="none" stroke="url(#tailGrad)" stroke-width="1.7" stroke-linecap="round"/></g>
+        <g class="hind">
+          <ellipse cx="-13.5" cy="-1.2" rx="6" ry="2.3" fill="#f2a6b8"/>
+          <ellipse cx="13.5" cy="-1.2" rx="6" ry="2.3" fill="#f2a6b8"/>
+        </g>
+        <g class="bob">
+          <path d="M -17 -4 C -21.5 -20, -15 -37, 0 -38.5 C 15 -37, 21.5 -20, 17 -4 C 10 0, -10 0, -17 -4 Z" fill="url(#furGrad)" stroke="#dcd5d1" stroke-width="0.5"/>
+          <path d="M -17 -4 C -21.5 -20, -15 -37, 0 -38.5 C 15 -37, 21.5 -20, 17 -4 C 10 0, -10 0, -17 -4 Z" fill="url(#bodyShade)"/>
+          <g stroke="#d6ccc8" stroke-width="0.45" fill="none" opacity="0.8">${fur}</g>
+          <g class="head">
+            ${ear(-1)}${ear(1)}
+            <path d="M -11.5 -27 C -6 -31.5, 6 -31.5, 11.5 -27 C 12.5 -20, 7.5 -12.5, 2.2 -7.6 C 1 -6.8, -1 -6.8, -2.2 -7.6 C -7.5 -12.5, -12.5 -20, -11.5 -27 Z" fill="url(#furGrad)" stroke="#e2dbd8" stroke-width="0.45"/>
+            <path d="M -9 -17 Q -6 -12 -2.5 -9 M 9 -17 Q 6 -12 2.5 -9" stroke="#e4dcd8" stroke-width="0.6" fill="none"/>
+            <ellipse cx="-6.7" cy="-20.5" rx="2.1" ry="2.5" fill="url(#eyeGrad)" transform="rotate(-18 -6.7 -20.5)"/>
+            <ellipse cx="6.7" cy="-20.5" rx="2.1" ry="2.5" fill="url(#eyeGrad)" transform="rotate(18 6.7 -20.5)"/>
+            <circle cx="-7.3" cy="-21.4" r="0.65" fill="#fff"/><circle cx="6.1" cy="-21.4" r="0.65" fill="#fff"/>
+            <ellipse cx="0" cy="-7.6" rx="2" ry="1.35" fill="#ef9db2"/>
+            <circle cx="-0.7" cy="-7.4" r="0.35" fill="#b85a73"/><circle cx="0.7" cy="-7.4" r="0.35" fill="#b85a73"/>
+            <g class="whisk" stroke="#64748b" stroke-opacity="0.45" stroke-width="0.32" fill="none">${whiskers(-1)}${whiskers(1)}</g>
+          </g>
+        </g>
+        ${paw(-1)}${paw(1)}`;
+    }
+
+    // Small side-view mouse resting in the home cage
+    function cageMouseMarkup(flip) {
+      return `<g transform="scale(${flip ? -1 : 1} 1)">
+        <path d="M -14 2 C -24 6, -30 0, -36 4" fill="none" stroke="#efb3c3" stroke-width="1.4" stroke-linecap="round"/>
+        <ellipse cx="0" cy="0" rx="15" ry="8.5" fill="url(#furGrad)" stroke="#d6cfcb" stroke-width="0.5"/>
+        <ellipse cx="12" cy="-1" rx="7.5" ry="6" fill="url(#furGrad)"/>
+        <ellipse cx="9" cy="-6.5" rx="3.2" ry="3.8" fill="url(#earGrad)" stroke="#f7eef0" stroke-width="0.6"/>
+        <circle cx="15" cy="-2" r="1.2" fill="#c0142f"/>
+        <circle cx="19.5" cy="0.2" r="1" fill="#ef9db2"/>
+        <ellipse cx="6" cy="7.5" rx="2.5" ry="1" fill="#f2a6b8"/><ellipse cx="-7" cy="7.5" rx="3" ry="1" fill="#f2a6b8"/>
+      </g>`;
+    }
+
+    function buildScene() {
+      // Wall clock ticks
+      const ticks = document.getElementById('clockTicks');
+      for (let k = 0; k < 60; k++) {
+        const a = k * 6 * Math.PI / 180, big = k % 5 === 0;
+        el('line', { x1: Math.sin(a) * (big ? 52 : 57), y1: -Math.cos(a) * (big ? 52 : 57), x2: Math.sin(a) * 61, y2: -Math.cos(a) * 61, stroke: "#111827", "stroke-width": big ? 3 : 1 }, ticks);
+      }
+      [12, 3, 6, 9].forEach((n, k) => {
+        const a = k * Math.PI / 2;
+        const t = el('text', { x: Math.sin(a) * 42, y: -Math.cos(a) * 42 + 5, "text-anchor": "middle", "font-family": "Inter", "font-size": 14, "font-weight": 700, fill: "#111827" }, ticks);
+        t.textContent = n;
+      });
+      // Cage lid bars and bedding
+      const bars = document.getElementById('lidBars');
+      for (let x = 1012; x < 1276; x += 9) el('line', { x1: x, y1: 459, x2: x, y2: 471 }, bars);
+      const sp = document.getElementById('beddingSpeckle');
+      const rnd = seeded(7);
+      for (let k = 0; k < 140; k++) {
+        el('ellipse', { cx: 1024 + rnd() * 234, cy: 552 + rnd() * 28, rx: 1 + rnd() * 1.6, ry: 0.6 + rnd() * 0.8, fill: rnd() < 0.5 ? "#b48a4a" : "#f3e2bd", opacity: 0.8 }, sp);
+      }
+      // Side ventilation slots on the cabinet
+      const vents = document.getElementById('sideVents');
+      for (let k = 0; k < 8; k++) el('polygon', { points: `935,${300 + k * 14} 947,${290 + k * 14} 947,${294 + k * 14} 935,${304 + k * 14}`, fill: "#3f4955" }, vents);
+    }
+
+    function buildRig() {
+      const walls = document.getElementById('laneWalls');
+      const badges = document.getElementById('laneBadges');
+      const discs = document.getElementById('discs');
+      const plates = document.getElementById('plates');
+      const behind = document.getElementById('behindLayer');
+      const wallShadows = document.getElementById('wallShadows');
+      const miceLayer = document.getElementById('miceLayer');
+      const lcds = document.getElementById('lcds');
+      const ridges = document.getElementById('rodRidges');
+
+      for (let k = 0; k < 28; k++) el('line', { x1: ROD_X0, x2: ROD_X1, y1: ROD_CY, y2: ROD_CY, stroke: "#2f3640", "stroke-width": 1 }, ridges);
+
+      for (let b = 0; b <= N; b++) {
+        const x = ROD_X0 + LANE_W * b;
+        // lane partitions recede towards the back wall
+        el('polygon', { points: `${x - 2},232 ${x + 2},232 ${x + 2},${PLATE_Y + 26} ${x - 3},${PLATE_Y + 26}`, fill: "#5b6573", opacity: 0.7 }, walls);
+        el('ellipse', { cx: x + 3, cy: ROD_CY + 6, rx: 9, ry: 84, fill: "url(#wallShadow)" }, walls);
+        el('ellipse', { cx: x, cy: ROD_CY, rx: 6.5, ry: 84, fill: "url(#discGrad)" }, discs);
+        el('path', { d: `M ${x - 2.5} 74 Q ${x - 4} ${ROD_CY} ${x - 2.5} 226`, stroke: "#fff", "stroke-opacity": 0.28, "stroke-width": 1, fill: "none" }, discs);
+        el('ellipse', { cx: x, cy: ROD_CY, rx: 9.5, ry: 19, fill: "url(#collarGrad)" }, discs);
+        el('circle', { cx: x, cy: ROD_CY - 12, r: 1.4, fill: "#334155" }, discs);
+      }
+
+      for (let i = 0; i < N; i++) {
+        const cx = laneC(i);
+        el('circle', { cx, cy: 94, r: 10, fill: "#681197" }, badges);
+        el('circle', { cx: cx - 3, cy: 91, r: 4, fill: "#fff", opacity: 0.15 }, badges);
+        const t = el('text', { x: cx, y: 98, "text-anchor": "middle", "font-family": "JetBrains Mono", "font-size": 11, "font-weight": 700, fill: "#fff" }, badges);
+        t.textContent = i + 1;
+
+        // Hinged trip plate (top face in perspective + front edge)
+        const pg = el('g', { id: `plate${i}` }, plates);
+        el('ellipse', { cx, cy: PLATE_Y + 14, rx: 58, ry: 5, fill: "#000", opacity: 0.25 }, pg);
+        el('polygon', { points: `${cx - 56},${PLATE_Y + 2} ${cx + 56},${PLATE_Y + 2} ${cx + 49},${PLATE_Y - 9} ${cx - 49},${PLATE_Y - 9}`, fill: "url(#plateTop)", stroke: "#6b7583", "stroke-width": 0.6 }, pg);
+        el('rect', { x: cx - 56, y: PLATE_Y + 2, width: 112, height: 7, fill: "url(#plateFront)" }, pg);
+        el('circle', { cx: cx - 51, cy: PLATE_Y + 5.5, r: 2, fill: "#1f2937" }, pg);
+        el('circle', { cx: cx + 51, cy: PLATE_Y + 5.5, r: 2, fill: "#1f2937" }, pg);
+
+        el('ellipse', { id: `wsh${i}`, cx, cy: ROD_TOP, rx: 22, ry: 18, fill: "url(#wallShadow)", style: "display:none" }, wallShadows);
+
+        const tg = el('g', { id: `tail${i}`, style: "display:none" }, behind);
+        tg.innerHTML = tailPath(i + 1);
+
+        const mg = el('g', { id: `m${i}`, style: "display:none", class: "mouse-fade" }, miceLayer);
+        mg.innerHTML = mouseMarkup(i);
+
+        // Lane LCD timers with glass glare
+        el('rect', { x: cx - 52, y: 346, width: 104, height: 46, rx: 5, fill: "#0b0f16", stroke: "#475569", "stroke-width": 1.5 }, lcds);
+        el('rect', { x: cx - 47, y: 351, width: 94, height: 36, rx: 3, fill: "url(#lcdGrad)" }, lcds);
+        const ghost = el('text', { x: cx + 42, y: 379, "text-anchor": "end", class: "seg", "font-size": 22, fill: "#10b981", opacity: 0.08 }, lcds);
+        ghost.textContent = "888.8";
+        el('text', { id: `lcd${i}`, x: cx + 42, y: 379, "text-anchor": "end", class: "seg", "font-size": 22, fill: "#34d399", filter: "url(#glow)" }, lcds);
+        el('rect', { x: cx - 47, y: 351, width: 94, height: 36, rx: 3, fill: "url(#glassGlare)", "pointer-events": "none" }, lcds);
+        const lab = el('text', { x: cx - 8, y: 408, "text-anchor": "middle", "font-family": "JetBrains Mono", "font-size": 8.5, fill: "#94a3b8", "letter-spacing": 1 }, lcds);
+        lab.textContent = `LANE ${i + 1}`;
+        el('circle', { id: `led${i}`, cx: cx + 30, cy: 405, r: 4, fill: "#334155", stroke: "#0a1f44" }, lcds);
+      }
+
+      // Knob ticks (5..40 rpm mapped to -135..135 deg)
+      const ticks = document.getElementById('knobTicks');
+      for (let r = 5; r <= 40; r += 5) {
+        const a = rpmToAngle(r) * Math.PI / 180;
+        el('line', { x1: 375 + Math.sin(a) * 32, y1: 474 - Math.cos(a) * 32, x2: 375 + Math.sin(a) * 37, y2: 474 - Math.cos(a) * 37, stroke: "#94a3b8", "stroke-width": 1.5 }, ticks);
+        if (r % 10 === 0 || r === 5) {
+          const t = el('text', { x: 375 + Math.sin(a) * 45, y: 474 - Math.cos(a) * 45 + 3, "text-anchor": "middle", "font-family": "JetBrains Mono", "font-size": 7, fill: "#64748b" }, ticks);
+          t.textContent = r;
+        }
+      }
+
+      makeBrushedTexture();
+      buildScene();
+      setupKnob();
+    }
+
+    function rpmToAngle(r) { return -135 + (r - 5) / 35 * 270; }
+
+    function setupKnob() {
+      const knob = document.getElementById('knob');
+      const svg = document.getElementById('rig');
+      let dragging = false;
+      const toRpm = (evt) => {
+        const pt = svg.createSVGPoint();
+        pt.x = evt.clientX; pt.y = evt.clientY;
+        const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+        let a = Math.atan2(p.x - APP_X - 375, -(p.y - APP_Y - 474)) * 180 / Math.PI;
+        a = Math.max(-135, Math.min(135, a));
+        return Math.round(5 + (a + 135) / 270 * 35);
+      };
+      knob.addEventListener('pointerdown', e => { dragging = true; knob.setPointerCapture(e.pointerId); setRpm(toRpm(e)); });
+      knob.addEventListener('pointermove', e => { if (dragging) setRpm(toRpm(e)); });
+      knob.addEventListener('pointerup', () => dragging = false);
+      knob.addEventListener('wheel', e => { e.preventDefault(); setRpm(S.rpm + (e.deltaY < 0 ? 1 : -1)); }, { passive: false });
+    }
+
+    // --- SCENE PROPS ---
+    const CAGE_SPOTS = [[1050, 556, 0], [1100, 562, 1], [1150, 552, 0], [1196, 560, 1], [1236, 554, 1], [1124, 540, 0]];
+    function renderCage() {
+      const g = document.getElementById('cageMice');
+      const inCage = lanes.map((l, i) => l.state === "empty" ? i : -1).filter(i => i >= 0);
+      g.innerHTML = inCage.map((i, k) => {
+        const [x, y, f] = CAGE_SPOTS[k];
+        return `<g transform="translate(${x} ${y}) scale(${(lanes[i].scale / 1.22).toFixed(2)})">${cageMouseMarkup(f)}</g>`;
+      }).join('');
+      document.getElementById('cageCount').textContent = `In cage: ${inCage.length}`;
+    }
+
+    function renderVial() {
+      const d = DRUG_PROFILES[S.drugKey];
+      document.getElementById('vialLabel').textContent = S.isUnknown ? "DRUG  X" : d.shortName.toUpperCase();
+      document.getElementById('vialConc').textContent = S.isUnknown ? "coded" : `${d.conc} mg/mL`;
+      document.getElementById('syrFluid').setAttribute('opacity', S.phase === "dose" ? 0.6 : 0.15);
+    }
+
+    function updateClock() {
+      const t = S.labClock;
+      document.getElementById('hourHand').setAttribute('transform', `rotate(${(t / 120) % 360})`);
+      document.getElementById('minHand').setAttribute('transform', `rotate(${(t / 10) % 360})`);
+      document.getElementById('secHand').setAttribute('transform', `rotate(${(Math.floor(t) % 60) * 6})`);
+    }
+
+    // --- CONTROLS ---
+    function togglePower() {
+      if (S.power && S.trial && S.trial.running) abortTrial();
+      S.power = !S.power;
+      playBeep('click');
+      document.getElementById('rocker').setAttribute('fill', S.power ? "#dc2626" : "#7f1d1d");
+      document.getElementById('rockerTop').setAttribute('opacity', S.power ? 0.05 : 0.35);
+      const led = document.getElementById('pwrLed');
+      led.setAttribute('fill', S.power ? "#22c55e" : "#334155");
+      led.setAttribute('filter', S.power ? "url(#glow)" : "");
+      if (S.power && S.phase === "setup") S.phase = "basal";
+      refreshDisplays();
+      renderStepper();
+      showFeedback(S.power
+        ? "Rota-rod powered ON. Set the rod speed (20–25 rpm recommended), then click 'Place Mice on Rod'."
+        : "Rota-rod switched OFF.");
+    }
+
+    function setRpm(r) {
+      r = Math.max(5, Math.min(40, Math.round(r)));
+      if (S.trial && S.trial.running) {
+        showFeedback("Rod speed must stay constant during a trial.", true);
+        return;
+      }
+      S.rpm = r;
+      document.getElementById('rpmSlider').value = r;
+      document.getElementById('rpmLabel').innerText = r;
+      document.getElementById('knobInd').setAttribute('transform', `rotate(${rpmToAngle(r)} 375 474)`);
+      refreshDisplays();
+    }
+
+    function setCutoff(c) {
+      if (S.trial && S.trial.running) { showFeedback("Cannot change cut-off during a trial.", true); return; }
+      S.cutoff = c;
+      refreshDisplays();
+      renderObservation();
+    }
+
+    function setSimSpeed(sp) {
+      S.simSpeed = sp;
+      [1, 5, 15].forEach(v => {
+        document.getElementById('spd' + v).className = v === sp
+          ? "px-2.5 py-1 text-xs rounded font-semibold bg-teal-50 text-teal-700"
+          : "px-2.5 py-1 text-xs rounded font-semibold text-slate-600 hover:text-slate-900";
+      });
+      showFeedback(`Simulation speed set to ${sp}x.`);
+    }
+
+    function activeDrug() { return DRUG_PROFILES[S.drugKey]; }
+    function drugLabel() { return S.isUnknown ? "Unknown Mystery Drug" : activeDrug().name; }
+
+    function onDrugSelectChange() {
+      const val = document.getElementById('drugSelect').value;
+      const badge = document.getElementById('drugStatusBadge');
+      S.isUnknown = val === 'unknown';
+      S.drugKey = S.isUnknown ? mysteryDrugKey : val;
+      if (S.isUnknown) {
+        badge.innerText = "Mystery Exam Drug";
+        badge.className = "text-[11px] px-2.5 py-0.5 rounded font-mono font-semibold bg-amber-100 text-amber-800";
+      } else {
+        badge.innerText = "Drug: " + activeDrug().shortName;
+        badge.className = "text-[11px] px-2.5 py-0.5 rounded font-mono font-semibold bg-indigo-100 text-indigo-800";
+      }
+      // A new drug invalidates any dosing and post-drug data
+      mice.forEach(m => { m.dosed = false; m.post = null; });
+      if (["dose", "absorb", "post", "done"].includes(S.phase)) S.phase = mice.every(m => m.basal !== null) ? "dose" : "basal";
+      document.getElementById('absorbCard').classList.add('hidden');
+      renderAll();
+      showFeedback(`Test drug set to: ${drugLabel()}. Post-drug data cleared.`);
+    }
+
+    // --- PLACING MICE ---
+    function placeMice() {
+      if (!S.power) { showFeedback("Switch ON the MAINS first.", true); return; }
+      if (S.trial && S.trial.running) { showFeedback("A trial is already running.", true); return; }
+      if (S.phase === "dose") { showFeedback("Basal trial done. Inject the drug before the next trial.", true); return; }
+      if (S.phase === "absorb") { showFeedback("Wait for the 30-min absorption period to finish.", true); return; }
+      if (S.phase === "done") { showFeedback("Protocol complete. Start a New Experiment to repeat.", true); return; }
+      if (lanes.every(l => l.state === "onrod")) { showFeedback("Mice are already on the rod. Press START.", true); return; }
+      lanes.forEach((l, i) => {
+        Object.assign(l, { state: "placing", placeT: -i * 0.12, x: laneC(i), y: ROD_TOP - 120, rot: 0, vy: 0, T: Infinity });
+        const m = document.getElementById(`m${i}`);
+        document.getElementById('miceLayer').appendChild(m);
+        m.style.display = "";
+        m.style.opacity = 1;
+        m.querySelector('.tailCurl').style.display = "none";
+        setLed(i, "idle");
+      });
+      resetPlates();
+      renderCage();
+      showFeedback(`Mice M1–M6 placed in compartments 1–6 facing outward. Press START on the panel to begin the ${S.phase === 'post' ? 'post-drug' : 'basal'} trial.`);
+    }
+
+    // --- TRIALS ---
+    function fallTime(m, phase) {
+      const r = S.rpm, noise = Math.exp(gauss() * 0.15);
+      let T;
+      if (phase === "basal" || !isFinite(activeDrug().meanPost)) {
+        // Healthy mice: almost always reach cut-off at <=25 rpm; higher speeds shorten balance time
+        T = 260 * Math.pow(25 / r, 2.2) * m.skill * noise;
+        if (r <= 25 && phase === "basal" && Math.random() < 0.06) T = S.cutoff * (0.8 + Math.random() * 0.15);
+      } else {
+        T = activeDrug().meanPost * Math.pow(20 / r, 1.1) * m.skill * Math.exp(gauss() * 0.2);
+      }
+      T = Math.max(3, T);
+      return T >= S.cutoff ? Infinity : Math.round(T * 10) / 10;
+    }
+
+    function canStartTrial() {
+      if (!S.power) { showFeedback("Switch ON the MAINS first.", true); return false; }
+      if (S.trial && S.trial.running) { showFeedback("Trial already running.", true); return false; }
+      if (S.phase === "dose") { showFeedback("Inject the test drug (i.p.) before the post-drug trial.", true); return false; }
+      if (S.phase === "absorb") { showFeedback("Absorption period still running (30 min).", true); return false; }
+      if (S.phase === "done") { showFeedback("Protocol complete. Open the Observation Sheet or start a New Experiment.", true); return false; }
+      if (S.phase === "post" && S.basalRpm !== null && S.rpm !== S.basalRpm) {
+        showFeedback(`Use the same rod speed as the basal trial (${S.basalRpm} rpm) for a valid comparison.`, true);
+        return false;
+      }
+      return true;
+    }
+
+    function startTrial() {
+      if (!canStartTrial()) return;
+      if (!lanes.every(l => l.state === "onrod" || l.state === "placing")) {
+        showFeedback("Place the mice on the rod first ('Place Mice on Rod').", true);
+        return;
+      }
+      playBeep('click');
+      S.trial = { phase: S.phase, t: 0, running: true };
+      lanes.forEach((l, i) => {
+        if (l.state === "placing") { l.state = "onrod"; l.y = ROD_TOP; }
+        l.T = fallTime(mice[i], S.phase);
+        setLed(i, "run");
+      });
+      S.rodOn = true;
+      showFeedback(`${S.phase === 'post' ? 'Post-drug' : 'Basal'} trial running at ${S.rpm} rpm. Lane timers stop automatically when a mouse lands on its trip plate.`);
+    }
+
+    function abortTrial() {
+      S.trial = null;
+      S.rodOn = false;
+      clearLanes(false);
+    }
+
+    function stopTrial() {
+      playBeep('click');
+      if (S.trial && S.trial.running) {
+        abortTrial();
+        showFeedback("Trial aborted. No data recorded. Place mice again and restart.", true);
+      } else {
+        S.rodOn = false;
+        showFeedback("Rod stopped.");
+      }
+    }
+
+    function resetDevice() {
+      playBeep('click');
+      if (S.trial && S.trial.running) abortTrial();
+      for (let i = 0; i < N; i++) setLed(i, "idle");
+      refreshDisplays(true);
+      showFeedback("Lane timers reset to zero.");
+    }
+
+    function completeTrial() {
+      const phase = S.trial.phase;
+      S.trial.running = false;
+      S.rodOn = false;
+      lanes.forEach((l, i) => { mice[i][phase] = l.tStop; });
+      if (phase === "basal") {
+        S.basalRpm = S.rpm;
+        S.phase = "dose";
+        const failed = mice.filter(m => m.basal < S.cutoff).map(m => "M" + m.id);
+        showFeedback(failed.length
+          ? `Basal trial complete. ${failed.join(", ")} fell before cut-off (would be replaced in screening). Now inject the drug i.p.`
+          : `Basal trial complete: all mice stayed for ${S.cutoff} s and pass screening. Now inject the test drug i.p.`);
+      } else {
+        S.phase = "done";
+        showFeedback("Post-drug trial complete! Open the Observation Sheet to analyse the results.");
+      }
+      S.trial = null;
+      playBeep('complete');
+      setTimeout(() => clearLanes(true), 2200);
+      renderAll();
+    }
+
+    function clearLanes(fade) {
+      lanes.forEach((l, i) => {
+        const m = document.getElementById(`m${i}`);
+        document.getElementById(`tail${i}`).style.display = "none";
+        document.getElementById(`wsh${i}`).style.display = "none";
+        if (fade) {
+          m.style.opacity = 0;
+          setTimeout(() => { if (lanes[i].state !== "placing" && lanes[i].state !== "onrod") m.style.display = "none"; }, 950);
+        } else {
+          m.style.display = "none";
+        }
+        l.state = "empty";
+        setLed(i, "idle");
+      });
+      setTimeout(resetPlates, fade ? 950 : 0);
+      renderCage();
+    }
+
+    function resetPlates() {
+      for (let i = 0; i < N; i++) document.getElementById(`plate${i}`).removeAttribute('transform');
+    }
+
+    // Instant result for the current trial, without animation
+    function autoRunTrial() {
+      if (!S.power) togglePower();
+      if (!canStartTrial()) return;
+      S.trial = { phase: S.phase, t: 0, running: true };
+      lanes.forEach((l, i) => {
+        l.T = fallTime(mice[i], S.phase);
+        l.tStop = isFinite(l.T) ? l.T : S.cutoff;
+        setLcd(i, l.tStop);
+        setLed(i, isFinite(l.T) ? "fall" : "cut");
+      });
+      completeTrial();
+    }
+
+    function injectDrug() {
+      if (S.phase === "basal" || S.phase === "setup") { showFeedback("Record the basal fall-off times first (screening).", true); return; }
+      if (S.phase !== "dose") { showFeedback("Drug has already been administered.", true); return; }
+      const d = activeDrug();
+      mice.forEach((m, i) => setTimeout(() => {
+        m.dosed = true;
+        playBeep('inject');
+        const icon = document.getElementById('syringeIcon');
+        icon.classList.remove('syringe-anim'); void icon.offsetWidth; icon.classList.add('syringe-anim');
+        const pl = document.getElementById('syrPlunger');
+        pl.setAttribute('transform', 'translate(10 0)');
+        setTimeout(() => pl.removeAttribute('transform'), 180);
+        renderTray();
+        if (i === N - 1) {
+          S.phase = "absorb";
+          S.absorbLeft = 1800;
+          document.getElementById('absorbCard').classList.remove('hidden');
+          renderStepper();
+          showFeedback(`${S.isUnknown ? "Unknown drug" : d.name} injected i.p. to all 6 mice. Waiting 30 min for absorption…`);
+        }
+      }, i * 300));
+    }
+
+    function finishAbsorption() {
+      S.phase = "post";
+      document.getElementById('absorbCard').classList.add('hidden');
+      playBeep('complete');
+      renderAll();
+      showFeedback(`30 min elapsed. Place mice back on the rod and run the post-drug trial at ${S.basalRpm} rpm.`);
+    }
+    function skipAbsorption() { if (S.phase === "absorb") finishAbsorption(); }
+
+    function runFullProtocol() {
+      if (!S.power) togglePower();
+      if (S.trial && S.trial.running) abortTrial();
+      if (S.phase === "done") newExperiment(true);
+      if (S.phase === "basal") autoRunTrial();
+      if (S.phase === "dose") mice.forEach(m => m.dosed = true);
+      if (S.phase === "dose" || S.phase === "absorb") { S.phase = "post"; document.getElementById('absorbCard').classList.add('hidden'); }
+      if (S.phase === "post") autoRunTrial();
+      renderAll();
+      switchTab('observation');
+    }
+
+    function newExperiment(silent) {
+      if (S.trial && S.trial.running) abortTrial();
+      mice.forEach(m => { m.dosed = false; m.basal = null; m.post = null; m.skill = Math.exp(gauss() * 0.1); });
+      S.phase = S.power ? "basal" : "setup";
+      S.basalRpm = null;
+      document.getElementById('absorbCard').classList.add('hidden');
+      clearLanes(false);
+      refreshDisplays(true);
+      renderAll();
+      if (!silent) showFeedback("New experiment started. All data cleared.");
+    }
+
+    // --- DISPLAYS ---
+    function setLcd(i, v) {
+      document.getElementById(`lcd${i}`).textContent = S.power ? v.toFixed(1).padStart(5, '!') : "";
+    }
+    function refreshDisplays(zero) {
+      document.getElementById('rpmDisp').textContent = S.power ? String(S.rpm).padStart(2, '!') : "";
+      document.getElementById('cutDisp').textContent = S.power ? String(S.cutoff) : "";
+      for (let i = 0; i < N; i++) {
+        const t = document.getElementById(`lcd${i}`);
+        if (!S.power) t.textContent = "";
+        else if (zero || t.textContent === "") setLcd(i, 0);
+      }
+    }
+    function setLed(i, mode) {
+      const colors = { idle: "#334155", run: "#22c55e", fall: "#ef4444", cut: "#f59e0b" };
+      const led = document.getElementById(`led${i}`);
+      led.setAttribute('fill', S.power ? colors[mode] : colors.idle);
+      led.setAttribute('filter', S.power && mode !== "idle" ? "url(#glow)" : "");
+    }
+
+    // --- ANIMATION LOOP ---
+    let lastTs = performance.now(), realT = 0;
+    function frame(ts) {
+      const dtR = Math.min(0.05, Math.max(0, (ts - lastTs) / 1000));
+      lastTs = ts;
+      realT += dtR;
+      const dtS = dtR * S.simSpeed;
+
+      // Motor ramps to set speed
+      const target = S.power && S.rodOn ? S.rpm : 0;
+      const ramp = 25 * dtR * Math.max(1, S.simSpeed / 2);
+      S.rpmCur = S.rpmCur < target ? Math.min(target, S.rpmCur + ramp) : Math.max(target, S.rpmCur - ramp);
+      S.rodAngle += S.rpmCur / 60 * 2 * Math.PI * dtR;
+      drawRod();
+      updateHum();
+
+      // Wall clock runs at sim speed; the absorption wait is compressed 60x
+      S.labClock += S.phase === "absorb" ? dtR * 60 * S.simSpeed : dtS;
+      updateClock();
+
+      if (S.phase === "absorb") {
+        S.absorbLeft -= dtR * 60 * S.simSpeed;
+        if (S.absorbLeft <= 0) finishAbsorption();
+        else {
+          const m = Math.floor(S.absorbLeft / 60), s = Math.floor(S.absorbLeft % 60);
+          document.getElementById('absorbClock').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+          document.getElementById('absorbBar').style.width = `${(1 - S.absorbLeft / 1800) * 100}%`;
+        }
+      }
+
+      const tr = S.trial;
+      if (tr && tr.running) {
+        tr.t += dtS;
+        lanes.forEach((l, i) => {
+          if (l.state !== "onrod") return;
+          if (tr.t >= l.T) {
+            l.tStop = l.T;
+            l.state = "slipping"; l.slipT = 0; l.dir = Math.random() < 0.5 ? -1 : 1;
+            setLcd(i, l.T);
+          } else if (tr.t >= S.cutoff) {
+            l.tStop = S.cutoff;
+            l.state = "cut";
+            setLcd(i, S.cutoff);
+            setLed(i, "cut");
+            playBeep('cut');
+          } else {
+            setLcd(i, tr.t);
+          }
+        });
+        if (lanes.every(l => l.state === "landed" || l.state === "cut")) completeTrial();
+      }
+
+      lanes.forEach((l, i) => animateLane(l, i, dtR));
+      requestAnimationFrame(frame);
+    }
+
+    // Rotating rod: axial ridges projected onto the visible half of the cylinder + scrolling knurl
+    function drawRod() {
+      const lines = document.getElementById('rodRidges').children;
+      for (let k = 0; k < lines.length; k++) {
+        const th = S.rodAngle + k * 2 * Math.PI / lines.length;
+        const c = Math.cos(th);
+        const ln = lines[k];
+        if (c <= 0) { ln.setAttribute('stroke-opacity', 0); continue; }
+        const y = ROD_CY - ROD_R * Math.sin(th);
+        ln.setAttribute('y1', y); ln.setAttribute('y2', y);
+        ln.setAttribute('stroke-opacity', (0.08 + 0.35 * c).toFixed(2));
+      }
+      const off = -(S.rodAngle * ROD_R) % 7;
+      document.getElementById('knurl').setAttribute('patternTransform', `translate(0 ${off.toFixed(2)})`);
+    }
+
+    function animateLane(l, i, dtR) {
+      if (l.state === "empty") return;
+      const m = document.getElementById(`m${i}`);
+      const tail = document.getElementById(`tail${i}`);
+      const wsh = document.getElementById(`wsh${i}`);
+      const walking = S.rpmCur > 0.5;
+      const sc = l.scale;
+      let dx = 0, sy = 1, headY = 0, headRot = 0;
+
+      if (l.state === "placing") {
+        l.placeT += dtR;
+        const p = Math.max(0, Math.min(1, l.placeT / 0.6));
+        l.y = ROD_TOP - 120 + 120 * (1 - Math.pow(1 - p, 3));
+        l.rot = 0;
+        if (p >= 1) l.state = "onrod";
+      } else if (l.state === "onrod" || l.state === "cut") {
+        const tr = S.trial;
+        const ataxia = (l.state === "onrod" && tr && tr.running && isFinite(l.T)) ? Math.pow(Math.min(1, tr.t / l.T), 2.4) : 0;
+        const amp = (walking ? 1.6 : 0.4) + 20 * ataxia;
+        l.rot = amp * Math.sin(2 * Math.PI * (0.9 + 0.8 * ataxia) * realT + l.ph);
+        dx = l.rot * 0.3;
+        sy = 1 - 0.14 * ataxia;            // drugged mice flatten and splay on the rod
+        l.y = ROD_TOP;
+        headY = Math.sin(realT * 7 + l.ph) * 0.5;
+        headRot = Math.sin(realT * 1.3 + l.ph) * 4 * (1 - ataxia);
+      } else if (l.state === "slipping") {
+        // grip lost: the mouse is carried backwards over the top of the rod
+        l.slipT += dtR;
+        const p = Math.min(1, l.slipT / 0.4);
+        sy = 1 - 0.55 * p;
+        l.y = ROD_TOP - 5 * Math.sin(p * Math.PI / 2);
+        l.rot *= 0.9;
+        if (p >= 1) {
+          l.state = "falling"; l.vy = 20; l.y = ROD_TOP + 8;
+          document.getElementById('behindLayer').appendChild(m);
+          m.querySelector('.tailCurl').style.display = "";
+        }
+      } else if (l.state === "falling") {
+        l.vy += 1500 * dtR;
+        l.y += l.vy * dtR;
+        l.rot = l.dir * 14 * Math.sin(realT * 9);
+        sy = 0.45 + 0.55 * Math.min(1, (l.y - ROD_TOP) / 120);
+        if (l.y >= PLATE_Y - 3) {
+          l.y = PLATE_Y - 3;
+          l.state = "landed"; l.landT = 0;
+          setLed(i, "fall");
+          playBeep('fall');
+          document.getElementById(`plate${i}`).setAttribute('transform', `rotate(${l.dir * 2.5} ${laneC(i)} ${PLATE_Y + 4})`);
+        }
+      } else if (l.state === "landed") {
+        // brief squash on impact, then sits and sniffs
+        l.landT += dtR;
+        sy = l.landT < 0.18 ? 0.82 + l.landT : 0.94;
+        l.rot = 0;
+        headY = Math.max(0, Math.sin(realT * 9 + l.ph)) * 0.8;
+        headRot = Math.sin(realT * 0.8 + l.ph) * 8;
+      }
+
+      const onRod = l.state === "onrod" || l.state === "cut";
+      tail.style.display = onRod ? "" : "none";
+      if (onRod) tail.setAttribute('transform', `translate(${l.x + dx} ${l.y}) rotate(${-l.rot * 0.4}) scale(${sc})`);
+      m.setAttribute('transform', `translate(${l.x + dx} ${l.y}) rotate(${l.rot}) scale(${sc} ${sc * sy})`);
+
+      // soft shadow: on the back wall while on the rod, on the plate after landing
+      if (onRod || l.state === "placing") {
+        wsh.style.display = "";
+        wsh.setAttribute('cx', l.x + dx + 10); wsh.setAttribute('cy', l.y - 14 * sc);
+        wsh.setAttribute('rx', 22 * sc); wsh.setAttribute('ry', 19 * sc);
+      } else if (l.state === "landed") {
+        wsh.style.display = "";
+        wsh.setAttribute('cx', l.x + 3); wsh.setAttribute('cy', PLATE_Y - 2);
+        wsh.setAttribute('rx', 22 * sc); wsh.setAttribute('ry', 4);
+      } else {
+        wsh.style.display = "none";
+      }
+
+      // paws step alternately while the rod turns
+      const step = walking && onRod ? Math.sin(realT * (4 + S.rpmCur * 0.35) * Math.PI + l.ph) * 1.5 : 0;
+      m.querySelector('.pawL').setAttribute('transform', `translate(0 ${-Math.max(0, step)})`);
+      m.querySelector('.pawR').setAttribute('transform', `translate(0 ${-Math.max(0, -step)})`);
+      m.querySelector('.bob').setAttribute('transform', `translate(0 ${Math.abs(step) * 0.3})`);
+      m.querySelector('.head').setAttribute('transform', `translate(0 ${headY}) rotate(${headRot} 0 -12)`);
+      m.querySelector('.whisk').setAttribute('transform', `rotate(${Math.sin(realT * 14 + l.ph) * 2} 0 -8.6)`);
+    }
+
+    // --- TRAY / STEPPER ---
+    function doseVol(m) { const d = activeDrug(); return m.wt / 1000 * d.dose / d.conc; }
+
+    function renderTray() {
+      document.getElementById('trayCards').innerHTML = mice.map(m => {
+        const b = m.basal !== null ? `${m.basal.toFixed(1)} s` : "--";
+        const p = m.post !== null ? `${m.post.toFixed(1)} s` : "--";
+        const dosedTag = m.dosed
+          ? `<span class="text-[9px] px-1 rounded bg-indigo-100 text-indigo-700 font-bold">💉 ${doseVol(m).toFixed(2)} mL</span>`
+          : `<span class="text-[9px] px-1 rounded bg-slate-100 text-slate-500">undosed</span>`;
+        return `
+          <div class="p-2 rounded-lg border ${m.dosed ? 'border-indigo-200 bg-indigo-50/40' : 'border-slate-200 bg-slate-50'}">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-800">M${m.id}</span>
+              <span class="text-[10px] font-mono text-slate-500">${m.wt.toFixed(1)} g</span>
+            </div>
+            <div class="mt-1">${dosedTag}</div>
+            <div class="text-[10px] font-mono text-slate-600 mt-1">B: <span class="font-bold">${b}</span></div>
+            <div class="text-[10px] font-mono text-indigo-700">P: <span class="font-bold">${p}</span></div>
+          </div>`;
+      }).join('');
+    }
+
+    const STEPS = [
+      { key: "setup", label: "Power ON" },
+      { key: "basal", label: "Basal trial (screening)" },
+      { key: "dose", label: "Inject drug i.p." },
+      { key: "absorb", label: "30-min absorption" },
+      { key: "post", label: "Post-drug trial" },
+      { key: "done", label: "Analyse results" }
+    ];
+    function renderStepper() {
+      const idx = STEPS.findIndex(s => s.key === S.phase);
+      document.getElementById('stepper').innerHTML = STEPS.map((s, i) => {
+        const cls = i < idx ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+          : i === idx ? "bg-teal-600 text-white border-teal-600 shadow"
+          : "bg-slate-50 text-slate-400 border-slate-200";
+        return `<span class="px-2 py-1 rounded-md border ${cls}">${i < idx ? '✓' : i + 1}. ${s.label}</span>`;
+      }).join('<span class="text-slate-300 self-center">›</span>');
+      document.getElementById('phaseIndicator').innerText = "Phase: " + STEPS[idx].label;
+    }
+
+    // --- STATISTICS ---
+    const mean = a => a.reduce((s, x) => s + x, 0) / a.length;
+    const sd = a => { const m = mean(a); return Math.sqrt(a.reduce((s, x) => s + (x - m) ** 2, 0) / (a.length - 1)); };
+    const sem = a => sd(a) / Math.sqrt(a.length);
+
+    function lgamma(z) {
+      const g = 7, p = [0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313,
+        -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+      if (z < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * z)) - lgamma(1 - z);
+      z -= 1;
+      let x = p[0];
+      for (let i = 1; i < g + 2; i++) x += p[i] / (z + i);
+      const t = z + g + 0.5;
+      return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(x);
+    }
+    function betacf(a, b, x) {
+      const FPMIN = 1e-300;
+      const qab = a + b, qap = a + 1, qam = a - 1;
+      let c = 1, d = 1 - qab * x / qap;
+      if (Math.abs(d) < FPMIN) d = FPMIN;
+      d = 1 / d;
+      let h = d;
+      for (let m = 1; m <= 200; m++) {
+        const m2 = 2 * m;
+        let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+        d = 1 + aa * d; if (Math.abs(d) < FPMIN) d = FPMIN;
+        c = 1 + aa / c; if (Math.abs(c) < FPMIN) c = FPMIN;
+        d = 1 / d; h *= d * c;
+        aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+        d = 1 + aa * d; if (Math.abs(d) < FPMIN) d = FPMIN;
+        c = 1 + aa / c; if (Math.abs(c) < FPMIN) c = FPMIN;
+        d = 1 / d;
+        const del = d * c;
+        h *= del;
+        if (Math.abs(del - 1) < 3e-12) break;
+      }
+      return h;
+    }
+    function betai(a, b, x) {
+      if (x <= 0) return 0;
+      if (x >= 1) return 1;
+      const bt = Math.exp(lgamma(a + b) - lgamma(a) - lgamma(b) + a * Math.log(x) + b * Math.log(1 - x));
+      return x < (a + 1) / (a + b + 2) ? bt * betacf(a, b, x) / a : 1 - bt * betacf(b, a, 1 - x) / b;
+    }
+    // Two-tailed p value for Student's t
+    function tPValue(t, df) { return betai(df / 2, 0.5, df / (df + t * t)); }
+
+    function computeStats() {
+      if (!mice.every(m => m.basal !== null && m.post !== null)) return null;
+      const B = mice.map(m => m.basal), P = mice.map(m => m.post);
+      const D = mice.map(m => m.basal - m.post);
+      const n = mice.length, df = n - 1;
+      const sdD = sd(D);
+      const md = mean(D);
+      let t = null, p = 1;
+      if (sdD > 0) { t = md / (sdD / Math.sqrt(n)); p = tPValue(t, df); }
+      else if (md !== 0) { t = Infinity; p = 0; }
+      return {
+        B, P, df, t, p,
+        mB: mean(B), sB: sem(B), mP: mean(P), sP: sem(P),
+        pct: (mean(B) - mean(P)) / mean(B) * 100
+      };
+    }
+
+    // --- OBSERVATION SHEET ---
+    function renderObservation() {
+      document.getElementById('lblObsDrug').innerText = drugLabel();
+      document.getElementById('lblObsRpm').innerText = S.basalRpm ?? S.rpm;
+      document.getElementById('lblObsCut').innerText = S.cutoff;
+
+      document.getElementById('tblBody').innerHTML = mice.map(m => {
+        const pct = m.basal !== null && m.post !== null ? ((m.basal - m.post) / m.basal * 100).toFixed(1) : '--';
+        const flag = m.basal !== null && m.basal < S.cutoff ? ' <span title="Failed screening" class="text-amber-600">⚠</span>' : '';
+        const fmt = v => v === null ? '--' : (v >= S.cutoff ? `${v.toFixed(1)}*` : v.toFixed(1));
+        return `
+          <tr class="hover:bg-slate-50">
+            <td class="p-2 border-r text-center font-bold text-slate-700">M${m.id}</td>
+            <td class="p-2 border-r text-center">${m.wt.toFixed(1)}</td>
+            <td class="p-2 border-r text-center">${doseVol(m).toFixed(2)}</td>
+            <td class="p-2 border-r text-center font-bold text-slate-700">${fmt(m.basal)}${flag}</td>
+            <td class="p-2 border-r text-center font-bold text-indigo-700">${fmt(m.post)}</td>
+            <td class="p-2 text-center text-rose-700">${pct}</td>
+          </tr>`;
+      }).join('') + `<tr><td colspan="6" class="p-1.5 text-[10px] text-slate-400 font-sans text-left">* reached cut-off (${S.cutoff} s) &nbsp; ⚠ fell before cut-off during basal screening</td></tr>`;
+
+      const st = computeStats();
+      const set = (id, txt) => document.getElementById(id).innerText = txt;
+      if (!st) {
+        set('lblMeanBasal', '--'); set('lblMeanPost', '--'); set('lblMeanPct', '--');
+        set('lblPct', '-- %'); set('lblT', 't = --'); set('lblP', 'p value pending');
+        set('lblInference', 'Pending complete dataset');
+        set('lblInferenceDetail', 'Record basal and post-drug fall-off times for all 6 mice.');
+        drawChart(null);
+        return;
+      }
+      set('lblMeanBasal', `${st.mB.toFixed(1)} ± ${st.sB.toFixed(1)}`);
+      set('lblMeanPost', `${st.mP.toFixed(1)} ± ${st.sP.toFixed(1)}`);
+      set('lblMeanPct', `${st.pct.toFixed(1)} %`);
+      set('lblPct', `${st.pct.toFixed(1)} %`);
+      set('lblT', st.t === null ? 't = 0 (no change)' : `t = ${isFinite(st.t) ? st.t.toFixed(2) : '∞'}`);
+      set('lblP', st.t === null ? 'Identical values; p = 1.0' : `p = ${st.p < 0.001 ? '< 0.001' : st.p.toFixed(4)} (two-tailed, df = ${st.df})`);
+      const sig = st.p < 0.05 && st.pct > 0;
+      set('lblInference', sig
+        ? (st.pct > 50 ? "Significant muscle relaxant activity" : "Significant motor incoordination")
+        : "No significant muscle relaxant activity");
+      set('lblInferenceDetail', sig
+        ? `Fall-off time fell from ${st.mB.toFixed(1)} s to ${st.mP.toFixed(1)} s (p < 0.05): the drug impairs grip and motor coordination.`
+        : `Fall-off time was not significantly reduced (p ≥ 0.05): the drug lacks muscle relaxant action at this dose.`);
+      drawChart(st);
+    }
+
+    function drawChart(st) {
+      const svg = document.getElementById('chart');
+      const X0 = 46, Y0 = 210, H = 180, top = S.cutoff;
+      const y = v => Y0 - v / top * H;
+      let h = '';
+      for (let v = 0; v <= top; v += top / 6) {
+        h += `<line x1="${X0}" x2="345" y1="${y(v)}" y2="${y(v)}" stroke="#e2e8f0"/>`;
+        h += `<text x="${X0 - 6}" y="${y(v) + 3}" font-size="9" text-anchor="end" fill="#64748b" font-family="JetBrains Mono">${Math.round(v)}</text>`;
+      }
+      h += `<line x1="${X0}" x2="${X0}" y1="${Y0 - H}" y2="${Y0}" stroke="#94a3b8"/><line x1="${X0}" x2="345" y1="${Y0}" y2="${Y0}" stroke="#94a3b8"/>`;
+      h += `<text x="12" y="${Y0 - H / 2}" font-size="9" fill="#475569" transform="rotate(-90 12 ${Y0 - H / 2})" text-anchor="middle">Fall-off time (s)</text>`;
+      const bars = [
+        { lab: "Basal", cx: 125, m: st?.mB, s: st?.sB, pts: st?.B, fill: "#64748b" },
+        { lab: "Post-drug", cx: 265, m: st?.mP, s: st?.sP, pts: st?.P, fill: "#6366f1" }
+      ];
+      bars.forEach(b => {
+        h += `<text x="${b.cx}" y="${Y0 + 16}" font-size="10" font-weight="600" text-anchor="middle" fill="#334155">${b.lab}</text>`;
+        if (!st) return;
+        h += `<rect x="${b.cx - 36}" y="${y(b.m)}" width="72" height="${Y0 - y(b.m)}" rx="3" fill="${b.fill}" opacity="0.85"/>`;
+        h += `<line x1="${b.cx}" x2="${b.cx}" y1="${y(b.m + b.s)}" y2="${y(Math.max(0, b.m - b.s))}" stroke="#0a1f44" stroke-width="1.5"/>`;
+        h += `<line x1="${b.cx - 8}" x2="${b.cx + 8}" y1="${y(b.m + b.s)}" y2="${y(b.m + b.s)}" stroke="#0a1f44" stroke-width="1.5"/>`;
+        b.pts.forEach((v, k) => h += `<circle cx="${b.cx - 25 + k * 10}" cy="${y(v)}" r="2.6" fill="#fff" stroke="#0a1f44" stroke-width="0.8"/>`);
+      });
+      if (st && st.p < 0.05) {
+        const stars = st.p < 0.001 ? '***' : st.p < 0.01 ? '**' : '*';
+        h += `<text x="265" y="${y(st.mP + st.sP) - 6}" font-size="14" font-weight="700" text-anchor="middle" fill="#e11d48">${stars}</text>`;
+      }
+      if (!st) h += `<text x="195" y="120" font-size="11" text-anchor="middle" fill="#94a3b8">Complete both trials to plot</text>`;
+      svg.innerHTML = h;
+    }
+
+    function resetObservationData() { newExperiment(); }
+
+    function loadReferenceDataset() {
+      document.getElementById('drugSelect').value = 'diazepam';
+      S.isUnknown = false; S.drugKey = 'diazepam';
+      document.getElementById('drugStatusBadge').innerText = "Drug: Diazepam";
+      document.getElementById('drugStatusBadge').className = "text-[11px] px-2.5 py-0.5 rounded font-mono font-semibold bg-indigo-100 text-indigo-800";
+      setRpm(20); S.cutoff = 180; document.getElementById('cutSelect').value = 180;
+      const post = [38.4, 45.1, 52.6, 36.9, 41.7, 47.3];
+      mice.forEach((m, i) => { m.basal = 180; m.post = post[i]; m.dosed = true; });
+      S.basalRpm = 20;
+      S.phase = "done";
+      renderAll();
+      showFeedback("Loaded reference dataset (Diazepam 4 mg/kg i.p., 20 rpm, cut-off 180 s).");
+    }
+
+    // --- QUIZ ---
+    const QUIZ = [
+      { q: "The rota-rod test primarily evaluates:", o: ["Analgesic activity", "Motor coordination / skeletal muscle relaxant activity", "Anticonvulsant activity"], a: 1 },
+      { q: "Diazepam reduces fall-off time mainly by:", o: ["Blocking nicotinic receptors at the neuromuscular junction", "Inhibiting Ca²⁺ release from the sarcoplasmic reticulum", "Facilitating GABA-A mediated inhibition of spinal polysynaptic reflexes"], a: 2 },
+      { q: "Why are mice screened before drug administration?", o: ["To select animals able to stay on the rod for the full cut-off time", "To induce tolerance to the drug", "To measure baseline body temperature"], a: 0 },
+      { q: "A typical rota-rod setting for mice is:", o: ["2 rpm, 0.5 cm rod", "20–25 rpm, ≈3 cm knurled rod", "200 rpm, 10 cm rod"], a: 1 },
+      { q: "Which drug would NOT significantly reduce fall-off time?", o: ["Caffeine", "Phenobarbitone", "Chlorpromazine"], a: 0 }
+    ];
+    function renderQuiz() {
+      document.getElementById('quizBody').innerHTML = QUIZ.map((item, i) => `
+        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-2">
+          <p class="font-semibold text-slate-900">Q${i + 1}. ${item.q}</p>
+          ${item.o.map((o, j) => `<label class="flex items-center space-x-2"><input type="radio" name="q${i}" value="${j}"> <span>${o}</span></label>`).join('')}
+        </div>`).join('');
+    }
+    function evaluateQuestions() {
+      const ans = QUIZ.map((_, i) => document.querySelector(`input[name="q${i}"]:checked`)?.value);
+      if (ans.some(a => a === undefined)) { showFeedback(`Please answer all ${QUIZ.length} questions before submitting!`, true); return; }
+      const score = ans.filter((a, i) => +a === QUIZ[i].a).length;
+      closeModal('modalQuestions');
+      showFeedback(`Viva Assessment Score: ${score}/${QUIZ.length} (${Math.round(score / QUIZ.length * 100)}%).`);
+    }
+
+    // --- RESULTS MODAL ---
+    function submitEvaluation() {
+      if (!document.getElementById('unknownDrugDeduction').value) { showFeedback("Please select your deduction first!", true); return; }
+      openResultsModal();
+    }
+    function openResultsModal() {
+      const st = computeStats();
+      const choice = document.getElementById('unknownDrugDeduction').value;
+      document.getElementById('resActiveDrug').innerText = drugLabel();
+      document.getElementById('resPct').innerText = st ? `${st.pct.toFixed(1)} %` : "--";
+      document.getElementById('resStat').innerText = st ? (st.t === null ? "No change" : `p ${st.p < 0.001 ? '< 0.001' : '= ' + st.p.toFixed(4)}`) : "--";
+      document.getElementById('resUserDeduction').innerText = choice ? DRUG_PROFILES[choice].shortName : "Not submitted";
+      const expl = document.getElementById('resExplanation');
+      if (!choice) {
+        document.getElementById('resActualUnknown').innerText = "Hidden";
+        expl.className = "p-3 rounded-lg bg-teal-50 border border-teal-200 text-teal-900 leading-relaxed text-[11px]";
+        expl.innerHTML = st ? `<strong>${drugLabel()}:</strong> ${S.isUnknown ? 'Submit your deduction to reveal the mystery agent.' : activeDrug().desc}` : "Complete the protocol to see the summary.";
+      } else {
+        const actual = DRUG_PROFILES[mysteryDrugKey];
+        document.getElementById('resActualUnknown').innerText = actual.shortName;
+        const ok = choice === mysteryDrugKey;
+        expl.className = `p-3 rounded-lg ${ok ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-rose-50 border-rose-200 text-rose-900'} border leading-relaxed text-[11px]`;
+        expl.innerHTML = ok
+          ? `<strong>CORRECT DIAGNOSIS!</strong> The mystery drug was <strong>${actual.name}</strong>. ${actual.desc}`
+          : `<strong>INCORRECT DEDUCTION.</strong> The mystery drug was <strong>${actual.name}</strong>.<br>${actual.desc}`;
+      }
+      openModal('modalResults');
+    }
+
+    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    // --- TABS ---
+    function switchTab(tabId) {
+      const map = { task: ['viewTask', 'tabTask'], experiment: ['viewExperiment', 'tabExperiment'], observation: ['viewObservation', 'tabObservation'] };
+      Object.values(map).forEach(([v, t]) => {
+        document.getElementById(v).classList.add('hidden');
+        const b = document.getElementById(t);
+        b.classList.remove('bg-teal-500', 'text-white', 'shadow');
+        b.classList.add('text-slate-300');
+      });
+      document.getElementById(map[tabId][0]).classList.remove('hidden');
+      document.getElementById(map[tabId][1]).classList.add('bg-teal-500', 'text-white', 'shadow');
+      if (tabId === 'observation') renderObservation();
+    }
+
+    function showFeedback(msg, isAlert = false) {
+      document.getElementById('feedbackText').innerText = msg;
+      const icon = document.getElementById('feedbackIcon');
+      icon.innerText = isAlert ? "⚠️" : "ℹ";
+      icon.className = isAlert ? "text-amber-400 font-bold" : "text-teal-400 font-bold";
+    }
+
+    function renderAll() { renderTray(); renderStepper(); renderObservation(); renderVial(); renderCage(); }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      buildRig();
+      setRpm(20);
+      renderQuiz();
+      renderAll();
+      refreshDisplays();
+      updateClock();
+      requestAnimationFrame(frame);
+    });
+  </script>
+  <script src="../assets/js/viva.js"></script>
+</body>
+</html>

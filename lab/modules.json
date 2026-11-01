@@ -1,0 +1,202 @@
+[
+ {
+  "no": 1,
+  "sem": "V",
+  "cat": "In-vivo",
+  "title": "Routes of Drug Administration",
+  "slug": "01-routes-of-drug-administration",
+  "description": "Onset and duration of pentobarbitone sleep via oral, s.c., i.m., i.p. and i.v. routes in mice."
+ },
+ {
+  "no": 2,
+  "sem": "V",
+  "cat": "In-vivo",
+  "title": "Effects of Drugs on Rabbit Eye",
+  "slug": "02-effects-of-drugs-on-rabbit-eye",
+  "description": "Mydriatics, miotics and local anaesthetics: pupil size, light reflex and corneal reflex."
+ },
+ {
+  "no": 3,
+  "sem": "V",
+  "cat": "In-vivo",
+  "title": "Anticonvulsant Activity: MES (Electroconvulsometer)",
+  "slug": "03-anticonvulsant-activity-mes-electroconvulsometer",
+  "description": "Maximal electroshock seizures in rats; abolition of tonic hind-limb extension by phenytoin."
+ },
+ {
+  "no": 4,
+  "sem": "V",
+  "cat": "In-vivo",
+  "title": "Muscle Relaxant Activity: Rota-Rod",
+  "slug": "04-muscle-relaxant-activity-rota-rod",
+  "description": "Fall-off time of mice on a rotating rod before and after diazepam."
+ },
+ {
+  "no": 5,
+  "sem": "V",
+  "cat": "In-vivo",
+  "title": "Anticonvulsant Activity: PTZ-Induced Seizures",
+  "slug": "05-anticonvulsant-activity-ptz-induced-seizures",
+  "description": "Latency and protection against pentylenetetrazole clonic convulsions with diazepam."
+ },
+ {
+  "no": 6,
+  "sem": "V",
+  "cat": "In-vivo",
+  "title": "Hepatic Enzyme Induction: Phenobarbitone Sleeping Time",
+  "slug": "06-hepatic-enzyme-induction-phenobarbitone-sleeping-time",
+  "description": "Effect of enzyme inducers and inhibitors on barbiturate sleeping time in mice."
+ },
+ {
+  "no": 7,
+  "sem": "V",
+  "cat": "Isolated tissue",
+  "title": "Ciliary Motility of Frog Oesophagus",
+  "slug": "07-ciliary-motility-of-frog-oesophagus",
+  "description": "Time for a poppy seed to travel 20 mm along the oesophagus with ACh, physostigmine and atropine."
+ },
+ {
+  "no": 8,
+  "sem": "V",
+  "cat": "In-vivo",
+  "title": "Local Anaesthetics",
+  "slug": "08-local-anaesthetics",
+  "description": "Surface (rabbit cornea), infiltration and nerve-block methods; onset and duration."
+ },
+ {
+  "no": 9,
+  "sem": "V",
+  "cat": "In-vivo",
+  "title": "Locomotor Activity: Actophotometer",
+  "slug": "09-locomotor-activity-actophotometer",
+  "description": "CNS depressant and stimulant effects on photocell beam counts in mice."
+ },
+ {
+  "no": 10,
+  "sem": "V",
+  "cat": "In-vivo",
+  "title": "Catalepsy & Stereotypy",
+  "slug": "10-catalepsy-and-stereotypy",
+  "description": "Haloperidol-induced catalepsy (bar test) and amphetamine stereotypy; reversal by anti-catatonic drugs."
+ },
+ {
+  "no": 11,
+  "sem": "V",
+  "cat": "In-vivo",
+  "title": "Anxiolytic Activity: Elevated Plus Maze",
+  "slug": "11-anxiolytic-activity-elevated-plus-maze",
+  "description": "Open-arm entries and time spent with diazepam in mice."
+ },
+ {
+  "no": 12,
+  "sem": "VI",
+  "cat": "Isolated tissue",
+  "title": "DRC of Acetylcholine: Frog Rectus Abdominis",
+  "slug": "12-drc-of-acetylcholine-frog-rectus-abdominis",
+  "description": "Graded contractions on a kymograph; log dose–response curve and EC50."
+ },
+ {
+  "no": 13,
+  "sem": "VI",
+  "cat": "Isolated tissue",
+  "title": "Physostigmine & Atropine on ACh DRC (Rat Ileum)",
+  "slug": "13-physostigmine-and-atropine-on-ach-drc-rat-ileum",
+  "description": "Left shift by anticholinesterase and parallel right shift by competitive antagonist."
+ },
+ {
+  "no": 14,
+  "sem": "VI",
+  "cat": "Bioassay",
+  "title": "Histamine Bioassay: Matching Method",
+  "slug": "14-histamine-bioassay-matching-method",
+  "description": "Estimate an unknown histamine concentration on guinea-pig ileum by matching responses."
+ },
+ {
+  "no": 15,
+  "sem": "VI",
+  "cat": "Bioassay",
+  "title": "Histamine Bioassay: Interpolation & Bracketing",
+  "slug": "15-histamine-bioassay-interpolation-and-bracketing",
+  "description": "Interpolate the test response between standard doses."
+ },
+ {
+  "no": 16,
+  "sem": "VI",
+  "cat": "Bioassay",
+  "title": "Three-Point Bioassay",
+  "slug": "16-three-point-bioassay",
+  "description": "Two standard doses and one test dose; potency by formula."
+ },
+ {
+  "no": 17,
+  "sem": "VI",
+  "cat": "Bioassay",
+  "title": "Four-Point Bioassay",
+  "slug": "17-four-point-bioassay",
+  "description": "Two standard and two test doses in Latin-square order; potency ratio."
+ },
+ {
+  "no": 18,
+  "sem": "VI",
+  "cat": "Bioassay",
+  "title": "pA2 Value: Schild Plot",
+  "slug": "18-pa2-value-schild-plot",
+  "description": "pA2 of atropine (ACh) or mepyramine (histamine) from dose ratios."
+ },
+ {
+  "no": 19,
+  "sem": "VI",
+  "cat": "In-vivo",
+  "title": "Analgesic Activity: Eddy's Hot Plate",
+  "slug": "19-analgesic-activity-eddys-hot-plate",
+  "description": "Reaction time (paw licking / jumping) with morphine or pentazocine."
+ },
+ {
+  "no": 20,
+  "sem": "VI",
+  "cat": "In-vivo",
+  "title": "Analgesic Activity: Tail-Flick Analgesiometer",
+  "slug": "20-analgesic-activity-tail-flick-analgesiometer",
+  "description": "Radiant heat tail withdrawal latency and % maximum possible effect."
+ },
+ {
+  "no": 21,
+  "sem": "VI",
+  "cat": "In-vivo",
+  "title": "Anti-inflammatory Activity: Carrageenan Paw Oedema",
+  "slug": "21-anti-inflammatory-activity-carrageenan-paw-oedema",
+  "description": "Plethysmometer paw volume and % inhibition with indomethacin / diclofenac."
+ },
+ {
+  "no": 22,
+  "sem": "VII",
+  "cat": "In-vivo",
+  "title": "Drugs on Blood Pressure & Heart Rate",
+  "slug": "22-drugs-on-blood-pressure-and-heart-rate",
+  "description": "Dale's adrenaline reversal, ACh reversal after atropine, histamine and β-agonist responses in the anaesthetised rat."
+ },
+ {
+  "no": 23,
+  "sem": "VII",
+  "cat": "In-vivo",
+  "title": "Anti-ulcer Activity: Pylorus Ligation",
+  "slug": "23-anti-ulcer-activity-pylorus-ligation",
+  "description": "Gastric volume, acidity and ulcer index with ranitidine / omeprazole."
+ },
+ {
+  "no": 24,
+  "sem": "VII",
+  "cat": "In-vivo",
+  "title": "Gastrointestinal Motility: Charcoal Meal",
+  "slug": "24-gastrointestinal-motility-charcoal-meal",
+  "description": "Percentage intestinal transit with atropine and metoclopramide; measure the charcoal front on a scale."
+ },
+ {
+  "no": 25,
+  "sem": "VII",
+  "cat": "In-vivo",
+  "title": "Antidiarrhoeal Activity: Castor Oil Model",
+  "slug": "25-antidiarrhoeal-activity-castor-oil-model",
+  "description": "Onset, wet and total faeces with loperamide and atropine; % inhibition."
+ }
+]

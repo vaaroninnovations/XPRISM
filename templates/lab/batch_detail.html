@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}{{ b.name }}{% endblock %}
+{% block content %}
+<a href="{% url 'batch_list' %}" class="text-xs font-semibold text-teal-700 hover:underline">← Batches</a>
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 flex flex-wrap items-start justify-between gap-4">
+  <div>
+    <div class="flex items-center gap-2"><span class="mono text-[11px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded">SEM {{ b.semester }}</span><span class="mono text-[11px] text-slate-500">{{ b.academic_year }}</span>{% if b.archived %}<span class="text-[11px] text-slate-500">archived</span>{% endif %}</div>
+    <h1 class="text-xl font-bold text-slate-900 mt-1">{{ b.name }}</h1>
+    <p class="text-xs text-slate-500">Faculty: {% for f in b.faculty.all %}{{ f.display_name }}{% if not forloop.last %}, {% endif %}{% empty %}none assigned{% endfor %}</p>
+  </div>
+  <div class="p-3 rounded-xl bg-slate-900 text-white min-w-[260px]">
+    <div class="text-[10px] uppercase tracking-wider text-slate-400 font-mono">Class code {% if not b.join_enabled %}(joining closed){% endif %}</div>
+    <div class="text-2xl font-extrabold mono tracking-widest text-teal-300">{{ b.class_code }}</div>
+    <div class="text-[10px] text-slate-400 break-all">{{ join_url }}</div>
+    {% if manage %}<div class="flex gap-1 mt-2">
+      <form method="post" action="{% url 'batch_action' b.pk 'toggle_join' %}">{% csrf_token %}<button class="px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 text-[11px]">{% if b.join_enabled %}Close joining{% else %}Open joining{% endif %}</button></form>
+      <form method="post" action="{% url 'batch_action' b.pk 'regen' %}" onsubmit="return confirm('Generate a new class code? The old one stops working.')">{% csrf_token %}<button class="px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 text-[11px]">New code</button></form>
+    </div>{% endif %}
+  </div>
+</div>
+<div class="flex flex-wrap gap-2">
+  {% if manage %}<a href="{% url 'assignment_new' b.pk %}" class="px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow">+ Assign experiment</a>
+  <a href="{% url 'batch_edit' b.pk %}" class="px-4 py-2 rounded-lg border border-slate-300 bg-white text-slate-700 text-sm font-medium hover:bg-slate-50">Edit batch</a>{% endif %}
+  <a href="{% url 'marks_sheet' b.pk %}" class="px-4 py-2 rounded-lg border border-slate-300 bg-white text-slate-700 text-sm font-medium hover:bg-slate-50">Marks sheet</a>
+  {% if manage %}<form method="post" action="{% url 'batch_action' b.pk 'archive' %}">{% csrf_token %}<button class="px-4 py-2 rounded-lg border border-slate-300 bg-white text-slate-500 text-sm hover:bg-slate-50">{% if b.archived %}Restore{% else %}Archive{% endif %}</button></form>{% endif %}
+</div>
+
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+  <h2 class="text-sm font-bold text-slate-800 mb-3">Assignments</h2>
+  <table class="obs-table w-full text-xs text-left"><thead><tr><th>Experiment</th><th>Opens</th><th>Due</th><th>Mode</th><th>Marks</th><th>Submitted</th><th>To grade</th><th></th></tr></thead><tbody>
+  {% for a in assigns %}<tr><td class="font-semibold">Exp {{ a.experiment.no }}: {{ a.experiment.title }}</td><td>{{ a.opens_at|date:"d M H:i" }}</td><td>{{ a.due_at|date:"d M H:i" }}</td><td>{% if a.exam_mode %}<span class="text-rose-700 font-semibold">Exam {{ a.time_limit_min }}′</span>{% else %}Practical{% endif %}</td><td class="mono">{{ a.max_marks|floatformat:"-1" }}</td><td class="mono">{{ a.n_sub }}/{{ enrolls|length }}</td><td class="mono">{{ a.n_grade }}</td><td><a href="{% url 'assignment_detail' a.pk %}" class="text-teal-700 font-semibold hover:underline">Open →</a></td></tr>
+  {% empty %}<tr><td colspan="8" class="text-slate-400 py-3">No experiments assigned yet.</td></tr>{% endfor %}
+  </tbody></table>
+</div>
+
+<div class="grid lg:grid-cols-3 gap-4">
+  <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+    <h2 class="text-sm font-bold text-slate-800 mb-3">Students <span class="mono text-xs text-slate-500">({{ enrolls|length }})</span></h2>
+    {% if request.session.cred_sheet %}<a href="{% url 'credentials_download' b.pk %}" class="inline-block mb-3 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-900 text-xs font-bold">⬇ Download new students' credentials (once)</a>{% endif %}
+    <div class="max-h-[480px] overflow-y-auto">
+    <table class="obs-table w-full text-xs text-left"><thead><tr><th>Roll no</th><th>Name</th><th>Username</th><th>Joined via</th><th>Last sign-in</th>{% if enrol %}<th></th>{% endif %}</tr></thead><tbody>
+    {% for e in enrolls %}<tr><td class="mono">{{ e.student.roll_no }}</td><td>{{ e.student.display_name }}{% if not e.student.is_active %} <span class="text-slate-400">(inactive)</span>{% endif %}</td><td class="mono">{{ e.student.username }}</td><td>{{ e.via }}</td><td>{{ e.student.last_login|date:"d M H:i"|default:"never" }}</td>
+      {% if enrol %}<td class="whitespace-nowrap"><form method="post" action="{% url 'student_action' b.pk e.student.pk 'reset' %}" class="inline" onsubmit="return confirm('Reset password for {{ e.student.username }}?')">{% csrf_token %}<button class="text-teal-700 hover:underline">Reset password</button></form> · <form method="post" action="{% url 'student_action' b.pk e.student.pk 'remove' %}" class="inline" onsubmit="return confirm('Remove {{ e.student.display_name }} from this batch?')">{% csrf_token %}<button class="text-rose-600 hover:underline">Remove</button></form></td>{% endif %}</tr>
+    {% empty %}<tr><td colspan="6" class="text-slate-400 py-3">No students yet. Share the class code or add them here.</td></tr>{% endfor %}
+    </tbody></table></div>
+  </div>
+  {% if enrol %}
+  <div class="space-y-4">
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+      <h2 class="text-sm font-bold text-slate-800 mb-2">Upload student list</h2>
+      <form method="post" enctype="multipart/form-data" action="{% url 'students_upload' b.pk %}" class="space-y-2">{% csrf_token %}{{ upload_form.file }}<p class="text-[11px] text-slate-500">CSV or Excel. First row: <span class="mono">roll_no, first_name, last_name, email</span>. Accounts get a temporary password that must be changed at first sign-in.</p><button class="w-full py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold">Upload & enrol</button></form>
+    </div>
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+      <h2 class="text-sm font-bold text-slate-800 mb-2">Add one student</h2>
+      <form method="post" action="{% url 'student_add' b.pk %}" class="space-y-2">{% csrf_token %}
+        {% for f in add_form %}<div><label class="block text-[11px] font-semibold text-slate-600">{{ f.label }}</label>{{ f }}</div>{% endfor %}
+        <button class="w-full py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold">Add student</button></form>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

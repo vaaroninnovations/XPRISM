@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="flex items-center justify-center py-16">
+  <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-8 max-w-md text-center space-y-3">
+    {% if code %}<div class="mono text-teal-700 text-xs font-bold">ERROR {{ code }}</div>{% endif %}
+    <h1 class="text-xl font-bold text-slate-900">{{ title }}</h1>
+    <p class="text-sm text-slate-600">{{ text }}</p>
+    <a href="{% url 'home' %}" class="inline-block mt-2 px-5 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow">Back to the lab</a>
+  </div>
+</div>
+{% endblock %}

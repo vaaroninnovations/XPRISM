@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exp 02: Effects of Drugs on Rabbit Eye • XPRISM</title>
+  <meta name="description" content="Mydriatics, miotics and local anaesthetics: pupil size, light reflex and corneal reflex.">
+    <meta name="theme-color" content="#0a1f44">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
+  <link rel="stylesheet" href="../assets/css/tailwind.css">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <script src="../assets/js/tone.min.js"></script>
+  <style>
+    
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f1f5f9;
+      color: #0a1f44;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Custom Instrument Cursors */
+    .tool-dropper-active { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24' fill='none' stroke='%230284c7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11Z'/%3E%3Cpath d='m5 2 5 5'/%3E%3Cpath d='m2 5 5 5'/%3E%3Cpath d='M22 22h-1a2 2 0 0 1-2-2V9'/%3E%3C/svg%3E") 4 24, crosshair; }
+    .tool-cotton-active { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='8' r='5' fill='white'/%3E%3Cpath d='M12 13v9'/%3E%3C/svg%3E") 12 8, pointer; }
+    .tool-torch-active { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24' fill='none' stroke='%23eab308' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m2 2 20 20'/%3E%3Ccircle cx='18' cy='6' r='3' fill='%23fef08a'/%3E%3C/svg%3E") 18 6, crosshair; }
+    .tool-ruler-active { cursor: crosshair; }
+    .tool-tonopen-active { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='10' y='2' width='4' height='16' rx='2' fill='%23c7d2fe'/%3E%3Cpath d='M8 18h8'/%3E%3Cpath d='M12 18v5'/%3E%3C/svg%3E") 12 23, crosshair; }
+
+    /* Eyelid Blink Keyframes */
+    @keyframes blinkAnim {
+      0% { transform: scaleY(1); opacity: 0; }
+      20% { transform: scaleY(0.04); opacity: 1; }
+      60% { transform: scaleY(0.04); opacity: 1; }
+      100% { transform: scaleY(1); opacity: 0; }
+    }
+    .eyelid-blink-active {
+      animation: blinkAnim 0.22s ease-in-out forwards;
+      transform-origin: center;
+    }
+
+    /* Falling Liquid Droplet Animation */
+    @keyframes dropFall {
+      0% { transform: translateY(-25px) scale(0.6); opacity: 0; }
+      40% { opacity: 1; transform: translateY(0px) scale(1.1); }
+      80% { transform: translateY(28px) scale(0.9, 1.2); opacity: 0.9; }
+      100% { transform: translateY(45px) scale(1.4, 0.4); opacity: 0; }
+    }
+    .drop-anim {
+      animation: dropFall 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    /* Pen torch beam */
+    .torch-beam {
+      background: radial-gradient(circle at center, rgba(254, 240, 138, 0.75) 0%, rgba(250, 204, 21, 0.35) 45%, rgba(250, 204, 21, 0) 72%);
+      pointer-events: none;
+      transition: width 0.15s, height 0.15s;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-100 overflow-x-hidden">
+
+  <!-- TOP BRANDING BAR (XPRISM Header) -->
+  <header class="site-header bg-white border-b border-slate-200 px-4 md:px-6 py-2 flex items-center justify-between gap-3 shadow-sm shrink-0">
+    <div class="flex items-center gap-3 min-w-0">
+    <a href="../index.html" title="Back to Lab Home" class="shrink-0"><img src="../assets/img/xprism-lockup.png" alt="XPRISM" class="h-11 w-auto" width="146" height="49"></a>
+      <div class="min-w-0 border-l border-slate-200 pl-3">
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="text-[10px] uppercase font-bold bg-teal-50 text-teal-700 px-2 py-0.5 rounded-full border border-teal-200 font-display tracking-wide">Virtual Lab</span>
+        <a href="../index.html" class="text-[11px] font-semibold text-teal-700 hover:underline">← All experiments</a>
+      </div>
+      <p class="text-xs text-slate-500">Aaron Innovations • Experimental Pharmacology Research &amp; Interactive Student Module</p>
+    </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="hidden md:block text-right">
+        <div class="text-xs font-semibold text-slate-800 flex items-center justify-end space-x-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Dr. Vara Prasad Saka</span>
+        </div>
+        <div class="text-[11px] text-slate-500 font-mono">ID: 8019152501 • Dept. of Pharmacology</div>
+      </div>
+      <div class="flex items-center gap-2 border-l pl-4 border-slate-200">
+        <a class="site-nav-btn" href="01-routes-of-drug-administration.html" title="Previous: Exp #1 Routes of Drug Administration">‹</a><a class="site-nav-btn" href="03-anticonvulsant-activity-mes-electroconvulsometer.html" title="Next: Exp #3 Anticonvulsant Activity: MES (Electroconvulsometer)">›</a>
+        <button id="audioToggleBtn" class="p-2 rounded-lg bg-teal-100 hover:bg-teal-200 text-teal-800 transition" title="Toggle sound feedback" aria-label="Toggle sound feedback">
+          <svg id="soundIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+        </button>
+        <span class="hidden sm:inline bg-indigo-100 text-indigo-800 text-xs px-2.5 py-1 rounded-md font-medium border border-indigo-200 whitespace-nowrap">Exp #2</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- SUB-HEADER / VIEW TABS -->
+
+  <div id="subHeader" class="site-subheader bg-slate-800 text-white px-4 md:px-6 py-2 flex flex-wrap items-center justify-between gap-3 shadow shrink-0">
+    <div class="text-sm font-semibold tracking-wide flex items-center space-x-2 min-w-0">
+      <span class="text-teal-400 font-mono text-xs px-1.5 py-0.5 rounded bg-teal-950/80 border border-teal-500/40 shrink-0">MODULE 02</span>
+      <span>Examination 2: Effects of Drugs on Rabbit's Eye</span>
+    </div>
+    <div class="flex items-center space-x-1.5 bg-slate-900/80 p-1 rounded-lg border border-slate-700" role="tablist">
+      <button id="tabTask" onclick="switchTab('task')" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white transition">Task Description</button>
+      <button id="tabExperiment" onclick="switchTab('experiment')" class="px-3.5 py-1.5 rounded-md text-xs font-semibold bg-teal-500 text-white shadow transition">Experiment Bench</button>
+      <button id="tabObservation" onclick="switchTab('observation')" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white transition">Observation Sheet &amp; Graphs</button>
+    </div>
+  </div>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-5 flex flex-col min-h-0">
+
+    <!-- ============================================== -->
+    <!-- TAB 1: TASK DESCRIPTION -->
+    <!-- ============================================== -->
+    <div id="viewTask" class="hidden flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between overflow-y-auto">
+      <div class="max-w-4xl space-y-6">
+        <div class="border-b pb-4">
+          <div class="inline-block px-2.5 py-1 rounded bg-teal-50 text-teal-800 text-xs font-bold font-mono mb-2">EXPERIMENT OBJECTIVE</div>
+          <h2 class="text-xl font-bold text-slate-900">Effects of Autonomic & Anesthetic Drugs on the Rabbit's Eye</h2>
+          <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+            Test the prescribed pharmacological agents, including an <strong>Unknown Mystery Drug</strong>, record baseline and post-drug observations in the standardized table, analyze pupil diameter, light reflex, corneal reflex, and intraocular pressure, and deduce the identity of the unknown drug.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-4">
+          <div class="p-4 rounded-xl bg-sky-50/70 border border-sky-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-sky-500 text-white flex items-center justify-center font-bold text-sm shadow">1</div>
+            <h3 class="text-sm font-bold text-sky-950">Drug Instillation</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Instill test compounds into the <strong>Right Eye (Treated)</strong>. The <strong>Left Eye (Control)</strong> remains under Normal Saline for continuous physiological comparison.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-amber-50/70 border border-amber-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center font-bold text-sm shadow">2</div>
+            <h3 class="text-sm font-bold text-amber-950">Scale & Reflexes</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Activate the <strong>Pupil Scale</strong> tool: click and drag across the pupil to automatically compute millimeter diameter. Test corneal sensation with the <strong>Cotton Wisp</strong> and the pupillary constriction with the <strong>Pen Torch</strong>.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-emerald-50/70 border border-emerald-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center font-bold text-sm shadow">3</div>
+            <h3 class="text-sm font-bold text-emerald-950">Clinical Deduction</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Correlate physiological changes with Mydriatics (Atropine, Ephedrine, Phenylephrine), Miotics (Physostigmine, Pilocarpine), or Local Anesthetics (Lignocaine).
+            </p>
+          </div>
+        </div>
+
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Physiological Baseline Norms (Albino Rabbit)</h4>
+          <div class="grid sm:grid-cols-4 gap-3 text-xs text-slate-600">
+            <div class="bg-white p-2.5 rounded border"><span class="font-bold text-slate-800">Pupil Diameter:</span> 7.0 mm (Normal)</div>
+            <div class="bg-white p-2.5 rounded border"><span class="font-bold text-slate-800">Light Reflex:</span> Present (Constriction)</div>
+            <div class="bg-white p-2.5 rounded border"><span class="font-bold text-slate-800">Corneal Reflex:</span> Present (Blink)</div>
+            <div class="bg-white p-2.5 rounded border"><span class="font-bold text-slate-800">Intraocular Tension:</span> 14–16 mmHg</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-6 border-t flex justify-end">
+        <button onclick="switchTab('experiment')" class="px-6 py-2.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-semibold text-sm shadow flex items-center space-x-2 transition">
+          <span>Go to Experiment Stage</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- TAB 2: EXPERIMENTAL BENCH & ANIMATED RABBIT RIG -->
+    <!-- ============================================== -->
+    <div id="viewExperiment" class="flex-1 flex flex-col lg:flex-row gap-4 h-[calc(100vh-140px)] min-h-[580px]">
+      
+      <!-- MAIN BENCH STAGE -->
+      <div class="flex-1 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col relative overflow-hidden">
+        
+        <!-- Top Toolbar over Bench -->
+        <div class="p-3 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 z-10 shrink-0">
+          
+          <!-- Drug selector dropdown -->
+          <div class="flex items-center space-x-2">
+            <label class="text-xs font-bold text-slate-600">Select Drug:</label>
+            <select id="drugSelect" onchange="onDrugSelectChange()" class="bg-white border border-slate-300 text-slate-800 text-xs rounded-lg px-3 py-1.5 font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
+              <option value="">-- Choose Agent to Instill --</option>
+              <option value="ephedrine">Ephedrine</option>
+              <option value="adrenaline">Adrenaline (Epinephrine)</option>
+              <option value="atropine">Atropine Sulfate</option>
+              <option value="physostigmine">Physostigmine (Eserine)</option>
+              <option value="lignocaine">Lignocaine (Lidocaine)</option>
+              <option value="saline">Normal Saline (Control)</option>
+              <option value="phenylephrine">Phenylephrine</option>
+              <option value="pilocarpine">Pilocarpine</option>
+              <option value="cocaine">Cocaine HCl</option>
+              <option value="amphetamine">Amphetamine</option>
+              <option value="unknown">Unknown Drug (Exam Mystery)</option>
+            </select>
+            <span id="drugStatusBadge" class="text-[11px] px-2 py-0.5 rounded font-mono font-semibold bg-slate-200 text-slate-700">None in Pipette</span>
+          </div>
+
+          <!-- View Toggle & Saline Flush -->
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-medium text-slate-500">View:</span>
+            <div class="flex rounded-lg border border-slate-300 bg-white p-0.5 shadow-sm">
+              <button id="zoomOutBtn" onclick="setZoom(false)" class="px-2.5 py-1 text-xs rounded font-semibold bg-teal-50 text-teal-700">
+                Rabbit Rig
+              </button>
+              <button id="zoomInBtn" onclick="setZoom(true)" class="px-2.5 py-1 text-xs rounded font-semibold text-slate-600 hover:text-slate-900">
+                Macro Eyes
+              </button>
+            </div>
+            <button onclick="washWithSaline()" class="px-3 py-1 bg-sky-600 hover:bg-sky-700 text-white rounded-lg text-xs font-medium shadow flex items-center space-x-1.5 transition">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+              <span>Wash Eyes (Saline)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- BENCH CANVAS & WORKSPACE -->
+        <div id="benchArea" class="flex-1 relative bg-gradient-to-b from-slate-100 via-slate-200 to-slate-300 flex items-center justify-center overflow-hidden">
+          
+          <!-- OVERVIEW SCENE: RABBIT IN CZERMAK BOX -->
+          <div id="overviewScene" class="w-full h-full absolute inset-0 flex flex-col items-center justify-center transition-opacity duration-300">
+            <!-- Lab Background Desk -->
+            <div class="absolute inset-x-0 bottom-0 h-32 bg-slate-300/80 border-t-4 border-slate-400/80"></div>
+            
+            <svg class="w-[430px] max-w-full h-auto drop-shadow-2xl cursor-pointer" viewBox="0 0 500 400" onclick="setZoom(true)" title="Click to zoom in on rabbit eyes">
+              <!-- Wooden Restrainer / Czermak Box -->
+              <polygon points="120,340 380,340 340,180 160,180" fill="#d97706" stroke="#b45309" stroke-width="4"/>
+              <polygon points="140,340 360,340 330,200 170,200" fill="#b45309" opacity="0.25"/>
+              <rect x="210" y="140" width="80" height="90" rx="10" fill="#92400e" stroke="#78350f" stroke-width="3"/>
+              <circle cx="250" cy="180" r="28" fill="#451a03"/>
+              <ellipse cx="220" cy="145" rx="8" ry="4" fill="#64748b"/>
+              <ellipse cx="280" cy="145" rx="8" ry="4" fill="#64748b"/>
+
+              <!-- Rabbit Head -->
+              <g id="rabbitRigOverview">
+                <path d="M 215 130 C 180 40, 160 30, 195 20 C 220 20, 230 70, 235 125 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="3"/>
+                <path d="M 210 110 C 190 50, 175 40, 195 32 C 208 32, 218 70, 225 105 Z" fill="#fecdd3" opacity="0.7"/>
+
+                <path d="M 285 130 C 320 40, 340 30, 305 20 C 280 20, 270 70, 265 125 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="3"/>
+                <path d="M 290 110 C 310 50, 325 40, 305 32 C 292 32, 282 70, 275 105 Z" fill="#fecdd3" opacity="0.7"/>
+
+                <!-- Face -->
+                <ellipse cx="250" cy="175" rx="55" ry="60" fill="#ffffff" stroke="#e2e8f0" stroke-width="3"/>
+
+                <!-- Right Eye (Observer Left) -->
+                <g>
+                  <ellipse cx="222" cy="165" rx="12" ry="9" fill="#ef4444" stroke="#991b1b" stroke-width="1.5"/>
+                  <circle id="miniRightPupil" cx="222" cy="165" r="4.5" fill="#450a0a"/>
+                  <circle cx="220" cy="163" r="1.5" fill="#ffffff"/>
+                </g>
+                <text x="210" y="195" font-size="10" font-weight="bold" fill="#0369a1">Right Eye</text>
+
+                <!-- Left Eye (Observer Right) -->
+                <g>
+                  <ellipse cx="278" cy="165" rx="12" ry="9" fill="#ef4444" stroke="#991b1b" stroke-width="1.5"/>
+                  <circle id="miniLeftPupil" cx="278" cy="165" r="4.5" fill="#450a0a"/>
+                  <circle cx="276" cy="163" r="1.5" fill="#ffffff"/>
+                </g>
+                <text x="268" y="195" font-size="10" font-weight="bold" fill="#475569">Left Eye</text>
+
+                <polygon points="245,190 255,190 250,197" fill="#f43f5e"/>
+                <line x1="250" y1="197" x2="250" y2="204" stroke="#cbd5e1" stroke-width="2"/>
+                <path d="M 235 204 Q 250 210 265 204" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+                <line x1="230" y1="194" x2="185" y2="188" stroke="#cbd5e1" stroke-width="1.5"/>
+                <line x1="230" y1="198" x2="180" y2="200" stroke="#cbd5e1" stroke-width="1.5"/>
+                <line x1="270" y1="194" x2="315" y2="188" stroke="#cbd5e1" stroke-width="1.5"/>
+                <line x1="270" y1="198" x2="320" y2="200" stroke="#cbd5e1" stroke-width="1.5"/>
+              </g>
+            </svg>
+
+            <button onclick="setZoom(true)" class="mt-4 px-4 py-2 bg-white border border-slate-300 hover:border-teal-500 rounded-full text-xs font-semibold text-slate-700 shadow-md flex items-center space-x-2 transition">
+              <svg class="w-4 h-4 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
+              <span>Switch to Macro Eyes View (Measure & Test)</span>
+            </button>
+          </div>
+
+          <!-- MACRO SCENE: CLOSE-UP EYES WORKSPACE -->
+          <div id="macroScene" class="w-full h-full absolute inset-0 hidden flex items-center justify-around px-4 py-2">
+            
+            <!-- RIGHT EYE CONTAINER (TREATED) -->
+            <div id="rightEyeContainer" class="flex flex-col items-center p-3 rounded-2xl bg-white/95 border-2 border-teal-500/60 shadow-lg relative w-[47%] max-w-[340px]">
+              <div class="flex items-center justify-between w-full mb-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-teal-800 bg-teal-50 px-2.5 py-0.5 rounded border border-teal-200">
+                  Right Eye (Treated)
+                </span>
+                <span id="rightEyeDrugBadge" class="text-[11px] font-mono text-slate-600 font-semibold truncate max-w-[140px]">Normal Saline</span>
+              </div>
+
+              <!-- Interactive Eye Target SVG -->
+              <div class="relative w-full aspect-square max-w-[240px] flex items-center justify-center cursor-pointer" onclick="handleEyeClick('right')" onmousemove="handleMouseMoveOverEye(event, 'right')">
+                <svg id="svgRightEye" class="w-full h-full" viewBox="0 0 260 260">
+                  <!-- Eye orbit -->
+                  <ellipse cx="130" cy="130" rx="122" ry="85" fill="#fce7f3" stroke="#cbd5e1" stroke-width="3"/>
+                  <ellipse cx="130" cy="130" rx="114" ry="76" fill="#fdf2f8"/>
+                  <!-- Blood vessels -->
+                  <path d="M 25 130 Q 70 120 100 128 M 235 130 Q 190 125 160 132 M 35 140 Q 60 148 95 135 M 225 142 Q 190 140 165 132" stroke="#f43f5e" stroke-width="0.8" opacity="0.45" fill="none"/>
+                  
+                  <!-- Iris (Pinkish Albino) -->
+                  <circle cx="130" cy="130" r="58" fill="#fda4af" stroke="#e11d48" stroke-width="2.5"/>
+                  <circle cx="130" cy="130" r="54" fill="none" stroke="#f43f5e" stroke-width="1" stroke-dasharray="2,3" opacity="0.7"/>
+
+                  <!-- Pupil (Dynamic Radius) -->
+                  <circle id="rightPupil" cx="130" cy="130" r="26" fill="#4c0519" stroke="#881337" stroke-width="1.5" class="transition-all duration-300"/>
+                  
+                  <!-- Glint highlights -->
+                  <ellipse cx="118" cy="116" rx="9" ry="6" fill="#ffffff" opacity="0.75"/>
+                  <circle cx="138" cy="138" r="3" fill="#ffffff" opacity="0.5"/>
+
+                  <!-- Animated Droplet Effect when instilled -->
+                  <circle id="rightDroplet" cx="130" cy="70" r="4.5" fill="#38bdf8" class="hidden"/>
+
+                  <!-- Animated Eyelid for Blinking -->
+                  <path id="rightEyelid" d="M 12 130 Q 130 30 248 130 Q 130 230 12 130 Z" fill="#fed7aa" stroke="#fb923c" stroke-width="2" class="opacity-0"/>
+                </svg>
+
+                <!-- Light Spotlight Beam -->
+                <div id="rightTorchLight" class="torch-beam absolute w-36 h-36 rounded-full hidden"></div>
+              </div>
+
+              <!-- Measurement Readouts & Quick Status -->
+              <div class="w-full mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-mono">
+                <div>Pupil: <span id="lblRightSize" class="font-bold text-teal-700">7.0</span> mm</div>
+                <div>Tension: <span id="lblRightIOP" class="font-bold text-slate-700">Normal (15.0 mmHg)</span></div>
+              </div>
+            </div>
+
+            <!-- LEFT EYE CONTAINER (CONTROL) -->
+            <div id="leftEyeContainer" class="flex flex-col items-center p-3 rounded-2xl bg-white/95 border-2 border-slate-300 shadow-lg relative w-[47%] max-w-[340px]">
+              <div class="flex items-center justify-between w-full mb-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded border border-slate-200">
+                  Left Eye (Control / Saline)
+                </span>
+                <span class="text-[11px] font-mono text-emerald-700 font-semibold">Normal Saline</span>
+              </div>
+
+              <!-- Interactive Eye Target SVG -->
+              <div class="relative w-full aspect-square max-w-[240px] flex items-center justify-center cursor-pointer" onclick="handleEyeClick('left')" onmousemove="handleMouseMoveOverEye(event, 'left')">
+                <svg id="svgLeftEye" class="w-full h-full" viewBox="0 0 260 260">
+                  <ellipse cx="130" cy="130" rx="122" ry="85" fill="#fce7f3" stroke="#cbd5e1" stroke-width="3"/>
+                  <ellipse cx="130" cy="130" rx="114" ry="76" fill="#fdf2f8"/>
+                  <path d="M 25 130 Q 70 120 100 128 M 235 130 Q 190 125 160 132 M 35 140 Q 60 148 95 135 M 225 142 Q 190 140 165 132" stroke="#f43f5e" stroke-width="0.8" opacity="0.45" fill="none"/>
+                  
+                  <circle cx="130" cy="130" r="58" fill="#fda4af" stroke="#e11d48" stroke-width="2.5"/>
+                  <circle cx="130" cy="130" r="54" fill="none" stroke="#f43f5e" stroke-width="1" stroke-dasharray="2,3" opacity="0.7"/>
+
+                  <circle id="leftPupil" cx="130" cy="130" r="26" fill="#4c0519" stroke="#881337" stroke-width="1.5" class="transition-all duration-300"/>
+                  
+                  <ellipse cx="118" cy="116" rx="9" ry="6" fill="#ffffff" opacity="0.75"/>
+                  <circle cx="138" cy="138" r="3" fill="#ffffff" opacity="0.5"/>
+
+                  <!-- Animated Eyelid for Blinking -->
+                  <path id="leftEyelid" d="M 12 130 Q 130 30 248 130 Q 130 230 12 130 Z" fill="#fed7aa" stroke="#fb923c" stroke-width="2" class="opacity-0"/>
+                </svg>
+
+                <div id="leftTorchLight" class="torch-beam absolute w-36 h-36 rounded-full hidden"></div>
+              </div>
+
+              <!-- Measurement Readouts -->
+              <div class="w-full mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-mono">
+                <div>Pupil: <span class="font-bold text-slate-700">7.0</span> mm</div>
+                <div>Tension: <span class="font-bold text-slate-700">Normal (15.0 mmHg)</span></div>
+              </div>
+            </div>
+
+            <!-- INTERACTIVE PUPIL MEASURING DRAWING CANVAS & CALIPER LAYER -->
+            <canvas id="rulerOverlayCanvas" class="absolute inset-0 w-full h-full pointer-events-none z-20"></canvas>
+
+            <!-- Tono-pen Live Digital HUD Readout -->
+            <div id="tonopenReadout" class="absolute z-30 hidden bg-slate-900/95 text-white rounded-xl p-3 shadow-2xl border border-slate-700 pointer-events-none backdrop-blur-md" style="top: 25%; left: 40%;">
+              <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Tono-Pen Electronic Tonometer</div>
+              <div class="flex items-baseline space-x-2 my-1">
+                <span id="tonopenNumber" class="text-3xl font-extrabold font-mono text-teal-400">15.0</span>
+                <span class="text-xs text-slate-400 font-mono">mmHg</span>
+              </div>
+              <div class="flex items-center space-x-1.5 text-[11px] font-mono">
+                <span class="text-slate-400">Intraocular Status:</span>
+                <span id="tonopenStatus" class="font-bold text-emerald-400">NORMAL</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom Action Prompt Notification Banner -->
+          <div id="actionFeedback" class="absolute bottom-3 left-4 right-4 bg-slate-900/90 text-white py-2 px-4 rounded-lg text-xs flex items-center justify-between backdrop-blur-md shadow-lg border border-slate-700 pointer-events-none transition-opacity duration-300 z-30">
+            <div class="flex items-center space-x-2">
+              <span id="feedbackIcon" class="text-teal-400 font-bold text-sm">ℹ</span>
+              <span id="feedbackText">Select an instrument from the right palette or instill a drug to begin.</span>
+            </div>
+            <span id="activeDrugIndicator" class="text-[11px] font-mono text-slate-400 hidden sm:inline">Active: Baseline</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RIGHT SIDE: INSTRUMENTS PALETTE -->
+      <div class="w-full lg:w-64 bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-col justify-between shrink-0">
+        <div class="space-y-4">
+          <div class="border-b pb-2">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Apparatus & Tools</h3>
+            <p class="text-[11px] text-slate-500">Pick a tool to test the animal</p>
+          </div>
+
+          <div class="grid grid-cols-2 lg:grid-cols-1 gap-2.5">
+            
+            <!-- Tool 1: Dropper -->
+            <button id="btnToolDropper" onclick="selectTool('dropper')" class="tool-btn flex items-center space-x-3 p-2.5 rounded-xl border border-slate-200 hover:border-teal-500 text-left transition bg-slate-50 hover:bg-white shadow-xs">
+              <div class="w-9 h-9 rounded-lg bg-sky-100 text-sky-600 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11Z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 2 5 5M2 5l5 5M22 22h-1a2 2 0 0 1-2-2V9"/></svg>
+              </div>
+              <div>
+                <div class="text-xs font-bold text-slate-800">Drug Dropper</div>
+                <div class="text-[10px] text-slate-500">Instill drug into eye</div>
+              </div>
+            </button>
+
+            <!-- Tool 2: Cotton Wisp (Corneal Reflex) -->
+            <button id="btnToolCotton" onclick="selectTool('cotton')" class="tool-btn flex items-center space-x-3 p-2.5 rounded-xl border border-slate-200 hover:border-teal-500 text-left transition bg-slate-50 hover:bg-white shadow-xs">
+              <div class="w-9 h-9 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2a5 5 0 0 0-5 5c0 2.1 1.3 3.9 3.1 4.6L9 22h6l-1.1-10.4C15.7 10.9 17 9.1 17 7a5 5 0 0 0-5-5z"/></svg>
+              </div>
+              <div>
+                <div class="text-xs font-bold text-slate-800">Cotton Wisp</div>
+                <div class="text-[10px] text-slate-500">Test Corneal Reflex</div>
+              </div>
+            </button>
+
+            <!-- Tool 3: Pen Torch (Light Reflex) -->
+            <button id="btnToolTorch" onclick="selectTool('torch')" class="tool-btn flex items-center space-x-3 p-2.5 rounded-xl border border-slate-200 hover:border-teal-500 text-left transition bg-slate-50 hover:bg-white shadow-xs">
+              <div class="w-9 h-9 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              </div>
+              <div>
+                <div class="text-xs font-bold text-slate-800">Pen Torch</div>
+                <div class="text-[10px] text-slate-500">Test Light Reflex</div>
+              </div>
+            </button>
+
+            <!-- Tool 4: Pupil Scale / Draw Caliper (DRAW & AUTOMATIC MEASURE) -->
+            <button id="btnToolRuler" onclick="selectTool('ruler')" class="tool-btn flex items-center space-x-3 p-2.5 rounded-xl border border-slate-200 hover:border-teal-500 text-left transition bg-slate-50 hover:bg-white shadow-xs relative">
+              <div class="w-9 h-9 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16M7 6v2M11 6v2M15 6v2M19 6v2"/></svg>
+              </div>
+              <div>
+                <div class="text-xs font-bold text-slate-800 flex items-center space-x-1">
+                  <span>Pupil Scale</span>
+                  <span class="text-[9px] bg-indigo-100 text-indigo-700 px-1 py-0.2 rounded font-mono font-bold">DRAW</span>
+                </div>
+                <div class="text-[10px] text-slate-500">Drag to auto-measure</div>
+              </div>
+            </button>
+
+            <!-- Tool 5: Tono-pen (IOP) -->
+            <button id="btnToolTonopen" onclick="selectTool('tonopen')" class="tool-btn flex items-center space-x-3 p-2.5 rounded-xl border border-slate-200 hover:border-teal-500 text-left transition bg-slate-50 hover:bg-white shadow-xs">
+              <div class="w-9 h-9 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+              </div>
+              <div>
+                <div class="text-xs font-bold text-slate-800">Tono-Pen</div>
+                <div class="text-[10px] text-slate-500">Measure Eye Tension</div>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Auto-Log and Observation Sheet Link -->
+        <div class="pt-4 border-t border-slate-200 space-y-2">
+          <button onclick="autoRecordToObservationTable()" class="w-full py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-semibold shadow transition flex items-center justify-center space-x-1.5">
+            <svg class="w-3.5 h-3.5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            <span>Auto-Record to Table</span>
+          </button>
+          <button onclick="switchTab('observation')" class="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium transition text-center">
+            Open Observation Sheet →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- TAB 3: OBSERVATION TABLE & EVALUATION -->
+    <!-- ============================================== -->
+    <div id="viewObservation" class="hidden flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between overflow-y-auto">
+      <div class="space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b pb-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Clinical Protocol: Effects of Drugs on Rabbit's Eye</h2>
+            <p class="text-xs text-slate-500">Compare parameters Before & After instillation in Right (Treated) vs Left (Control) Eyes</p>
+          </div>
+
+          <div class="flex items-center space-x-3">
+            <button onclick="resetObservationTable()" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50 text-xs font-medium text-slate-700 transition">
+              Clear Inputs
+            </button>
+            <button onclick="autoFillCurrentState()" class="px-3.5 py-1.5 rounded-lg bg-teal-50 border border-teal-300 hover:bg-teal-100 text-teal-800 text-xs font-semibold transition flex items-center space-x-1.5">
+              <span>Auto-Fill Current Observations</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Clinical Observation Table -->
+        <div class="overflow-x-auto border border-slate-200 rounded-xl shadow-sm">
+          <table class="w-full text-xs text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                <th rowspan="2" class="p-3 border-r border-slate-200 font-bold text-center">Rabbit Eye</th>
+                <th rowspan="2" class="p-3 border-r border-slate-200 font-bold">Drug / Agent</th>
+                <th colspan="3" class="p-2 border-r border-slate-200 font-bold text-center bg-teal-50/70">Intraocular Tension (mmHg)</th>
+                <th colspan="2" class="p-2 border-r border-slate-200 font-bold text-center bg-amber-50/70">Light Reflex</th>
+                <th colspan="2" class="p-2 border-r border-slate-200 font-bold text-center bg-rose-50/70">Corneal Reflex</th>
+                <th colspan="3" class="p-2 font-bold text-center bg-indigo-50/70">Pupil Size (mm)</th>
+              </tr>
+              <tr class="bg-slate-50 text-slate-600 border-b border-slate-200 text-[11px]">
+                <th class="p-2 border-r text-center">Before</th>
+                <th class="p-2 border-r text-center">After</th>
+                <th class="p-2 border-r text-center">Effect</th>
+                <th class="p-2 border-r text-center">Before</th>
+                <th class="p-2 border-r text-center">After</th>
+                <th class="p-2 border-r text-center">Before</th>
+                <th class="p-2 border-r text-center">After</th>
+                <th class="p-2 border-r text-center">Before</th>
+                <th class="p-2 border-r text-center">After</th>
+                <th class="p-2 text-center">Difference</th>
+              </tr>
+            </thead>
+            <tbody id="obsTableBody" class="divide-y divide-slate-200 font-mono text-[11px]">
+              <!-- Row 1: Right Eye (Treated) -->
+              <tr class="hover:bg-slate-50/80">
+                <td class="p-2.5 font-bold text-teal-800 border-r text-center">Right (Treated)</td>
+                <td class="p-2 border-r font-sans">
+                  <select id="obsRightDrug" class="w-full bg-white border border-slate-300 rounded px-2 py-1 text-xs">
+                    <option value="">Select Drug</option>
+                    <option value="ephedrine">Ephedrine</option>
+                    <option value="adrenaline">Adrenaline</option>
+                    <option value="atropine">Atropine</option>
+                    <option value="physostigmine">Physostigmine</option>
+                    <option value="lignocaine">Lignocaine</option>
+                    <option value="phenylephrine">Phenylephrine</option>
+                    <option value="pilocarpine">Pilocarpine</option>
+                    <option value="cocaine">Cocaine</option>
+                    <option value="amphetamine">Amphetamine</option>
+                    <option value="unknown">Unknown Drug</option>
+                  </select>
+                </td>
+                <td class="p-1.5 border-r text-center"><input id="r_iop_b" type="text" value="15.0" class="w-14 text-center border rounded py-0.5"></td>
+                <td class="p-1.5 border-r text-center"><input id="r_iop_a" type="text" placeholder="--" class="w-14 text-center border rounded py-0.5 font-bold text-teal-600"></td>
+                <td class="p-1.5 border-r text-center" id="r_iop_diff">--</td>
+                <td class="p-1.5 border-r text-center">
+                  <select id="r_lr_b" class="border rounded px-1 py-0.5"><option>Present</option><option>Absent</option></select>
+                </td>
+                <td class="p-1.5 border-r text-center">
+                  <select id="r_lr_a" class="border rounded px-1 py-0.5"><option value="">--</option><option>Present</option><option>Absent</option></select>
+                </td>
+                <td class="p-1.5 border-r text-center">
+                  <select id="r_cr_b" class="border rounded px-1 py-0.5"><option>Present</option><option>Absent</option></select>
+                </td>
+                <td class="p-1.5 border-r text-center">
+                  <select id="r_cr_a" class="border rounded px-1 py-0.5"><option value="">--</option><option>Present</option><option>Absent</option></select>
+                </td>
+                <td class="p-1.5 border-r text-center"><input id="r_sz_b" type="text" value="7.0" class="w-14 text-center border rounded py-0.5"></td>
+                <td class="p-1.5 border-r text-center"><input id="r_sz_a" type="text" placeholder="--" class="w-14 text-center border rounded py-0.5 font-bold text-teal-600"></td>
+                <td class="p-1.5 text-center font-bold" id="r_sz_diff">--</td>
+              </tr>
+
+              <!-- Row 2: Left Eye (Control) -->
+              <tr class="hover:bg-slate-50/80 bg-slate-50/40">
+                <td class="p-2.5 font-bold text-slate-600 border-r text-center">Left (Control)</td>
+                <td class="p-2 border-r font-sans text-slate-700 font-medium">Normal Saline</td>
+                <td class="p-1.5 border-r text-center"><input type="text" value="15.0" readonly class="w-14 text-center bg-slate-100 rounded py-0.5"></td>
+                <td class="p-1.5 border-r text-center"><input type="text" value="15.0" readonly class="w-14 text-center bg-slate-100 rounded py-0.5"></td>
+                <td class="p-1.5 border-r text-center text-slate-400">Nil</td>
+                <td class="p-1.5 border-r text-center text-slate-700">Present</td>
+                <td class="p-1.5 border-r text-center text-slate-700">Present</td>
+                <td class="p-1.5 border-r text-center text-slate-700">Present</td>
+                <td class="p-1.5 border-r text-center text-slate-700">Present</td>
+                <td class="p-1.5 border-r text-center"><input type="text" value="7.0" readonly class="w-14 text-center bg-slate-100 rounded py-0.5"></td>
+                <td class="p-1.5 border-r text-center"><input type="text" value="7.0" readonly class="w-14 text-center bg-slate-100 rounded py-0.5"></td>
+                <td class="p-1.5 text-center text-slate-400">0.0 mm</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- UNKNOWN DRUG IDENTIFICATION SECTION -->
+        <div class="p-4 rounded-xl border border-teal-200 bg-teal-50/50 flex flex-wrap items-center justify-between gap-4">
+          <div class="space-y-1">
+            <h3 class="text-sm font-bold text-slate-800">Identify Unknown Drug (Exam Diagnosis)</h3>
+            <p class="text-xs text-slate-600">Based on your pupil caliper measurements and reflex responses, identify the mystery drug.</p>
+          </div>
+
+          <div class="flex items-center space-x-3">
+            <select id="unknownDrugDeduction" class="bg-white border border-slate-300 text-slate-800 text-xs rounded-lg px-3 py-2 font-medium shadow-sm focus:ring-2 focus:ring-teal-500">
+              <option value="">-- Choose deduced compound --</option>
+              <option value="atropine">Atropine Sulfate (Mydriatic, Lost Light Reflex)</option>
+              <option value="physostigmine">Physostigmine (Miotic, Preserved Light Reflex)</option>
+              <option value="pilocarpine">Pilocarpine (Direct M3 Agonist Miotic)</option>
+              <option value="lignocaine">Lignocaine (Local Anesthetic, Lost Corneal Reflex)</option>
+              <option value="ephedrine">Ephedrine (Mydriatic, Preserved Light Reflex)</option>
+            </select>
+            <button onclick="submitEvaluation()" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-lg shadow transition">
+              Verify Deduction
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Footer Buttons -->
+      <div class="pt-6 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
+        <div class="text-xs text-slate-500 font-mono">XPRISM • Practical Evaluation Sheet</div>
+        <div class="flex items-center space-x-3">
+          <button onclick="openQuestionsModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow transition">
+            Answer the Questions
+          </button>
+          <button onclick="openResultsModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow transition">
+            Results
+          </button>
+          <button onclick="generateReport()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg shadow transition flex items-center space-x-1.5">
+            <svg class="w-3.5 h-3.5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+            <span>Print Report</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer no-print border-t border-slate-200 bg-white shrink-0">
+    <div class="max-w-7xl mx-auto px-6 py-3 text-xs text-slate-500 font-mono flex justify-between flex-wrap gap-2">
+      <span>XPRISM • Exp #02 • © 2026 Aaron Innovations • Dr. Vara Prasad Saka</span>
+      <span>Simulations are teaching aids that reduce animal use, in line with CCSEA 3Rs guidance. • <a href="../index.html" class="text-teal-700 hover:underline">All experiments</a></span>
+    </div>
+  </footer>
+
+  <!-- ============================================== -->
+  <!-- MODAL: VIVA-VOCE QUESTIONS -->
+  <!-- ============================================== -->
+  <div id="modalQuestions" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-base font-bold text-slate-800">Post-Laboratory Assessment Questions</h3>
+        <button onclick="closeModal('modalQuestions')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+
+      <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-2 text-xs text-slate-700">
+        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-2">
+          <p class="font-semibold text-slate-900">Q1. Why does Atropine abolish the light reflex in the rabbit's eye?</p>
+          <label class="flex items-center space-x-2"><input type="radio" name="q1" value="a"> <span>Blocks alpha-1 adrenergic receptors on radial dilator pupillae muscle</span></label>
+          <label class="flex items-center space-x-2"><input type="radio" name="q1" value="b"> <span>Blocks muscarinic M3 receptors on circular constrictor pupillae sphincter</span></label>
+          <label class="flex items-center space-x-2"><input type="radio" name="q1" value="c"> <span>Paralyzes corneal sensory nerve endings directly</span></label>
+        </div>
+
+        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-2">
+          <p class="font-semibold text-slate-900">Q2. Which drug completely abolishes the corneal reflex without altering pupil size?</p>
+          <label class="flex items-center space-x-2"><input type="radio" name="q2" value="a"> <span>Lignocaine (Local Anesthetic)</span></label>
+          <label class="flex items-center space-x-2"><input type="radio" name="q2" value="b"> <span>Pilocarpine</span></label>
+          <label class="flex items-center space-x-2"><input type="radio" name="q2" value="c"> <span>Phenylephrine</span></label>
+        </div>
+
+        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-2">
+          <p class="font-semibold text-slate-900">Q3. What distinguishes Ephedrine mydriasis from Atropine mydriasis?</p>
+          <label class="flex items-center space-x-2"><input type="radio" name="q3" value="a"> <span>Ephedrine produces miosis instead of mydriasis</span></label>
+          <label class="flex items-center space-x-2"><input type="radio" name="q3" value="b"> <span>In Ephedrine mydriasis, the light reflex is preserved; in Atropine it is lost</span></label>
+          <label class="flex items-center space-x-2"><input type="radio" name="q3" value="c"> <span>Ephedrine paralyzes the corneal reflex completely</span></label>
+        </div>
+      </div>
+
+      <div class="pt-3 border-t flex justify-end space-x-2">
+        <button onclick="closeModal('modalQuestions')" class="px-4 py-2 border rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">Cancel</button>
+        <button onclick="evaluateQuestions()" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-lg shadow">Submit Answers</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: RESULTS & DEDUCTION VERIFICATION -->
+  <!-- ============================================== -->
+  <div id="modalResults" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-base font-bold text-slate-800">Laboratory Results Summary</h3>
+        <button onclick="closeModal('modalResults')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div class="p-3 bg-slate-50 rounded-lg border flex justify-between">
+          <span class="text-slate-600">Active Test Substance:</span>
+          <span id="resActiveDrug" class="font-bold text-slate-900 font-mono">None</span>
+        </div>
+        <div class="p-3 bg-slate-50 rounded-lg border flex justify-between">
+          <span class="text-slate-600">Your Deduction (Unknown):</span>
+          <span id="resUserDeduction" class="font-bold text-teal-700 font-mono">Not submitted</span>
+        </div>
+        <div class="p-3 bg-slate-50 rounded-lg border flex justify-between">
+          <span class="text-slate-600">Correct Mystery Agent:</span>
+          <span id="resActualUnknown" class="font-bold text-emerald-700 font-mono">Atropine</span>
+        </div>
+        <div id="resExplanation" class="p-3 rounded-lg bg-teal-50 border border-teal-200 text-teal-900 leading-relaxed text-[11px]">
+          Results explanation will appear here.
+        </div>
+      </div>
+
+      <div class="pt-3 border-t flex justify-end">
+        <button onclick="closeModal('modalResults')" class="px-6 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg shadow">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT APPLICATION CODE -->
+  <script>
+    // --- PHARMACOLOGY DATABASE ---
+    // Rabbit baseline pupil: 7.0 mm (r=26px in SVG, 1 mm ~ 3.714 px)
+    const PIXELS_PER_MM = 3.714;
+
+    const DRUG_PROFILES = {
+      saline: {
+        name: "Normal Saline (Control)",
+        pupilMm: 7.0,
+        lightReflex: "Present",
+        cornealReflex: "Present",
+        iopMmHg: 15.0,
+        iopStatus: "Normal",
+        notes: "Physiological control vehicle. No change in diameter or reflex arcs."
+      },
+      atropine: {
+        name: "Atropine Sulfate",
+        pupilMm: 12.0, // Marked mydriasis
+        lightReflex: "Absent", // Paralyzed constrictor pupillae
+        cornealReflex: "Present",
+        iopMmHg: 19.5, // Increased due to trabecular crowding
+        iopStatus: "High",
+        notes: "Antimuscarinic. Passive mydriasis + loss of light reflex + elevated IOP."
+      },
+      physostigmine: {
+        name: "Physostigmine (Eserine)",
+        pupilMm: 3.5, // Pin-point miosis
+        lightReflex: "Present",
+        cornealReflex: "Present",
+        iopMmHg: 11.0, // Reduced IOP (improved canal of Schlemm drainage)
+        iopStatus: "Low",
+        notes: "Anticholinesterase. Marked miosis + decreased intraocular tension."
+      },
+      pilocarpine: {
+        name: "Pilocarpine Nitrate",
+        pupilMm: 3.8, // Marked miosis
+        lightReflex: "Present",
+        cornealReflex: "Present",
+        iopMmHg: 11.5,
+        iopStatus: "Low",
+        notes: "Direct muscarinic M3 agonist miotic. Decreases IOP."
+      },
+      lignocaine: {
+        name: "Lignocaine (Lidocaine)",
+        pupilMm: 7.0, // Normal pupil size
+        lightReflex: "Present",
+        cornealReflex: "Absent", // Surface sensory anesthesia abolishes blink!
+        iopMmHg: 15.0,
+        iopStatus: "Normal",
+        notes: "Local anesthetic. Completely abolishes corneal reflex without affecting pupil size."
+      },
+      ephedrine: {
+        name: "Ephedrine HCl",
+        pupilMm: 10.5, // Active mydriasis
+        lightReflex: "Present", // Light reflex intact!
+        cornealReflex: "Present",
+        iopMmHg: 16.0,
+        iopStatus: "Normal",
+        notes: "Sympathomimetic. Active mydriasis with preserved pupillary light reflex."
+      },
+      adrenaline: {
+        name: "Adrenaline (Epinephrine)",
+        pupilMm: 10.8,
+        lightReflex: "Present",
+        cornealReflex: "Present",
+        iopMmHg: 14.0,
+        iopStatus: "Normal",
+        notes: "Alpha-1 adrenergic stimulation of radial dilator pupillae muscle."
+      },
+      phenylephrine: {
+        name: "Phenylephrine",
+        pupilMm: 11.0,
+        lightReflex: "Present",
+        cornealReflex: "Present",
+        iopMmHg: 15.5,
+        iopStatus: "Normal",
+        notes: "Selective alpha-1 agonist. Pure mydriasis without cycloplegia."
+      },
+      cocaine: {
+        name: "Cocaine HCl",
+        pupilMm: 10.0,
+        lightReflex: "Present",
+        cornealReflex: "Absent", // Anesthetic + sympathomimetic
+        iopMmHg: 15.0,
+        iopStatus: "Normal",
+        notes: "Reuptake inhibitor: active mydriasis + partial corneal anesthesia."
+      },
+      amphetamine: {
+        name: "Amphetamine",
+        pupilMm: 10.2,
+        lightReflex: "Present",
+        cornealReflex: "Present",
+        iopMmHg: 15.8,
+        iopStatus: "Normal",
+        notes: "Indirect sympathomimetic mydriasis with intact light reflex."
+      }
+    };
+
+    // State Variables
+    let currentSelectedTool = null;
+    let isZoomedIn = false;
+    let activeTestDrugKey = "saline";
+    let isLightOnRight = false;
+    let isLightOnLeft = false;
+    let soundEnabled = true;
+
+    // Unknown Mystery Drug Generator
+    const possibleMysteryDrugs = ['atropine', 'physostigmine', 'pilocarpine', 'lignocaine', 'ephedrine'];
+    let mysteryDrugKey = possibleMysteryDrugs[Math.floor(Math.random() * possibleMysteryDrugs.length)];
+
+    // Web Audio Synthesizer (Tone.js)
+    let synth = null;
+    function playBeep(type) {
+      if (!soundEnabled) return;
+      try {
+        if (!synth && window.Tone) {
+          synth = new Tone.PolySynth(Tone.Synth).toDestination();
+          synth.volume.value = -12;
+        }
+        if (Tone.context.state !== 'running') {
+          Tone.start();
+        }
+        if (type === 'drop') synth.triggerAttackRelease("C5", "32n");
+        if (type === 'blink') synth.triggerAttackRelease("G3", "16n");
+        if (type === 'tonopen') synth.triggerAttackRelease(["E5", "B5"], "32n");
+        if (type === 'wash') synth.triggerAttackRelease("C4", "8n");
+        if (type === 'measure') synth.triggerAttackRelease("D5", "64n");
+      } catch (e) {
+        // Safe audio failure
+      }
+    }
+
+    document.getElementById('audioToggleBtn').addEventListener('click', () => {
+      soundEnabled = !soundEnabled;
+      document.getElementById('audioToggleBtn').classList.toggle('bg-teal-100', soundEnabled);
+      showFeedback(soundEnabled ? "Audio feedback enabled" : "Audio muted");
+    });
+
+    // --- TAB SWITCHER ---
+    function switchTab(tabId) {
+      ['viewTask', 'viewExperiment', 'viewObservation'].forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+      });
+      ['tabTask', 'tabExperiment', 'tabObservation'].forEach(id => {
+        const btn = document.getElementById(id);
+        btn.classList.remove('bg-teal-500', 'text-white', 'shadow');
+        btn.classList.add('text-slate-300');
+      });
+
+      if (tabId === 'task') {
+        document.getElementById('viewTask').classList.remove('hidden');
+        document.getElementById('tabTask').classList.add('bg-teal-500', 'text-white', 'shadow');
+      } else if (tabId === 'experiment') {
+        document.getElementById('viewExperiment').classList.remove('hidden');
+        document.getElementById('tabExperiment').classList.add('bg-teal-500', 'text-white', 'shadow');
+        resizeRulerCanvas();
+      } else if (tabId === 'observation') {
+        document.getElementById('viewObservation').classList.remove('hidden');
+        document.getElementById('tabObservation').classList.add('bg-teal-500', 'text-white', 'shadow');
+      }
+    }
+
+    // --- ZOOM MODE ---
+    function setZoom(zoomIn) {
+      isZoomedIn = zoomIn;
+      const overview = document.getElementById('overviewScene');
+      const macro = document.getElementById('macroScene');
+      const btnOut = document.getElementById('zoomOutBtn');
+      const btnIn = document.getElementById('zoomInBtn');
+
+      if (zoomIn) {
+        overview.classList.add('hidden');
+        macro.classList.remove('hidden');
+        btnIn.classList.add('bg-teal-50', 'text-teal-700');
+        btnOut.classList.remove('bg-teal-50', 'text-teal-700');
+        resizeRulerCanvas();
+        showFeedback("Macro Eyes View: Click and drag with the Pupil Scale to measure diameter in millimeters.");
+      } else {
+        macro.classList.add('hidden');
+        overview.classList.remove('hidden');
+        btnOut.classList.add('bg-teal-50', 'text-teal-700');
+        btnIn.classList.remove('bg-teal-50', 'text-teal-700');
+        clearCaliperLine();
+        showFeedback("Rabbit Rig Overview: Click on the rabbit head to enter Macro Eye view.");
+      }
+    }
+
+    // --- TOOL SELECTION ---
+    function selectTool(toolName) {
+      if (currentSelectedTool === toolName) {
+        currentSelectedTool = null;
+      } else {
+        currentSelectedTool = toolName;
+      }
+
+      document.querySelectorAll('.tool-btn').forEach(b => {
+        b.classList.remove('border-teal-500', 'bg-teal-50', 'ring-2', 'ring-teal-400');
+      });
+      document.getElementById('benchArea').className = "flex-1 relative bg-gradient-to-b from-slate-100 via-slate-200 to-slate-300 flex items-center justify-center overflow-hidden";
+      
+      document.getElementById('tonopenReadout').classList.add('hidden');
+      hideTorchBeam();
+
+      const overlayCanvas = document.getElementById('rulerOverlayCanvas');
+
+      if (currentSelectedTool) {
+        if (currentSelectedTool === 'dropper') {
+          document.getElementById('btnToolDropper').classList.add('border-teal-500', 'bg-teal-50', 'ring-2', 'ring-teal-400');
+          document.getElementById('benchArea').classList.add('tool-dropper-active');
+          overlayCanvas.style.pointerEvents = 'none';
+          showFeedback("Drug Dropper Active: Pick a drug, then click Right Eye to instill liquid drops.");
+        } else if (currentSelectedTool === 'cotton') {
+          document.getElementById('btnToolCotton').classList.add('border-teal-500', 'bg-teal-50', 'ring-2', 'ring-teal-400');
+          document.getElementById('benchArea').classList.add('tool-cotton-active');
+          overlayCanvas.style.pointerEvents = 'none';
+          showFeedback("Cotton Wisp Active: Touch cornea to observe the Corneal (Blink) Reflex.");
+        } else if (currentSelectedTool === 'torch') {
+          document.getElementById('btnToolTorch').classList.add('border-teal-500', 'bg-teal-50', 'ring-2', 'ring-teal-400');
+          document.getElementById('benchArea').classList.add('tool-torch-active');
+          overlayCanvas.style.pointerEvents = 'none';
+          showFeedback("Pen Torch Active: Focus light on pupil to test the Light Reflex constriction.");
+        } else if (currentSelectedTool === 'ruler') {
+          document.getElementById('btnToolRuler').classList.add('border-teal-500', 'bg-teal-50', 'ring-2', 'ring-teal-400');
+          document.getElementById('benchArea').classList.add('tool-ruler-active');
+          if (!isZoomedIn) setZoom(true);
+          // Enable drawing layer
+          overlayCanvas.style.pointerEvents = 'auto';
+          showFeedback("Pupil Scale Active: CLICK and DRAG across the pupil to draw a measuring line with auto-calculation.");
+        } else if (currentSelectedTool === 'tonopen') {
+          document.getElementById('btnToolTonopen').classList.add('border-teal-500', 'bg-teal-50', 'ring-2', 'ring-teal-400');
+          document.getElementById('benchArea').classList.add('tool-tonopen-active');
+          overlayCanvas.style.pointerEvents = 'none';
+          showFeedback("Tono-Pen Active: Tap the cornea to read intraocular pressure (IOP).");
+        }
+      } else {
+        overlayCanvas.style.pointerEvents = 'none';
+        showFeedback("Tool deselected. Select an instrument to interact.");
+      }
+    }
+
+    // --- DRUG SELECTOR HANDLER ---
+    function onDrugSelectChange() {
+      const select = document.getElementById('drugSelect');
+      const val = select.value;
+      const badge = document.getElementById('drugStatusBadge');
+
+      if (!val) {
+        badge.innerText = "None in Pipette";
+        badge.className = "text-[11px] px-2 py-0.5 rounded font-mono font-semibold bg-slate-200 text-slate-700";
+      } else {
+        badge.innerText = select.options[select.selectedIndex].text + " Ready";
+        badge.className = "text-[11px] px-2 py-0.5 rounded font-mono font-semibold bg-teal-100 text-teal-800 animate-pulse";
+        selectTool('dropper');
+        if (!isZoomedIn) setZoom(true);
+      }
+    }
+
+    // --- BENCH EYE CLICK ROUTER ---
+    function handleEyeClick(eyeSide) {
+      if (!isZoomedIn) {
+        setZoom(true);
+        return;
+      }
+
+      if (currentSelectedTool === 'dropper') {
+        applyDrugInstillation(eyeSide);
+      } else if (currentSelectedTool === 'cotton') {
+        testCornealReflex(eyeSide);
+      } else if (currentSelectedTool === 'torch') {
+        testLightReflex(eyeSide);
+      } else if (currentSelectedTool === 'tonopen') {
+        measureIOP(eyeSide);
+      } else if (currentSelectedTool !== 'ruler') {
+        showFeedback(`Selected ${eyeSide === 'right' ? 'Right (Treated)' : 'Left (Control)'} Eye.`);
+      }
+    }
+
+    // --- DRUG INSTILLATION ---
+    function applyDrugInstillation(eyeSide) {
+      const drugSelect = document.getElementById('drugSelect');
+      const drugKey = drugSelect.value;
+
+      if (!drugKey) {
+        showFeedback("Please select a drug from the dropdown before instilling!", true);
+        return;
+      }
+
+      if (eyeSide === 'left') {
+        showFeedback("Left Eye is the Physiological Control (Saline only). Instill test drugs in the Right Eye.", true);
+        return;
+      }
+
+      // If Unknown drug selected, map to randomized mystery drug
+      if (drugKey === 'unknown') {
+        activeTestDrugKey = mysteryDrugKey;
+        document.getElementById('rightEyeDrugBadge').innerText = "Unknown Drug";
+        document.getElementById('activeDrugIndicator').innerText = "Active: Unknown Drug";
+      } else {
+        activeTestDrugKey = drugKey;
+        document.getElementById('rightEyeDrugBadge').innerText = DRUG_PROFILES[drugKey].name;
+        document.getElementById('activeDrugIndicator').innerText = "Active: " + DRUG_PROFILES[drugKey].name;
+      }
+
+      // Droplet animation
+      const droplet = document.getElementById('rightDroplet');
+      droplet.classList.remove('hidden');
+      droplet.classList.remove('drop-anim');
+      void droplet.offsetWidth; // Trigger reflow
+      droplet.classList.add('drop-anim');
+
+      playBeep('drop');
+
+      setTimeout(() => {
+        droplet.classList.add('hidden');
+        triggerBlink('right');
+        updateEyeVisuals();
+        showFeedback(`Instilled 2 drops of ${DRUG_PROFILES[activeTestDrugKey].name} in Right Eye.`);
+      }, 400);
+
+      selectTool(null);
+    }
+
+    // --- SALINE FLUSH ---
+    function washWithSaline() {
+      activeTestDrugKey = "saline";
+      document.getElementById('rightEyeDrugBadge').innerText = "Normal Saline";
+      document.getElementById('activeDrugIndicator').innerText = "Active: Baseline (Saline)";
+      document.getElementById('drugSelect').value = "";
+      document.getElementById('drugStatusBadge').innerText = "None in Pipette";
+      document.getElementById('drugStatusBadge').className = "text-[11px] px-2 py-0.5 rounded font-mono font-semibold bg-slate-200 text-slate-700";
+
+      playBeep('wash');
+      triggerBlink('right');
+      triggerBlink('left');
+      updateEyeVisuals();
+      clearCaliperLine();
+
+      showFeedback("Eyes washed thoroughly with Normal Saline. Receptors returned to baseline.");
+    }
+
+    // --- RECEPTOR UPDATE LOGIC ---
+    function updateEyeVisuals() {
+      const profile = DRUG_PROFILES[activeTestDrugKey];
+      
+      let rightR = profile.pupilMm * PIXELS_PER_MM;
+      if (isLightOnRight && profile.lightReflex === "Present") {
+        rightR = Math.max(12, rightR * 0.62); // Constriction to light
+      }
+      
+      document.getElementById('rightPupil').setAttribute('r', rightR);
+      document.getElementById('miniRightPupil').setAttribute('r', (profile.pupilMm / 7.0) * 4.5);
+      document.getElementById('lblRightSize').innerText = profile.pupilMm.toFixed(1);
+      document.getElementById('lblRightIOP').innerText = `${profile.iopStatus} (${profile.iopMmHg.toFixed(1)} mmHg)`;
+
+      // Left Eye: Control Saline
+      let leftR = 7.0 * PIXELS_PER_MM; // ~26px
+      if (isLightOnLeft) {
+        leftR = 16.5; // Normal reflex constriction
+      }
+      document.getElementById('leftPupil').setAttribute('r', leftR);
+    }
+
+    // --- CORNEAL REFLEX ---
+    function testCornealReflex(eyeSide) {
+      if (eyeSide === 'right') {
+        const profile = DRUG_PROFILES[activeTestDrugKey];
+        if (profile.cornealReflex === "Present") {
+          playBeep('blink');
+          triggerBlink('right');
+          showFeedback("Corneal Reflex: Present (+). Rabbit blinked immediately upon touching cornea.");
+        } else {
+          showFeedback("Corneal Reflex: Absent (-). No blink response! Surface sensory anesthesia present (Lignocaine effect).", true);
+        }
+      } else {
+        playBeep('blink');
+        triggerBlink('left');
+        showFeedback("Left Eye (Control) Corneal Reflex: Present (+). Normal sensory arc intact.");
+      }
+    }
+
+    // --- LIGHT REFLEX ---
+    function testLightReflex(eyeSide) {
+      if (eyeSide === 'right') {
+        isLightOnRight = true;
+        document.getElementById('rightTorchLight').classList.remove('hidden');
+        updateEyeVisuals();
+        
+        const profile = DRUG_PROFILES[activeTestDrugKey];
+        if (profile.lightReflex === "Present") {
+          showFeedback("Light Reflex: Present (+). Pupil constricted promptly when illuminated by torch.");
+        } else {
+          showFeedback("Light Reflex: Absent (-). Pupil remains widely dilated and unresponsive to light (Atropine cycloplegia)!", true);
+        }
+
+        setTimeout(() => {
+          isLightOnRight = false;
+          document.getElementById('rightTorchLight').classList.add('hidden');
+          updateEyeVisuals();
+        }, 1600);
+      } else {
+        isLightOnLeft = true;
+        document.getElementById('leftTorchLight').classList.remove('hidden');
+        updateEyeVisuals();
+        showFeedback("Left Eye (Control) Light Reflex: Present (+). Prompt normal constriction.");
+
+        setTimeout(() => {
+          isLightOnLeft = false;
+          document.getElementById('leftTorchLight').classList.add('hidden');
+          updateEyeVisuals();
+        }, 1600);
+      }
+    }
+
+    function hideTorchBeam() {
+      document.getElementById('rightTorchLight').classList.add('hidden');
+      document.getElementById('leftTorchLight').classList.add('hidden');
+    }
+
+    function handleMouseMoveOverEye(e, eyeSide) {
+      if (currentSelectedTool === 'torch') {
+        const torchEl = eyeSide === 'right' ? document.getElementById('rightTorchLight') : document.getElementById('leftTorchLight');
+        const rect = e.currentTarget.getBoundingClientRect();
+        torchEl.style.left = (e.clientX - rect.left - 72) + 'px';
+        torchEl.style.top = (e.clientY - rect.top - 72) + 'px';
+      }
+    }
+
+    // --- TONO-PEN MEASUREMENT ---
+    function measureIOP(eyeSide) {
+      playBeep('tonopen');
+      triggerBlink(eyeSide);
+
+      const panel = document.getElementById('tonopenReadout');
+      const num = document.getElementById('tonopenNumber');
+      const status = document.getElementById('tonopenStatus');
+
+      let val = 15.0;
+      let stat = "NORMAL";
+      let statColor = "text-emerald-400";
+
+      if (eyeSide === 'right') {
+        const p = DRUG_PROFILES[activeTestDrugKey];
+        val = p.iopMmHg + (Math.random() * 0.4 - 0.2);
+        stat = p.iopStatus.toUpperCase();
+        if (stat === "HIGH") statColor = "text-rose-400";
+        if (stat === "LOW") statColor = "text-amber-400";
+      } else {
+        val = 15.1 + (Math.random() * 0.4 - 0.2);
+      }
+
+      num.innerText = val.toFixed(1);
+      status.innerText = stat;
+      status.className = "font-bold " + statColor;
+      panel.classList.remove('hidden');
+
+      showFeedback(`${eyeSide === 'right' ? 'Right' : 'Left'} Eye Tension: ${val.toFixed(1)} mmHg (${stat})`);
+
+      setTimeout(() => {
+        panel.classList.add('hidden');
+      }, 2500);
+    }
+
+    // --- EYELID BLINK TWEEN ---
+    function triggerBlink(eyeSide) {
+      const eyelid = eyeSide === 'right' ? document.getElementById('rightEyelid') : document.getElementById('leftEyelid');
+      eyelid.classList.remove('eyelid-blink-active');
+      void eyelid.offsetWidth;
+      eyelid.classList.add('eyelid-blink-active');
+    }
+
+    // ========================================================
+    // --- DRAW AND AUTOMATIC MEASURE PUPIL SCALE / CALIPER ---
+    // ========================================================
+    const rulerCanvas = document.getElementById('rulerOverlayCanvas');
+    const rCtx = rulerCanvas.getContext('2d');
+    let isDrawingScale = false;
+    let drawStartX = 0, drawStartY = 0;
+    let drawCurrentX = 0, drawCurrentY = 0;
+    let lastMeasuredMm = 7.0;
+
+    function resizeRulerCanvas() {
+      const parent = rulerCanvas.parentElement;
+      if (!parent) return;
+      rulerCanvas.width = parent.clientWidth;
+      rulerCanvas.height = parent.clientHeight;
+    }
+    window.addEventListener('resize', resizeRulerCanvas);
+
+    rulerCanvas.addEventListener('pointerdown', (e) => {
+      if (currentSelectedTool !== 'ruler') return;
+      isDrawingScale = true;
+      const rect = rulerCanvas.getBoundingClientRect();
+      drawStartX = e.clientX - rect.left;
+      drawStartY = e.clientY - rect.top;
+      drawCurrentX = drawStartX;
+      drawCurrentY = drawStartY;
+      rulerCanvas.setPointerCapture(e.pointerId);
+    });
+
+    rulerCanvas.addEventListener('pointermove', (e) => {
+      if (!isDrawingScale || currentSelectedTool !== 'ruler') return;
+      const rect = rulerCanvas.getBoundingClientRect();
+      drawCurrentX = e.clientX - rect.left;
+      drawCurrentY = e.clientY - rect.top;
+      renderCaliperLine();
+    });
+
+    rulerCanvas.addEventListener('pointerup', () => {
+      if (!isDrawingScale) return;
+      isDrawingScale = false;
+      finalizeMeasurement();
+    });
+
+    function renderCaliperLine() {
+      rCtx.clearRect(0, 0, rulerCanvas.width, rulerCanvas.height);
+
+      const dx = drawCurrentX - drawStartX;
+      const dy = drawCurrentY - drawStartY;
+      const pixelDist = Math.hypot(dx, dy);
+      if (pixelDist < 2) return;
+
+      // Calculate millimeter value: calibrated to eye SVG size
+      // 26px radius = 52px diameter = 7.0 mm (Scale factor: ~7.428 px per mm of diameter)
+      const calculatedMm = Math.max(1.0, Math.min(16.0, pixelDist / (PIXELS_PER_MM * 2)));
+
+      // Draw Caliper Guidelines & Crosshair Pins
+      rCtx.save();
+
+      // Main measurement dimension line
+      rCtx.beginPath();
+      rCtx.moveTo(drawStartX, drawStartY);
+      rCtx.lineTo(drawCurrentX, drawCurrentY);
+      rCtx.strokeStyle = '#0284c7';
+      rCtx.lineWidth = 2.5;
+      rCtx.setLineDash([4, 2]);
+      rCtx.stroke();
+      rCtx.setLineDash([]);
+
+      // Start Pin / Crosshair
+      drawPin(drawStartX, drawStartY, '#ef4444');
+      // End Pin / Crosshair
+      drawPin(drawCurrentX, drawCurrentY, '#10b981');
+
+      // Caliper perpendicular end ticks
+      const angle = Math.atan2(dy, dx);
+      const perpAngle = angle + Math.PI / 2;
+      const tickLength = 12;
+
+      rCtx.lineWidth = 2;
+      rCtx.strokeStyle = '#0a1f44';
+
+      // Start tick
+      rCtx.beginPath();
+      rCtx.moveTo(drawStartX + Math.cos(perpAngle) * tickLength, drawStartY + Math.sin(perpAngle) * tickLength);
+      rCtx.lineTo(drawStartX - Math.cos(perpAngle) * tickLength, drawStartY - Math.sin(perpAngle) * tickLength);
+      rCtx.stroke();
+
+      // End tick
+      rCtx.beginPath();
+      rCtx.moveTo(drawCurrentX + Math.cos(perpAngle) * tickLength, drawCurrentY + Math.sin(perpAngle) * tickLength);
+      rCtx.lineTo(drawCurrentX - Math.cos(perpAngle) * tickLength, drawCurrentY - Math.sin(perpAngle) * tickLength);
+      rCtx.stroke();
+
+      // Millimeter division ticks along line
+      const totalMm = Math.floor(calculatedMm);
+      for (let m = 1; m < totalMm; m++) {
+        const ratio = m / calculatedMm;
+        const tx = drawStartX + dx * ratio;
+        const ty = drawStartY + dy * ratio;
+        const tLen = (m % 5 === 0) ? 8 : 4;
+        rCtx.beginPath();
+        rCtx.moveTo(tx + Math.cos(perpAngle) * tLen, ty + Math.sin(perpAngle) * tLen);
+        rCtx.lineTo(tx - Math.cos(perpAngle) * tLen, ty - Math.sin(perpAngle) * tLen);
+        rCtx.strokeStyle = (m % 5 === 0) ? '#0284c7' : '#64748b';
+        rCtx.stroke();
+      }
+
+      // Live Measurement Badge & HUD
+      const midX = (drawStartX + drawCurrentX) / 2;
+      const midY = (drawStartY + drawCurrentY) / 2 - 20;
+
+      const badgeText = `${calculatedMm.toFixed(1)} mm`;
+      rCtx.font = "bold 13px 'JetBrains Mono', monospace";
+      const textWidth = rCtx.measureText(badgeText).width;
+
+      rCtx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+      rCtx.beginPath();
+      rCtx.roundRect(midX - textWidth / 2 - 8, midY - 14, textWidth + 16, 22, 6);
+      rCtx.fill();
+      rCtx.strokeStyle = '#38bdf8';
+      rCtx.lineWidth = 1;
+      rCtx.stroke();
+
+      rCtx.fillStyle = '#38bdf8';
+      rCtx.textAlign = 'center';
+      rCtx.textBaseline = 'middle';
+      rCtx.fillText(badgeText, midX, midY - 3);
+
+      rCtx.restore();
+    }
+
+    function drawPin(x, y, color) {
+      rCtx.beginPath();
+      rCtx.arc(x, y, 4.5, 0, Math.PI * 2);
+      rCtx.fillStyle = color;
+      rCtx.fill();
+      rCtx.lineWidth = 1.5;
+      rCtx.strokeStyle = '#ffffff';
+      rCtx.stroke();
+    }
+
+    function finalizeMeasurement() {
+      const dx = drawCurrentX - drawStartX;
+      const dy = drawCurrentY - drawStartY;
+      const pixelDist = Math.hypot(dx, dy);
+
+      if (pixelDist < 10) {
+        // Simple tap: snap and auto-measure right eye directly
+        snapDirectMeasurement();
+        return;
+      }
+
+      const calculatedMm = Math.max(1.0, Math.min(16.0, pixelDist / (PIXELS_PER_MM * 2)));
+      lastMeasuredMm = Number(calculatedMm.toFixed(1));
+      playBeep('measure');
+
+      // Auto-update observation table with measured pupil value
+      document.getElementById('r_sz_a').value = lastMeasuredMm.toFixed(1);
+      const diff = (lastMeasuredMm - 7.0).toFixed(1);
+      document.getElementById('r_sz_diff').innerText = (diff > 0 ? "+" : "") + diff + " mm";
+      
+      showFeedback(`Auto-Measured Pupil Diameter: ${lastMeasuredMm.toFixed(1)} mm. Recorded into Observation Sheet!`);
+    }
+
+    function snapDirectMeasurement() {
+      // Snap directly to the actual pharmacological diameter of the treated right eye
+      const targetMm = DRUG_PROFILES[activeTestDrugKey].pupilMm;
+      lastMeasuredMm = targetMm;
+      playBeep('measure');
+
+      document.getElementById('r_sz_a').value = targetMm.toFixed(1);
+      const diff = (targetMm - 7.0).toFixed(1);
+      document.getElementById('r_sz_diff').innerText = (diff > 0 ? "+" : "") + diff + " mm";
+
+      showFeedback(`Direct Caliper Auto-Measurement: ${targetMm.toFixed(1)} mm.`);
+    }
+
+    function clearCaliperLine() {
+      rCtx.clearRect(0, 0, rulerCanvas.width, rulerCanvas.height);
+    }
+
+    // --- OBSERVATION TABLE AUTO-RECORD ---
+    function autoRecordToObservationTable() {
+      const profile = DRUG_PROFILES[activeTestDrugKey];
+      document.getElementById('obsRightDrug').value = activeTestDrugKey;
+      document.getElementById('r_iop_a').value = profile.iopMmHg.toFixed(1);
+      document.getElementById('r_iop_diff').innerText = (profile.iopMmHg - 15.0).toFixed(1) + " mmHg";
+      document.getElementById('r_lr_a').value = profile.lightReflex;
+      document.getElementById('r_cr_a').value = profile.cornealReflex;
+      document.getElementById('r_sz_a').value = profile.pupilMm.toFixed(1);
+      
+      const diff = (profile.pupilMm - 7.0).toFixed(1);
+      document.getElementById('r_sz_diff').innerText = (diff > 0 ? "+" : "") + diff + " mm";
+      
+      showFeedback("Recorded live eye measurements to the Observation Sheet.");
+    }
+
+    function autoFillCurrentState() {
+      autoRecordToObservationTable();
+    }
+
+    function resetObservationTable() {
+      document.getElementById('obsRightDrug').value = "";
+      document.getElementById('r_iop_a').value = "";
+      document.getElementById('r_iop_diff').innerText = "--";
+      document.getElementById('r_lr_a').value = "";
+      document.getElementById('r_cr_a').value = "";
+      document.getElementById('r_sz_a').value = "";
+      document.getElementById('r_sz_diff').innerText = "--";
+      showFeedback("Observation table inputs cleared.");
+    }
+
+    // --- EVALUATION & DEDUCTION MODAL ---
+    function submitEvaluation() {
+      const userChoice = document.getElementById('unknownDrugDeduction').value;
+      if (!userChoice) {
+        showFeedback("Please select your pharmacological deduction first!", true);
+        return;
+      }
+      openResultsModal();
+    }
+
+    function openResultsModal() {
+      const userChoice = document.getElementById('unknownDrugDeduction').value;
+      const actualDrug = DRUG_PROFILES[mysteryDrugKey].name;
+      
+      document.getElementById('resActiveDrug').innerText = DRUG_PROFILES[activeTestDrugKey].name;
+      document.getElementById('resUserDeduction').innerText = userChoice ? (DRUG_PROFILES[userChoice]?.name || userChoice) : "Not submitted";
+      document.getElementById('resActualUnknown').innerText = actualDrug;
+
+      const isCorrect = userChoice === mysteryDrugKey;
+      const expl = document.getElementById('resExplanation');
+
+      if (isCorrect) {
+        expl.className = "p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900 leading-relaxed text-[11px]";
+        expl.innerHTML = `<strong>CORRECT DIAGNOSIS!</strong> You accurately identified <strong>${actualDrug}</strong>. Your clinical correlation of pupil diameter, reflex arcs, and intraocular tension matches textbook findings.`;
+      } else {
+        expl.className = "p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-900 leading-relaxed text-[11px]";
+        expl.innerHTML = `<strong>INCORRECT DEDUCTION.</strong> The mystery drug was <strong>${actualDrug}</strong>.<br>Note: ${DRUG_PROFILES[mysteryDrugKey].notes}`;
+      }
+
+      document.getElementById('modalResults').classList.remove('hidden');
+    }
+
+    function openQuestionsModal() {
+      document.getElementById('modalQuestions').classList.remove('hidden');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    function evaluateQuestions() {
+      const q1 = document.querySelector('input[name="q1"]:checked')?.value;
+      const q2 = document.querySelector('input[name="q2"]:checked')?.value;
+      const q3 = document.querySelector('input[name="q3"]:checked')?.value;
+
+      if (!q1 || !q2 || !q3) {
+        showFeedback("Please answer all 3 questions before submitting!", true);
+        return;
+      }
+
+      let score = 0;
+      if (q1 === 'b') score++;
+      if (q2 === 'a') score++;
+      if (q3 === 'b') score++;
+
+      mcpVivaResult(score, 3, {"q1": "b", "q2": "a", "q3": "b"});
+    }
+
+    function generateReport() {
+      window.print();
+    }
+
+    // --- FEEDBACK TOAST ---
+    function showFeedback(msg, isAlert = false) {
+      const el = document.getElementById('actionFeedback');
+      const txt = document.getElementById('feedbackText');
+      const icon = document.getElementById('feedbackIcon');
+
+      txt.innerText = msg;
+      icon.innerText = isAlert ? "⚠️" : "ℹ";
+      icon.className = isAlert ? "text-amber-400 font-bold" : "text-teal-400 font-bold";
+      
+      el.style.opacity = "1";
+    }
+
+    // Initialize baseline on window load
+    window.addEventListener('DOMContentLoaded', () => {
+      updateEyeVisuals();
+      resizeRulerCanvas();
+    });
+  </script>
+  <script src="../assets/js/viva.js"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Platform{% endblock %}
+{% block content %}
+<div class="flex flex-wrap items-end justify-between gap-3"><div><h1 class="text-xl font-bold text-slate-900">Platform administration</h1><p class="text-xs text-slate-500">Super admin</p></div><a href="{% url 'college_new' %}" class="px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow">+ New college</a></div>
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 text-center">
+  <div class="bg-white rounded-xl border p-3"><div class="text-[10px] uppercase text-slate-500 font-mono">Colleges</div><div class="text-xl font-extrabold mono">{{ stats.colleges }}</div></div>
+  <div class="bg-white rounded-xl border p-3"><div class="text-[10px] uppercase text-slate-500 font-mono">Active users</div><div class="text-xl font-extrabold mono">{{ stats.users }}</div></div>
+  <div class="bg-white rounded-xl border p-3"><div class="text-[10px] uppercase text-slate-500 font-mono">Submissions</div><div class="text-xl font-extrabold mono">{{ stats.submissions }}</div></div>
+  <a href="{% url 'platform_experiments' %}" class="bg-white rounded-xl border p-3 hover:border-teal-300"><div class="text-[10px] uppercase text-slate-500 font-mono">Experiments live</div><div class="text-xl font-extrabold mono text-teal-700">{{ stats.experiments }}</div></a>
+  <a href="{% url 'trial_users' %}" class="bg-white rounded-xl border p-3 hover:border-teal-300"><div class="text-[10px] uppercase text-slate-500 font-mono">Trial users</div><div class="text-xl font-extrabold mono text-amber-700">{{ stats.trial_users }}</div></a>
+  <a href="{% url 'trial_users' %}" class="bg-white rounded-xl border p-3 hover:border-teal-300"><div class="text-[10px] uppercase text-slate-500 font-mono">Trial visits</div><div class="text-xl font-extrabold mono">{{ stats.trial_visits }}</div></a>
+  <a href="{% url 'data_requests' %}" class="bg-white rounded-xl border p-3 hover:border-teal-300"><div class="text-[10px] uppercase text-slate-500 font-mono">Open data requests</div><div class="text-xl font-extrabold mono {% if stats.open_requests %}text-rose-700{% endif %}">{{ stats.open_requests }}</div></a>
+</div>
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 overflow-x-auto">
+<h2 class="text-sm font-bold text-slate-800 mb-3">Colleges</h2>
+<table class="obs-table w-full text-xs text-left"><thead><tr><th>College</th><th>Code</th><th>Students</th><th>Staff</th><th>Batches</th><th>Subscription</th><th>Status</th><th></th></tr></thead><tbody>
+{% for c in colleges %}<tr><td class="font-semibold">{{ c.name }}</td><td class="mono">{{ c.code }}</td><td class="mono">{{ c.n_students }}</td><td class="mono">{{ c.n_staff }}</td><td class="mono">{{ c.n_batches }}</td><td>{% if c.is_subscribed %}<span class="text-emerald-700">active{% if c.subscription_until %} to {{ c.subscription_until|date:"d M Y" }}{% endif %}</span>{% else %}<span class="text-rose-700">lapsed (trial rules)</span>{% endif %}</td><td>{% if c.is_active %}<span class="text-emerald-700">active</span>{% else %}<span class="text-slate-400">inactive</span>{% endif %}</td><td class="whitespace-nowrap"><a href="{% url 'college_edit' c.pk %}" class="text-teal-700 hover:underline">Edit</a> · <a href="{% url 'staff_users' %}?college={{ c.pk }}" class="text-teal-700 hover:underline">People</a></td></tr>
+{% empty %}<tr><td colspan="8" class="text-slate-400 py-3">No colleges yet. Create the first one.</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

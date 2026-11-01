@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Data requests{% endblock %}
+{% block content %}
+<div><h1 class="text-xl font-bold text-slate-900">Data-protection requests</h1><p class="text-xs text-slate-500">Respond within 30 days. Approving a deletion erases the person's name, roll number, e-mail, submissions and feedback; de-identified marks are kept for statistics. This cannot be undone.</p></div>
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 overflow-x-auto">
+  <h2 class="text-sm font-bold text-slate-800 mb-3">Open</h2>
+  <table class="obs-table w-full text-xs text-left"><thead><tr><th>#</th><th>Received</th><th>User</th><th>Type</th><th>Message</th><th>Decision</th></tr></thead><tbody>
+  {% for r in open %}<tr><td>{{ r.pk }}</td><td class="mono">{{ r.created_at|date:"d M Y" }}</td><td>{{ r.username_snapshot }}{% if r.user %} <span class="text-slate-400">{{ r.user.display_name }}</span>{% endif %}</td><td>{{ r.get_kind_display }}</td><td class="max-w-xs">{{ r.message|default:"—" }}</td>
+    <td><form method="post" class="flex flex-wrap gap-1 items-center">{% csrf_token %}<input type="hidden" name="id" value="{{ r.pk }}"><input name="note" placeholder="Note to file (optional)" class="border rounded px-2 py-1 text-[11px] w-40"><button name="decision" value="approve" class="px-2 py-1 rounded bg-teal-600 text-white text-[11px]" onclick="return confirm('{% if r.kind == 'deletion' %}Erase this person\'s personal data permanently?{% else %}Mark as completed?{% endif %}')">{% if r.kind == 'deletion' %}Erase data{% else %}Mark done{% endif %}</button><button name="decision" value="reject" class="px-2 py-1 rounded border text-[11px]">Reject</button></form></td></tr>
+  {% empty %}<tr><td colspan="6" class="text-slate-400 py-3">No open requests.</td></tr>{% endfor %}
+  </tbody></table>
+</div>
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 overflow-x-auto">
+  <h2 class="text-sm font-bold text-slate-800 mb-3">Closed (latest 50)</h2>
+  <table class="obs-table w-full text-xs text-left"><thead><tr><th>#</th><th>User</th><th>Type</th><th>Status</th><th>Resolved</th><th>Note</th></tr></thead><tbody>
+  {% for r in closed %}<tr><td>{{ r.pk }}</td><td>{{ r.username_snapshot }}</td><td>{{ r.get_kind_display }}</td><td>{{ r.get_status_display }}</td><td class="mono">{{ r.resolved_at|date:"d M Y" }}{% if r.resolved_by %} by {{ r.resolved_by.username }}{% endif %}</td><td>{{ r.resolution_note }}</td></tr>{% empty %}<tr><td colspan="6" class="text-slate-400 py-3">None.</td></tr>{% endfor %}
+  </tbody></table>
+</div>
+{% endblock %}

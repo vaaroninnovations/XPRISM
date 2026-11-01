@@ -1,0 +1,80 @@
+{% extends 'legal/_base.html' %}
+{% block title %}Privacy Policy{% endblock %}
+{% block doc %}
+<div class="mono text-[11px] text-teal-700 font-bold">PRIVACY POLICY</div>
+<h1>Privacy Policy</h1>
+<p class="text-xs text-slate-500">Version {{ POLICY_VERSION }} • effective {{ POLICY_EFFECTIVE }}</p>
+<p>This policy explains what personal data XPRISM, the Experimental Pharmacology Research &amp; Interactive Student Module ("the Lab", "we"), collects, why, who can see it, how long we keep it and how you can exercise your rights. It is written to meet the <b>Digital Personal Data Protection Act, 2023</b> ("DPDP Act") and the <b>Digital Personal Data Protection Rules, 2025</b>, and the Information Technology Act, 2000.</p>
+
+<h2>1. Who is responsible for your data</h2>
+<p><b>{{ LEGAL.org_name }}</b>, {{ LEGAL.org_address }}, operates the Lab and is the <b>Data Fiduciary</b> for data collected through it. Where your college uses the Lab for its students, your college decides which students and staff are enrolled and how marks are used. For those purposes your college is also a Data Fiduciary, and we process data on its instructions.</p>
+
+<h2>2. What we collect</h2>
+<table>
+  <tr><th>Category</th><th>Data</th><th>Source</th></tr>
+  <tr><td>Account</td><td>Name, username, role, college, roll / enrolment number, e-mail address (optional for college students; required for free-trial accounts as the username), institution and occupation (free trial, optional), hashed password</td><td>You, or your faculty / college admin</td></tr>
+  <tr><td>Trial usage</td><td>Which experiment modules you have opened in the free trial and when each visit started and ended</td><td>Generated when you use the Lab</td></tr>
+  <tr><td>Academic records</td><td>Batches you belong to, assignments, experiment submissions (observation tables, calculated answers, viva answers), automatic scores, marks and feedback</td><td>Generated when you use the Lab</td></tr>
+  <tr><td>Security & audit</td><td>Sign-in times, failed sign-in counts, IP address of key actions (sign-in, grading, exports, data requests), consent records</td><td>Generated automatically</td></tr>
+  <tr><td>Technical</td><td>Session and security cookies (see section 8)</td><td>Your browser</td></tr>
+</table>
+<p>We do <b>not</b> collect Aadhaar numbers, financial information, health information, precise location, photographs, or biometric data. Experiments run entirely in your browser; simulation data that you do not submit is not sent to us.</p>
+
+<h2>3. Why we use it (purposes) and our legal basis</h2>
+<ul>
+  <li><b>To provide the Lab</b>: create your account, show you your assignments, save and score your submissions. <i>Basis: your consent, given at sign-up or first sign-in.</i></li>
+  <li><b>Teaching and assessment</b>: let your faculty review your work, give marks and feedback, and export marks for your college's internal assessment. <i>Basis: consent, and your college's legitimate educational purpose as a use for which you voluntarily provided data (DPDP Act, s. 7(a)).</i></li>
+  <li><b>Security</b>: protect accounts (e.g. lock after repeated failed sign-ins), investigate misuse, keep an audit trail. <i>Basis: consent and legal obligations on reasonable security safeguards.</i></li>
+  <li><b>Free trial</b>: enforce the one-visit-per-module rule and respond to your subscription enquiries. <i>Basis: your consent.</i></li>
+  <li><b>Ethics agreement</b>: record that you accepted the trial rules and the ethical-use-of-animals undertaking (version and time). <i>Basis: consent.</i></li>
+  <li><b>Service e-mails</b>: password-reset messages only. We do not send marketing.</li>
+</ul>
+<p>We do not sell, rent or trade personal data, do not show advertising, do not profile you for marketing, and do not use your data to train artificial-intelligence models.</p>
+
+<h2>4. Who can see your data</h2>
+<ul>
+  <li><b>You</b>: your own profile, submissions, marks and feedback.</li>
+  <li><b>Your faculty</b>: data of students in the batches they teach.</li>
+  <li><b>Lab assistants</b> of your college: enrolment and progress, without the ability to change marks.</li>
+  <li><b>Your college admin</b>: data of all users of your college, to manage accounts and handle your requests.</li>
+  <li><b>Platform administrators</b> of {{ LEGAL.org_name }}: only as needed to run, secure and support the service, including managing free-trial accounts and individual subscriptions.</li>
+  <li><b>Service providers (Data Processors)</b>: the hosting provider of our server in {{ LEGAL.hosting_location }} and, if configured, an e-mail delivery service for password resets. They process data only on our instructions under contract.</li>
+  <li><b>Authorities</b>: only when required by law, court order or a lawful request.</li>
+</ul>
+<p>Students of one college cannot see data of another college, and students cannot see each other's submissions or marks.</p>
+
+<h2>5. How long we keep it</h2>
+<ul>
+  <li>Accounts and academic records: while your college uses the Lab and for <b>{{ DATA_RETENTION_YEARS }} years</b> after your last activity, so that internal-assessment marks can be verified. After that, personal data is erased or de-identified.</li>
+  <li>Audit and security logs: up to 1 year, or longer if needed for an ongoing investigation, and at least as long as the law requires.</li>
+  <li>When an account is deleted on request, your name, roll number, e-mail, submissions and feedback are erased. Your college may keep <b>de-identified</b> marks (not linked to you) for statistics.</li>
+</ul>
+
+<h2>6. Your rights</h2>
+<p>Under the DPDP Act you have the right to:</p>
+<ol>
+  <li><b>Access</b> a summary of your personal data and how it is processed. Use <a href="{% url 'my_data' %}">My data → Download all my data</a> at any time.</li>
+  <li><b>Correction and completion</b> of inaccurate or incomplete data. Ask from <a href="{% url 'my_data' %}">My data</a> or ask your faculty.</li>
+  <li><b>Erasure</b> of your data when it is no longer needed, or when you withdraw consent, subject to legal retention.</li>
+  <li><b>Withdraw consent</b> at any time, as easily as you gave it, by requesting account deletion. Withdrawal does not affect processing done before it. Without consent you will not be able to use the Lab for assessed work.</li>
+  <li><b>Grievance redressal</b> (section 9) and, if not satisfied, to complain to the <b>Data Protection Board of India</b>.</li>
+  <li><b>Nominate</b> another person to exercise these rights in the event of your death or incapacity, by writing to the grievance officer.</li>
+</ol>
+<p>We aim to respond within 30 days, and in any case within the period prescribed under the DPDP Rules.</p>
+
+<h2>7. Children</h2>
+<p>The Lab is intended for students of degree and diploma pharmacy programmes, who are normally 18 or older. If you are under 18, you may use the Lab only with the <b>verifiable consent of your parent or lawful guardian</b>, obtained through your college. We do not track or monitor children's behaviour, and we do not direct advertising at anyone. If we learn that a child's data was collected without such consent, we will delete it.</p>
+
+<h2>8. Cookies</h2>
+<p>We use only <b>strictly necessary</b> cookies: a session cookie to keep you signed in, and a CSRF cookie that protects forms against forgery. We do not use analytics, advertising or third-party tracking cookies, and the Lab loads no resources from other websites. Simulations may store small preferences in your browser (e.g. sound on/off) that never leave your device.</p>
+
+<h2>9. Security</h2>
+<p>Passwords are stored only as salted hashes. All traffic is encrypted with HTTPS. Access is restricted by role and college. Accounts lock after repeated failed sign-ins. Key actions are written to an audit log that cannot be edited. The server and backups are access-controlled. If a personal data breach occurs, we will inform affected users and the Data Protection Board of India as required by the DPDP Rules.</p>
+
+<h2>10. Grievance officer & contact</h2>
+<p>For any question, request or complaint about your personal data, contact:</p>
+<p class="p-3 rounded-lg bg-slate-50 border border-slate-200"><b>Grievance Officer:</b> {{ LEGAL.grievance_officer }}<br>E-mail: <a href="mailto:{{ LEGAL.grievance_email }}">{{ LEGAL.grievance_email }}</a><br>{{ LEGAL.org_name }}, {{ LEGAL.org_address }}{% if COLLEGE and COLLEGE.grievance_officer %}<br><br><b>Your college's contact:</b> {{ COLLEGE.grievance_officer }}{% if COLLEGE.grievance_email %} • <a href="mailto:{{ COLLEGE.grievance_email }}">{{ COLLEGE.grievance_email }}</a>{% endif %}{% endif %}</p>
+
+<h2>11. Changes to this policy</h2>
+<p>If we change this policy in a way that affects you, we will update the version number and ask you to review and accept it the next time you sign in.</p>
+{% endblock %}

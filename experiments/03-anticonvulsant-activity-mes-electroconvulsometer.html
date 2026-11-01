@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exp 03: Anticonvulsant Activity: MES (Electroconvulsometer) • XPRISM</title>
+  <meta name="description" content="Maximal electroshock seizures in rats; abolition of tonic hind-limb extension by phenytoin.">
+  <!-- Tailwind CSS -->
+    <meta name="theme-color" content="#0a1f44">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
+  <link rel="stylesheet" href="../assets/css/tailwind.css">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <!-- Tone.js for Web Audio Synthesis -->
+  <script src="../assets/js/tone.min.js"></script>
+  <style>
+    
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f1f5f9;
+      color: #0a1f44;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Shock flash on chamber */
+    @keyframes electricShockFlash {
+      0% { opacity: 0; background-color: rgba(254, 240, 138, 0); }
+      15% { opacity: 0.95; background-color: rgba(239, 68, 68, 0.45); }
+      30% { opacity: 0.3; background-color: rgba(56, 189, 248, 0.6); }
+      50% { opacity: 0.9; background-color: rgba(253, 224, 71, 0.7); }
+      75% { opacity: 0.4; background-color: rgba(147, 51, 234, 0.4); }
+      100% { opacity: 0; background-color: rgba(254, 240, 138, 0); }
+    }
+    .shock-active {
+      animation: electricShockFlash 0.35s ease-out forwards;
+    }
+
+    /* Clonic Jerking Vibration Animation */
+    @keyframes clonicJerk {
+      0% { transform: translate(0px, 0px) rotate(0deg); }
+      20% { transform: translate(-3px, -2px) rotate(-1.5deg); }
+      40% { transform: translate(3px, 1px) rotate(1.8deg); }
+      60% { transform: translate(-2px, 2px) rotate(-1deg); }
+      80% { transform: translate(3px, -1px) rotate(1.2deg); }
+      100% { transform: translate(0px, 0px) rotate(0deg); }
+    }
+    .mouse-clonic-shake {
+      animation: clonicJerk 0.08s infinite ease-in-out;
+      transform-origin: center;
+    }
+
+    /* Gentle Breathing Animation for Baseline & Recovery */
+    @keyframes breathing {
+      0% { transform: scale(1, 1); }
+      50% { transform: scale(1.015, 0.985); }
+      100% { transform: scale(1, 1); }
+    }
+    .mouse-breathing {
+      animation: breathing 1.8s infinite ease-in-out;
+      transform-origin: 200px 170px;
+    }
+
+    /* Digital LED segments glow */
+    .led-display {
+      text-shadow: 0 0 10px rgba(56, 189, 248, 0.75), 0 0 20px rgba(56, 189, 248, 0.3);
+    }
+    .led-display-red {
+      text-shadow: 0 0 10px rgba(239, 68, 68, 0.8), 0 0 20px rgba(239, 68, 68, 0.4);
+    }
+    .led-display-amber {
+      text-shadow: 0 0 10px rgba(245, 158, 11, 0.8), 0 0 20px rgba(245, 158, 11, 0.4);
+    }
+
+    /* Print View styling */
+    @media print {
+      body { background: white !important; }
+      header, .no-print, #viewTask, #viewExperiment { display: none !important; }
+      #viewObservation { display: block !important; padding: 0 !important; }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-100 overflow-x-hidden">
+
+  <!-- ============================================== -->
+  <!-- TOP BRANDING BAR (XPRISM Header) -->
+  <!-- ============================================== -->
+  <header class="site-header bg-white border-b border-slate-200 px-4 md:px-6 py-2 flex items-center justify-between gap-3 shadow-sm shrink-0">
+    <div class="flex items-center gap-3 min-w-0">
+    <a href="../index.html" title="Back to Lab Home" class="shrink-0"><img src="../assets/img/xprism-lockup.png" alt="XPRISM" class="h-11 w-auto" width="146" height="49"></a>
+      <div class="min-w-0 border-l border-slate-200 pl-3">
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="text-[10px] uppercase font-bold bg-teal-50 text-teal-700 px-2 py-0.5 rounded-full border border-teal-200 font-display tracking-wide">Virtual Lab</span>
+        <a href="../index.html" class="text-[11px] font-semibold text-teal-700 hover:underline">← All experiments</a>
+      </div>
+      <p class="text-xs text-slate-500">Aaron Innovations • Experimental Pharmacology Research &amp; Interactive Student Module</p>
+    </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="hidden md:block text-right">
+        <div class="text-xs font-semibold text-slate-800 flex items-center justify-end space-x-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Dr. Vara Prasad Saka</span>
+        </div>
+        <div class="text-[11px] text-slate-500 font-mono">ID: 8019152501 • Dept. of Pharmacology</div>
+      </div>
+      <div class="flex items-center gap-2 border-l pl-4 border-slate-200">
+        <a class="site-nav-btn" href="02-effects-of-drugs-on-rabbit-eye.html" title="Previous: Exp #2 Effects of Drugs on Rabbit Eye">‹</a><a class="site-nav-btn" href="04-muscle-relaxant-activity-rota-rod.html" title="Next: Exp #4 Muscle Relaxant Activity: Rota-Rod">›</a>
+        <button id="audioToggleBtn" class="p-2 rounded-lg bg-teal-100 hover:bg-teal-200 text-teal-800 transition" title="Toggle sound feedback" aria-label="Toggle sound feedback">
+          <svg id="soundIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+        </button>
+        <span class="hidden sm:inline bg-indigo-100 text-indigo-800 text-xs px-2.5 py-1 rounded-md font-medium border border-indigo-200 whitespace-nowrap">Exp #3</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================== -->
+  <!-- SUB-HEADER / VIEW TABS -->
+  <!-- ============================================== -->
+
+  <div id="subHeader" class="site-subheader bg-slate-800 text-white px-4 md:px-6 py-2 flex flex-wrap items-center justify-between gap-3 shadow shrink-0">
+    <div class="text-sm font-semibold tracking-wide flex items-center space-x-2 min-w-0">
+      <span class="text-teal-400 font-mono text-xs px-1.5 py-0.5 rounded bg-teal-950/80 border border-teal-500/40 shrink-0">MODULE 03</span>
+      <span>Examination 3: Anticonvulsant Screening by Maximal Electroshock Seizure (MES)</span>
+    </div>
+    <div class="flex items-center space-x-1.5 bg-slate-900/80 p-1 rounded-lg border border-slate-700" role="tablist">
+      <button id="tabTask" onclick="switchTab('task')" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white transition">Task Description</button>
+      <button id="tabExperiment" onclick="switchTab('experiment')" class="px-3.5 py-1.5 rounded-md text-xs font-semibold bg-teal-500 text-white shadow transition">Experiment Bench</button>
+      <button id="tabObservation" onclick="switchTab('observation')" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white transition">Observation Sheet &amp; Graphs</button>
+    </div>
+  </div>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-5 flex flex-col min-h-0">
+
+    <!-- ============================================== -->
+    <!-- TAB 1: TASK DESCRIPTION & THEORY -->
+    <!-- ============================================== -->
+    <div id="viewTask" class="hidden flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between overflow-y-auto">
+      <div class="max-w-5xl space-y-6">
+        <div class="border-b pb-4">
+          <div class="inline-block px-2.5 py-1 rounded bg-indigo-50 text-indigo-800 text-xs font-bold font-mono mb-2">EXPERIMENT PROTOCOL & CURRICULUM</div>
+          <h2 class="text-xl font-bold text-slate-900">Evaluation of Anticonvulsant Activity of Drugs Using Electroconvulsometer (MES Model)</h2>
+          <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+            The <strong>Maximal Electroshock Seizure (MES)</strong> method is the gold standard preclinical screening model for testing anti-epileptic drugs primarily effective against generalized tonic-clonic (grand mal) seizures and partial convulsions. Abolition or significant abbreviation of the <strong>Hindlimb Tonic Extensor (HTE)</strong> phase serves as the clinical hallmark of anticonvulsant efficacy.
+          </p>
+        </div>
+
+        <!-- 3 Pillars Grid -->
+        <div class="grid md:grid-cols-3 gap-4">
+          <div class="p-4 rounded-xl bg-sky-50/70 border border-sky-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-sky-600 text-white flex items-center justify-center font-bold text-sm shadow">1</div>
+            <h3 class="text-sm font-bold text-sky-950">Electrical Induction</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Standard current of <strong>30 mA</strong> is administered transauricularly via ear-clip electrodes moistened with 0.9% saline for a duration of <strong>0.2 seconds</strong> to induce maximal generalized seizures in Swiss albino mice.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-amber-50/70 border border-amber-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-amber-600 text-white flex items-center justify-center font-bold text-sm shadow">2</div>
+            <h3 class="text-sm font-bold text-amber-950">Seizure Chronology</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Carefully record the durations of: <em>(a) Tonic Flexion</em>, <em>(b) Tonic Hindlimb Extension</em> (usually 10–14 s in controls), <em>(c) Clonic Convulsions</em> (rhythmic limb clonus), and <em>(d) Postictal Stupor</em>.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-emerald-50/70 border border-emerald-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold text-sm shadow">3</div>
+            <h3 class="text-sm font-bold text-emerald-950">Protective Index</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Antiepileptic drugs such as <strong>Phenytoin</strong> (voltage-gated $Na^+$ channel blocker) selectively prevent the spread of seizure discharge, abolishing tonic hindlimb extension ($0.0 \text{ s}$) while preserving mild clonus.
+            </p>
+          </div>
+        </div>
+
+        <!-- Standard Parameters Table -->
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Preclinical Standard Parameters (Swiss Albino Mice)</h4>
+          <div class="grid sm:grid-cols-4 gap-3 text-xs text-slate-600">
+            <div class="bg-white p-2.5 rounded border border-slate-200"><span class="font-bold text-slate-800">Shock Current:</span> 30 mA AC</div>
+            <div class="bg-white p-2.5 rounded border border-slate-200"><span class="font-bold text-slate-800">Shock Duration:</span> 0.2 seconds</div>
+            <div class="bg-white p-2.5 rounded border border-slate-200"><span class="font-bold text-slate-800">Electrodes:</span> Ear-clip / Corneal with Saline</div>
+            <div class="bg-white p-2.5 rounded border border-slate-200"><span class="font-bold text-slate-800">Animal Weight:</span> 20–30 g (Fasted)</div>
+          </div>
+        </div>
+
+        <!-- Stages Explanation Box -->
+        <div class="border border-indigo-100 bg-indigo-50/40 p-4 rounded-xl">
+          <h4 class="text-xs font-bold text-indigo-900 uppercase tracking-wider mb-2">Pathophysiological Phases of Maximal Electroshock Seizure (MES)</h4>
+          <ol class="list-decimal list-inside text-xs text-slate-700 space-y-1.5 leading-relaxed">
+            <li><strong>Tonic Flexor Phase:</strong> Sudden tonic contraction with forward flexion of both forelimbs and hindlimbs (~1.5–3.0 s).</li>
+            <li><strong>Tonic Extensor Phase:</strong> Rapid, rigid hyperextension of both hindlimbs pointing posteriorly 180° parallel to the spine (~10.0–14.0 s). <em>Drug protection is marked when extension is abolished or reduced to &lt;2 s.</em></li>
+            <li><strong>Clonic Jerks:</strong> Generalized intermittent, rapid, violent tremors and rhythmic paddle-like clonic jerking (~12.0–18.0 s).</li>
+            <li><strong>Postictal Stupor:</strong> Animal falls prostrate, motionless, exhausted with diminished reflexes before regaining righting reflex.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="pt-6 border-t flex justify-end">
+        <button onclick="switchTab('experiment')" class="px-6 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm shadow flex items-center space-x-2 transition">
+          <span>Go to Electroconvulsometer Bench</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- TAB 2: EXPERIMENT BENCH (INTERACTIVE APPARATUS) -->
+    <!-- ============================================== -->
+    <div id="viewExperiment" class="flex-1 flex flex-col lg:flex-row gap-4 h-auto min-h-[640px]">
+      
+      <!-- LEFT 70%: STAGE & OBSERVATION CHAMBER -->
+      <div class="flex-1 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
+        
+        <!-- Bench Topbar: Animal & Group Selector -->
+        <div class="p-3 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 z-10 shrink-0">
+          
+          <!-- Treatment Group Selector -->
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-bold text-slate-700">Group:</span>
+            <select id="groupSelect" onchange="onGroupChange()" class="bg-white border border-slate-300 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option value="vehicle">Group I: Vehicle Control (0.9% Normal Saline, 10 ml/kg)</option>
+              <option value="phenytoin">Group II: Phenytoin Sodium (25 mg/kg i.p.)</option>
+              <option value="valproate">Group III: Sodium Valproate (300 mg/kg i.p.)</option>
+              <option value="diazepam">Group IV: Diazepam (4 mg/kg i.p.)</option>
+              <option value="unknown">Group V: Unknown Test Compound (Mystery Drug)</option>
+            </select>
+          </div>
+
+          <!-- Animal 1 to 6 Buttons -->
+          <div class="flex items-center space-x-1.5">
+            <span class="text-xs font-semibold text-slate-500">Mouse:</span>
+            <div id="mouseButtonGroup" class="flex items-center space-x-1 bg-white border border-slate-200 p-0.5 rounded-lg shadow-sm">
+              <button onclick="selectAnimalIndex(0)" class="mouse-select-btn px-2.5 py-1 text-xs rounded font-bold bg-indigo-600 text-white">#1</button>
+              <button onclick="selectAnimalIndex(1)" class="mouse-select-btn px-2.5 py-1 text-xs rounded font-semibold text-slate-600 hover:bg-slate-100">#2</button>
+              <button onclick="selectAnimalIndex(2)" class="mouse-select-btn px-2.5 py-1 text-xs rounded font-semibold text-slate-600 hover:bg-slate-100">#3</button>
+              <button onclick="selectAnimalIndex(3)" class="mouse-select-btn px-2.5 py-1 text-xs rounded font-semibold text-slate-600 hover:bg-slate-100">#4</button>
+              <button onclick="selectAnimalIndex(4)" class="mouse-select-btn px-2.5 py-1 text-xs rounded font-semibold text-slate-600 hover:bg-slate-100">#5</button>
+              <button onclick="selectAnimalIndex(5)" class="mouse-select-btn px-2.5 py-1 text-xs rounded font-semibold text-slate-600 hover:bg-slate-100">#6</button>
+            </div>
+            <span id="animalTestedBadge" class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200">Untested</span>
+          </div>
+        </div>
+
+        <!-- ANIMATED CHAMBER AREA -->
+        <div id="chamberContainer" class="flex-1 relative bg-gradient-to-b from-slate-200 via-slate-100 to-slate-200 flex flex-col items-center justify-between p-4 overflow-hidden min-h-[350px]">
+          
+          <!-- Chamber Top Status HUD -->
+          <div class="w-full flex items-center justify-between text-xs font-mono z-10">
+            <div class="bg-white/80 backdrop-blur px-3 py-1 rounded-lg border border-slate-300 shadow-sm flex items-center space-x-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+              <span id="chamberLiveStageText" class="font-bold text-slate-800">STATE: BASELINE / RESTING</span>
+            </div>
+            <div class="bg-slate-900/90 text-white px-3 py-1 rounded-lg border border-slate-700 shadow-sm flex items-center space-x-3">
+              <span>WEIGHT: <strong id="hudMouseWeight" class="text-cyan-400">24.2 g</strong></span>
+              <span class="text-slate-400">|</span>
+              <span>EAR CLIPS: <strong id="hudClipStatus" class="text-amber-400">DETACHED</strong></span>
+            </div>
+          </div>
+
+          <!-- Electric Shock Flash Overlay -->
+          <div id="shockOverlay" class="absolute inset-0 pointer-events-none z-30"></div>
+
+          <!-- Rodent SVG Stage Graphic -->
+          <div class="relative w-full max-w-xl h-[280px] flex items-center justify-center my-auto">
+            <!-- Acrylic Glass Observation Cage Outline -->
+            <div class="absolute inset-0 border-4 border-slate-400/40 rounded-2xl bg-white/40 backdrop-blur-[1px] shadow-inner pointer-events-none">
+              <div class="absolute bottom-2 inset-x-4 h-5 bg-amber-100/40 rounded-lg border border-amber-300/40"></div>
+            </div>
+
+            <!-- ELECTRODE CABLES RUNNING FROM CEILING -->
+            <svg id="cablesSvg" class="absolute inset-0 w-full h-full pointer-events-none z-20" viewBox="0 0 500 280">
+              <!-- Cable Left (Red) -->
+              <path id="cableLeft" d="M 120 0 Q 150 70 215 130" stroke="#ef4444" stroke-width="2.5" fill="none" opacity="0.4" stroke-dasharray="4,2"/>
+              <!-- Cable Right (Black) -->
+              <path id="cableRight" d="M 380 0 Q 350 70 245 125" stroke="#0a1f44" stroke-width="2.5" fill="none" opacity="0.4" stroke-dasharray="4,2"/>
+              <!-- Spark particles group -->
+              <g id="sparkGroup" class="hidden">
+                <circle cx="215" cy="130" r="14" fill="#fef08a" opacity="0.8"/>
+                <polygon points="215,115 220,128 235,130 222,136 225,150 215,138 205,150 208,136 195,130 210,128" fill="#eab308"/>
+                <circle cx="245" cy="125" r="14" fill="#38bdf8" opacity="0.8"/>
+                <polygon points="245,110 250,123 265,125 252,131 255,145 245,133 235,145 238,131 225,125 240,123" fill="#0284c7"/>
+              </g>
+            </svg>
+
+            <!-- Swiss Albino Mouse Rig (Dynamic SVG) -->
+            <svg id="mouseSvg" class="w-full h-full max-h-[250px] drop-shadow-md z-10 transition-transform duration-300 mouse-breathing" viewBox="0 0 500 280">
+              
+              <!-- Mouse Rig Group -->
+              <g id="mouseRigGroup">
+                <!-- Tail -->
+                <path id="mouseTail" d="M 120 190 Q 70 210 30 180 T 10 140" fill="none" stroke="#fbcfe8" stroke-width="4.5" stroke-linecap="round"/>
+
+                <!-- Hindlimbs -->
+                <g id="hindlimbs">
+                  <!-- Normal / Resting Hindlimb -->
+                  <path id="limbResting" d="M 130 185 Q 110 205 135 220 Q 155 220 160 205 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+                  <!-- Tonic Extensor Hindlimb (Hyperextension 180° backwards!) -->
+                  <g id="limbExtensor" class="hidden">
+                    <!-- Straight rigid extended legs pointing backward -->
+                    <path d="M 140 185 L 60 215 L 45 220 L 50 210 L 130 178 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="2.5"/>
+                    <path d="M 145 190 L 70 230 L 55 236 L 60 225 L 135 183 Z" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="2"/>
+                    <!-- Extended Toes -->
+                    <circle cx="45" cy="220" r="3" fill="#fbcfe8"/>
+                    <circle cx="55" cy="236" r="3" fill="#fbcfe8"/>
+                  </g>
+                </g>
+
+                <!-- Mouse Body Pelvis & Abdomen -->
+                <ellipse id="mouseBody" cx="210" cy="180" rx="90" ry="45" fill="#ffffff" stroke="#e2e8f0" stroke-width="3"/>
+                <ellipse cx="205" cy="182" rx="80" ry="38" fill="#f8fafc"/>
+
+                <!-- Forelimbs -->
+                <g id="forelimbs">
+                  <path id="forelimbNormal" d="M 270 195 Q 285 220 295 218" fill="none" stroke="#fbcfe8" stroke-width="4" stroke-linecap="round"/>
+                  <path id="forelimbFlexed" d="M 260 185 Q 280 180 270 165" class="hidden" fill="none" stroke="#fbcfe8" stroke-width="4.5" stroke-linecap="round"/>
+                </g>
+
+                <!-- Head & Snout -->
+                <g id="mouseHeadGroup">
+                  <path d="M 270 160 Q 320 155 350 175 Q 310 205 265 195 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="3"/>
+                  
+                  <!-- Pinkish Ear Left -->
+                  <ellipse cx="280" cy="145" rx="14" ry="18" fill="#fbcfe8" stroke="#f472b6" stroke-width="1.5" transform="rotate(-15 280 145)"/>
+                  <ellipse cx="280" cy="145" rx="8" ry="12" fill="#fda4af" opacity="0.6" transform="rotate(-15 280 145)"/>
+
+                  <!-- Pinkish Ear Right -->
+                  <ellipse cx="295" cy="148" rx="13" ry="16" fill="#fbcfe8" stroke="#f472b6" stroke-width="1.5" transform="rotate(10 295 148)"/>
+
+                  <!-- Albino Red Eye -->
+                  <circle cx="318" cy="168" r="5" fill="#ef4444" stroke="#991b1b" stroke-width="1.5"/>
+                  <circle cx="316" cy="166" r="1.5" fill="#ffffff"/>
+
+                  <!-- Pink Nose & Whiskers -->
+                  <circle cx="350" cy="175" r="4" fill="#f43f5e"/>
+                  <line x1="345" y1="172" x2="380" y2="162" stroke="#94a3b8" stroke-width="1.2"/>
+                  <line x1="345" y1="176" x2="385" y2="176" stroke="#94a3b8" stroke-width="1.2"/>
+                  <line x1="345" y1="180" x2="378" y2="190" stroke="#94a3b8" stroke-width="1.2"/>
+
+                  <!-- Ear Clips Visual Elements -->
+                  <g id="earClipsGraphic" class="hidden">
+                    <!-- Left ear clip -->
+                    <rect x="272" y="132" width="12" height="18" rx="3" fill="#334155" stroke="#ef4444" stroke-width="2"/>
+                    <circle cx="278" cy="141" r="3" fill="#ef4444"/>
+                    <!-- Right ear clip -->
+                    <rect x="290" y="135" width="12" height="18" rx="3" fill="#334155" stroke="#0284c7" stroke-width="2"/>
+                    <circle cx="296" cy="144" r="3" fill="#0284c7"/>
+                  </g>
+                </g>
+              </g>
+
+            </svg>
+          </div>
+
+          <!-- Bottom Stage Phase Progression Bar -->
+          <div class="w-full bg-white/95 rounded-xl border border-slate-200 p-2.5 shadow-sm z-10 space-y-2">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-bold text-slate-700">Seizure Phase Timeline:</span>
+              <span id="phaseElapsedClock" class="font-mono font-bold text-indigo-700 text-sm">00.0 s</span>
+            </div>
+            
+            <!-- Multi-colored progress segment tracker -->
+            <div class="grid grid-cols-5 gap-1.5 text-center text-[10px] font-bold">
+              <div id="segShock" class="py-1 rounded bg-slate-100 text-slate-500 border border-slate-200">1. Shock (0.2s)</div>
+              <div id="segFlex" class="py-1 rounded bg-slate-100 text-slate-500 border border-slate-200">2. Flexion</div>
+              <div id="segExt" class="py-1 rounded bg-slate-100 text-slate-500 border border-slate-200">3. Extension (HTE)</div>
+              <div id="segClonus" class="py-1 rounded bg-slate-100 text-slate-500 border border-slate-200">4. Clonus</div>
+              <div id="segStupor" class="py-1 rounded bg-slate-100 text-slate-500 border border-slate-200">5. Stupor / Recovery</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- RIGHT 30%: HARDWARE CONSOLE (ELECTROCONVULSOMETER) & CONTROLS -->
+      <div class="w-full lg:w-80 bg-slate-900 text-white rounded-xl shadow-xl border border-slate-800 p-4 flex flex-col justify-between shrink-0">
+        
+        <div class="space-y-4">
+          <!-- Console Topplate Header -->
+          <div class="border-b border-slate-700 pb-3 flex items-center justify-between">
+            <div>
+              <div class="text-xs font-bold uppercase tracking-wider text-cyan-400 font-mono">DIGITAL INSTRUMENT</div>
+              <h3 class="text-sm font-extrabold text-white tracking-wide">ELECTROCONVULSOMETER</h3>
+            </div>
+            <span class="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></span>
+          </div>
+
+          <!-- Digital LED Meters -->
+          <div class="grid grid-cols-2 gap-2.5">
+            <!-- Current Meter -->
+            <div class="bg-black/80 rounded-xl p-2.5 border border-slate-700">
+              <div class="text-[9px] uppercase font-mono text-slate-400">Current Output</div>
+              <div class="flex items-baseline space-x-1 my-0.5">
+                <span id="ledCurrent" class="text-2xl font-black font-mono text-cyan-400 led-display">30</span>
+                <span class="text-xs text-cyan-500 font-mono">mA</span>
+              </div>
+              <div class="text-[9px] text-slate-500 font-mono">50 Hz AC Sinusoidal</div>
+            </div>
+
+            <!-- Duration Timer -->
+            <div class="bg-black/80 rounded-xl p-2.5 border border-slate-700">
+              <div class="text-[9px] uppercase font-mono text-slate-400">Shock Duration</div>
+              <div class="flex items-baseline space-x-1 my-0.5">
+                <span class="text-2xl font-black font-mono text-amber-400 led-display-amber">0.20</span>
+                <span class="text-xs text-amber-500 font-mono">sec</span>
+              </div>
+              <div class="text-[9px] text-slate-500 font-mono">Solid-State Calibrated</div>
+            </div>
+          </div>
+
+          <!-- Step 1: Attach / Detach Electrodes Button -->
+          <div class="space-y-1.5">
+            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Step 1: Electrodes</label>
+            <button id="btnAttachClips" onclick="toggleEarClips()" class="w-full py-2.5 px-3 rounded-xl border border-indigo-400/50 bg-indigo-950/60 hover:bg-indigo-900 text-indigo-200 text-xs font-bold transition flex items-center justify-center space-x-2 shadow-sm">
+              <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+              <span id="btnClipsLabel">Attach Ear-Clip Electrodes</span>
+            </button>
+          </div>
+
+          <!-- Step 2: Trigger Shock (The Big Red Button) -->
+          <div class="space-y-1.5">
+            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Step 2: Stimulate</label>
+            <button id="btnDeliverShock" onclick="deliverElectroshock()" disabled class="w-full py-3 px-4 rounded-xl font-black text-sm tracking-wide uppercase transition shadow-lg flex items-center justify-center space-x-2 bg-slate-800 text-slate-500 cursor-not-allowed">
+              <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              <span>Deliver 30 mA Shock</span>
+            </button>
+          </div>
+
+          <!-- Real-Time Phase Marker Buttons -->
+          <div class="p-3 bg-slate-800/80 rounded-xl border border-slate-700 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold uppercase text-slate-300">Phase Chronometry</span>
+              <span id="timerRunningBadge" class="text-[9px] font-mono bg-slate-700 text-slate-300 px-1.5 py-0.5 rounded">IDLE</span>
+            </div>
+            <div class="grid grid-cols-3 gap-1.5 text-[11px] font-mono">
+              <div class="bg-black/60 p-1.5 rounded border border-slate-700 text-center">
+                <div class="text-[9px] text-slate-400">HTE Phase</div>
+                <div id="readoutTonic" class="font-bold text-rose-400 text-xs">-- s</div>
+              </div>
+              <div class="bg-black/60 p-1.5 rounded border border-slate-700 text-center">
+                <div class="text-[9px] text-slate-400">Clonus</div>
+                <div id="readoutClonic" class="font-bold text-amber-400 text-xs">-- s</div>
+              </div>
+              <div class="bg-black/60 p-1.5 rounded border border-slate-700 text-center">
+                <div class="text-[9px] text-slate-400">Stupor</div>
+                <div id="readoutStupor" class="font-bold text-cyan-400 text-xs">-- s</div>
+              </div>
+            </div>
+            
+            <div class="pt-1 flex space-x-1.5">
+              <button onclick="autoFillCurrentAnimalRecord()" class="flex-1 py-1.5 bg-emerald-700 hover:bg-emerald-600 text-white rounded-lg text-xs font-semibold shadow transition">
+                Record in Table
+              </button>
+              <button onclick="resetBenchState()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-medium transition" title="Reset Current Animal">
+                Reset
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feedback Console Message -->
+        <div class="pt-3 border-t border-slate-800 text-[11px] text-slate-300 flex items-center space-x-2">
+          <span class="text-cyan-400 text-sm">ℹ</span>
+          <span id="consoleInstruction">Select group and attach ear-clip electrodes to begin.</span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ============================================== -->
+    <!-- TAB 3: OBSERVATION SHEET & STATISTICAL ANALYSIS -->
+    <!-- ============================================== -->
+    <div id="viewObservation" class="hidden flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between overflow-y-auto space-y-6">
+      
+      <!-- Table Header & Controls -->
+      <div class="flex flex-wrap items-center justify-between gap-4 border-b pb-4">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900">Standard Experimental Observation Sheet</h2>
+          <p class="text-xs text-slate-500">Maximal Electroshock Seizure (MES) Anticonvulsant Screening Protocol • PCI Curriculum</p>
+        </div>
+
+        <div class="flex items-center space-x-2 no-print">
+          <button onclick="fillAllMockData()" class="px-3.5 py-1.5 rounded-lg bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold transition">
+            Auto-Complete All 12 Animals
+          </button>
+          <button onclick="resetEntireDataset()" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50 text-xs font-medium text-slate-700 transition">
+            Clear Table
+          </button>
+        </div>
+      </div>
+
+      <!-- OBSERVATION TABLE (GROUP I vs GROUP II) -->
+      <div class="space-y-4">
+        <div class="overflow-x-auto border border-slate-200 rounded-xl shadow-sm">
+          <table class="w-full text-xs text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-800 text-white border-b border-slate-700">
+                <th class="p-2.5 border-r border-slate-700 text-center w-12">#</th>
+                <th class="p-2.5 border-r border-slate-700">Treatment Group</th>
+                <th class="p-2.5 border-r border-slate-700 text-center">Weight (g)</th>
+                <th class="p-2.5 border-r border-slate-700 text-center bg-rose-950/60 text-rose-300">Tonic Flexion (s)</th>
+                <th class="p-2.5 border-r border-slate-700 text-center bg-rose-900 text-white font-extrabold">Tonic Extension (s)</th>
+                <th class="p-2.5 border-r border-slate-700 text-center bg-amber-950/60 text-amber-300">Clonus (s)</th>
+                <th class="p-2.5 border-r border-slate-700 text-center bg-cyan-950/60 text-cyan-300">Stupor (s)</th>
+                <th class="p-2.5 border-r border-slate-700 text-center">Total Time (s)</th>
+                <th class="p-2.5 text-center">Protection from HTE</th>
+              </tr>
+            </thead>
+            <tbody id="fullObservationTableBody" class="font-mono text-[11px] divide-y divide-slate-200">
+              <!-- Dynamically populated rows for Vehicle and Treated groups -->
+            </tbody>
+            <tfoot>
+              <!-- Summary Statistics Row for Vehicle -->
+              <tr class="bg-slate-100 font-bold border-t-2 border-slate-300 text-slate-800 font-mono text-[11px]">
+                <td colspan="2" class="p-2 text-right">Vehicle Control Mean (± SEM):</td>
+                <td id="statVehWeight" class="p-2 text-center">--</td>
+                <td id="statVehFlex" class="p-2 text-center">--</td>
+                <td id="statVehExt" class="p-2 text-center text-rose-700 font-extrabold">--</td>
+                <td id="statVehClon" class="p-2 text-center">--</td>
+                <td id="statVehStupor" class="p-2 text-center">--</td>
+                <td id="statVehTotal" class="p-2 text-center">--</td>
+                <td id="statVehProtection" class="p-2 text-center text-rose-700">0.0% (0/6)</td>
+              </tr>
+              <!-- Summary Statistics Row for Drug-Treated -->
+              <tr class="bg-indigo-50 font-bold border-t border-indigo-200 text-indigo-950 font-mono text-[11px]">
+                <td colspan="2" class="p-2 text-right" id="drugGroupNameSummary">Test Drug Treated Mean (± SEM):</td>
+                <td id="statDrugWeight" class="p-2 text-center">--</td>
+                <td id="statDrugFlex" class="p-2 text-center">--</td>
+                <td id="statDrugExt" class="p-2 text-center text-emerald-700 font-extrabold">--</td>
+                <td id="statDrugClon" class="p-2 text-center">--</td>
+                <td id="statDrugStupor" class="p-2 text-center">--</td>
+                <td id="statDrugTotal" class="p-2 text-center">--</td>
+                <td id="statDrugProtection" class="p-2 text-center text-emerald-700 text-xs">--</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <!-- ANALYTICAL COMPARISON CHART & CALCULATIONS -->
+      <div class="grid md:grid-cols-2 gap-6 pt-2">
+        
+        <!-- Live Visual Bar Comparison -->
+        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-3">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center justify-between">
+            <span>Hindlimb Tonic Extensor (HTE) Duration Comparison</span>
+            <span class="text-[10px] text-slate-500 font-normal">Primary Efficacy Metric</span>
+          </h3>
+
+          <div class="space-y-4 pt-2">
+            <!-- Vehicle Bar -->
+            <div>
+              <div class="flex justify-between text-xs font-semibold mb-1">
+                <span class="text-slate-700">Control (Vehicle):</span>
+                <span id="chartLabelControl" class="font-mono text-rose-600">12.2 s</span>
+              </div>
+              <div class="w-full bg-slate-200 rounded-full h-4 overflow-hidden">
+                <div id="chartBarControl" class="bg-rose-500 h-4 rounded-full transition-all duration-500" style="width: 85%;"></div>
+              </div>
+            </div>
+
+            <!-- Drug Bar -->
+            <div>
+              <div class="flex justify-between text-xs font-semibold mb-1">
+                <span id="chartDrugNameLabel" class="text-slate-700">Test Group (Phenytoin):</span>
+                <span id="chartLabelDrug" class="font-mono text-emerald-600">0.0 s</span>
+              </div>
+              <div class="w-full bg-slate-200 rounded-full h-4 overflow-hidden">
+                <div id="chartBarDrug" class="bg-emerald-500 h-4 rounded-full transition-all duration-500" style="width: 0%;"></div>
+              </div>
+            </div>
+
+            <div class="pt-2 text-xs text-slate-600 bg-white p-3 rounded-lg border border-slate-200 leading-relaxed">
+              <strong>Pharmacological Inference:</strong> <span id="inferenceText">Significant abolition of hindlimb extension indicates robust protection against maximal electroshock-induced seizure spread across the neural cortex.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- UNKNOWN DRUG IDENTIFICATION / EXAM MODULE -->
+        <div class="bg-indigo-50/60 border border-indigo-200 p-4 rounded-xl flex flex-col justify-between space-y-4">
+          <div class="space-y-1">
+            <div class="inline-block px-2 py-0.5 rounded bg-indigo-100 text-indigo-900 font-bold text-[10px] uppercase font-mono">Exam Diagnosis Module</div>
+            <h3 class="text-sm font-bold text-slate-900">Identification of Unknown Drug Compound</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Based on the presence/abolition of tonic extension, suppression of clonic jerking, and postictal stupor recovery, deduce the identity of the mystery compound.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-700">Select Deduced Pharmacological Agent:</label>
+            <div class="flex items-center space-x-2">
+              <select id="unknownDeductionSelect" class="flex-1 bg-white border border-slate-300 text-slate-800 text-xs rounded-lg px-3 py-2 font-medium shadow-sm focus:ring-2 focus:ring-indigo-500">
+                <option value="">-- Choose deduced compound --</option>
+                <option value="phenytoin">Phenytoin Sodium (Complete HTE abolition, Clonic preserved)</option>
+                <option value="valproate">Sodium Valproate (Abolishes HTE and reduces Clonic time)</option>
+                <option value="diazepam">Diazepam (Potent GABA-A enhancer, sedative anticonvulsant)</option>
+                <option value="saline">Inactive Vehicle (No protection, Full HTE displayed)</option>
+              </select>
+              <button onclick="verifyUnknownDeduction()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow transition shrink-0">
+                Verify Answer
+              </button>
+            </div>
+          </div>
+
+          <div id="unknownVerdictBox" class="hidden p-3 rounded-lg text-xs leading-relaxed"></div>
+        </div>
+
+      </div>
+
+      <!-- Action Footer Buttons -->
+      <div class="pt-6 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 no-print">
+        <div class="text-xs text-slate-500 font-mono">XPRISM • Virtual Lab Assessment Portfolio</div>
+        <div class="flex items-center space-x-3">
+          <button onclick="openVivaModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow transition">
+            Answer Viva-Voce Questions
+          </button>
+          <button onclick="window.print()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg shadow transition flex items-center space-x-1.5">
+            <svg class="w-3.5 h-3.5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+            <span>Print Laboratory Report</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer class="site-footer no-print border-t border-slate-200 bg-white shrink-0">
+    <div class="max-w-7xl mx-auto px-6 py-3 text-xs text-slate-500 font-mono flex justify-between flex-wrap gap-2">
+      <span>XPRISM • Exp #03 • © 2026 Aaron Innovations • Dr. Vara Prasad Saka</span>
+      <span>Simulations are teaching aids that reduce animal use, in line with CCSEA 3Rs guidance. • <a href="../index.html" class="text-teal-700 hover:underline">All experiments</a></span>
+    </div>
+  </footer>
+
+  <!-- ============================================== -->
+  <!-- MODAL: VIVA-VOCE QUESTIONS & POST-LAB MCQ -->
+  <!-- ============================================== -->
+  <div id="modalViva" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div>
+          <h3 class="text-base font-bold text-slate-900">Post-Laboratory Assessment Questions</h3>
+          <p class="text-xs text-slate-500">Maximal Electroshock Seizure (MES) Pharmacology</p>
+        </div>
+        <button onclick="closeModal('modalViva')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+
+      <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-2 text-xs text-slate-700">
+        <!-- Question 1 -->
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+          <p class="font-bold text-slate-900">Q1. What is the pathognomonic criterion indicating anticonvulsant protection in the MES test?</p>
+          <label class="flex items-center space-x-2"><input type="radio" name="vq1" value="a"> <span>Prolongation of clonic convulsion duration</span></label>
+          <label class="flex items-center space-x-2"><input type="radio" name="vq1" value="b"> <span>Complete abolition or reduction of hindlimb tonic extension (HTE)</span></label>
+          <label class="flex items-center space-x-2"><input type="radio" name="vq1" value="c"> <span>Permanent loss of corneal reflex</span></label>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+          <p class="font-bold text-slate-900">Q2. What is the primary molecular mechanism of action of Phenytoin?</p>
+          <label class="flex items-center space-x-2"><input type="radio" name="vq2" value="a"> <span>Direct opening of GABAA-gated chloride channels</span></label>
+          <label class="flex items-center space-x-2"><input type="radio" name="vq2" value="b"> <span>Use-dependent blockade of voltage-gated sodium (Na+) channels</span></label>
+          <label class="flex items-center space-x-2"><input type="radio" name="vq2" value="c"> <span>Selective inhibition of T-type calcium channels in the thalamus</span></label>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+          <p class="font-bold text-slate-900">Q3. Why are ear-clip electrodes moistened with saline prior to shock administration?</p>
+          <label class="flex items-center space-x-2"><input type="radio" name="vq3" value="a"> <span>To lower contact electrical impedance and prevent localized skin burns</span></label>
+          <label class="flex items-center space-x-2"><input type="radio" name="vq3" value="b"> <span>To act as a topical local anesthetic</span></label>
+          <label class="flex items-center space-x-2"><input type="radio" name="vq3" value="c"> <span>To stimulate auditory nerve reflex pathways</span></label>
+        </div>
+      </div>
+
+      <div class="pt-3 border-t flex items-center justify-between">
+        <span id="vivaScoreDisplay" class="text-xs font-mono font-bold text-indigo-700"></span>
+        <div class="flex space-x-2">
+          <button onclick="closeModal('modalViva')" class="px-4 py-2 border rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">Cancel</button>
+          <button onclick="submitVivaAssessment()" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow">Submit Answers</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- JAVASCRIPT LOGIC & PHARMACOLOGICAL SIMULATOR -->
+  <!-- ============================================== -->
+  <script>
+    // --- PHARMACOLOGICAL PROFILES DATABASE ---
+    // Realistic phase durations (seconds) and protection rates in Swiss Albino Mice
+    const PHARMA_DATABASE = {
+      vehicle: {
+        name: "Vehicle Control (0.9% Normal Saline)",
+        dose: "10 ml/kg i.p.",
+        tonicFlexion: { mean: 2.2, sd: 0.3 },
+        tonicExtension: { mean: 12.4, sd: 1.1 }, // Full prominent HTE
+        clonic: { mean: 14.8, sd: 1.5 },
+        stupor: { mean: 78.0, sd: 8.0 },
+        percentProtection: 0, // 0 / 6 protected
+        notes: "Standard grand mal seizure sequence. No anticonvulsant protection."
+      },
+      phenytoin: {
+        name: "Phenytoin Sodium",
+        dose: "25 mg/kg i.p.",
+        tonicFlexion: { mean: 2.4, sd: 0.4 },
+        tonicExtension: { mean: 0.0, sd: 0.0 }, // 100% abolished HTE!
+        clonic: { mean: 12.0, sd: 1.8 },
+        stupor: { mean: 35.0, sd: 5.0 },
+        percentProtection: 100, // 6 / 6 protected
+        notes: "Abolishes tonic hindlimb extensor component while preserving clonic jerks."
+      },
+      valproate: {
+        name: "Sodium Valproate",
+        dose: "300 mg/kg i.p.",
+        tonicFlexion: { mean: 1.8, sd: 0.3 },
+        tonicExtension: { mean: 0.0, sd: 0.0 }, // Abolished
+        clonic: { mean: 7.2, sd: 1.2 }, // Also significantly shortens clonus
+        stupor: { mean: 42.0, sd: 6.0 },
+        percentProtection: 100,
+        notes: "Broad-spectrum anticonvulsant. Abolishes HTE and dampens clonic convulsions."
+      },
+      diazepam: {
+        name: "Diazepam",
+        dose: "4 mg/kg i.p.",
+        tonicFlexion: { mean: 1.5, sd: 0.3 },
+        tonicExtension: { mean: 0.0, sd: 0.0 },
+        clonic: { mean: 4.5, sd: 1.0 },
+        stupor: { mean: 95.0, sd: 12.0 }, // Prolonged sedative stupor
+        percentProtection: 100,
+        notes: "Potent benzodiazepine GABA-A facilitator. Suppresses all convulsive phases."
+      }
+    };
+
+    // State Data Storage for 6 mice in each of the 2 active groups
+    // Vehicle Group (Group 1, 6 mice)
+    let vehicleData = [
+      { id: 1, weight: 24.2, flex: null, ext: null, clon: null, stupor: null, tested: false },
+      { id: 2, weight: 25.0, flex: null, ext: null, clon: null, stupor: null, tested: false },
+      { id: 3, weight: 23.8, flex: null, ext: null, clon: null, stupor: null, tested: false },
+      { id: 4, weight: 26.1, flex: null, ext: null, clon: null, stupor: null, tested: false },
+      { id: 5, weight: 24.7, flex: null, ext: null, clon: null, stupor: null, tested: false },
+      { id: 6, weight: 25.5, flex: null, ext: null, clon: null, stupor: null, tested: false }
+    ];
+
+    // Treated Group (Group 2, 6 mice)
+    let treatedData = [
+      { id: 1, weight: 24.5, flex: null, ext: null, clon: null, stupor: null, tested: false },
+      { id: 2, weight: 25.2, flex: null, ext: null, clon: null, stupor: null, tested: false },
+      { id: 3, weight: 24.0, flex: null, ext: null, clon: null, stupor: null, tested: false },
+      { id: 4, weight: 26.4, flex: null, ext: null, clon: null, stupor: null, tested: false },
+      { id: 5, weight: 23.9, flex: null, ext: null, clon: null, stupor: null, tested: false },
+      { id: 6, weight: 25.8, flex: null, ext: null, clon: null, stupor: null, tested: false }
+    ];
+
+    // Current Session State
+    let activeGroupKey = 'vehicle';
+    let currentAnimalIndex = 0;
+    let areClipsAttached = false;
+    let isShockExecuting = false;
+    let soundEnabled = true;
+
+    // Seizure Simulation Timers
+    let simulationPhaseTimeout = null;
+    let phaseInterval = null;
+    let timerStartTime = 0;
+    let currentLiveState = 'IDLE'; // IDLE, SHOCK, FLEXION, EXTENSION, CLONIC, STUPOR, RECOVERED
+
+    // Random Mystery Drug key assigned for this student session
+    const mysteryCandidates = ['phenytoin', 'valproate', 'diazepam'];
+    const assignedMysteryDrugKey = mysteryCandidates[Math.floor(Math.random() * mysteryCandidates.length)];
+
+    // Web Audio Synthesizer (Tone.js)
+    let synth = null;
+    let noiseSynth = null;
+
+    function initAudio() {
+      if (!synth && window.Tone) {
+        synth = new Tone.PolySynth(Tone.Synth).toDestination();
+        synth.volume.value = -8;
+      }
+    }
+
+    function playAudio(type) {
+      if (!soundEnabled) return;
+      try {
+        initAudio();
+        if (Tone.context.state !== 'running') {
+          Tone.start();
+        }
+        if (type === 'buzzer') {
+          // Harsh electric shock buzzer sound (low saw wave)
+          const shockOsc = new Tone.Oscillator(120, "sawtooth").toDestination();
+          shockOsc.volume.value = -4;
+          shockOsc.start();
+          shockOsc.stop("+0.22");
+        } else if (type === 'click') {
+          synth.triggerAttackRelease("C5", "64n");
+        } else if (type === 'chime') {
+          synth.triggerAttackRelease(["E5", "G5", "B5"], "16n");
+        } else if (type === 'jerk') {
+          synth.triggerAttackRelease("D2", "32n");
+        }
+      } catch (e) {
+        // Safe failover
+      }
+    }
+
+    document.getElementById('audioToggleBtn').addEventListener('click', () => {
+      soundEnabled = !soundEnabled;
+      document.getElementById('audioToggleBtn').classList.toggle('bg-indigo-100', soundEnabled);
+      showConsoleMessage(soundEnabled ? "Audio feedback enabled" : "Audio muted");
+    });
+
+    // --- TAB SWITCHER ---
+    function switchTab(tabId) {
+      ['viewTask', 'viewExperiment', 'viewObservation'].forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+      });
+      ['tabTask', 'tabExperiment', 'tabObservation'].forEach(id => {
+        const btn = document.getElementById(id);
+        btn.classList.remove('bg-teal-500', 'text-white', 'shadow');
+        btn.classList.add('text-slate-300');
+      });
+
+      if (tabId === 'task') {
+        document.getElementById('viewTask').classList.remove('hidden');
+        document.getElementById('tabTask').classList.add('bg-teal-500', 'text-white', 'shadow');
+      } else if (tabId === 'experiment') {
+        document.getElementById('viewExperiment').classList.remove('hidden');
+        document.getElementById('tabExperiment').classList.add('bg-teal-500', 'text-white', 'shadow');
+      } else if (tabId === 'observation') {
+        document.getElementById('viewObservation').classList.remove('hidden');
+        document.getElementById('tabObservation').classList.add('bg-teal-500', 'text-white', 'shadow');
+        renderObservationTable();
+      }
+    }
+
+    // --- ANIMAL & GROUP HANDLERS ---
+    function onGroupChange() {
+      activeGroupKey = document.getElementById('groupSelect').value;
+      currentAnimalIndex = 0;
+      resetBenchState();
+      updateAnimalSelectorUI();
+      showConsoleMessage(`Switched to ${getGroupDisplayName(activeGroupKey)}. Selected Mouse #1.`);
+    }
+
+    function getGroupDisplayName(key) {
+      if (key === 'vehicle') return 'Vehicle Control';
+      if (key === 'unknown') return 'Unknown Test Compound';
+      return PHARMA_DATABASE[key].name;
+    }
+
+    function getResolvedDrugProfileKey() {
+      return activeGroupKey === 'unknown' ? assignedMysteryDrugKey : activeGroupKey;
+    }
+
+    function selectAnimalIndex(idx) {
+      if (isShockExecuting) {
+        showConsoleMessage("Wait until current seizure progression finishes!", true);
+        return;
+      }
+      currentAnimalIndex = idx;
+      resetBenchState();
+      updateAnimalSelectorUI();
+      playAudio('click');
+    }
+
+    function updateAnimalSelectorUI() {
+      const currentList = activeGroupKey === 'vehicle' ? vehicleData : treatedData;
+      const currentMouse = currentList[currentAnimalIndex];
+
+      // Update button styles
+      const btns = document.querySelectorAll('.mouse-select-btn');
+      btns.forEach((btn, index) => {
+        const isTested = currentList[index].tested;
+        if (index === currentAnimalIndex) {
+          btn.className = "mouse-select-btn px-2.5 py-1 text-xs rounded font-bold bg-indigo-600 text-white shadow-sm ring-2 ring-indigo-400";
+        } else if (isTested) {
+          btn.className = "mouse-select-btn px-2.5 py-1 text-xs rounded font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300";
+        } else {
+          btn.className = "mouse-select-btn px-2.5 py-1 text-xs rounded font-semibold text-slate-600 hover:bg-slate-100";
+        }
+      });
+
+      // Update Tested Badge
+      const badge = document.getElementById('animalTestedBadge');
+      if (currentMouse.tested) {
+        badge.innerText = "Tested";
+        badge.className = "text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300";
+        // Fill readouts with previously recorded numbers
+        document.getElementById('readoutTonic').innerText = currentMouse.ext.toFixed(1) + " s";
+        document.getElementById('readoutClonic').innerText = currentMouse.clon.toFixed(1) + " s";
+        document.getElementById('readoutStupor').innerText = currentMouse.stupor.toFixed(1) + " s";
+      } else {
+        badge.innerText = "Untested";
+        badge.className = "text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200";
+        document.getElementById('readoutTonic').innerText = "-- s";
+        document.getElementById('readoutClonic').innerText = "-- s";
+        document.getElementById('readoutStupor').innerText = "-- s";
+      }
+
+      // Update HUD weight
+      document.getElementById('hudMouseWeight').innerText = currentMouse.weight.toFixed(1) + " g";
+    }
+
+    // --- ELECTRODES ATTACHMENT ---
+    function toggleEarClips() {
+      if (isShockExecuting) return;
+      areClipsAttached = !areClipsAttached;
+      playAudio('click');
+
+      const clipsGraphic = document.getElementById('earClipsGraphic');
+      const cableLeft = document.getElementById('cableLeft');
+      const cableRight = document.getElementById('cableRight');
+      const hudStatus = document.getElementById('hudClipStatus');
+      const btnLabel = document.getElementById('btnClipsLabel');
+      const shockBtn = document.getElementById('btnDeliverShock');
+
+      if (areClipsAttached) {
+        clipsGraphic.classList.remove('hidden');
+        cableLeft.setAttribute('opacity', '1');
+        cableRight.setAttribute('opacity', '1');
+        hudStatus.innerText = "ATTACHED (SALINE MOISTENED)";
+        hudStatus.className = "text-emerald-400 font-bold";
+        btnLabel.innerText = "Detach Ear-Clip Electrodes";
+        
+        // Enable shock delivery button
+        shockBtn.disabled = false;
+        shockBtn.className = "w-full py-3 px-4 rounded-xl font-black text-sm tracking-wide uppercase transition shadow-lg flex items-center justify-center space-x-2 bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white cursor-pointer active:scale-95";
+        showConsoleMessage("Ear clips attached firmly to mouse pinnae with saline. Ready to deliver electroshock.");
+      } else {
+        clipsGraphic.classList.add('hidden');
+        cableLeft.setAttribute('opacity', '0.4');
+        cableRight.setAttribute('opacity', '0.4');
+        hudStatus.innerText = "DETACHED";
+        hudStatus.className = "text-amber-400 font-bold";
+        btnLabel.innerText = "Attach Ear-Clip Electrodes";
+        
+        // Disable shock delivery button
+        shockBtn.disabled = true;
+        shockBtn.className = "w-full py-3 px-4 rounded-xl font-black text-sm tracking-wide uppercase transition shadow-lg flex items-center justify-center space-x-2 bg-slate-800 text-slate-500 cursor-not-allowed";
+        showConsoleMessage("Ear clips detached.");
+      }
+    }
+
+    // --- SHOCK DELIVERY & SEIZURE CHRONOLOGY ---
+    function deliverElectroshock() {
+      if (!areClipsAttached || isShockExecuting) return;
+
+      isShockExecuting = true;
+      document.getElementById('btnDeliverShock').disabled = true;
+      document.getElementById('btnAttachClips').disabled = true;
+
+      // Start Electrical Shock Spark and Audio
+      playAudio('buzzer');
+      const overlay = document.getElementById('shockOverlay');
+      overlay.classList.remove('shock-active');
+      void overlay.offsetWidth;
+      overlay.classList.add('shock-active');
+      document.getElementById('sparkGroup').classList.remove('hidden');
+
+      // LED Shock indicator
+      document.getElementById('ledCurrent').classList.add('led-display-red', 'text-rose-500');
+
+      // Timeline tracker activation
+      resetPhaseHighlights();
+      setPhaseBadge('segShock', true);
+      document.getElementById('chamberLiveStageText').innerText = "STATE: ELECTRICAL STIMULATION (30 mA, 0.2 s)";
+      document.getElementById('timerRunningBadge').innerText = "STIMULATING";
+      document.getElementById('timerRunningBadge').className = "text-[9px] font-mono bg-rose-600 text-white px-1.5 py-0.5 rounded animate-pulse";
+
+      // Calculate randomized realistic times based on pharmacological profile
+      const profKey = getResolvedDrugProfileKey();
+      const profile = PHARMA_DATABASE[profKey];
+
+      // Gaussian random noise
+      const rnd = (m, s) => Math.max(0, Number((m + (Math.random() * 2 - 1) * s).toFixed(1)));
+      
+      const flexTime = rnd(profile.tonicFlexion.mean, profile.tonicFlexion.sd);
+      const extTime = profile.tonicExtension.mean > 0 ? rnd(profile.tonicExtension.mean, profile.tonicExtension.sd) : 0.0;
+      const clonicTime = rnd(profile.clonic.mean, profile.clonic.sd);
+      const stuporTime = rnd(profile.stupor.mean, profile.stupor.sd);
+
+      // Stop spark after 0.25 s
+      setTimeout(() => {
+        document.getElementById('sparkGroup').classList.add('hidden');
+        document.getElementById('ledCurrent').classList.remove('led-display-red', 'text-rose-500');
+        startSeizureProgression(flexTime, extTime, clonicTime, stuporTime);
+      }, 250);
+    }
+
+    function startSeizureProgression(flexSec, extSec, clonSec, stuporSec) {
+      const mouseRig = document.getElementById('mouseSvg');
+      const forelimbNormal = document.getElementById('forelimbNormal');
+      const forelimbFlexed = document.getElementById('forelimbFlexed');
+      const limbResting = document.getElementById('limbResting');
+      const limbExtensor = document.getElementById('limbExtensor');
+
+      mouseRig.classList.remove('mouse-breathing');
+
+      let elapsedSeconds = 0.0;
+      const clockEl = document.getElementById('phaseElapsedClock');
+      clearInterval(phaseInterval);
+      phaseInterval = setInterval(() => {
+        elapsedSeconds += 0.1;
+        clockEl.innerText = elapsedSeconds.toFixed(1) + " s";
+      }, 100);
+
+      // --- PHASE 1: TONIC FLEXION (~2.0 s) ---
+      currentLiveState = 'FLEXION';
+      setPhaseBadge('segFlex', true);
+      document.getElementById('chamberLiveStageText').innerText = "STATE: TONIC FLEXOR SPASM";
+      document.getElementById('timerRunningBadge').innerText = "FLEXION";
+      forelimbNormal.classList.add('hidden');
+      forelimbFlexed.classList.remove('hidden');
+
+      setTimeout(() => {
+        // --- PHASE 2: TONIC EXTENSION (HTE) ---
+        setPhaseBadge('segFlex', false);
+        setPhaseBadge('segExt', true);
+        document.getElementById('timerRunningBadge').innerText = "EXTENSION";
+
+        if (extSec > 0) {
+          // Unprotected: Full rigid hindlimb extension 180 degrees backward
+          currentLiveState = 'EXTENSION';
+          document.getElementById('chamberLiveStageText').innerText = "STATE: HINDLIMB TONIC EXTENSION (HTE)";
+          limbResting.classList.add('hidden');
+          limbExtensor.classList.remove('hidden');
+          document.getElementById('readoutTonic').innerText = extSec.toFixed(1) + " s";
+        } else {
+          // Protected by Anticonvulsant: Extension abolished!
+          currentLiveState = 'PROTECTED';
+          document.getElementById('chamberLiveStageText').innerText = "STATE: TONIC EXTENSION ABOLISHED (PROTECTED!)";
+          document.getElementById('readoutTonic').innerText = "0.0 s (ABOLISHED)";
+          showConsoleMessage("Hindlimb tonic extensor phase completely ABOLISHED by drug!", false);
+        }
+
+        // Time to transition to Clonic
+        const tonicWaitMs = extSec > 0 ? (extSec * 450) : 600; // Accelerated laboratory simulation scale
+
+        setTimeout(() => {
+          // --- PHASE 3: CLONIC JERKS ---
+          setPhaseBadge('segExt', false);
+          setPhaseBadge('segClonus', true);
+          currentLiveState = 'CLONIC';
+          document.getElementById('chamberLiveStageText').innerText = "STATE: CLONIC SEIZURE (RAPID LIMB TREMORS)";
+          document.getElementById('timerRunningBadge').innerText = "CLONUS";
+          document.getElementById('readoutClonic').innerText = clonSec.toFixed(1) + " s";
+
+          // Revert limbs and trigger rhythmic clonic jitter
+          limbExtensor.classList.add('hidden');
+          limbResting.classList.remove('hidden');
+          forelimbFlexed.classList.add('hidden');
+          forelimbNormal.classList.remove('hidden');
+          mouseRig.classList.add('mouse-clonic-shake');
+
+          const clonicWaitMs = clonSec * 350;
+
+          setTimeout(() => {
+            // --- PHASE 4: POSTICTAL STUPOR ---
+            mouseRig.classList.remove('mouse-clonic-shake');
+            setPhaseBadge('segClonus', false);
+            setPhaseBadge('segStupor', true);
+            currentLiveState = 'STUPOR';
+            document.getElementById('chamberLiveStageText').innerText = "STATE: POSTICTAL STUPOR (EXHAUSTION / QUIET)";
+            document.getElementById('timerRunningBadge').innerText = "STUPOR";
+            document.getElementById('readoutStupor').innerText = stuporSec.toFixed(1) + " s";
+
+            setTimeout(() => {
+              // --- PHASE 5: RECOVERY ---
+              clearInterval(phaseInterval);
+              currentLiveState = 'RECOVERED';
+              mouseRig.classList.add('mouse-breathing');
+              document.getElementById('chamberLiveStageText').innerText = "STATE: RECOVERED (EXPLORATORY BEHAVIOR)";
+              document.getElementById('timerRunningBadge').innerText = "COMPLETE";
+              document.getElementById('timerRunningBadge').className = "text-[9px] font-mono bg-emerald-600 text-white px-1.5 py-0.5 rounded";
+
+              // Store data into active animal
+              const currentList = activeGroupKey === 'vehicle' ? vehicleData : treatedData;
+              currentList[currentAnimalIndex].flex = flexSec;
+              currentList[currentAnimalIndex].ext = extSec;
+              currentList[currentAnimalIndex].clon = clonSec;
+              currentList[currentAnimalIndex].stupor = stuporSec;
+              currentList[currentAnimalIndex].tested = true;
+
+              isShockExecuting = false;
+              document.getElementById('btnDeliverShock').disabled = false;
+              document.getElementById('btnAttachClips').disabled = false;
+              updateAnimalSelectorUI();
+              playAudio('chime');
+
+              showConsoleMessage(`Mouse #${currentAnimalIndex + 1} seizure sequence finished. Results recorded. Ready for next animal.`);
+            }, 1800);
+
+          }, clonicWaitMs);
+
+        }, tonicWaitMs);
+
+      }, 1200);
+    }
+
+    function setPhaseBadge(segId, active) {
+      const el = document.getElementById(segId);
+      if (active) {
+        el.className = "py-1 rounded bg-indigo-600 text-white border border-indigo-700 shadow-sm font-extrabold";
+      } else {
+        el.className = "py-1 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold";
+      }
+    }
+
+    function resetPhaseHighlights() {
+      ['segShock', 'segFlex', 'segExt', 'segClonus', 'segStupor'].forEach(id => {
+        document.getElementById(id).className = "py-1 rounded bg-slate-100 text-slate-500 border border-slate-200";
+      });
+      document.getElementById('phaseElapsedClock').innerText = "00.0 s";
+    }
+
+    function resetBenchState() {
+      clearInterval(phaseInterval);
+      resetPhaseHighlights();
+      document.getElementById('mouseSvg').className = "w-full h-full max-h-[250px] drop-shadow-md z-10 transition-transform duration-300 mouse-breathing";
+      document.getElementById('forelimbFlexed').classList.add('hidden');
+      document.getElementById('forelimbNormal').classList.remove('hidden');
+      document.getElementById('limbExtensor').classList.add('hidden');
+      document.getElementById('limbResting').classList.remove('hidden');
+      document.getElementById('chamberLiveStageText').innerText = "STATE: BASELINE / RESTING";
+      document.getElementById('timerRunningBadge').innerText = "IDLE";
+      document.getElementById('timerRunningBadge').className = "text-[9px] font-mono bg-slate-700 text-slate-300 px-1.5 py-0.5 rounded";
+      isShockExecuting = false;
+      document.getElementById('btnDeliverShock').disabled = !areClipsAttached;
+      document.getElementById('btnAttachClips').disabled = false;
+    }
+
+    // Record manually or auto-fill current active animal
+    function autoFillCurrentAnimalRecord() {
+      const currentList = activeGroupKey === 'vehicle' ? vehicleData : treatedData;
+      const mouse = currentList[currentAnimalIndex];
+      if (!mouse.tested) {
+        // Run quick auto generation for this mouse
+        const profKey = getResolvedDrugProfileKey();
+        const p = PHARMA_DATABASE[profKey];
+        const rnd = (m, s) => Math.max(0, Number((m + (Math.random() * 2 - 1) * s).toFixed(1)));
+        
+        mouse.flex = rnd(p.tonicFlexion.mean, p.tonicFlexion.sd);
+        mouse.ext = p.tonicExtension.mean > 0 ? rnd(p.tonicExtension.mean, p.tonicExtension.sd) : 0.0;
+        mouse.clon = rnd(p.clonic.mean, p.clonic.sd);
+        mouse.stupor = rnd(p.stupor.mean, p.stupor.sd);
+        mouse.tested = true;
+
+        updateAnimalSelectorUI();
+      }
+      showConsoleMessage(`Data for Mouse #${currentAnimalIndex + 1} confirmed in Observation Sheet.`);
+      switchTab('observation');
+    }
+
+    // --- POPULATE OBSERVATION TABLE & STATS ---
+    function renderObservationTable() {
+      const tbody = document.getElementById('fullObservationTableBody');
+      tbody.innerHTML = "";
+
+      const drugName = getGroupDisplayName(activeGroupKey);
+      document.getElementById('drugGroupNameSummary').innerText = `${drugName} Treated Mean (± SEM):`;
+      document.getElementById('chartDrugNameLabel').innerText = `Test Group (${drugName}):`;
+
+      // Render 6 rows for Vehicle Control
+      vehicleData.forEach((row, i) => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50";
+        const total = (row.flex !== null && row.ext !== null && row.clon !== null) ? (row.flex + row.ext + row.clon).toFixed(1) : "--";
+        const isProtected = row.ext !== null && row.ext === 0;
+
+        tr.innerHTML = `
+          <td class="p-2 border-r text-center font-bold text-slate-600">${i + 1}</td>
+          <td class="p-2 border-r font-sans text-slate-700">Vehicle Control (Saline 10 ml/kg)</td>
+          <td class="p-2 border-r text-center">${row.weight.toFixed(1)}</td>
+          <td class="p-2 border-r text-center text-rose-800">${row.flex !== null ? row.flex.toFixed(1) : '--'}</td>
+          <td class="p-2 border-r text-center text-rose-700 font-extrabold">${row.ext !== null ? row.ext.toFixed(1) : '--'}</td>
+          <td class="p-2 border-r text-center text-amber-800">${row.clon !== null ? row.clon.toFixed(1) : '--'}</td>
+          <td class="p-2 border-r text-center text-cyan-800">${row.stupor !== null ? row.stupor.toFixed(1) : '--'}</td>
+          <td class="p-2 border-r text-center font-bold">${total}</td>
+          <td class="p-2 text-center ${isProtected ? 'text-emerald-700 font-bold' : 'text-rose-600'}">${row.ext !== null ? (isProtected ? 'PROTECTED (+)' : 'Unprotected (-)') : '--'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Render 6 rows for Drug Treated
+      treatedData.forEach((row, i) => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-indigo-50/50 bg-indigo-50/20";
+        const total = (row.flex !== null && row.ext !== null && row.clon !== null) ? (row.flex + row.ext + row.clon).toFixed(1) : "--";
+        const isProtected = row.ext !== null && row.ext === 0;
+
+        tr.innerHTML = `
+          <td class="p-2 border-r text-center font-bold text-indigo-700">${i + 7}</td>
+          <td class="p-2 border-r font-sans text-indigo-900 font-medium">${drugName}</td>
+          <td class="p-2 border-r text-center">${row.weight.toFixed(1)}</td>
+          <td class="p-2 border-r text-center text-slate-700">${row.flex !== null ? row.flex.toFixed(1) : '--'}</td>
+          <td class="p-2 border-r text-center text-emerald-700 font-extrabold">${row.ext !== null ? row.ext.toFixed(1) : '--'}</td>
+          <td class="p-2 border-r text-center text-slate-700">${row.clon !== null ? row.clon.toFixed(1) : '--'}</td>
+          <td class="p-2 border-r text-center text-slate-700">${row.stupor !== null ? row.stupor.toFixed(1) : '--'}</td>
+          <td class="p-2 border-r text-center font-bold">${total}</td>
+          <td class="p-2 text-center ${isProtected ? 'text-emerald-700 font-bold bg-emerald-50' : 'text-rose-600'}">${row.ext !== null ? (isProtected ? 'PROTECTED (+)' : 'Unprotected (-)') : '--'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Calculate Statistics
+      computeGroupStatistics();
+    }
+
+    function computeGroupStatistics() {
+      // Helper for Mean ± SEM
+      const calcStats = (dataList) => {
+        const tested = dataList.filter(d => d.tested);
+        if (tested.length === 0) return null;
+
+        const n = tested.length;
+        const avg = (field) => tested.reduce((acc, c) => acc + c[field], 0) / n;
+        const sem = (field, meanVal) => {
+          if (n <= 1) return 0;
+          const variance = tested.reduce((acc, c) => acc + Math.pow(c[field] - meanVal, 2), 0) / (n - 1);
+          return Math.sqrt(variance / n);
+        };
+
+        const wM = avg('weight');
+        const fM = avg('flex');
+        const eM = avg('ext');
+        const cM = avg('clon');
+        const sM = avg('stupor');
+        const totM = fM + eM + cM;
+        const protectedCount = tested.filter(d => d.ext === 0).length;
+
+        return {
+          weight: `${wM.toFixed(1)} ± ${sem('weight', wM).toFixed(1)}`,
+          flex: `${fM.toFixed(1)} ± ${sem('flex', fM).toFixed(1)}`,
+          ext: `${eM.toFixed(1)} ± ${sem('ext', eM).toFixed(1)}`,
+          extMean: eM,
+          clon: `${cM.toFixed(1)} ± ${sem('clon', cM).toFixed(1)}`,
+          stupor: `${sM.toFixed(1)} ± ${sem('stupor', sM).toFixed(1)}`,
+          total: `${totM.toFixed(1)}`,
+          protection: `${((protectedCount / n) * 100).toFixed(0)}% (${protectedCount}/${n})`
+        };
+      };
+
+      const vehStats = calcStats(vehicleData);
+      const drugStats = calcStats(treatedData);
+
+      if (vehStats) {
+        document.getElementById('statVehWeight').innerText = vehStats.weight;
+        document.getElementById('statVehFlex').innerText = vehStats.flex;
+        document.getElementById('statVehExt').innerText = vehStats.ext;
+        document.getElementById('statVehClon').innerText = vehStats.clon;
+        document.getElementById('statVehStupor').innerText = vehStats.stupor;
+        document.getElementById('statVehTotal').innerText = vehStats.total;
+        document.getElementById('statVehProtection').innerText = vehStats.protection;
+
+        // Chart control bar
+        document.getElementById('chartLabelControl').innerText = vehStats.extMean.toFixed(1) + " s";
+        document.getElementById('chartBarControl').style.width = Math.min(100, (vehStats.extMean / 15) * 100) + "%";
+      }
+
+      if (drugStats) {
+        document.getElementById('statDrugWeight').innerText = drugStats.weight;
+        document.getElementById('statDrugFlex').innerText = drugStats.flex;
+        document.getElementById('statDrugExt').innerText = drugStats.ext;
+        document.getElementById('statDrugClon').innerText = drugStats.clon;
+        document.getElementById('statDrugStupor').innerText = drugStats.stupor;
+        document.getElementById('statDrugTotal').innerText = drugStats.total;
+        document.getElementById('statDrugProtection').innerText = drugStats.protection;
+
+        // Chart drug bar
+        document.getElementById('chartLabelDrug').innerText = drugStats.extMean.toFixed(1) + " s";
+        document.getElementById('chartBarDrug').style.width = Math.min(100, (drugStats.extMean / 15) * 100) + "%";
+
+        // Dynamic inference
+        if (drugStats.extMean <= 1.0) {
+          document.getElementById('inferenceText').innerHTML = `<strong class="text-emerald-700">Significant Anticonvulsant Protection:</strong> The test compound completely abolished the Hindlimb Tonic Extensor (HTE) phase (0.0 s, 100% protection), confirming clinical efficacy against generalized tonic-clonic convulsions.`;
+        } else {
+          document.getElementById('inferenceText').innerHTML = `<strong class="text-rose-700">Lack of Protection:</strong> Hindlimb tonic extension remained uninhibited, indicating lack of efficacy against the MES grand mal seizure model.`;
+        }
+      }
+    }
+
+    // Fill all 12 animals instantly for quick study/demonstration
+    function fillAllMockData() {
+      const fillList = (list, key) => {
+        const p = PHARMA_DATABASE[key];
+        const rnd = (m, s) => Math.max(0, Number((m + (Math.random() * 2 - 1) * s).toFixed(1)));
+        list.forEach(m => {
+          m.flex = rnd(p.tonicFlexion.mean, p.tonicFlexion.sd);
+          m.ext = p.tonicExtension.mean > 0 ? rnd(p.tonicExtension.mean, p.tonicExtension.sd) : 0.0;
+          m.clon = rnd(p.clonic.mean, p.clonic.sd);
+          m.stupor = rnd(p.stupor.mean, p.stupor.sd);
+          m.tested = true;
+        });
+      };
+
+      fillList(vehicleData, 'vehicle');
+      fillList(treatedData, getResolvedDrugProfileKey());
+
+      updateAnimalSelectorUI();
+      renderObservationTable();
+      showConsoleMessage("Auto-completed experimental datasets for all 12 animals.");
+    }
+
+    function resetEntireDataset() {
+      const clearList = (list) => {
+        list.forEach(m => {
+          m.flex = null;
+          m.ext = null;
+          m.clon = null;
+          m.stupor = null;
+          m.tested = false;
+        });
+      };
+      clearList(vehicleData);
+      clearList(treatedData);
+
+      resetBenchState();
+      updateAnimalSelectorUI();
+      renderObservationTable();
+      showConsoleMessage("Observation table and animal test history reset.");
+    }
+
+    // --- UNKNOWN DRUG VERIFICATION ---
+    function verifyUnknownDeduction() {
+      const selected = document.getElementById('unknownDeductionSelect').value;
+      const box = document.getElementById('unknownVerdictBox');
+
+      if (!selected) {
+        showConsoleMessage("Please select a candidate drug before submitting deduction!", true);
+        return;
+      }
+
+      const actualKey = assignedMysteryDrugKey;
+      const actualName = PHARMA_DATABASE[actualKey].name;
+
+      box.classList.remove('hidden');
+
+      if (selected === actualKey) {
+        box.className = "p-3 rounded-lg text-xs leading-relaxed bg-emerald-100 border border-emerald-300 text-emerald-950";
+        box.innerHTML = `<strong>CORRECT DIAGNOSIS!</strong> The unknown drug was indeed <strong>${actualName}</strong>.<br>Abolition of hindlimb extension along with specific chronometry profiles accurately matches the pharmacological mechanism.`;
+        playAudio('chime');
+      } else {
+        box.className = "p-3 rounded-lg text-xs leading-relaxed bg-rose-100 border border-rose-300 text-rose-950";
+        box.innerHTML = `<strong>INCORRECT DEDUCTION.</strong> You guessed ${PHARMA_DATABASE[selected]?.name || selected}, but the actual unknown compound was <strong>${actualName}</strong>.<br>Review the duration of clonic jerking and postictal stupor.`;
+      }
+    }
+
+    // --- VIVA-VOCE MODAL & ASSESSMENT ---
+    function openVivaModal() {
+      document.getElementById('modalViva').classList.remove('hidden');
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    function submitVivaAssessment() {
+      const q1 = document.querySelector('input[name="vq1"]:checked')?.value;
+      const q2 = document.querySelector('input[name="vq2"]:checked')?.value;
+      const q3 = document.querySelector('input[name="vq3"]:checked')?.value;
+
+      if (!q1 || !q2 || !q3) {
+        showConsoleMessage("Please answer all 3 questions before submitting!", true);
+        return;
+      }
+
+      let score = 0;
+      if (q1 === 'b') score++;
+      if (q2 === 'b') score++;
+      if (q3 === 'a') score++;
+
+      const display = document.getElementById('vivaScoreDisplay');
+      display.innerText = `Score: ${score}/3 (${Math.round((score / 3) * 100)}%)`;
+
+      setTimeout(() => {
+        closeModal('modalViva');
+        showConsoleMessage(`Viva evaluation completed: ${score}/3 points recorded in lab portfolio.`);
+      }, 900);
+    }
+
+    // --- CONSOLE FEEDBACK TOAST ---
+    function showConsoleMessage(msg, isAlert = false) {
+      const el = document.getElementById('consoleInstruction');
+      el.innerText = msg;
+      el.className = isAlert ? "text-amber-400 font-bold" : "text-cyan-300";
+    }
+
+    // Initialize application on load
+    window.addEventListener('DOMContentLoaded', () => {
+      updateAnimalSelectorUI();
+      renderObservationTable();
+    });
+  </script>
+  <script src="../assets/js/viva.js"></script>
+</body>
+</html>
