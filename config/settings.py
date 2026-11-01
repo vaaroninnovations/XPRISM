@@ -107,7 +107,7 @@ STATIC_ROOT = Path(env('DJANGO_STATIC_ROOT', BASE_DIR / 'staticfiles'))
 EXPERIMENTS_DIR = BASE_DIR / 'experiments'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# e-mail (password reset). Console backend until SMTP is configured.
+# e-mail (sign-up verification & welcome, password reset). Console backend until SMTP is configured.
 if env('EMAIL_HOST'):
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = env('EMAIL_HOST'); EMAIL_PORT = int(env('EMAIL_PORT', '587'))
@@ -116,6 +116,9 @@ if env('EMAIL_HOST'):
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', 'XPRISM <no-reply@localhost>')
+EMAIL_TIMEOUT = int(env('EMAIL_TIMEOUT', '15'))
+# sign-up e-mails (verification + welcome) are sent on a background thread so SMTP never slows the page
+EMAIL_ASYNC = env_bool('EMAIL_ASYNC', not _TESTING)
 
 # sessions & security
 SESSION_COOKIE_AGE = 60 * 60 * 10          # 10 h: a lab day

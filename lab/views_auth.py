@@ -10,10 +10,12 @@ from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
-from django.utils.http import url_has_allowed_host_and_scheme
+from django.utils.encoding import force_str
+from django.utils.http import url_has_allowed_host_and_scheme, urlsafe_base64_decode
 from django.views.decorators.http import require_POST
 
 from . import access
+from .emails import send_signup_emails, send_verification_email, verification_token
 from .forms import ConsentForm, DataRequestForm, EthicsAgreementForm, SignupForm, TrialSignupForm, INPUT
 from .models import Attempt, ConsentRecord, DataRequest, Enrollment, Role, User
 from .permissions import audit, client_ip
@@ -94,9 +96,12 @@ def signup(request):
             u.save()
             ConsentRecord.objects.create(user=u, policy_version=settings.POLICY_VERSION, ip=client_ip(request))
             Enrollment.objects.create(batch=batch, student=u, via='class_code')
+            send_signup_emails(u, request, batch=batch)
         login(request, u, backend='django.contrib.auth.backends.ModelBackend')
         audit(request, 'signup', u.username, college=batch.college, batch=batch.pk)
         messages.success(request, f'Welcome! Your username is {u.username}. You have joined {batch.name}.')
+        if u.email:
+            messages.info(request, f'We have sent a verification link to {u.email}. Please check your inbox.')
         return redirect('student_dashboard')
     return render(request, 'registration/signup.html', {'form': form})
 
@@ -111,12 +116,50 @@ def trial_signup(request):
                  is_trial_account=True, institution=cd.get('institution', ''), occupation=cd['occupation'],
                  consent_version=settings.POLICY_VERSION, consent_at=timezone.now())
         u.set_password(cd['password1'])
-        u.save()
-        ConsentRecord.objects.create(user=u, policy_version=settings.POLICY_VERSION, ip=client_ip(request))
+        with transaction.atomic():
+            u.save()
+            ConsentRecord.objects.create(user=u, policy_version=settings.POLICY_VERSION, ip=client_ip(request))
+            send_signup_emails(u, request)
         login(request, u, backend='django.contrib.auth.backends.ModelBackend')
         audit(request, 'trial_signup', u.username, occupation=u.occupation)
+        messages.info(request, f'Welcome! We have sent a verification link to {u.email}. Please check your inbox.')
         return redirect('landing')
     return render(request, 'registration/trial_signup.html', {'form': form})
+
+
+def verify_email(request, uidb64, token):
+    """Link from the verification e-mail. Works whether or not the user is signed in."""
+    try:
+        user = User.objects.get(pk=force_str(urlsafe_base64_decode(uidb64)))
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    ctx = {'title': 'Link not valid', 'text': 'This verification link is invalid or has expired. Sign in and use “Resend verification e-mail” to get a new one.'}
+    status = 400
+    if user is not None and user.email_verified:
+        ctx, status = {'title': 'Already verified', 'text': f'The e-mail address {user.email} is already verified. Thank you!'}, 200
+    elif user is not None and user.is_active and user.email and verification_token.check_token(user, token):
+        user.email_verified, user.email_verified_at = True, timezone.now()
+        user.save(update_fields=['email_verified', 'email_verified_at'])
+        audit(request, 'email_verified', user.username, college=user.college)
+        ctx, status = {'title': 'E-mail verified', 'text': f'Thank you! {user.email} is now verified for your XPRISM account.'}, 200
+    return render(request, 'lab/message.html', ctx, status=status)
+
+
+@login_required
+@require_POST
+def resend_verification(request):
+    u = request.user
+    if not u.email:
+        messages.error(request, 'There is no e-mail address on your account. Please ask your faculty to add one.')
+    elif u.email_verified:
+        messages.info(request, 'Your e-mail address is already verified.')
+    elif not cache.add(f'verify-resend:{u.pk}', 1, 60):
+        messages.warning(request, 'A verification e-mail was sent less than a minute ago. Please check your inbox (and spam folder).')
+    else:
+        send_verification_email(u, request)
+        audit(request, 'verification_resent', u.username)
+        messages.success(request, f'Verification e-mail sent to {u.email}.')
+    return redirect(_safe_next(request, '/home/'))
 
 
 @login_required

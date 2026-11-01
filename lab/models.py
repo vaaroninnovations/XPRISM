@@ -60,6 +60,8 @@ class User(AbstractUser):
     subscribed_until = models.DateField('Individual subscription until', null=True, blank=True)
     ethics_version = models.CharField(max_length=20, blank=True)
     ethics_at = models.DateTimeField(null=True, blank=True)
+    email_verified = models.BooleanField(default=False)
+    email_verified_at = models.DateTimeField(null=True, blank=True)
 
     @property
     def display_name(self):

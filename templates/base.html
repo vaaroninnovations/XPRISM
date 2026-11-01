@@ -59,6 +59,13 @@
       {% endfor %}
     </div>
     {% endif %}
+    {% if NEEDS_EMAIL_VERIFY %}
+    <form method="post" action="{% url 'resend_verification' %}" class="px-4 py-2.5 rounded-lg border bg-amber-50 border-amber-200 text-amber-900 text-sm flex flex-wrap items-center justify-between gap-2" role="status">
+      {% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
+      <span>Please verify your e-mail address <strong>{{ user.email }}</strong>: open the link we sent you.</span>
+      <button type="submit" class="px-3 py-1 rounded-md bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold">Resend verification e-mail</button>
+    </form>
+    {% endif %}
     {% block content %}{% endblock %}
   </main>
 

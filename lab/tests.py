@@ -474,3 +474,93 @@ class TrialTests(Base):
         self.client.post('/platform/trials/', {'user': u.pk, 'action': 'revoke'})
         u.refresh_from_db()
         self.assertFalse(u.has_full_access)
+
+
+class SignupEmailTests(Base):
+    """Verification + welcome e-mails go out automatically after self sign-up."""
+    TRIAL = {'first_name': 'Tara', 'last_name': 'Trial', 'email': 'tara@example.com', 'institution': 'Some College',
+             'occupation': 'student', 'password1': 'Trial!Pass123', 'password2': 'Trial!Pass123', 'accept': 'on', 'age_ok': 'on'}
+
+    def class_data(self, **kw):
+        return {'class_code': self.batch.class_code, 'first_name': 'New', 'last_name': 'Student', 'roll_no': 'BP070', 'email': 'new@example.com',
+                'password1': 'Fresh!Pass123', 'password2': 'Fresh!Pass123', 'accept': 'on', 'age_ok': 'on', **kw}
+
+    def post(self, url, data):
+        with self.captureOnCommitCallbacks(execute=True):
+            return self.client.post(url, data)
+
+    @staticmethod
+    def link_in(msg):
+        return re.search(r'https?://[^/\s]+(/accounts/verify/[^\s]+/)', msg.body).group(1)
+
+    def test_trial_signup_sends_verification_and_welcome(self):
+        from django.core import mail
+        r = self.post('/accounts/trial/', self.TRIAL)
+        self.assertEqual(r.status_code, 302)
+        self.assertEqual(len(mail.outbox), 2)
+        verify, welcome = mail.outbox
+        self.assertEqual(verify.to, ['tara@example.com'])
+        self.assertIn('Verify', verify.subject)
+        self.assertIn('Welcome', welcome.subject)
+        self.assertIn('Free trial', welcome.body)
+        self.assertEqual(verify.alternatives[0][1], 'text/html')
+        u = User.objects.get(username='tara@example.com')
+        self.assertFalse(u.email_verified)
+        self.assertContains(self.client.get('/student/', follow=True), 'Resend verification e-mail')
+        # the link verifies, even when signed out, and only once
+        self.client.logout()
+        link = self.link_in(verify)
+        r = self.client.get(link)
+        self.assertContains(r, 'E-mail verified')
+        u.refresh_from_db()
+        self.assertTrue(u.email_verified)
+        self.assertIsNotNone(u.email_verified_at)
+        self.assertTrue(AuditLog.objects.filter(action='email_verified', target=u.username).exists())
+        self.assertContains(self.client.get(link), 'Already verified')
+
+    def test_class_code_signup_welcome_includes_username_and_class(self):
+        from django.core import mail
+        self.post('/accounts/signup/', self.class_data())
+        self.assertEqual(len(mail.outbox), 2)
+        self.assertIn('one-bp070', mail.outbox[1].body)
+        self.assertIn(self.batch.name, mail.outbox[1].body)
+        self.assertNotIn('Free trial', mail.outbox[1].body)
+
+    def test_class_code_signup_without_email_sends_nothing(self):
+        from django.core import mail
+        r = self.post('/accounts/signup/', self.class_data(email='', roll_no='BP071'))
+        self.assertEqual(r.status_code, 302)
+        self.assertEqual(len(mail.outbox), 0)
+        self.assertNotContains(self.client.get('/student/'), 'Resend verification e-mail')
+
+    def test_bad_or_tampered_link_refused(self):
+        from django.core import mail
+        self.post('/accounts/trial/', self.TRIAL)
+        link = self.link_in(mail.outbox[0])
+        self.assertEqual(self.client.get(link[:-3] + 'xx/').status_code, 400)
+        self.assertEqual(self.client.get('/accounts/verify/zzz/abc-def/').status_code, 400)
+        # changing the address invalidates the old link
+        User.objects.filter(username='tara@example.com').update(email='other@example.com')
+        self.assertEqual(self.client.get(link).status_code, 400)
+        self.assertFalse(User.objects.get(username='tara@example.com').email_verified)
+
+    def test_resend_is_throttled(self):
+        from django.core import mail
+        from django.core.cache import cache
+        cache.clear()
+        self.post('/accounts/trial/', self.TRIAL)
+        mail.outbox.clear()
+        self.client.post('/accounts/verify/resend/', {'next': '/student/'})
+        self.client.post('/accounts/verify/resend/')
+        self.assertEqual(len(mail.outbox), 1)
+        self.client.get(self.link_in(mail.outbox[0]))
+        cache.clear()
+        self.client.post('/accounts/verify/resend/')
+        self.assertEqual(len(mail.outbox), 1)          # already verified: nothing more sent
+
+    def test_mail_failure_does_not_break_signup(self):
+        from unittest import mock
+        with mock.patch('django.core.mail.EmailMultiAlternatives.send', side_effect=OSError('smtp down')), self.assertLogs('lab.emails', 'ERROR'):
+            r = self.post('/accounts/trial/', self.TRIAL)
+        self.assertEqual(r.status_code, 302)
+        self.assertTrue(User.objects.filter(username='tara@example.com').exists())

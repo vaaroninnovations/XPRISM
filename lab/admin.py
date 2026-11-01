@@ -6,10 +6,10 @@ from .models import Assignment, Attempt, AuditLog, Batch, College, ConsentRecord
 
 @admin.register(User)
 class MyUserAdmin(UserAdmin):
-    list_display = ('username', 'first_name', 'last_name', 'role', 'college', 'roll_no', 'is_active', 'last_login')
-    list_filter = ('role', 'college', 'is_active')
+    list_display = ('username', 'first_name', 'last_name', 'role', 'college', 'roll_no', 'email_verified', 'is_active', 'last_login')
+    list_filter = ('role', 'college', 'is_active', 'email_verified')
     search_fields = ('username', 'first_name', 'last_name', 'roll_no', 'email')
-    fieldsets = UserAdmin.fieldsets + (('XPRISM', {'fields': ('role', 'college', 'roll_no', 'must_change_password', 'consent_version', 'consent_at', 'failed_logins', 'locked_until', 'anonymised')}),)
+    fieldsets = UserAdmin.fieldsets + (('XPRISM', {'fields': ('role', 'college', 'roll_no', 'must_change_password', 'consent_version', 'consent_at', 'failed_logins', 'locked_until', 'anonymised', 'email_verified', 'email_verified_at')}),)
     add_fieldsets = UserAdmin.add_fieldsets + (('XPRISM', {'fields': ('role', 'college', 'roll_no')}),)
 
 

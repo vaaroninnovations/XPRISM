@@ -35,5 +35,6 @@ def site(request):
         'NEEDS_ETHICS': (u.is_authenticated and u.ethics_version != settings.ETHICS_VERSION and not u.must_change_password
                          and u.consent_version == settings.POLICY_VERSION
                          and not request.path.startswith(('/ethics/', '/about/', '/privacy/', '/terms/', '/conditions/', '/consent/', '/accounts/'))),
+        'NEEDS_EMAIL_VERIFY': bool(u.is_authenticated and u.email and not u.email_verified and not u.is_platform_admin),
         'ETHICS_VERSION': settings.ETHICS_VERSION, 'TRIAL_HOURS': settings.TRIAL_VISIT_MAX_HOURS,
     }

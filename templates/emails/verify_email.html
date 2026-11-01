@@ -1,0 +1,11 @@
+{% extends 'emails/_layout.html' %}
+{% block body %}
+<p style="margin:0 0 14px;">Hello {{ name }},</p>
+<p style="margin:0 0 14px;">Please confirm that <strong>{{ user.email }}</strong> is your e-mail address so we can reach you about your {{ site_name }} account (for example, to reset your password).</p>
+<p style="margin:24px 0;text-align:center;">
+  <a href="{{ verify_url }}" style="display:inline-block;background:#0d9488;color:#ffffff;text-decoration:none;font-weight:600;padding:12px 26px;border-radius:8px;">Verify my e-mail</a>
+</p>
+<p style="margin:0 0 14px;font-size:13px;color:#475569;">Or copy this link into your browser (valid for {{ valid_days }} day{{ valid_days|pluralize }}):<br>
+  <a href="{{ verify_url }}" style="color:#0f766e;word-break:break-all;">{{ verify_url }}</a></p>
+<p style="margin:0;font-size:13px;color:#475569;">If you did not create an account, you can ignore this e-mail.</p>
+{% endblock %}
