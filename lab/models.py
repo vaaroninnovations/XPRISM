@@ -75,6 +75,11 @@ class User(AbstractUser):
         return self.role == Role.SUPERADMIN or self.is_superuser
 
     @property
+    def is_shared_demo(self):
+        """A public login printed in adverts: visitors must not be able to change its password."""
+        return self.username in settings.SHARED_DEMO_USERNAMES
+
+    @property
     def has_full_access(self):
         """Unlimited use of experiments: platform admins, members of a subscribed college, or an individual subscription."""
         if self.is_platform_admin:

@@ -131,6 +131,21 @@ class AuthTests(Base):
             r = self.client.post('/api/attempts/1/submit', data='{}', content_type='application/json')
             self.assertEqual(r.status_code, 403)
 
+    def test_shared_demo_password_cannot_be_changed(self):
+        demo = mkuser('xprismdemo', Role.STUDENT, self.c1)
+        self.login(demo)
+        self.assertNotContains(self.client.get('/student/'), '/accounts/password/change/')
+        self.assertEqual(self.client.get('/accounts/password/change/').status_code, 302)
+        r = self.client.post('/accounts/password/change/', {'new_password1': 'Changed!Pass123', 'new_password2': 'Changed!Pass123'})
+        self.assertEqual(r.status_code, 302)
+        demo.refresh_from_db()
+        self.assertTrue(demo.check_password(PW))
+        self.assertEqual(self.client.post('/accounts/password/force/', {'new_password1': 'Changed!Pass123', 'new_password2': 'Changed!Pass123'}).status_code, 302)
+        demo.refresh_from_db()
+        self.assertTrue(demo.check_password(PW))
+        self.login(self.st)
+        self.assertContains(self.client.get('/student/'), '/accounts/password/change/')
+
     def test_forced_password_change(self):
         u = mkuser('one-bp010', Role.STUDENT, self.c1, must_change_password=True)
         self.login(u)

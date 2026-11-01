@@ -192,6 +192,9 @@ def consent(request):
 
 @login_required
 def force_password(request):
+    if request.user.is_shared_demo:
+        messages.info(request, 'The password of this shared demo account cannot be changed.')
+        return redirect('home')
     form = SetPasswordForm(request.user, request.POST or None)
     for f in form.fields.values():
         f.widget.attrs['class'] = INPUT

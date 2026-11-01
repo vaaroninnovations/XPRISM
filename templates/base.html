@@ -68,7 +68,7 @@
     </div>
     <div class="flex items-center gap-1 text-xs">
       <a href="{% url 'my_data' %}" class="px-2.5 py-1.5 rounded-md text-slate-300 hover:text-white">My data</a>
-      <a href="{% url 'password_change' %}" class="px-2.5 py-1.5 rounded-md text-slate-300 hover:text-white">Password</a>
+      {% if not user.is_shared_demo %}<a href="{% url 'password_change' %}" class="px-2.5 py-1.5 rounded-md text-slate-300 hover:text-white">Password</a>{% endif %}
       <form method="post" action="{% url 'logout' %}" class="inline">{% csrf_token %}<button class="px-2.5 py-1.5 rounded-md bg-slate-700 hover:bg-slate-600 text-white font-semibold">Sign out</button></form>
     </div>
   </nav>
