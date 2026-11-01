@@ -76,7 +76,7 @@ class User(AbstractUser):
 
     @property
     def is_shared_demo(self):
-        """A public login printed in adverts: visitors must not be able to change its password."""
+        """A public login printed in adverts: AccountGateMiddleware limits what it can change."""
         return self.username in settings.SHARED_DEMO_USERNAMES
 
     @property

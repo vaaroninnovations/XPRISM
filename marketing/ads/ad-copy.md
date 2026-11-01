@@ -1,12 +1,17 @@
 # XPRISM ad text
 
-**Demo login used in every ad**
+**Demo logins**
 
-- Website: https://xprism.drvara.si
-- Demo ID: `xprismdemo`
-- Password: `Xprism@2026`
+Website: https://xprism.drvara.si. Password for all of them: `Xprism@2026`
 
-The demo is a student login with unlimited practice on all 25 modules. It doesn't show the faculty tools.
+| Role | Demo ID | What they can try |
+|---|---|---|
+| Student | `xprismdemo` | Assignments, unlimited practice on all 25 modules, and submitting work |
+| Faculty | `xprismfaculty` | Batches, assigning experiments, grading and marks export |
+| Lab Assistant | `xprismassistant` | Viewing batches and submissions |
+| College Admin | `xprismadmin` | Viewing staff, experiments, settings, requests and the audit log |
+
+Most changes are switched off on these logins, and sample data resets every night.
 
 ## Images
 
@@ -16,7 +21,9 @@ The demo is a student login with unlimited practice on all 25 modules. It doesn'
 | `xprism-ad-2-story-1080x1920.png` | Instagram and Facebook Stories, Reels, WhatsApp Status |
 | `xprism-ad-3-landscape-1200x628.png` | Facebook link ads, LinkedIn, X |
 | `xprism-ad-4-3rs-square-1080x1080.png` | Ethics and 3Rs message |
-| `xprism-ad-5-faculty-square-1080x1080.png` | Faculty and colleges |
+| `xprism-ad-5-faculty-square-1080x1080.png` | Faculty and colleges, with the faculty login |
+| `xprism-ad-6-all-roles-square-1080x1080.png` | Every role's login: feeds, WhatsApp |
+| `xprism-ad-7-all-roles-story-1080x1920.png` | Every role's login: Stories, Reels, WhatsApp Status |
 
 ## Facebook and Instagram: students
 
@@ -54,14 +61,34 @@ Password: Xprism@2026
 
 Teaching experimental pharmacology with fewer live animals? XPRISM gives your students 25 interactive simulations, and gives you the tools to run them as real coursework: batches, assignments, a timed exam mode, grading and marks export to Excel or CSV.
 
-See what your students would use with the student demo:
-Website: xprism.drvara.si
-Demo ID: xprismdemo
-Password: Xprism@2026
+Try it yourself at xprism.drvara.si (password for all: Xprism@2026):
+Faculty: xprismfaculty
+Student: xprismdemo
+Lab Assistant: xprismassistant
+College Admin: xprismadmin
 
 For college access, write to drvaraprasadsaka@gmail.com.
 
 **Headline:** Virtual pharmacology practicals for your college
+
+## Every role: Facebook, Instagram and WhatsApp
+
+**Text**
+
+One lab. Every role. See XPRISM the way your college would use it: as a student running a practical, faculty grading it, a lab assistant checking submissions, or a college admin overseeing it all.
+
+Website: xprism.drvara.si
+Password for all: Xprism@2026
+
+Student: xprismdemo
+Faculty: xprismfaculty
+Lab Assistant: xprismassistant
+College Admin: xprismadmin
+
+Sample data only. Please don't enter real student details.
+
+**Headline:** Try every role. It's free.
+**Button:** Learn More
 
 ## WhatsApp
 

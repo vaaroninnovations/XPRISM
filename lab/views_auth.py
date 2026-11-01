@@ -72,7 +72,7 @@ def login_view(request):
                 return redirect(_safe_next(request, '/home/'))
         else:
             cache.set(ip_key, ip_fails + 1, 15 * 60)
-            if target:
+            if target and not target.is_shared_demo:    # its password is public, so a lock-out would only let anyone block the demo
                 target.failed_logins += 1
                 if target.failed_logins >= settings.LOGIN_MAX_FAILURES:
                     target.locked_until = now + timezone.timedelta(minutes=settings.LOGIN_LOCK_MINUTES)

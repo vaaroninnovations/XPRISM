@@ -146,6 +146,59 @@ class AuthTests(Base):
         self.login(self.st)
         self.assertContains(self.client.get('/student/'), '/accounts/password/change/')
 
+    def test_shared_demo_limits(self):
+        call_command('setup_demo', stdout=io.StringIO())
+        User.objects.filter(username__in=settings.SHARED_DEMO_USERNAMES).update(consent_version=settings.POLICY_VERSION)
+        demo = {u.role: u for u in User.objects.filter(username__in=settings.SHARED_DEMO_USERNAMES)}
+        self.assertEqual(set(demo), {Role.COLLEGE_ADMIN, Role.FACULTY, Role.LAB_ASSISTANT, Role.STUDENT})
+        b = Batch.objects.get(college__code='xprism-demo')
+        self.assertFalse(b.join_enabled)
+        # every role's start page works, and shows the warning
+        for u, url in ((demo[Role.COLLEGE_ADMIN], '/college/'), (demo[Role.FACULTY], '/faculty/'), (demo[Role.LAB_ASSISTANT], '/faculty/'), (demo[Role.STUDENT], '/student/')):
+            self.login(u)
+            self.assertContains(self.client.get(url), 'Shared demo:')
+        # a demo college admin cannot touch people, settings or requests
+        admin, fac, stu = demo[Role.COLLEGE_ADMIN], demo[Role.FACULTY], demo[Role.STUDENT]
+        self.login(admin)
+        for url in (f'/college/users/{fac.pk}/toggle/', f'/college/users/{fac.pk}/reset/', '/college/settings/', '/college/experiments/', '/college/requests/', '/college/users/',
+                    f'/faculty/batches/{b.pk}/action/archive/', f'/faculty/batches/{b.pk}/students/{stu.pk}/reset/', f'/faculty/batches/{b.pk}/students/add/', '/faculty/batches/new/', '/me/data/'):
+            self.assertEqual(self.client.post(url, {'name': 'x', 'first_name': 'x', 'roll_no': '1', 'kind': 'deletion'}).status_code, 302, url)
+        fac.refresh_from_db(); stu.refresh_from_db(); b.refresh_from_db()
+        self.assertTrue(fac.is_active and fac.check_password('Xprism@2026') and not fac.must_change_password)
+        self.assertTrue(stu.check_password('Xprism@2026'))
+        self.assertFalse(b.archived)
+        self.assertEqual(Batch.objects.filter(college__code='xprism-demo').count(), 1)
+        self.assertFalse(DataRequest.objects.filter(user=stu).exists())
+        self.assertFalse(User.objects.filter(college__code='xprism-demo', roll_no='1').exists())
+        # visitors' IP addresses stay hidden on the shared audit log
+        AuditLog.objects.create(actor=stu, college=b.college, action='login', ip='203.0.113.9')
+        self.assertNotContains(self.client.get('/college/audit/'), '203.0.113.9')
+        # the demo works as a demo: faculty can grade, the student can submit, and repeated bad passwords lock nobody out
+        self.login(fac)
+        at = Attempt.objects.filter(assignment__batch=b, status=Attempt.SUBMITTED).first()
+        self.client.post(f'/faculty/attempts/{at.pk}/', {'manual_marks': '7', 'feedback': 'ok'})
+        at.refresh_from_db()
+        self.assertEqual(at.status, Attempt.GRADED)
+        self.login(stu)
+        a = Assignment.objects.filter(batch=b, exam_mode=False).first()
+        self.assertEqual(self.client.get(f'{a.experiment.url}?a={a.pk}').status_code, 302)  # ethics agreement first
+        self.client.post('/agreement/', {'agree_ethics': 'on'})
+        self.assertEqual(self.client.get(f'{a.experiment.url}?a={a.pk}').status_code, 200)
+        started = Attempt.objects.get(student=stu, assignment=a, status=Attempt.STARTED)
+        r = self.client.post(f'/api/attempts/{started.pk}/submit', json.dumps({'completion': True}), content_type='application/json')
+        self.assertEqual(r.status_code, 200)
+        self.client.logout()
+        for _ in range(settings.LOGIN_MAX_FAILURES + 1):
+            self.client.post('/accounts/login/', {'username': 'xprismdemo', 'password': 'wrong'})
+        stu.refresh_from_db()
+        self.assertIsNone(stu.locked_until)
+        # the nightly run puts everything back and leaves other colleges alone
+        batches_elsewhere = Batch.objects.exclude(college__code='xprism-demo').count()
+        call_command('setup_demo', stdout=io.StringIO())
+        self.assertFalse(Attempt.objects.filter(student=stu).exists())
+        self.assertEqual(Batch.objects.exclude(college__code='xprism-demo').count(), batches_elsewhere)
+        self.assertEqual(Batch.objects.filter(college__code='xprism-demo').count(), 1)
+
     def test_forced_password_change(self):
         u = mkuser('one-bp010', Role.STUDENT, self.c1, must_change_password=True)
         self.login(u)

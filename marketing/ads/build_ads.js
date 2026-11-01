@@ -1,11 +1,13 @@
 // Renders the XPRISM ad images with the project's own fonts, logo and simulation screenshots.
-// Change the demo login below, then run:  npm i --no-save playwright-core && node marketing/ads/build_ads.js
+// Change the demo logins below (and PASSWORD in lab/management/commands/setup_demo.py), then run:
+//   npm i --no-save playwright-core && node marketing/ads/build_ads.js
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { chromium } = require('playwright-core');
 
 const SITE = 'xprism.drvara.si', ID = 'xprismdemo', PWD = 'Xprism@2026';
+const ROLES = [['Student', 'xprismdemo'], ['Faculty', 'xprismfaculty'], ['Lab Assistant', 'xprismassistant'], ['College Admin', 'xprismadmin']];
 const ROOT = 'file:///' + path.resolve(__dirname, '../..').replace(/\\/g, '/');
 
 const css = `
@@ -40,6 +42,11 @@ h1 span{color:#5ee0d3}
 .pair .shot{flex:1.55 1 0;margin-top:0}
 .pair .rs{flex:1 1 0;flex-direction:column;margin-top:0}
 .pair .rs div{display:flex;flex-direction:column;justify-content:center}
+.roles .site{display:flex;justify-content:space-between;gap:calc(var(--u)*16);margin-top:calc(var(--u)*8);padding-bottom:calc(var(--u)*12);border-bottom:1px solid #e2e8f0;font-size:calc(var(--u)*20);font-weight:600;color:#475569}
+.roles .site strong{display:block;margin-top:calc(var(--u)*2);font-family:'JetBrains Mono',monospace;font-weight:700;font-size:calc(var(--u)*30);letter-spacing:-.02em;color:#08193b}
+.roles .table{display:grid;grid-template-columns:1fr 1fr;gap:calc(var(--u)*8) calc(var(--u)*20);margin-top:calc(var(--u)*12)}
+.roles .table small{display:block;font-size:calc(var(--u)*20);font-weight:600;color:#475569}
+.roles .table strong{display:block;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:calc(var(--u)*30);letter-spacing:-.02em}
 /* landscape: copy beside the screenshot */
 .wide{flex-direction:row;gap:calc(var(--u)*36);align-items:stretch}
 .wide .col{flex:1 1 0;min-width:0;display:flex;flex-direction:column}
@@ -54,8 +61,12 @@ const logo = `<div class="logo"><img src="${ROOT}/brand/xprism-lockup-transparen
 const lab = '<div class="tag">Virtual<br>Pharmacology Lab</div>';
 const motto = '<h1>Experiment Virtually.<br>Learn Practically.<br><span>Advance Ethically.</span></h1>';
 const shot = (file, pos, extra = '') => `<div class="shot"><img src="${ROOT}/static/assets/img/modules/${file}" alt="" style="object-position:${pos};${extra}"></div>`;
-const credOf = title => `<div class="cred"><h2>${title}</h2><div class="grid"><div><small>Website</small><strong>${SITE}</strong></div><div><small>Demo ID</small><strong>${ID}</strong></div><div><small>Password</small><strong>${PWD}</strong></div></div></div>`;
+const credOf = (title, id = ID) => `<div class="cred"><h2>${title}</h2><div class="grid"><div><small>Website</small><strong>${SITE}</strong></div><div><small>Demo ID</small><strong>${id}</strong></div><div><small>Password</small><strong>${PWD}</strong></div></div></div>`;
 const cred = credOf("Try the demo now. It's free.");
+const roleTable = `<div class="cred roles"><h2>Try every role. It's free.</h2>
+  <div class="site"><span>Website <strong>${SITE}</strong></span><span>Password for all <strong>${PWD}</strong></span></div>
+  <div class="table">${ROLES.map(([r, id]) => `<div><small>${r}</small><strong>${id}</strong></div>`).join('')}</div></div>`;
+const faculty = `<div class="shot"><img src="${ROOT}/marketing/ads/assets/demo-faculty.jpg" alt="" style="object-position:0 0"></div>`;
 
 const ads = [
   { name: 'xprism-ad-1-square-1080x1080', w: 1080, h: 1080, u: 1, pad: 52, hs: 76, ss: 31, body: `
@@ -86,7 +97,19 @@ const ads = [
     <div class="top">${logo}<div class="tag">For pharmacology<br>faculty &amp; colleges</div></div>
     <h1>Assign it. Time it.<br><span>Grade it.</span></h1>
     <p class="sub">Virtual practicals with batches, exam mode, viva questions, grading and marks export.</p>
-    ${shot('hero-dose-response.jpg', '50% 40%')}${credOf("Try the student demo now. It's free.")}` },
+    ${shot('hero-dose-response.jpg', '50% 40%')}${credOf("Try the faculty demo now. It's free.", 'xprismfaculty')}` },
+  { name: 'xprism-ad-6-all-roles-square-1080x1080', w: 1080, h: 1080, u: 1, pad: 52, hs: 76, ss: 31, body: `
+    <div class="top">${logo}${lab}</div>
+    <h1>One lab.<br><span>Every role.</span></h1>
+    <p class="sub">Student. Faculty. Lab assistant. College admin.</p>
+    ${faculty}${roleTable}` },
+  { name: 'xprism-ad-7-all-roles-story-1080x1920', w: 1080, h: 1920, u: 1.18, pad: 60, hs: 92, ss: 37, body: `
+    <div style="height:70px"></div>
+    <div class="top">${logo}${lab}</div>
+    <h1>One lab.<br><span>Every role.</span></h1>
+    <p class="sub">Student. Faculty. Lab assistant. College admin.</p>
+    ${faculty}${roleTable}
+    <div style="height:150px"></div>` },
 ];
 
 (async () => {

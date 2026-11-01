@@ -66,6 +66,23 @@ The agreement is stored as a consent record (`ethics-<ETHICS_VERSION>`). Changin
 granted an individual subscription under **Platform → Trial users**, which can also reset a trial.
 Students of a college whose subscription lapses fall back to the one-visit rule.
 
+## Public demo logins
+
+`manage.py setup_demo` creates "XPRISM Demo College" with one shared login per role, all with the password `Xprism@2026`:
+`xprismadmin` (College Admin), `xprismfaculty` (Faculty), `xprismassistant` (Lab Assistant) and `xprismdemo` (Student),
+plus a sample batch, assignments and submissions.
+
+These logins are meant to be printed in adverts, so they are limited (`SHARED_DEMO_USERNAMES` in `.env`):
+
+- They can look at everything in the demo college, and can assign, grade and submit. All other changes are refused,
+  including passwords, adding or removing people, batches, college settings and data requests.
+- Wrong passwords don't lock them, the audit log hides visitors' IP addresses, and the class code can't be used to join.
+- Running `setup_demo` again puts the demo college back as it was and touches no other college. To do that nightly:
+  `sudo cp deploy/demo-reset.sh /etc/cron.daily/xprism-demo-reset && sudo chmod +x /etc/cron.daily/xprism-demo-reset`
+
+The student login gives unlimited practice on every enabled module, free of charge, for anyone who has the password.
+To end the demo, deactivate the logins or set the demo college inactive under **Platform → Colleges**.
+
 ## How an assignment works
 
 1. Faculty assigns an experiment to a batch. Students see it on **My assignments** and press **Start**.

@@ -174,7 +174,7 @@ ETHICS_VERSION = '2026-11-02'
 # a free-trial visit ends when the user returns to the lab index / a dashboard, opens another module, or after this many hours
 TRIAL_VISIT_MAX_HOURS = int(env('TRIAL_VISIT_MAX_HOURS', '3'))
 SUBSCRIPTION_CONTACT = env('SUBSCRIPTION_CONTACT', 'drvaraprasadsaka@gmail.com')
-SHARED_DEMO_USERNAMES = [u.strip() for u in env('SHARED_DEMO_USERNAMES', 'xprismdemo').split(',') if u.strip()]
+SHARED_DEMO_USERNAMES = [u.strip() for u in env('SHARED_DEMO_USERNAMES', 'xprismdemo,xprismfaculty,xprismassistant,xprismadmin').split(',') if u.strip()]
 DATA_RETENTION_YEARS = int(env('DATA_RETENTION_YEARS', '3'))
 LOGIN_MAX_FAILURES = 5
 LOGIN_LOCK_MINUTES = 15
