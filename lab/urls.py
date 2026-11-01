@@ -10,6 +10,8 @@ from . import views_student as stu
 urlpatterns = [
     path('', pub.landing, name='landing'),
     path('index.html', pub.index_redirect),
+    path('modules/', pub.modules, name='modules'),
+    path('documentation/', pub.documentation, name='documentation'),
     path('home/', au.home, name='home'),
     path('healthz', pub.healthz),
     re_path(r'^experiments/(?P<slug>[a-z0-9-]+)(?:\.html)?$', pub.experiment_page, name='experiment'),

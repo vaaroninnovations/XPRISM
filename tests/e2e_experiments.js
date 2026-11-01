@@ -17,7 +17,7 @@ const FNS = ['runAllInstant', 'runAll', 'guidedRun', 'doseAllInstant', 'runCompl
   }
   const st = await session('demo-bp001', 'Demo@Student2026');
   const fac = await session('demo-faculty', 'Demo@Faculty2026');
-  await st.goto(BASE + '/');
+  await st.goto(BASE + '/modules/');
   const slugs = await st.evaluate(async () => [...new Set([...document.querySelectorAll('a.expCard')].map(a => a.getAttribute('href').split('?')[0]))]);
   let fails = 0;
   for (const s of slugs) {

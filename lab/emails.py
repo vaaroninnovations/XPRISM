@@ -74,7 +74,7 @@ def send_welcome_email(user, request=None, batch=None):
         return False
     _send(user, f'Welcome to {settings.SITE_NAME}', 'welcome', {
         'batch': batch, 'is_trial': user.is_trial_account, 'login_url': _base_url(request) + reverse('login'),
-        'lab_url': _base_url(request) + '/', 'subscribe_url': _base_url(request) + reverse('subscribe'),
+        'lab_url': _base_url(request) + reverse('modules'), 'subscribe_url': _base_url(request) + reverse('subscribe'),
         'subscription_contact': settings.SUBSCRIPTION_CONTACT,
     })
     return True

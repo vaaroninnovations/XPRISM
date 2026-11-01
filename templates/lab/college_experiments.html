@@ -5,7 +5,7 @@
 <form method="post" class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-3">{% csrf_token %}
   <div class="flex gap-2 text-xs"><button type="button" onclick="document.querySelectorAll('[name=enabled]').forEach(c=>c.checked=true)" class="px-2 py-1 rounded border">All on</button><button type="button" onclick="document.querySelectorAll('[name=enabled]').forEach(c=>c.checked=false)" class="px-2 py-1 rounded border">All off</button></div>
   <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
-  {% for e in exps %}<label class="flex items-start gap-2 p-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-xs"><input type="checkbox" name="enabled" value="{{ e.pk }}" class="accent-teal-600 mt-0.5" {% if e.pk not in disabled %}checked{% endif %}><span><span class="mono font-bold text-teal-700">#{{ e.no|stringformat:"02d" }}</span> {{ e.title }} <span class="text-slate-400">• Sem {{ e.semester }}</span></span></label>{% endfor %}
+  {% for e in exps %}<label class="flex items-start gap-2 p-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-xs"><input type="checkbox" name="enabled" value="{{ e.pk }}" class="accent-teal-600 mt-0.5" {% if e.pk not in disabled %}checked{% endif %}><span><span class="mono font-bold text-teal-700">#{{ e.no|stringformat:"02d" }}</span> {{ e.title }} <span class="text-slate-400">• {{ e.category }}</span></span></label>{% endfor %}
   </div>
   <button class="px-5 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow">Save</button>
 </form>

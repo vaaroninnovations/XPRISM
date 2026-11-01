@@ -35,7 +35,7 @@ def home(request):
         return redirect('landing')
     access.consume_open(u, 'dashboard')
     if u.is_trial_account and not u.has_full_access:
-        return redirect('landing')
+        return redirect('modules')
     if u.is_platform_admin:
         return redirect('platform_dashboard')
     return redirect({Role.COLLEGE_ADMIN: 'college_dashboard', Role.FACULTY: 'staff_dashboard', Role.LAB_ASSISTANT: 'staff_dashboard'}.get(u.role, 'student_dashboard'))
@@ -123,7 +123,7 @@ def trial_signup(request):
         login(request, u, backend='django.contrib.auth.backends.ModelBackend')
         audit(request, 'trial_signup', u.username, occupation=u.occupation)
         messages.info(request, f'Welcome! We have sent a verification link to {u.email}. Please check your inbox.')
-        return redirect('landing')
+        return redirect('modules')
     return render(request, 'registration/trial_signup.html', {'form': form})
 
 
@@ -174,7 +174,7 @@ def ethics_agreement(request):
     u.save(update_fields=['ethics_version', 'ethics_at'])
     ConsentRecord.objects.create(user=u, policy_version=f'ethics-{settings.ETHICS_VERSION}', ip=client_ip(request))
     audit(request, 'ethics_agreement', settings.ETHICS_VERSION, trial=not u.has_full_access)
-    return redirect(_safe_next(request, '/'))
+    return redirect(_safe_next(request, '/modules/'))
 
 
 @login_required

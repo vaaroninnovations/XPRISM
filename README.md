@@ -29,7 +29,7 @@ needed; fonts, CSS and JavaScript are all served by your own server.
 | **Lab Assistant** | College Admin | See batches and submissions, enrol students, reset student passwords; **cannot** assign, grade or export marks |
 | **Student** | Faculty (CSV / single) or self sign-up with a **class code** | Do assigned experiments and submit them, see provisional and final marks and feedback, practise any enabled experiment, download their data, request correction or deletion |
 | **Free-trial user** | Self sign-up at `/accounts/trial/` (name, e-mail, institution) | Explore **each experiment once** (see below); no assignments or marks |
-| **Visitor** | n/a | Browse the catalogue and legal pages. Every experiment requires sign-in |
+| **Visitor** | n/a | See the home page (`/`), and browse the catalogue (`/modules/`), documentation (`/documentation/`) and legal pages. Every experiment requires sign-in |
 
 Students and staff added by someone else get a **temporary password** and must change it at first
 sign-in. Every user must **accept the current Privacy Policy, Terms and Conditions** before using the
@@ -55,7 +55,7 @@ The agreement is stored as a consent record (`ethics-<ETHICS_VERSION>`). Changin
 **Free-trial rules** (shown in the same pop-up to trial users, with an extra required box):
 
 1. A user without a subscription can open **each experiment once**.
-2. The visit ends when the user returns to the Lab index or a dashboard, opens another experiment,
+2. The visit ends when the user returns to the home page, the Lab index or a dashboard, opens another experiment,
    signs out, or after `TRIAL_VISIT_MAX_HOURS` (default 3). Reloading the same page during the visit is
    fine.
 3. After that, the experiment shows **"Subscription only"** (HTTP 402 page with subscription options).
@@ -191,3 +191,6 @@ tests/             browser end-to-end tests (Playwright) used before release
 
 To rebuild the CSS after editing templates:
 `npx tailwindcss@3 -c tailwind.config.js -i tw-input.css -o static/assets/css/tailwind.css --minify`
+
+The images in `static/assets/img/modules/` are screenshots of the simulations, one per module
+(`<slug>.jpg`) plus the three `hero-*.jpg` shown on the home page. Add a new module's image there too.

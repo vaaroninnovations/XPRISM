@@ -1,111 +1,221 @@
 {% extends 'base.html' %}{% load static %}
 {% block title %}{{ SITE_FULL_NAME }}{% endblock %}
+{% block main_class %}flex-1 w-full{% endblock %}
+{% block notices_class %}xh-wrap xh-notices space-y-2{% endblock %}
 {% block content %}
-<section class="-mx-4 md:-mx-6 -mt-4 md:-mt-6 relative overflow-hidden bg-white border-b border-slate-200">
-  <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(900px 380px at 12% 0%, rgba(126,19,181,.10), transparent 60%), radial-gradient(800px 360px at 95% 100%, rgba(43,191,176,.12), transparent 60%), radial-gradient(600px 300px at 60% 0%, rgba(6,110,170,.08), transparent 60%);"></div>
-  <div class="relative max-w-7xl mx-auto px-6 py-8 grid lg:grid-cols-12 gap-8 items-center">
-    <div class="lg:col-span-5 flex justify-center lg:justify-start">
-      <img src="{% static 'img/xprism-logo.png' %}" alt="XPRISM: Experimental Pharmacology Research &amp; Interactive Student Module" class="w-full max-w-[460px] h-auto" width="963" height="440">
-    </div>
-    <div class="lg:col-span-7 space-y-4">
-      <div class="font-mono text-[11px] font-semibold text-teal-700 px-2 py-0.5 rounded bg-teal-50 border border-teal-200 inline-block">EXPERIMENTAL PHARMACOLOGY • B.PHARM • {{ n_total }} MODULES</div>
-      <h1 class="sr-only">XPRISM: {{ SITE_FULL_NAME }}</h1>
-      <div class="rounded-xl border border-teal-100 bg-white/70 backdrop-blur p-4 shadow-sm">
-        <div class="font-display text-[11px] uppercase tracking-wider font-bold xp-gradient-text inline-block">Our aim</div>
-        <p class="text-[15px] text-slate-800 mt-1 leading-relaxed">{{ SITE_AIM_SHORT }} <a href="{% url 'about' %}" class="text-teal-700 font-semibold hover:underline whitespace-nowrap">About XPRISM →</a></p>
-      </div>
-      <p class="text-sm text-slate-600 leading-relaxed">Simulated practicals for Pharmacology I, II and III: in-vivo behavioural studies, isolated tissue experiments and bioassays. Each module has a task description, an interactive experiment bench, an observation sheet with statistics, and viva questions.</p>
-      <div class="flex flex-wrap items-center gap-3">
+<section class="xh-hero">
+  <div class="xh-wrap xh-hero-grid">
+    <div>
+      <p class="xh-eyebrow">The next generation of pharmacology education</p>
+      <h1>Experiment Virtually.<br>Learn Practically.<br><span>Advance Ethically.</span></h1>
+      <p class="xh-lead">Explore {{ n_total }} interactive experimental pharmacology simulations. Master experimental techniques, analyse drug responses and strengthen your practical knowledge while supporting the 3Rs.</p>
+      <div class="xh-actions">
       {% if not user.is_authenticated %}
-        <a href="{% url 'trial_signup' %}" class="px-4 py-2.5 rounded-lg xp-gradient text-white text-sm font-bold shadow-md hover:opacity-95 font-display">Start free trial: explore all {{ n_total }} modules once</a>
-        <a href="{% url 'login' %}" class="px-4 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold shadow">Sign in</a>
-        <a href="{% url 'signup' %}" class="px-4 py-2.5 rounded-lg bg-white border border-slate-300 hover:bg-slate-50 text-slate-800 text-sm font-semibold">Join with a class code</a>
+        <a href="{% url 'trial_signup' %}" class="xh-btn xh-btn-teal">Start free trial</a>
+        <a href="{% url 'modules' %}" class="xh-btn xh-btn-ghost">Explore modules</a>
       {% elif trial %}
-        <span class="px-3 py-1.5 rounded-lg bg-amber-400 text-slate-900 text-sm font-bold">Free trial</span>
-        <span class="text-sm text-slate-600">Each module can be explored <b>once</b>. Leaving a module (back to this page, or opening another) ends that visit.</span>
-        <a href="{% url 'subscribe' %}" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold">Subscribe for full access</a>
+        <a href="{% url 'modules' %}" class="xh-btn xh-btn-teal">Open the lab</a>
+        <a href="{% url 'subscribe' %}" class="xh-btn xh-btn-ghost">Subscribe for full access</a>
       {% elif user.role == Role.STUDENT %}
-        <a href="{% url 'student_dashboard' %}" class="px-4 py-2.5 rounded-lg xp-gradient text-white text-sm font-semibold shadow-md font-display">Go to my assignments →</a>
+        <a href="{% url 'student_dashboard' %}" class="xh-btn xh-btn-teal">Go to my assignments</a>
+        <a href="{% url 'modules' %}" class="xh-btn xh-btn-ghost">Practice lab</a>
       {% else %}
-        <a href="{% url 'home' %}" class="px-4 py-2.5 rounded-lg xp-gradient text-white text-sm font-semibold shadow-md font-display">Go to my dashboard →</a>
+        <a href="{% url 'home' %}" class="xh-btn xh-btn-teal">Go to my dashboard</a>
+        <a href="{% url 'modules' %}" class="xh-btn xh-btn-ghost">Explore modules</a>
       {% endif %}
-        <div class="ml-auto bg-slate-900 text-white rounded-xl px-4 py-3 min-w-[200px] shadow">
-        {% if trial %}
-          <div class="text-[10px] uppercase tracking-wider text-slate-300 font-mono">Free explorations left</div>
-          <div class="text-2xl font-extrabold mono mt-0.5"><span class="text-amber-300">{{ trial_left }}</span><span class="text-slate-400 text-lg"> / {{ n_total }}</span></div>
-          <div class="h-1.5 bg-slate-700 rounded mt-1.5 overflow-hidden"><div class="h-full bg-amber-400" style="width: {% widthratio trial_left n_total 100 %}%"></div></div>
-        {% else %}
-          <div class="text-[10px] uppercase tracking-wider text-slate-300 font-mono">{% if user.is_authenticated %}Experiments available to you{% else %}Experiments in the lab{% endif %}</div>
-          <div class="text-2xl font-extrabold mono mt-0.5" style="color:#5ee0d3">{{ n_total }}</div>
-          <div class="text-[11px] text-slate-300">{% if user.is_authenticated %}Unlimited access • assignments go to your faculty{% else %}Sign in or start a free trial to explore{% endif %}</div>
-        {% endif %}
-        </div>
       </div>
+      <dl class="xh-stats">
+        <div><dt>Simulations</dt><dd>{{ n_total }}</dd></div>
+        <div><dt>Ethical learning</dt><dd>3Rs</dd></div>
+        <div><dt>Virtual practice</dt><dd>100%</dd></div>
+      </dl>
+    </div>
+    <figure class="xh-bench" id="bench">
+      <div class="xh-bench-bar" role="group" aria-label="Choose a simulation to preview">
+        <button type="button" data-shot="0" aria-pressed="true">Rota-Rod</button>
+        <button type="button" data-shot="1" aria-pressed="false">Plus Maze</button>
+        <button type="button" data-shot="2" aria-pressed="false">Dose–Response</button>
+      </div>
+      <div class="xh-bench-stage">
+        <img class="is-on" src="{% static 'img/modules/hero-rota-rod.jpg' %}" alt="The XPRISM Rota-Rod bench during a run: mice on the rotating rod with their fall-off times recorded" width="1360" height="850">
+        <img src="{% static 'img/modules/hero-plus-maze.jpg' %}" alt="The XPRISM Elevated Plus Maze bench, with open-arm entries and time being recorded" width="1360" height="850" loading="lazy">
+        <img src="{% static 'img/modules/hero-dose-response.jpg' %}" alt="The XPRISM frog rectus abdominis bench, with graded contractions recorded on a kymograph" width="1360" height="850" loading="lazy">
+      </div>
+      <figcaption>Screens from the XPRISM simulations</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="xh-sec xh-3rs" id="three-rs">
+  <div class="xh-wrap">
+    <div class="xh-head">
+      <p class="xh-kicker">The 3Rs</p>
+      <h2>Better Science. Fewer Animals. More Responsible Learning.</h2>
+    </div>
+    <div class="xh-rs">
+      <article>
+        <span class="xh-r" aria-hidden="true">R<sub>1</sub></span>
+        <h3>Replacement</h3>
+        <p>Use interactive computer simulations as alternatives to live-animal practicals in pharmacology education.</p>
+      </article>
+      <article>
+        <span class="xh-r" aria-hidden="true">R<sub>2</sub></span>
+        <h3>Reduction</h3>
+        <p>Allow repeated digital practice and better preparation, supporting efforts to reduce unnecessary animal use.</p>
+      </article>
+      <article>
+        <span class="xh-r" aria-hidden="true">R<sub>3</sub></span>
+        <h3>Refinement</h3>
+        <p>Teach humane procedures, animal welfare, careful experimental planning and responsible research practice.</p>
+      </article>
+    </div>
+    <div class="xh-rs-foot">
+      <a href="{% url 'ethics' %}" class="xh-link">Explore our 3Rs commitment →</a>
+      <p>XPRISM simulations are teaching aids for practical and preparatory training. They do not replace the approvals required for real research involving animals.</p>
     </div>
   </div>
 </section>
 
-<div class="-mx-4 md:-mx-6 bg-white border-b border-slate-200 sticky top-0 z-10">
-  <div class="max-w-7xl mx-auto px-6 py-3 flex flex-wrap items-center justify-between gap-3">
-    <div id="semFilters" class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-lg border border-slate-200">
-      <button data-sem="all" class="semBtn px-3 py-1.5 rounded-md text-xs bg-teal-600 text-white font-semibold shadow">All semesters</button>
-      <button data-sem="V" class="semBtn px-3 py-1.5 rounded-md text-xs text-slate-600 hover:text-slate-900 font-medium">Sem V</button>
-      <button data-sem="VI" class="semBtn px-3 py-1.5 rounded-md text-xs text-slate-600 hover:text-slate-900 font-medium">Sem VI</button>
-      <button data-sem="VII" class="semBtn px-3 py-1.5 rounded-md text-xs text-slate-600 hover:text-slate-900 font-medium">Sem VII</button>
+<section class="xh-sec xh-tint" id="modules">
+  <div class="xh-wrap">
+    <div class="xh-head xh-head-row">
+      <div>
+        <p class="xh-kicker">The modules</p>
+        <h2>A bench for every practical.</h2>
+      </div>
+      <ul class="xh-counts">
+        {% for s in sections %}{% if s.items %}<li><b class="mono">{{ s.items|length }}</b> {{ s.name }}</li>{% endif %}{% endfor %}
+      </ul>
     </div>
-    <input id="search" placeholder="Search experiments, drugs, apparatus…" class="w-64 bg-white border border-slate-300 text-xs rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-teal-500" aria-label="Search experiments">
+    <div class="xh-featured">
+      {% for e in featured %}{% include 'lab/_exp_card.html' %}{% endfor %}
+    </div>
+    <div class="xh-center"><a href="{% url 'modules' %}" class="xh-btn xh-btn-purple">View all {{ n_total }} modules</a></div>
   </div>
-</div>
+</section>
 
-{% for s in sections %}{% if s.items %}
-<section class="pt-4 semSection" data-sem="{{ s.sem }}">
-  <div class="flex items-end justify-between mb-3">
-    <div><h2 class="text-lg font-bold text-slate-900">{{ s.name }}</h2><p class="text-xs text-slate-500">{{ s.sub }}</p></div>
-    <span class="mono text-[11px] text-slate-500">{{ s.items|length }} experiments</span>
+<section class="xh-sec" id="how-it-works">
+  <div class="xh-wrap">
+    <div class="xh-head">
+      <p class="xh-kicker">How it works</p>
+      <h2>From principle to viva.</h2>
+    </div>
+    {# a graded response: each step of the journey is one contraction on the kymograph, rising to a maximum #}
+    <svg class="xh-trace" viewBox="0 0 1200 90" preserveAspectRatio="none" aria-hidden="true">
+      <defs><linearGradient id="xhTraceInk" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#4e1c8f"/><stop offset=".35" stop-color="#7e13b5"/><stop offset=".7" stop-color="#066eaa"/><stop offset="1" stop-color="#2bbfb0"/></linearGradient></defs>
+      <path d="M0 82H95C120 82 125 64 150 64S180 82 205 82H395C420 82 425 46 450 46S480 82 505 82H695C720 82 725 26 750 26S780 82 805 82H995C1020 82 1025 8 1050 8S1080 82 1105 82H1200" fill="none" stroke="url(#xhTraceInk)" stroke-width="3" vector-effect="non-scaling-stroke"/>
+    </svg>
+    <ol class="xh-steps">
+      <li><span class="mono">01</span><h3>Understand the experiment</h3><p>Study the aim, principle, apparatus and experimental procedure.</p></li>
+      <li><span class="mono">02</span><h3>Perform the virtual practical</h3><p>Interact with equipment, administer simulated drugs and observe responses.</p></li>
+      <li><span class="mono">03</span><h3>Record and analyse</h3><p>Complete observation sheets, interpret graphs and calculate results.</p></li>
+      <li><span class="mono">04</span><h3>Assess understanding</h3><p>Answer viva questions, submit practicals and receive faculty feedback.</p></li>
+    </ol>
   </div>
-  <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-    {% for e in s.items %}
-    <a href="{% if e.used %}{% url 'subscribe' %}?exp={{ e.slug }}{% elif e.assignment %}{{ e.assignment.launch_url }}{% elif e.locked %}{% url 'trial_signup' %}{% else %}{{ e.url }}{% endif %}" data-text="{{ e.title|lower }} {{ e.description|lower }} {{ e.category|lower }}" data-state="{{ e.trial_state|default:'' }}" class="expCard card-live block rounded-xl border {% if e.locked or e.used %}border-dashed border-slate-300 bg-white/60{% else %}bg-white border-slate-200 shadow-sm hover:-translate-y-0.5 hover:shadow-md{% endif %} p-4 transition">
-      <div class="flex items-start justify-between gap-2">
-        <div class="mono text-[11px] font-bold {% if e.locked or e.used %}text-slate-500 bg-slate-100 border-slate-200{% else %}text-teal-700 bg-teal-50 border-teal-200{% endif %} border px-2 py-0.5 rounded">EXP #{{ e.no|stringformat:"02d" }}</div>
-        <span class="text-[10px] font-semibold border px-2 py-0.5 rounded-full {% if e.category == 'Bioassay' %}bg-violet-50 text-violet-800 border-violet-200{% elif e.category == 'Isolated tissue' %}bg-amber-50 text-amber-800 border-amber-200{% else %}bg-sky-50 text-sky-800 border-sky-200{% endif %}">{{ e.category }}</span>
-      </div>
-      <h3 class="text-sm font-bold mt-3 {% if e.locked or e.used %}text-slate-500{% else %}text-slate-900{% endif %}">{{ e.title }}</h3>
-      <p class="text-xs mt-1.5 leading-relaxed {% if e.locked or e.used %}text-slate-400{% else %}text-slate-600{% endif %}">{{ e.description }}</p>
-      <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
-        {% if e.used %}<span class="text-[11px] font-semibold text-rose-700 flex items-center gap-1.5">🔒 Subscription only</span><span class="text-[11px] text-slate-400">trial used</span>
-        {% elif e.trial_state == 'available' %}<span class="text-[11px] font-semibold text-amber-700 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Free trial • 1 visit</span><span class="text-xs font-semibold text-teal-700">Explore →</span>
-        {% elif e.assignment %}<span class="text-[11px] font-semibold text-indigo-700 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>Assigned • due {{ e.assignment.due_at|date:"d M" }}</span><span class="text-xs font-semibold text-teal-700">Open →</span>
-        {% elif e.locked %}<span class="text-[11px] font-semibold text-slate-500 flex items-center gap-1.5">🔒 Free trial after sign-up</span>
-        {% else %}<span class="text-[11px] font-semibold text-emerald-700 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Available</span><span class="text-xs font-semibold text-teal-700">Open lab →</span>{% endif %}
-      </div>
+</section>
+
+<section class="xh-sec xh-tint" id="capabilities">
+  <div class="xh-wrap">
+    <div class="xh-head">
+      <p class="xh-kicker">The platform</p>
+      <h2>More than a set of simulations.</h2>
+    </div>
+    <div class="xh-caps">
+      <article>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6.5L4.8 18a2 2 0 0 0 1.7 3h11a2 2 0 0 0 1.7-3L14 9.5V3M7.5 15h9"/></svg>
+        <h3>Interactive virtual laboratory</h3>
+        <p>Experiment-specific digital benches and simulated pharmacological responses.</p>
+      </article>
+      <article>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4H7a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2M9 3h6v3H9zM9 13l2 2 4-4"/></svg>
+        <h3>Practical assessments</h3>
+        <p>Observation sheets, viva questions, submissions, grading and a timed exam mode.</p>
+      </article>
+      <article>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.600 3.200-5.500 6.500-5.500s5.900 1.900 6.500 5.500M16 4.800a3.500 3.500 0 0 1 0 6.400M18 14.900c1.900.8 3.100 2.500 3.500 5.100"/></svg>
+        <h3>Faculty &amp; class management</h3>
+        <p>Batch enrolment, assignments, attempts and student progress.</p>
+      </article>
+      <article>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4v16h16M8 16v-4M12.500 16V8M17 16v-6"/></svg>
+        <h3>Results &amp; reporting</h3>
+        <p>Marks, feedback and academic records you can export to Excel or CSV.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="xh-sec xh-navy" id="who-its-for">
+  <div class="xh-wrap">
+    <div class="xh-head">
+      <p class="xh-kicker">Who it's for</p>
+      <h2>One lab, three ways in.</h2>
+    </div>
+    <div class="xh-who">
+      <article>
+        <h3>Students</h3>
+        <p>Practise each technique as often as you need, then check your understanding before the practical counts.</p>
+      </article>
+      <article>
+        <h3>Faculty</h3>
+        <p>Create batches, assign experiments with due dates and attempts, review submissions and export marks.</p>
+      </article>
+      <article>
+        <h3>Colleges</h3>
+        <p>Adopt digital teaching alternatives, manage staff and choose which experiments your college uses.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="xh-sec" id="resources">
+  <div class="xh-wrap xh-duo">
+    <a href="{% url 'documentation' %}">
+      <p class="xh-kicker">Documentation</p>
+      <h2>Guides for every role and every module.</h2>
+      <p>Getting started, the experiment user guide, faculty and institutional guides, calculations, references and FAQs.</p>
+      <span class="xh-link">Read the documentation →</span>
     </a>
-    {% endfor %}
+    <a href="{% url 'ethics' %}">
+      <p class="xh-kicker">Ethics</p>
+      <h2>Responsible science, built in.</h2>
+      <p>The 3Rs and the CCSEA and PCI framework behind XPRISM, and the ethical-use agreement every user accepts.</p>
+      <span class="xh-link">Read about ethical use →</span>
+    </a>
   </div>
 </section>
-{% endif %}{% endfor %}
-<p id="noMatch" class="hidden text-sm text-slate-500 text-center py-16">No experiments match your search.</p>
+
+{% if not user.is_authenticated %}
+<section class="xh-cta">
+  <div class="xh-wrap">
+    <h2>Start Your Virtual Pharmacology Journey</h2>
+    <p>Learn experimental techniques through interactive simulations and responsible science.</p>
+    <div class="xh-cta-choices">
+      <a href="{% url 'trial_signup' %}"><b>Start free trial</b><span>One exploration per experiment</span></a>
+      <a href="{% url 'signup' %}"><b>Join with class code</b><span>Your faculty gave you a code</span></a>
+    </div>
+    <p class="xh-cta-signin">Already registered? <a href="{% url 'login' %}">Sign in to your account.</a></p>
+  </div>
+</section>
+{% endif %}
 {% endblock %}
 {% block scripts %}
 <script>
   (function () {
-    let sem = 'all';
-    const q = document.getElementById('search');
-    function apply() {
-      const t = q.value.trim().toLowerCase(); let shown = 0;
-      document.querySelectorAll('.semSection').forEach(sec => {
-        let n = 0;
-        sec.querySelectorAll('.expCard').forEach(c => { const ok = (sem === 'all' || sec.dataset.sem === sem) && (!t || c.dataset.text.includes(t)); c.style.display = ok ? '' : 'none'; if (ok) n++; });
-        sec.style.display = n ? '' : 'none'; shown += n;
-      });
-      document.getElementById('noMatch').classList.toggle('hidden', shown > 0);
+    const bench = document.getElementById('bench');
+    const tabs = [...bench.querySelectorAll('[data-shot]')], shots = [...bench.querySelectorAll('.xh-bench-stage img')];
+    let i = 0, timer = null;
+    function show(n) {
+      i = n;
+      shots.forEach((s, k) => s.classList.toggle('is-on', k === n));
+      tabs.forEach((t, k) => t.setAttribute('aria-pressed', k === n ? 'true' : 'false'));
     }
-    document.querySelectorAll('.semBtn').forEach(b => b.addEventListener('click', () => {
-      sem = b.dataset.sem;
-      document.querySelectorAll('.semBtn').forEach(x => x.className = 'semBtn px-3 py-1.5 rounded-md text-xs ' + (x === b ? 'bg-teal-600 text-white font-semibold shadow' : 'text-slate-600 hover:text-slate-900 font-medium'));
-      apply();
-    }));
-    q.addEventListener('input', apply);
+    tabs.forEach((t, k) => t.addEventListener('click', () => { stop(); show(k); }));
+    function stop() { clearInterval(timer); timer = null; }
+    function play() { if (!timer && !matchMedia('(prefers-reduced-motion: reduce)').matches) timer = setInterval(() => show((i + 1) % shots.length), 5000); }
+    bench.addEventListener('mouseenter', stop); bench.addEventListener('focusin', stop);
+    bench.addEventListener('mouseleave', play);
+    play();
   })();
 </script>
 {% endblock %}

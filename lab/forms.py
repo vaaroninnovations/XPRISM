@@ -81,7 +81,7 @@ class ConsentForm(forms.Form):
 class BatchForm(StyledMixin, forms.ModelForm):
     class Meta:
         model = Batch
-        fields = ['name', 'semester', 'academic_year', 'join_enabled', 'faculty']
+        fields = ['name', 'academic_year', 'join_enabled', 'faculty']
         widgets = {'faculty': forms.CheckboxSelectMultiple}
         labels = {'faculty': 'Faculty for this batch'}
 

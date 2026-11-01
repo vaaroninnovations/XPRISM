@@ -14,12 +14,14 @@ from django.views.decorators.http import require_GET
 from . import access
 from .models import Assignment, Attempt, Experiment, Role
 
-SEMESTERS = [('V', 'Pharmacology I', 'Semester V • In-vivo behavioural & basic experiments'),
-             ('VI', 'Pharmacology II', 'Semester VI • Isolated tissues, bioassays, analgesic & anti-inflammatory'),
-             ('VII', 'Pharmacology III', 'Semester VII • Cardiovascular & gastrointestinal pharmacology')]
+CATEGORIES = [('In-vivo', 'In-vivo simulations', 'Behavioural, anticonvulsant, analgesic, anti-inflammatory, cardiovascular and gastrointestinal studies'),
+              ('Isolated tissue', 'Isolated tissue experiments', 'Frog and rat preparations, kymograph recording and dose–response curves'),
+              ('Bioassay', 'Bioassay experiments', 'Histamine bioassays, three-point and four-point designs, and pA2 estimation')]
+FEATURED = (4, 11, 12, 14, 18, 21)      # the experiments previewed on the home page
 
 
-def landing(request):
+def _catalogue(request):
+    """The experiments this visitor can see, each marked with how they may open it."""
     u = request.user
     exps = list(Experiment.objects.filter(is_active=True))
     assigned, trial = {}, None
@@ -38,9 +40,26 @@ def landing(request):
         e.assignment = assigned.get(e.pk)
         e.trial_state = (trial.get(e.pk, access.AVAILABLE) if trial is not None else None)
         e.used = e.trial_state == access.USED
-    sections = [dict(sem=s, name=n, sub=sub, items=[e for e in exps if e.semester == s]) for s, n, sub in SEMESTERS]
-    left = sum(1 for e in exps if e.trial_state == access.AVAILABLE) if trial is not None else None
-    return render(request, 'lab/landing.html', {'sections': sections, 'n_total': len(exps), 'trial': trial is not None, 'trial_left': left})
+    return exps, trial is not None
+
+
+def _sections(exps):
+    return [dict(cat=c, name=n, sub=sub, items=[e for e in exps if e.category == c]) for c, n, sub in CATEGORIES]
+
+
+def landing(request):
+    exps, trial = _catalogue(request)
+    return render(request, 'lab/landing.html', {'featured': [e for e in exps if e.no in FEATURED], 'sections': _sections(exps), 'n_total': len(exps), 'trial': trial})
+
+
+def modules(request):
+    exps, trial = _catalogue(request)
+    left = sum(1 for e in exps if e.trial_state == access.AVAILABLE) if trial else None
+    return render(request, 'lab/modules.html', {'sections': _sections(exps), 'n_total': len(exps), 'trial': trial, 'trial_left': left})
+
+
+def documentation(request):
+    return render(request, 'legal/documentation.html', {'sections': _sections(list(Experiment.objects.filter(is_active=True))), 'page': 'documentation'})
 
 
 def subscribe(request):
@@ -136,7 +155,7 @@ def experiment_page(request, slug):
         if not u.is_platform_admin and not exp.enabled_for(u.college):
             return render(request, 'lab/message.html', {'title': 'Experiment not available', 'text': 'This experiment has been switched off for your college. Contact your college admin.'}, status=403)
         if u.ethics_version != settings.ETHICS_VERSION:
-            return redirect(f'{reverse("landing")}?agree=1&next={request.get_full_path()}')
+            return redirect(f'{reverse("modules")}?agree=1&next={request.get_full_path()}')
         a_id = request.GET.get('a')
         if not u.has_full_access:
             allowed, visit = access.enter(u, exp)
@@ -173,7 +192,7 @@ def experiment_page(request, slug):
     page = FACULTY_BLOCK.sub(lambda m: _user_block(request), page, count=1)
     loc = (u.college.location_text if u.is_authenticated and u.college and u.college.location_text else settings.SITE_DEFAULT_LOCATION)
     page = page.replace('Aaron Innovations • Experimental Pharmacology Research &amp; Interactive Student Module', f'{html.escape(loc)} • {html.escape(settings.SITE_TAGLINE)}')
-    page = page.replace('href="../index.html"', 'href="/"')
+    page = page.replace('href="../index.html"', f'href="{reverse("modules")}"')
     probe = EXP_PROBES.get(exp.no)
     probe_js = ''
     if probe:

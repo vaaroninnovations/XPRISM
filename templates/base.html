@@ -15,12 +15,16 @@
   <header class="site-header bg-white border-b border-slate-200 px-4 md:px-6 py-2 flex items-center justify-between gap-3 shadow-sm">
     <div class="flex items-center gap-3 min-w-0">
       <a href="/" title="XPRISM home" class="shrink-0"><img src="{% static 'img/xprism-lockup.png' %}" alt="XPRISM" class="h-11 w-auto" width="146" height="49"></a>
+      {% if user.is_authenticated %}
       <div class="min-w-0 border-l border-slate-200 pl-3 hidden sm:block">
         <div class="flex items-center gap-2 flex-wrap">
           <span class="text-[10px] uppercase font-bold bg-teal-50 text-teal-700 px-2 py-0.5 rounded-full border border-teal-200 font-display tracking-wide">Virtual Lab</span>
         </div>
         <p class="text-xs text-slate-500">{{ SITE_LOCATION }} • {{ SITE_TAGLINE }}</p>
       </div>
+      {% else %}
+      <span class="xh-brandtag">Virtual Pharmacology Lab</span>
+      {% endif %}
     </div>
     {% if user.is_authenticated %}
     <div class="text-right">
@@ -28,11 +32,30 @@
       <div class="text-[11px] text-slate-500 font-mono">{% if IS_TRIAL %}<span class="text-amber-700 font-semibold">Free trial</span>{% if user.institution %} • {{ user.institution }}{% endif %}{% else %}{{ user.get_role_display }}{% if COLLEGE %} • {{ COLLEGE.name }}{% endif %}{% endif %}</div>
     </div>
     {% else %}
-    <div class="flex items-center gap-2">
-      <a href="{% url 'signup' %}" class="hidden md:inline-block px-3 py-1.5 rounded-lg border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 text-xs font-semibold">Join with class code</a>
-      <a href="{% url 'trial_signup' %}" class="hidden sm:inline-block px-3 py-1.5 rounded-lg border border-amber-300 text-amber-900 bg-amber-50 hover:bg-amber-100 text-xs font-semibold">Start free trial</a>
-      <a href="{% url 'login' %}" class="px-3.5 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold shadow">Sign in</a>
+    <nav class="xh-pubnav" aria-label="Main">
+      <a href="{% url 'about' %}"{% if request.path == '/about/' %} aria-current="page"{% endif %}>About</a>
+      <a href="{% url 'modules' %}"{% if request.path == '/modules/' %} aria-current="page"{% endif %}>Modules</a>
+      <a href="{% url 'documentation' %}"{% if request.path == '/documentation/' %} aria-current="page"{% endif %}>Documentation</a>
+    </nav>
+    <div class="xh-pubauth">
+      <a href="{% url 'login' %}" class="xh-signin">Sign in</a>
+      <details class="xh-drop">
+        <summary class="xh-signup">Sign up</summary>
+        <div class="xh-drop-panel">
+          <a href="{% url 'trial_signup' %}"><b>Start free trial</b><span>One exploration per experiment</span></a>
+          <a href="{% url 'signup' %}"><b>Join with class code</b><span>Your faculty gave you a code</span></a>
+        </div>
+      </details>
+      <details class="xh-drop xh-burger">
+        <summary aria-label="Menu"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 5.5h14M3 10h14M3 14.5h14"/></svg></summary>
+        <div class="xh-drop-panel">
+          <a href="{% url 'about' %}"><b>About</b></a>
+          <a href="{% url 'modules' %}"><b>Modules</b></a>
+          <a href="{% url 'documentation' %}"><b>Documentation</b></a>
+        </div>
+      </details>
     </div>
+    <script>document.addEventListener('click', function (e) { document.querySelectorAll('details.xh-drop[open]').forEach(function (d) { if (!d.contains(e.target)) d.open = false; }); });</script>
     {% endif %}
   </header>
 
@@ -51,7 +74,8 @@
   </nav>
   {% endif %}
 
-  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-4">
+  <main class="{% block main_class %}flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-4{% endblock %}">
+    {% if messages or NEEDS_EMAIL_VERIFY %}<div class="{% block notices_class %}space-y-4{% endblock %}">{% endif %}
     {% if messages %}
     <div class="space-y-2">
       {% for m in messages %}
@@ -66,13 +90,14 @@
       <button type="submit" class="px-3 py-1 rounded-md bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold">Resend verification e-mail</button>
     </form>
     {% endif %}
+    {% if messages or NEEDS_EMAIL_VERIFY %}</div>{% endif %}
     {% block content %}{% endblock %}
   </main>
 
   <footer class="site-footer border-t border-slate-200 bg-white">
     <div class="max-w-7xl mx-auto px-6 py-3 text-xs text-slate-500 flex justify-between flex-wrap gap-2">
       <span class="flex items-center gap-2"><img src="{% static 'img/xprism-mark.png' %}" alt="" class="w-6 h-6" width="24" height="24"><span><span class="font-display font-bold text-slate-800">XPRISM</span> • {{ SITE_FULL_NAME }}<br class="sm:hidden"><span class="hidden sm:inline"> • </span>© 2026 {{ SITE_INSTITUTION }} • Created by {{ SITE_CREATOR }}</span></span>
-      <span class="flex gap-3 flex-wrap items-center"><a href="{% url 'about' %}" class="hover:text-teal-700">About</a><a href="{% url 'ethics' %}" class="hover:text-teal-700">Ethical use of animals</a><a href="{% url 'privacy' %}" class="hover:text-teal-700">Privacy Policy</a><a href="{% url 'terms' %}" class="hover:text-teal-700">Terms of Service</a><a href="{% url 'conditions' %}" class="hover:text-teal-700">Conditions of Use</a><a href="mailto:{{ SITE_CREATOR_EMAIL }}" class="hover:text-teal-700">Contact</a></span>
+      <span class="flex gap-3 flex-wrap items-center"><a href="{% url 'about' %}" class="hover:text-teal-700">About</a><a href="{% url 'modules' %}" class="hover:text-teal-700">Modules</a><a href="{% url 'documentation' %}" class="hover:text-teal-700">Documentation</a><a href="{% url 'ethics' %}" class="hover:text-teal-700">Ethical use of animals</a><a href="{% url 'privacy' %}" class="hover:text-teal-700">Privacy Policy</a><a href="{% url 'terms' %}" class="hover:text-teal-700">Terms of Service</a><a href="{% url 'conditions' %}" class="hover:text-teal-700">Conditions of Use</a><a href="mailto:{{ SITE_CREATOR_EMAIL }}" class="hover:text-teal-700">Contact</a></span>
     </div>
   </footer>
   {% if NEEDS_ETHICS %}{% include 'lab/_ethics_modal.html' %}{% endif %}

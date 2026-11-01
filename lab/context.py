@@ -10,9 +10,9 @@ def site(request):
     if u.is_authenticated:
         r = u.role
         if r == Role.STUDENT:
-            nav = [('My assignments', '/student/'), ('Practice lab', '/')] if (u.has_full_access or not u.is_trial_account) else [('Lab (free trial)', '/'), ('Subscribe', '/subscribe/')]
+            nav = [('My assignments', '/student/'), ('Practice lab', '/modules/')] if (u.has_full_access or not u.is_trial_account) else [('Lab (free trial)', '/modules/'), ('Subscribe', '/subscribe/')]
         if r in (Role.FACULTY, Role.LAB_ASSISTANT):
-            nav = [('Dashboard', '/faculty/'), ('Batches', '/faculty/batches/'), ('Experiments', '/')]
+            nav = [('Dashboard', '/faculty/'), ('Batches', '/faculty/batches/'), ('Experiments', '/modules/')]
         if r == Role.COLLEGE_ADMIN:
             nav = [('College', '/college/'), ('Staff', '/college/users/'), ('Batches', '/faculty/batches/'), ('Experiments', '/college/experiments/'), ('Requests', '/college/requests/'), ('Audit log', '/college/audit/')]
         if u.is_platform_admin:
@@ -34,7 +34,7 @@ def site(request):
         # shown after the temporary-password and policy-consent steps, never on top of them
         'NEEDS_ETHICS': (u.is_authenticated and u.ethics_version != settings.ETHICS_VERSION and not u.must_change_password
                          and u.consent_version == settings.POLICY_VERSION
-                         and not request.path.startswith(('/ethics/', '/about/', '/privacy/', '/terms/', '/conditions/', '/consent/', '/accounts/'))),
+                         and not request.path.startswith(('/documentation/', '/ethics/', '/about/','/privacy/', '/terms/', '/conditions/', '/consent/', '/accounts/'))),
         'NEEDS_EMAIL_VERIFY': bool(u.is_authenticated and u.email and not u.email_verified and not u.is_platform_admin),
         'ETHICS_VERSION': settings.ETHICS_VERSION, 'TRIAL_HOURS': settings.TRIAL_VISIT_MAX_HOURS,
     }

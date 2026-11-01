@@ -1,0 +1,114 @@
+{% extends 'legal/_base.html' %}
+{% block title %}Documentation{% endblock %}
+{% block aside %}
+      <div class="text-[10px] uppercase tracking-wider text-slate-400 font-mono mb-2">Documentation</div>
+      <a href="#getting-started" class="block px-2 py-1.5 rounded text-slate-600 hover:bg-slate-50">Getting started</a>
+      <a href="#experiment-guide" class="block px-2 py-1.5 rounded text-slate-600 hover:bg-slate-50">Experiment user guide</a>
+      <a href="#faculty-guide" class="block px-2 py-1.5 rounded text-slate-600 hover:bg-slate-50">Faculty guide</a>
+      <a href="#institutional-guide" class="block px-2 py-1.5 rounded text-slate-600 hover:bg-slate-50">Institutional guide</a>
+      <a href="#scientific-resources" class="block px-2 py-1.5 rounded text-slate-600 hover:bg-slate-50">Scientific resources</a>
+      <a href="#ethics" class="block px-2 py-1.5 rounded text-slate-600 hover:bg-slate-50">3Rs &amp; ethics</a>
+      <a href="#faqs" class="block px-2 py-1.5 rounded text-slate-600 hover:bg-slate-50">FAQs</a>
+{% endblock %}
+{% block doc %}
+<div class="mono text-[11px] text-teal-700 font-bold">DOCUMENTATION</div>
+<h1>Using XPRISM</h1>
+<p>How to register, run a simulation, set and grade practicals, and manage XPRISM for a college.</p>
+
+<h2 id="getting-started">Getting started</h2>
+<h3>Choose how to register</h3>
+<ul>
+  <li><b><a href="{% url 'trial_signup' %}">Free trial</a>:</b> sign up with your name, e-mail and institution, and explore each experiment once.</li>
+  <li><b><a href="{% url 'signup' %}">Class code</a>:</b> if your faculty gave you a code, use it to join their batch. You get your assignments and unlimited practice while your college's subscription is active.</li>
+  <li><b>Added by your college:</b> if your faculty or college admin created your account, <a href="{% url 'login' %}">sign in</a> with the temporary password you were given. You will be asked to change it.</li>
+</ul>
+<h3>Your first sign-in</h3>
+<ol>
+  <li>Accept the Privacy Policy, Terms of Service and Conditions of Use.</li>
+  <li>Read and accept the ethical-use agreement. Free-trial users also accept the trial rules.</li>
+  <li>Open your start page: <b>My assignments</b> for students, a dashboard for staff, or <a href="{% url 'modules' %}">Modules</a> for free-trial users.</li>
+</ol>
+
+<h2 id="experiment-guide">Experiment user guide</h2>
+<p>Every module has the same three tabs:</p>
+<ol>
+  <li><b>Task Description:</b> the aim, principle, apparatus and procedure for that experiment.</li>
+  <li><b>Experiment:</b> the interactive bench. Set up the apparatus, give the simulated drugs and watch the responses.</li>
+  <li><b>Observation:</b> the observation sheet, with results and statistics, and the viva questions that check your understanding.</li>
+</ol>
+<p>Each module's own instructions are in its Task Description tab. While you work, the <b>Guide</b> button in the module's status bar opens this page at that module, in a new tab, so it does not end your visit. It is hidden during exams.</p>
+{% for s in sections %}{% if s.items %}
+<h3>{{ s.name }}</h3>
+<table>
+  <thead><tr><th style="width:3rem">No.</th><th style="width:40%">Module</th><th>What you do</th></tr></thead>
+  <tbody>
+  {% for e in s.items %}<tr id="exp-{{ e.no|stringformat:'02d' }}"><td class="mono">{{ e.no|stringformat:'02d' }}</td><td><a href="{{ e.url }}">{{ e.title }}</a></td><td>{{ e.description }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}{% endfor %}
+<p>Opening a module needs a signed-in account. For free-trial users, opening one starts your single visit to it.</p>
+
+<h2 id="faculty-guide">Faculty guide</h2>
+<ol>
+  <li><b>Create a batch.</b> Each batch gets its own class code, which students can use to join.</li>
+  <li><b>Enrol students.</b> Upload a CSV or Excel list, add students one at a time, or let them join with the code. Credentials for uploaded students can be downloaded once.</li>
+  <li><b>Assign an experiment.</b> Set the opening and due dates, attempts and maximum marks, and whether late work is accepted.</li>
+  <li><b>Review submissions.</b> Each student's score starts as provisional marks. You can override it and add feedback, and <b>Save &amp; next</b> moves you through the queue.</li>
+  <li><b>Export marks.</b> The marks sheet shows each student's best attempt and exports to Excel or CSV.</li>
+</ol>
+<h3>How the automatic score is worked out</h3>
+<p>Viva 40%, correct unknown or numeric answer 30% (only for experiments that have one) and completed observation sheet 30%, scaled to the assignment's maximum marks.</p>
+<h3>Exam mode</h3>
+<p>A countdown starts when the student opens the experiment. It keeps running if they close the tab, and the attempt is submitted automatically at zero. Reference datasets, auto-run and "skip waiting" shortcuts, answer checks and viva marking are all hidden until submission.</p>
+<p>The answer check runs in the student's browser, so a student with technical knowledge could read the true value from the page code. Your review remains the final authority, and each student gets their own randomised unknowns.</p>
+<h3>Lab assistants</h3>
+<p>Lab assistants can see batches and submissions, enrol students and reset student passwords. They cannot assign, grade or export marks.</p>
+
+<h2 id="institutional-guide">Institutional guide</h2>
+<ul>
+  <li><b>Staff:</b> college admins add or deactivate faculty, lab assistants and other admins, and reset passwords.</li>
+  <li><b>Experiments:</b> switch individual experiments on or off for your college.</li>
+  <li><b>College settings:</b> set your college's header line and grievance officer.</li>
+  <li><b>Data requests:</b> handle correction and deletion requests from your users under <b>Requests</b>.</li>
+  <li><b>Audit log:</b> review sign-ins, account changes, uploads, assignments, grading and exports.</li>
+  <li><b>Subscriptions:</b> if your college's subscription lapses, its students fall back to one visit per module. To subscribe, write to <a href="mailto:{{ SITE_CREATOR_EMAIL }}">{{ SITE_CREATOR_EMAIL }}</a>.</li>
+</ul>
+
+<h2 id="scientific-resources">Scientific resources</h2>
+<h3>Common calculations</h3>
+<table>
+  <thead><tr><th style="width:40%">Quantity</th><th>Formula</th></tr></thead>
+  <tbody>
+    <tr><td>Standard error of the mean</td><td class="mono">SEM = SD / √n</td></tr>
+    <tr><td>Percentage inhibition</td><td class="mono">% inhibition = (control − treated) / control × 100</td></tr>
+    <tr><td>Percentage maximum possible effect (analgesia)</td><td class="mono">% MPE = (test − baseline) / (cut-off − baseline) × 100</td></tr>
+    <tr><td>Dose ratio</td><td class="mono">DR = EC50 with antagonist / EC50 without antagonist</td></tr>
+    <tr><td>pA2 from a single dose ratio</td><td class="mono">pA2 = log10(DR − 1) − log10[B], with [B] the antagonist concentration in mol/L</td></tr>
+  </tbody>
+</table>
+<h3>Further reading</h3>
+<ul>
+  <li>Russell WMS, Burch RL. <i>The Principles of Humane Experimental Technique</i>. Methuen; 1959.</li>
+  <li>Arunlakshana O, Schild HO. Some quantitative uses of drug antagonists. <i>Br J Pharmacol Chemother</i>. 1959;14:48–58.</li>
+  <li>Kulkarni SK. <i>Handbook of Experimental Pharmacology</i>. Vallabh Prakashan.</li>
+  <li>Ghosh MN. <i>Fundamentals of Experimental Pharmacology</i>. Hilton &amp; Company.</li>
+</ul>
+
+<h2 id="ethics">3Rs &amp; ethics</h2>
+<ul>
+  <li><b>Replacement:</b> use methods that avoid animals, such as computer simulations, wherever they achieve the learning objective.</li>
+  <li><b>Reduction:</b> where animals are unavoidable, use the fewest needed for a valid result, through good design and statistics.</li>
+  <li><b>Refinement:</b> modify procedures, housing and care to minimise pain and distress and to improve welfare.</li>
+</ul>
+<p>Simulated results are generated by models for learning. They are not real data, and XPRISM does not replace the approvals required for real research involving animals. Read the full <a href="{% url 'ethics' %}">ethical use of animals</a> text, including the CCSEA and PCI framework.</p>
+
+<h2 id="faqs">FAQs</h2>
+<details><summary>What does the free trial include?</summary><p>You can explore every enabled module once, free of charge. Trial work is not saved or submitted to any faculty.</p></details>
+<details><summary>When does a free-trial visit end?</summary><p>When you go back to the lab index, the home page or a dashboard, open another experiment, sign out, or after {{ TRIAL_HOURS }} hours. Reloading the same page is fine. After that, the module is available by subscription only.</p></details>
+<details><summary>Can I browse the modules without an account?</summary><p>Yes. Anyone can read the <a href="{% url 'modules' %}">module catalogue</a> and this documentation. Opening a simulation needs an account.</p></details>
+<details><summary>How do I get unlimited access?</summary><p>Through your college's subscription, or an individual subscription. Write to <a href="mailto:{{ SITE_CREATOR_EMAIL }}">{{ SITE_CREATOR_EMAIL }}</a>.</p></details>
+<details><summary>What do I need to run a simulation?</summary><p>A current desktop browser with JavaScript turned on. The simulations run in your browser, so nothing needs to be installed.</p></details>
+<details><summary>I've forgotten my password or my account is locked.</summary><p><a href="{% url 'password_reset' %}">Reset your password</a> by e-mail, or ask your faculty. An account locks for a short time after repeated failed sign-ins.</p></details>
+<details><summary>Can I see or delete my data?</summary><p>Yes. <b>My data</b> lets you download what is held about you and request correction or deletion. See the <a href="{% url 'privacy' %}">Privacy Policy</a>.</p></details>
+{% endblock %}

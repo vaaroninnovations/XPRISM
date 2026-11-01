@@ -2,7 +2,7 @@ from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import reverse
 
-OPEN_PREFIXES = ('/assets/', '/accounts/logout', '/privacy', '/terms', '/conditions', '/ethics', '/about', '/consent', '/accounts/password/force', '/accounts/verify', '/favicon')
+OPEN_PREFIXES = ('/assets/', '/accounts/logout', '/privacy', '/terms', '/conditions', '/ethics', '/about', '/documentation', '/consent', '/accounts/password/force', '/accounts/verify', '/favicon')
 
 
 class AccountGateMiddleware:

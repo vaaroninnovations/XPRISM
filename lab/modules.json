@@ -1,7 +1,6 @@
 [
  {
   "no": 1,
-  "sem": "V",
   "cat": "In-vivo",
   "title": "Routes of Drug Administration",
   "slug": "01-routes-of-drug-administration",
@@ -9,7 +8,6 @@
  },
  {
   "no": 2,
-  "sem": "V",
   "cat": "In-vivo",
   "title": "Effects of Drugs on Rabbit Eye",
   "slug": "02-effects-of-drugs-on-rabbit-eye",
@@ -17,7 +15,6 @@
  },
  {
   "no": 3,
-  "sem": "V",
   "cat": "In-vivo",
   "title": "Anticonvulsant Activity: MES (Electroconvulsometer)",
   "slug": "03-anticonvulsant-activity-mes-electroconvulsometer",
@@ -25,7 +22,6 @@
  },
  {
   "no": 4,
-  "sem": "V",
   "cat": "In-vivo",
   "title": "Muscle Relaxant Activity: Rota-Rod",
   "slug": "04-muscle-relaxant-activity-rota-rod",
@@ -33,7 +29,6 @@
  },
  {
   "no": 5,
-  "sem": "V",
   "cat": "In-vivo",
   "title": "Anticonvulsant Activity: PTZ-Induced Seizures",
   "slug": "05-anticonvulsant-activity-ptz-induced-seizures",
@@ -41,7 +36,6 @@
  },
  {
   "no": 6,
-  "sem": "V",
   "cat": "In-vivo",
   "title": "Hepatic Enzyme Induction: Phenobarbitone Sleeping Time",
   "slug": "06-hepatic-enzyme-induction-phenobarbitone-sleeping-time",
@@ -49,7 +43,6 @@
  },
  {
   "no": 7,
-  "sem": "V",
   "cat": "Isolated tissue",
   "title": "Ciliary Motility of Frog Oesophagus",
   "slug": "07-ciliary-motility-of-frog-oesophagus",
@@ -57,7 +50,6 @@
  },
  {
   "no": 8,
-  "sem": "V",
   "cat": "In-vivo",
   "title": "Local Anaesthetics",
   "slug": "08-local-anaesthetics",
@@ -65,7 +57,6 @@
  },
  {
   "no": 9,
-  "sem": "V",
   "cat": "In-vivo",
   "title": "Locomotor Activity: Actophotometer",
   "slug": "09-locomotor-activity-actophotometer",
@@ -73,7 +64,6 @@
  },
  {
   "no": 10,
-  "sem": "V",
   "cat": "In-vivo",
   "title": "Catalepsy & Stereotypy",
   "slug": "10-catalepsy-and-stereotypy",
@@ -81,7 +71,6 @@
  },
  {
   "no": 11,
-  "sem": "V",
   "cat": "In-vivo",
   "title": "Anxiolytic Activity: Elevated Plus Maze",
   "slug": "11-anxiolytic-activity-elevated-plus-maze",
@@ -89,7 +78,6 @@
  },
  {
   "no": 12,
-  "sem": "VI",
   "cat": "Isolated tissue",
   "title": "DRC of Acetylcholine: Frog Rectus Abdominis",
   "slug": "12-drc-of-acetylcholine-frog-rectus-abdominis",
@@ -97,7 +85,6 @@
  },
  {
   "no": 13,
-  "sem": "VI",
   "cat": "Isolated tissue",
   "title": "Physostigmine & Atropine on ACh DRC (Rat Ileum)",
   "slug": "13-physostigmine-and-atropine-on-ach-drc-rat-ileum",
@@ -105,7 +92,6 @@
  },
  {
   "no": 14,
-  "sem": "VI",
   "cat": "Bioassay",
   "title": "Histamine Bioassay: Matching Method",
   "slug": "14-histamine-bioassay-matching-method",
@@ -113,7 +99,6 @@
  },
  {
   "no": 15,
-  "sem": "VI",
   "cat": "Bioassay",
   "title": "Histamine Bioassay: Interpolation & Bracketing",
   "slug": "15-histamine-bioassay-interpolation-and-bracketing",
@@ -121,7 +106,6 @@
  },
  {
   "no": 16,
-  "sem": "VI",
   "cat": "Bioassay",
   "title": "Three-Point Bioassay",
   "slug": "16-three-point-bioassay",
@@ -129,7 +113,6 @@
  },
  {
   "no": 17,
-  "sem": "VI",
   "cat": "Bioassay",
   "title": "Four-Point Bioassay",
   "slug": "17-four-point-bioassay",
@@ -137,7 +120,6 @@
  },
  {
   "no": 18,
-  "sem": "VI",
   "cat": "Bioassay",
   "title": "pA2 Value: Schild Plot",
   "slug": "18-pa2-value-schild-plot",
@@ -145,7 +127,6 @@
  },
  {
   "no": 19,
-  "sem": "VI",
   "cat": "In-vivo",
   "title": "Analgesic Activity: Eddy's Hot Plate",
   "slug": "19-analgesic-activity-eddys-hot-plate",
@@ -153,7 +134,6 @@
  },
  {
   "no": 20,
-  "sem": "VI",
   "cat": "In-vivo",
   "title": "Analgesic Activity: Tail-Flick Analgesiometer",
   "slug": "20-analgesic-activity-tail-flick-analgesiometer",
@@ -161,7 +141,6 @@
  },
  {
   "no": 21,
-  "sem": "VI",
   "cat": "In-vivo",
   "title": "Anti-inflammatory Activity: Carrageenan Paw Oedema",
   "slug": "21-anti-inflammatory-activity-carrageenan-paw-oedema",
@@ -169,7 +148,6 @@
  },
  {
   "no": 22,
-  "sem": "VII",
   "cat": "In-vivo",
   "title": "Drugs on Blood Pressure & Heart Rate",
   "slug": "22-drugs-on-blood-pressure-and-heart-rate",
@@ -177,7 +155,6 @@
  },
  {
   "no": 23,
-  "sem": "VII",
   "cat": "In-vivo",
   "title": "Anti-ulcer Activity: Pylorus Ligation",
   "slug": "23-anti-ulcer-activity-pylorus-ligation",
@@ -185,7 +162,6 @@
  },
  {
   "no": 24,
-  "sem": "VII",
   "cat": "In-vivo",
   "title": "Gastrointestinal Motility: Charcoal Meal",
   "slug": "24-gastrointestinal-motility-charcoal-meal",
@@ -193,7 +169,6 @@
  },
  {
   "no": 25,
-  "sem": "VII",
   "cat": "In-vivo",
   "title": "Antidiarrhoeal Activity: Castor Oil Model",
   "slug": "25-antidiarrhoeal-activity-castor-oil-model",

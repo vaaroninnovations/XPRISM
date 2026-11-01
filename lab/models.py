@@ -94,7 +94,6 @@ class Experiment(models.Model):
     no = models.PositiveSmallIntegerField(unique=True)
     slug = models.SlugField(max_length=120, unique=True)
     title = models.CharField(max_length=200)
-    semester = models.CharField(max_length=5)
     category = models.CharField(max_length=40)
     description = models.TextField(blank=True)
     is_demo = models.BooleanField('Open to visitors without login', default=False)
@@ -124,8 +123,7 @@ def new_class_code():
 
 class Batch(models.Model):
     college = models.ForeignKey(College, on_delete=models.CASCADE, related_name='batches')
-    name = models.CharField(max_length=120, help_text='e.g. "B.Pharm Sem VI, Section A"')
-    semester = models.CharField(max_length=5, choices=[('V', 'Semester V'), ('VI', 'Semester VI'), ('VII', 'Semester VII'), ('other', 'Other')], default='V')
+    name = models.CharField(max_length=120, help_text='e.g. "B.Pharm Section A"')
     academic_year = models.CharField(max_length=20, default='2026-27')
     faculty = models.ManyToManyField(User, related_name='teaching_batches', blank=True)
     class_code = models.CharField(max_length=12, unique=True, blank=True)

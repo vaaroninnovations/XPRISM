@@ -28,7 +28,7 @@
   } else if (C.mode === 'trial') {
     bar.innerHTML = pill('bg-amber-400 text-slate-900', 'FREE TRIAL') +
       '<span class="text-amber-100">One visit per module: leaving this page ends it.</span><span id="mcpTrialLeft" class="mono text-amber-300"></span>' +
-      link('/', 'Finish & back to lab');
+      link('/modules/', 'Finish & back to lab');
     // confirm before any link that leaves this module (header, ‹ › arrows, footer)
     document.addEventListener('click', function (e) {
       var a = e.target.closest && e.target.closest('a[href]');
@@ -54,6 +54,8 @@
     document.getElementById('mcpSubmit').addEventListener('click', function () { openConfirm(false); });
     window.addEventListener('beforeunload', function (e) { if (!submitted) { e.preventDefault(); e.returnValue = ''; } });
   }
+  // this module's entry in the user guide; a new tab, so it never ends a trial visit or an attempt
+  if (!C.examMode && C.expNo) bar.insertAdjacentHTML('beforeend', '<a href="/documentation/#exp-' + String(C.expNo).padStart(2, '0') + '" target="_blank" class="px-2.5 py-1 rounded-md font-semibold bg-slate-700 hover:bg-slate-600 text-white">Guide ↗</a>');
 
   // ------------------------------------------------------------ exam mode lockdown
   var BLOCK = ['doseAllInstant', 'loadReferenceDataset', 'autoFillCurrentState', 'fillAllMockData', 'skipAbsorption', 'autoRunTrial', 'runFullProtocol',

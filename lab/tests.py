@@ -42,7 +42,7 @@ class Base(TestCase):
         cls.la = mkuser('one-la', Role.LAB_ASSISTANT, cls.c1)
         cls.st = mkuser('one-bp001', Role.STUDENT, cls.c1, roll_no='BP001')
         cls.st2 = mkuser('one-bp002', Role.STUDENT, cls.c1, roll_no='BP002')
-        cls.batch = Batch.objects.create(college=cls.c1, name='Sem VI A', semester='VI', created_by=cls.fac)
+        cls.batch = Batch.objects.create(college=cls.c1, name='Section A', created_by=cls.fac)
         cls.batch.faculty.add(cls.fac)
         Enrollment.objects.create(batch=cls.batch, student=cls.st)
         Enrollment.objects.create(batch=cls.batch, student=cls.st2)
@@ -77,6 +77,22 @@ class PublicTests(Base):
             self.assertContains(about, text)
         self.assertContains(self.client.get('/'), 'Created by Dr. Vara Prasad Saka')
         self.assertNotContains(self.client.get('/'), 'MyCAL')
+
+    def test_home_modules_and_documentation_are_public(self):
+        home = self.client.get('/')
+        for text in ['Replacement', 'Reduction', 'Refinement', 'Explore our 3Rs commitment', '/accounts/trial/', '/accounts/signup/', '/accounts/login/', '/modules/', '/documentation/']:
+            self.assertContains(home, text)
+        self.assertContains(home, 'class="expCard', count=6)
+        self.assertContains(self.client.get('/modules/'), 'class="expCard', count=25)
+        docs = self.client.get('/documentation/')
+        self.assertContains(docs, 'id="exp-18"')
+        self.assertContains(docs, 'Exam mode')
+
+    def test_no_semester_terms_in_the_lab(self):
+        self.login(self.fac)
+        urls = ['/', '/modules/', '/documentation/', '/about/', '/faculty/', '/faculty/batches/', f'/faculty/batches/{self.batch.pk}/', '/faculty/batches/new/']
+        for url in urls:
+            self.assertNotRegex(self.client.get(url).content.decode(), r'(?i)semester|\bsem\s+v', url)
 
 
 class AuthTests(Base):
@@ -271,7 +287,7 @@ class AssignmentFlowTests(Base):
         self.c1.disabled_experiments.add(self.e14)
         self.login(self.st)
         self.assertEqual(self.client.get(self.e14.url).status_code, 403)
-        self.assertNotContains(self.client.get('/'), self.e14.title)
+        self.assertNotContains(self.client.get('/modules/'), self.e14.title)
 
     def test_assignment_form_validation(self):
         self.login(self.fac)
@@ -404,8 +420,8 @@ class TrialTests(Base):
         self.assertEqual(r.status_code, 200)
         self.assertEqual(ctx_of(r)['mode'], 'trial')
         self.assertEqual(self.client.get(e1.url).status_code, 200)
-        # back to index ends the visit
-        r = self.client.get('/')
+        # back to the lab index ends the visit
+        r = self.client.get('/modules/')
         self.assertContains(r, 'Subscription only')
         r = self.client.get(e1.url)
         self.assertEqual(r.status_code, 302)
@@ -421,13 +437,18 @@ class TrialTests(Base):
         # expiry
         TrialVisit.objects.filter(user=u, experiment=e3).update(started_at=timezone.now() - timezone.timedelta(hours=settings.TRIAL_VISIT_MAX_HOURS + 1))
         self.assertEqual(self.client.get(e3.url).status_code, 302)
+        # going to the home page ends an open visit
+        e5 = Experiment.objects.get(no=5)
+        self.assertEqual(self.client.get(e5.url).status_code, 200)
+        self.client.get('/')
+        self.assertEqual(TrialVisit.objects.get(user=u, experiment=e5).consumed_by, 'index')
         # sign-out ends an open visit
         e4 = Experiment.objects.get(no=4)
         self.client.get(e4.url)
         self.client.post('/accounts/logout/')
         self.assertEqual(TrialVisit.objects.get(user=u, experiment=e4).consumed_by, 'logout')
         # cannot submit assignments; students' nav is trial nav
-        self.assertEqual(TrialVisit.objects.filter(user=u, consumed_at__isnull=False).count(), 4)
+        self.assertEqual(TrialVisit.objects.filter(user=u, consumed_at__isnull=False).count(), 5)
 
     def test_duplicate_trial_email_refused(self):
         self.signup('dup@example.com')

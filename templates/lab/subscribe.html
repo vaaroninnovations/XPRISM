@@ -37,6 +37,6 @@
     <div class="flex flex-wrap gap-1.5">{% for e in left %}<a href="{{ e.url }}" class="text-[11px] px-2 py-1 rounded-md border border-amber-200 bg-amber-50 text-amber-900 hover:bg-amber-100"><b class="mono">#{{ e.no|stringformat:"02d" }}</b> {{ e.title }}</a>{% endfor %}</div>
   </div>
   {% endif %}
-  <p class="text-center"><a href="/" class="text-sm text-teal-700 hover:underline">← Back to the lab</a></p>
+  <p class="text-center"><a href="/modules/" class="text-sm text-teal-700 hover:underline">← Back to the lab</a></p>
 </div>
 {% endblock %}

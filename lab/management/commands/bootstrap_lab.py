@@ -22,9 +22,9 @@ class Command(BaseCommand):
     def handle(self, *a, **o):
         mods = json.loads((Path(__file__).resolve().parents[2] / 'modules.json').read_text(encoding='utf-8'))
         for m in mods:
-            e, created = Experiment.objects.get_or_create(no=m['no'], defaults={'slug': m['slug'], 'title': m['title'], 'semester': m['sem'], 'category': m['cat'], 'description': m.get('description', '')})
+            e, created = Experiment.objects.get_or_create(no=m['no'], defaults={'slug': m['slug'], 'title': m['title'], 'category': m['cat'], 'description': m.get('description', '')})
             if not created:
-                e.slug, e.title, e.semester, e.category, e.description = m['slug'], m['title'], m['sem'], m['cat'], m.get('description', '')
+                e.slug, e.title, e.category, e.description = m['slug'], m['title'], m['cat'], m.get('description', '')
                 e.save()
         self.stdout.write(self.style.SUCCESS(f'{len(mods)} experiments in catalogue.'))
         if o['admin_username']:
@@ -51,7 +51,8 @@ class Command(BaseCommand):
         cadmin = mk('demo-admin', 'College', 'Admin', Role.COLLEGE_ADMIN, 'Demo@Admin2026')
         fac = mk('demo-faculty', 'Vara Prasad', 'Saka', Role.FACULTY, 'Demo@Faculty2026')
         mk('demo-assistant', 'Lab', 'Assistant', Role.LAB_ASSISTANT, 'Demo@Assist2026')
-        b, _ = Batch.objects.get_or_create(college=c, name='B.Pharm Sem VI, Section A', defaults={'semester': 'VI', 'created_by': fac})
+        Batch.objects.filter(college=c, name='B.Pharm Sem VI, Section A').update(name='B.Pharm Section A')    # earlier demo name
+        b, _ = Batch.objects.get_or_create(college=c, name='B.Pharm Section A', defaults={'created_by': fac})
         b.faculty.add(fac)
         for i in range(1, 6):
             s = mk(f'demo-bp{i:03d}', f'Student{i}', 'Demo', Role.STUDENT, 'Demo@Student2026', roll_no=f'BP{i:03d}')

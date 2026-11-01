@@ -42,8 +42,8 @@ const ok = (name, cond, extra = '') => { results.push([cond ? 'PASS' : 'FAIL', n
 
   // ---------------------------------------------------------------- 1. visitor
   let { ctx, p } = await newCtx();
-  await p.goto(BASE + '/');
-  ok('visitor: landing shows 25 experiments', (await p.$$('.expCard')).length === 25);
+  await p.goto(BASE + '/modules/');
+  ok('visitor: catalogue shows 25 experiments', (await p.$$('.expCard')).length === 25);
   ok('visitor: 4 demo cards', (await p.$$('text=Demo • no login')).length === 4);
   await snap(p, 'landing');
   await p.click('a.expCard:has-text("Routes of Drug Administration")'); await p.waitForTimeout(800);
@@ -101,7 +101,7 @@ const ok = (name, cond, extra = '') => { results.push([cond ? 'PASS' : 'FAIL', n
   await login(p, 'e2e-vprasad', facPw); await gates(p, 'Vara@Faculty2026');
   ok('faculty: lands on dashboard', p.url().endsWith('/faculty/'));
   await p.goto(BASE + '/faculty/batches/new/');
-  await p.fill('#id_name', 'B.Pharm Sem VI, Section A'); await p.selectOption('#id_semester', 'VI');
+  await p.fill('#id_name', 'B.Pharm Section A');
   await Promise.all([p.waitForLoadState('load'), p.click('button:has-text("Save")')]);
   const batchUrl = p.url();
   const classCode = (await p.textContent('.tracking-widest')).trim();

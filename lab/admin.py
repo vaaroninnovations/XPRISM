@@ -21,7 +21,7 @@ class CollegeAdmin(admin.ModelAdmin):
 
 @admin.register(Experiment)
 class ExperimentAdmin(admin.ModelAdmin):
-    list_display = ('no', 'title', 'semester', 'category', 'is_active')
+    list_display = ('no', 'title', 'category', 'is_active')
     list_editable = ('is_active',)
 
 
