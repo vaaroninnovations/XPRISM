@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Free-year applications{% endblock %}
 {% block content %}
-<div><h1 class="text-xl font-bold text-slate-900">Free-year applications</h1><p class="text-xs text-slate-500">Check each applicant before you approve. Approving awards one year of access straight away and e-mails the applicant.</p></div>
+<div class="flex flex-wrap items-end justify-between gap-3"><div><h1 class="text-xl font-bold text-slate-900">Free-year applications</h1><p class="text-xs text-slate-500">Check each applicant before you approve. Approving awards one year of access straight away and e-mails the applicant.</p></div><a href="{% url 'free_year_invitations' %}" class="px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow">Invite colleges</a></div>
 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 overflow-x-auto">
   <h2 class="text-sm font-bold text-slate-800 mb-3">Waiting for review</h2>
   <table class="obs-table w-full text-xs text-left"><thead><tr><th>#</th><th>Received</th><th>Applicant</th><th>Institution</th><th>Applying for</th><th>Message</th><th>Decision</th></tr></thead><tbody>

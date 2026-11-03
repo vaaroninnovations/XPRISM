@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Invitation e-mails{% endblock %}
+{% block content %}
+<div class="max-w-xl mx-auto bg-white rounded-xl border border-slate-200 shadow-sm p-6 md:p-8 space-y-3 text-center">
+  {% if inv.opted_out_at %}
+  <h1 class="text-xl font-bold text-slate-900">You have opted out</h1>
+  <p class="text-sm text-slate-600">We will not send any more invitations to {{ inv.email }}.</p>
+  {% else %}
+  <h1 class="text-xl font-bold text-slate-900">Stop invitation e-mails?</h1>
+  <p class="text-sm text-slate-600">We will not send any more invitations to {{ inv.email }}.</p>
+  <form method="post">{% csrf_token %}<button class="px-5 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow">Opt out</button></form>
+  {% endif %}
+</div>
+{% endblock %}

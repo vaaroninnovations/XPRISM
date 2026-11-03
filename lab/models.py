@@ -323,6 +323,35 @@ class FreeYearApplication(models.Model):
         return f'{self.name} <{self.email}> ({self.status})'
 
 
+def new_invitation_token():
+    return secrets.token_urlsafe(24)
+
+
+class FreeYearInvitation(models.Model):
+    """An e-mail inviting a college to apply for the free year. Each address is invited once, and can opt out."""
+    QUEUED, SENT, FAILED = 'queued', 'sent', 'failed'
+    email = models.EmailField(unique=True)
+    token = models.CharField(max_length=40, unique=True, default=new_invitation_token, editable=False)    # for the opt-out link
+    status = models.CharField(max_length=10, choices=[(QUEUED, 'Sending'), (SENT, 'Sent'), (FAILED, 'Failed')], default=QUEUED)
+    invited_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='+')
+    created_at = models.DateTimeField(auto_now_add=True)
+    sent_at = models.DateTimeField(null=True, blank=True)
+    opted_out_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['-created_at', '-pk']
+
+    def __str__(self):
+        return f'{self.email} ({self.status})'
+
+    @property
+    def can_retry(self):
+        """Failed, or still queued after an hour (the server restarted while sending). A recent queued one is on its way: retrying would send it twice."""
+        if self.opted_out_at or self.status == self.SENT:
+            return False
+        return self.status == self.FAILED or timezone.now() - self.created_at > timezone.timedelta(hours=1)
+
+
 class TrialVisit(models.Model):
     """One free exploration of an experiment by a user without a subscription."""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='trial_visits')

@@ -5,9 +5,9 @@ from django.shortcuts import redirect
 from django.urls import Resolver404, resolve, reverse
 from django.utils.http import url_has_allowed_host_and_scheme
 
-OPEN_PREFIXES = ('/assets/', '/accounts/logout', '/privacy', '/terms', '/conditions', '/ethics', '/about', '/documentation', '/consent', '/accounts/password/force', '/accounts/verify', '/favicon')
+OPEN_PREFIXES = ('/assets/', '/accounts/logout', '/privacy', '/terms', '/conditions', '/ethics', '/about', '/documentation', '/consent', '/accounts/password/force', '/accounts/verify', '/invitation/opt-out', '/favicon')
 # what a public demo login may change: enough to try assigning, grading and submitting. Everything else (people, passwords, settings, batches, data requests) is refused.
-SHARED_DEMO_ALLOWED = {'logout', 'consent', 'ethics_agreement', 'api_submit', 'assignment_new', 'assignment_edit', 'attempt_detail'}
+SHARED_DEMO_ALLOWED = {'logout', 'consent', 'ethics_agreement', 'api_submit', 'assignment_new', 'assignment_edit', 'attempt_detail', 'invitation_opt_out'}
 
 
 def _shared_demo_refusal(request):

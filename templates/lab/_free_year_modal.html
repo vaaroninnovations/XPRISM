@@ -67,7 +67,8 @@
   modal.addEventListener('click', function (e) { if (e.target === modal) modal.close(); });   // click on the backdrop
   modal.addEventListener('close', function () { if (recall() !== 'applied') remember(String(Date.now())); });
   var seen = recall();
-  if (modal.dataset.autoOpen && seen !== 'applied' && !(Date.now() - Number(seen) < WEEK)) setTimeout(function () { if (!document.querySelector('dialog[open]')) modal.showModal(); }, 1200);
+  if (new URLSearchParams(location.search).get('apply') === '1') modal.showModal();     // the link in an invitation e-mail
+  else if (modal.dataset.autoOpen && seen !== 'applied' && !(Date.now() - Number(seen) < WEEK)) setTimeout(function () { if (!document.querySelector('dialog[open]')) modal.showModal(); }, 1200);
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();

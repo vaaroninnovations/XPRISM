@@ -1,0 +1,14 @@
+{% autoescape off %}Dear colleague,
+
+We invite your college to apply to use {{ site_name }} for 1 year, free of cost.
+
+{{ site_name }} offers computer-assisted simulation learning with LMS, as per the PCI syllabus and CCSEA guidelines, along with 3R recommendations.
+{% if note %}
+{{ note }}
+{% endif %}
+Apply for the free year: {{ apply_url }}
+
+Every application is reviewed by our team. Once it is approved, your college's accounts and subscription are set up for you.
+
+Sent by {{ org.org_name }}, {{ org.org_address }}.
+Do not want these invitations? Opt out: {{ opt_out_url }}{% endautoescape %}

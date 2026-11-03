@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
@@ -8,11 +9,11 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from . import free_year
-from .emails import send_free_year_approved, send_free_year_declined, set_password_url
+from .emails import send_free_year_approved, send_free_year_declined, send_free_year_invitations, set_password_url
 from .forms import BrandingForm, CollegeCreateForm, CollegeForm, StaffUserForm, make_username, temp_password
 import datetime
 
-from .models import Attempt, AuditLog, Batch, College, DataRequest, Experiment, FreeYearApplication, Role, TrialVisit, User
+from .models import Attempt, AuditLog, Batch, College, DataRequest, Experiment, FreeYearApplication, FreeYearInvitation, Role, TrialVisit, User
 from .permissions import audit, role_required
 from .views_auth import anonymise_user
 
@@ -276,6 +277,66 @@ def free_year_applications(request):
         a.account = free_year.find_account(a)
         a.suggested_college = (a.user.college_id if a.user_id else None) or by_name.get(a.institution.casefold())
     return render(request, 'lab/free_year_applications.html', {'pending': pending, 'decided': qs.exclude(status=FreeYearApplication.PENDING)[:50], 'colleges': colleges})
+
+
+def _email_ready():
+    """Until SMTP is configured, mail only goes to the server's console: it must not be recorded as sent to real people."""
+    return settings.DEBUG or 'console' not in settings.EMAIL_BACKEND
+
+
+def _invite(request, text, note):
+    """Create and send invitations for the pasted addresses. Returns True if any were sent."""
+    addresses, invalid = free_year.parse_addresses(text)
+    invited = set(FreeYearInvitation.objects.filter(email__in=addresses).values_list('email', flat=True))
+    applied = set(FreeYearApplication.objects.filter(email__in=addresses).values_list('email', flat=True))
+    new = [a for a in addresses if a not in invited and a not in applied]
+    day_ago = timezone.now() - datetime.timedelta(days=1)
+    used = FreeYearInvitation.objects.filter(Q(sent_at__gte=day_ago) | Q(status=FreeYearInvitation.QUEUED, created_at__gte=day_ago)).count()
+    room = max(0, settings.FREE_YEAR_INVITES_PER_DAY - used)
+    to_send, over_limit = new[:room], new[room:]
+    with transaction.atomic():
+        invitations = [inv for inv, created in (FreeYearInvitation.objects.get_or_create(email=a, defaults={'invited_by': request.user}) for a in to_send) if created]
+        if invitations:
+            send_free_year_invitations(invitations, note, request)
+            audit(request, 'free_year_invited', f'{len(invitations)} addresses')
+    if invitations:
+        messages.success(request, f'Sending {len(invitations)} invitation{"s" if len(invitations) != 1 else ""}. Refresh this page to see each one marked as sent.')
+    if invited or applied:
+        messages.info(request, f'Skipped {len(invited | applied)} already invited or already applied: {", ".join(sorted(invited | applied)[:10])}{"…" if len(invited | applied) > 10 else ""}')
+    if invalid:
+        messages.error(request, f'Not valid, so not sent ({len(invalid)}): {", ".join(invalid[:10])}{"…" if len(invalid) > 10 else ""}')
+    if over_limit:
+        messages.warning(request, f'{len(over_limit)} not sent, because the limit is {settings.FREE_YEAR_INVITES_PER_DAY} a day. Paste them again tomorrow: {", ".join(over_limit[:10])}{"…" if len(over_limit) > 10 else ""}')
+    return bool(invitations)
+
+
+@_platform
+def free_year_invitations(request):
+    """Invite colleges by e-mail to apply for the free year."""
+    text, note = '', ''
+    if request.method == 'POST':
+        if not _email_ready():
+            messages.error(request, 'E-mail is not set up on this server, so nothing was sent.')
+            return redirect('free_year_invitations')
+        retry = request.POST.get('retry')
+        if retry:
+            inv = get_object_or_404(FreeYearInvitation, pk=retry)
+            if not inv.can_retry:
+                messages.info(request, f'{inv.email} cannot be retried: it has been sent, is still sending, or has opted out.')
+                return redirect('free_year_invitations')
+            with transaction.atomic():
+                FreeYearInvitation.objects.filter(pk=inv.pk).update(status=FreeYearInvitation.QUEUED)
+                send_free_year_invitations([inv], request=request)
+            messages.success(request, f'Trying {inv.email} again. Refresh this page to see the result.')
+            return redirect('free_year_invitations')
+        text, note = request.POST.get('addresses', ''), request.POST.get('note', '').strip()[:1000]
+        if _invite(request, text, note):
+            return redirect('free_year_invitations')
+    page = Paginator(FreeYearInvitation.objects.select_related('invited_by'), 50).get_page(request.GET.get('page'))
+    responses = {a.email: a for a in FreeYearApplication.objects.filter(email__in=[i.email for i in page])}
+    for inv in page:
+        inv.application = responses.get(inv.email)
+    return render(request, 'lab/free_year_invitations.html', {'page': page, 'text': text, 'note': note, 'email_ready': _email_ready(), 'per_day': settings.FREE_YEAR_INVITES_PER_DAY})
 
 
 @_platform

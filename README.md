@@ -73,6 +73,11 @@ a week) and an "Apply here" bar on other pages. Applications go to the super adm
 College Admin, or an existing college chosen from the list). The applicant is e-mailed the decision, with a
 link to set a password if a new account was made. Each e-mail address can hold one application, unless declined.
 
+**Inviting colleges:** under **Platform → Free year → Invite colleges**, paste e-mail addresses to send each one a
+separate invitation whose link opens the pop-up. An address is invited once, addresses that have applied are skipped,
+every invitation has an opt-out link, and at most `FREE_YEAR_INVITES_PER_DAY` (default 200) go out in 24 hours.
+Sending needs `EMAIL_HOST` to be set; without it the page refuses to send.
+
 ## Public demo logins
 
 `manage.py setup_demo` creates "XPRISM Demo College" with one shared login per role, all with the password `Xprism@2026`:
@@ -218,6 +223,3 @@ To rebuild the CSS after editing templates:
 
 The images in `static/assets/img/modules/` are screenshots of the simulations, one per module
 (`<slug>.jpg`) plus the three `hero-*.jpg` shown on the home page. Add a new module's image there too.
-#   X P R I S M  
- #   X P R I S M  
- 

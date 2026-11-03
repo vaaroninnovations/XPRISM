@@ -4,11 +4,30 @@ An individual gets User.subscribed_until on their account (created if they have 
 gets College.subscription_until, on an existing college or on a new one with its College Admin.
 An award never shortens access: it runs for a year from the later of today and the current end date.
 """
+import re
+
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.utils import timezone
 from django.utils.text import slugify
 
 from .forms import make_username, temp_password
 from .models import College, FreeYearApplication, Role, User
+
+
+def parse_addresses(text):
+    """Pasted text, separated by commas, semicolons, spaces or new lines, as (valid addresses without repeats, invalid entries)."""
+    valid, invalid = {}, []
+    for entry in re.split(r'[\s,;]+', text):
+        entry = entry.strip('<>"\'').lower()
+        if not entry:
+            continue
+        try:
+            validate_email(entry)
+            valid[entry] = True
+        except ValidationError:
+            invalid.append(entry)
+    return list(valid), invalid
 
 
 def one_year_after(day):

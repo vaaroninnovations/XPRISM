@@ -16,7 +16,7 @@ from django.views.decorators.http import require_GET, require_POST
 from . import access
 from .emails import send_free_year_received
 from .forms import FreeYearApplicationForm
-from .models import Assignment, Attempt, Experiment, FreeYearApplication, Role
+from .models import Assignment, Attempt, Experiment, FreeYearApplication, FreeYearInvitation, Role
 from .permissions import audit, client_ip
 
 FREE_YEAR_MAX_PER_HOUR = 5
@@ -115,6 +115,16 @@ def free_year_apply(request):
             audit(request, 'free_year_applied', f'#{app.pk}', kind=app.kind)
             send_free_year_received(app, request)
     return JsonResponse({'ok': True, 'email': app.email})
+
+
+def invitation_opt_out(request, token):
+    """Link in every invitation. Changes nothing on GET, because mail scanners open links by themselves."""
+    inv = get_object_or_404(FreeYearInvitation, token=token)
+    if request.method == 'POST' and not inv.opted_out_at:
+        inv.opted_out_at = timezone.now()
+        inv.save(update_fields=['opted_out_at'])
+        audit(request, 'free_year_invitation_opt_out', f'#{inv.pk}')
+    return render(request, 'lab/invitation_opt_out.html', {'inv': inv})
 
 
 def legal(request, page):

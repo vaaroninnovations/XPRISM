@@ -2,6 +2,7 @@ import datetime
 import io
 import json
 import re
+from unittest import mock
 
 from django.conf import settings
 from django.core import mail
@@ -11,7 +12,7 @@ from django.test import TestCase, override_settings
 from django.utils import timezone
 
 from .free_year import one_year_after
-from .models import Assignment, Attempt, AuditLog, Batch, College, ConsentRecord, DataRequest, Enrollment, Experiment, FreeYearApplication, Role, TrialVisit, User
+from .models import Assignment, Attempt, AuditLog, Batch, College, ConsentRecord, DataRequest, Enrollment, Experiment, FreeYearApplication, FreeYearInvitation, Role, TrialVisit, User
 from .views_auth import anonymise_user
 
 PW = 'Str0ng!Passw0rd'
@@ -848,3 +849,114 @@ class FreeYearTests(Base):
 
     def test_year_end_on_leap_day(self):
         self.assertEqual(one_year_after(datetime.date(2028, 2, 29)), datetime.date(2029, 2, 28))
+
+
+class FreeYearInvitationTests(Base):
+    URL = '/platform/free-year/invite/'
+
+    def setUp(self):
+        self.login(self.sa)
+
+    def invite(self, addresses, **extra):
+        with self.captureOnCommitCallbacks(execute=True):
+            return self.client.post(self.URL, {'addresses': addresses, **extra}, follow=True)
+
+    def test_only_super_admin_can_invite(self):
+        self.login(self.ca)
+        self.assertEqual(self.client.get(self.URL).status_code, 403)
+        self.assertEqual(self.client.post(self.URL, {'addresses': 'a@example.com'}).status_code, 403)
+        self.client.logout()
+        self.assertEqual(self.client.get(self.URL).status_code, 302)
+        self.assertFalse(FreeYearInvitation.objects.exists())
+
+    def test_each_address_gets_its_own_email_with_apply_and_opt_out_links(self):
+        self.invite('Principal@College.edu, hod@college.edu; dean@college.edu\nhod@college.edu', note='We met at <the> conference')
+        self.assertEqual(sorted(m.to[0] for m in mail.outbox), ['dean@college.edu', 'hod@college.edu', 'principal@college.edu'])
+        self.assertTrue(all(len(m.to) == 1 and not m.cc and not m.bcc for m in mail.outbox))
+        inv = FreeYearInvitation.objects.get(email='hod@college.edu')
+        self.assertEqual((inv.status, inv.invited_by), (FreeYearInvitation.SENT, self.sa))
+        self.assertIsNotNone(inv.sent_at)
+        msg = next(m for m in mail.outbox if m.to == ['hod@college.edu'])
+        self.assertIn('http://testserver/?apply=1', msg.body)
+        self.assertIn(f'/invitation/opt-out/{inv.token}/', msg.body)
+        self.assertIn(inv.token, msg.extra_headers['List-Unsubscribe'])
+        self.assertIn('We met at <the> conference', msg.body)
+        self.assertIn('We met at &lt;the&gt; conference', msg.alternatives[0][0])
+
+    def test_invalid_and_already_contacted_addresses_are_skipped(self):
+        FreeYearInvitation.objects.create(email='old@college.edu', status=FreeYearInvitation.SENT)
+        FreeYearApplication.objects.create(name='A', email='applied@college.edu', institution='X')
+        r = self.invite('old@college.edu applied@college.edu not-an-email new@college.edu')
+        self.assertEqual([m.to for m in mail.outbox], [['new@college.edu']])
+        self.assertContains(r, 'not-an-email')
+        self.assertContains(r, 'Skipped 2')
+
+    def test_nothing_valid_keeps_the_pasted_text(self):
+        r = self.invite('not-an-email')
+        self.assertEqual(mail.outbox, [])
+        self.assertContains(r, '>not-an-email</textarea>')
+
+    @override_settings(FREE_YEAR_INVITES_PER_DAY=2)
+    def test_daily_limit(self):
+        FreeYearInvitation.objects.create(email='today@college.edu', status=FreeYearInvitation.SENT, sent_at=timezone.now())
+        FreeYearInvitation.objects.create(email='lastweek@college.edu', status=FreeYearInvitation.SENT, sent_at=timezone.now() - timezone.timedelta(days=7))
+        r = self.invite('a@college.edu b@college.edu')
+        self.assertEqual([m.to for m in mail.outbox], [['a@college.edu']])
+        self.assertContains(r, 'b@college.edu')
+        self.assertFalse(FreeYearInvitation.objects.filter(email='b@college.edu').exists())
+
+    def test_failed_send_is_recorded_and_can_be_retried(self):
+        with mock.patch('django.core.mail.EmailMultiAlternatives.send', side_effect=OSError('no route')), self.assertLogs('lab.emails', 'ERROR'):
+            self.invite('a@college.edu')
+        inv = FreeYearInvitation.objects.get()
+        self.assertEqual(inv.status, FreeYearInvitation.FAILED)
+        self.assertIsNone(inv.sent_at)
+        with self.captureOnCommitCallbacks(execute=True):
+            self.client.post(self.URL, {'retry': inv.pk})
+        inv.refresh_from_db()
+        self.assertEqual(inv.status, FreeYearInvitation.SENT)
+        self.assertEqual([m.to for m in mail.outbox], [['a@college.edu']])
+
+    @override_settings(DEBUG=False, EMAIL_BACKEND='django.core.mail.backends.console.EmailBackend')
+    def test_refuses_to_send_when_email_is_not_set_up(self):
+        self.assertContains(self.client.get(self.URL), 'E-mail is not set up')
+        self.client.post(self.URL, {'addresses': 'a@college.edu'})
+        self.assertFalse(FreeYearInvitation.objects.exists())
+
+    def test_opt_out_needs_a_click_and_stops_further_invitations(self):
+        inv = FreeYearInvitation.objects.create(email='a@college.edu', status=FreeYearInvitation.FAILED)
+        self.client.logout()
+        url = f'/invitation/opt-out/{inv.token}/'
+        self.assertContains(self.client.get(url), 'Stop invitation e-mails?')
+        inv.refresh_from_db()
+        self.assertIsNone(inv.opted_out_at)
+        self.assertContains(self.client.post(url), 'You have opted out')
+        inv.refresh_from_db()
+        self.assertIsNotNone(inv.opted_out_at)
+        self.assertEqual(self.client.get('/invitation/opt-out/wrong/').status_code, 404)
+        self.login(self.sa)
+        self.invite('a@college.edu')
+        self.assertEqual(mail.outbox, [])
+        self.assertContains(self.client.post(self.URL, {'retry': inv.pk}, follow=True), 'cannot be retried')
+        self.assertEqual(mail.outbox, [])
+
+    def test_invitation_still_sending_cannot_be_sent_twice(self):
+        inv = FreeYearInvitation.objects.create(email='a@college.edu')
+        self.assertNotContains(self.client.get(self.URL), 'Try again')
+        with self.captureOnCommitCallbacks(execute=True):
+            self.client.post(self.URL, {'retry': inv.pk})
+        self.assertEqual(mail.outbox, [])
+        FreeYearInvitation.objects.filter(pk=inv.pk).update(created_at=timezone.now() - timezone.timedelta(hours=2))
+        self.assertContains(self.client.get(self.URL), 'Try again')
+        with self.captureOnCommitCallbacks(execute=True):
+            self.client.post(self.URL, {'retry': inv.pk})
+        self.assertEqual([m.to for m in mail.outbox], [['a@college.edu']])
+
+    def test_response_is_shown_to_super_admin(self):
+        FreeYearInvitation.objects.create(email='a@college.edu', status=FreeYearInvitation.SENT, sent_at=timezone.now())
+        FreeYearApplication.objects.create(name='A', email='a@college.edu', institution='X')
+        self.assertContains(self.client.get(self.URL), 'Applied: Pending')
+
+    def test_invitation_link_opens_the_popup(self):
+        self.client.logout()
+        self.assertContains(self.client.get('/?apply=1'), "get('apply') === '1'")
