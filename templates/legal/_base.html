@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="grid lg:grid-cols-4 gap-6">
+  <aside class="lg:col-span-1 no-print">
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sticky top-4 space-y-1 text-xs">
+      {% block aside %}
+      <div class="text-[10px] uppercase tracking-wider text-slate-400 font-mono mb-2">About & legal</div>
+      <a href="{% url 'about' %}" class="block px-2 py-1.5 rounded {% if page == 'about' %}bg-teal-50 text-teal-800 font-semibold{% else %}text-slate-600 hover:bg-slate-50{% endif %}">About XPRISM</a>
+      <a href="{% url 'privacy' %}" class="block px-2 py-1.5 rounded {% if page == 'privacy' %}bg-teal-50 text-teal-800 font-semibold{% else %}text-slate-600 hover:bg-slate-50{% endif %}">Privacy Policy</a>
+      <a href="{% url 'terms' %}" class="block px-2 py-1.5 rounded {% if page == 'terms' %}bg-teal-50 text-teal-800 font-semibold{% else %}text-slate-600 hover:bg-slate-50{% endif %}">Terms of Service</a>
+      <a href="{% url 'ethics' %}" class="block px-2 py-1.5 rounded {% if page == 'ethics' %}bg-teal-50 text-teal-800 font-semibold{% else %}text-slate-600 hover:bg-slate-50{% endif %}">Ethical use & trial rules</a>
+      <a href="{% url 'conditions' %}" class="block px-2 py-1.5 rounded {% if page == 'conditions' %}bg-teal-50 text-teal-800 font-semibold{% else %}text-slate-600 hover:bg-slate-50{% endif %}">Conditions of Use</a>
+      <div class="border-t pt-2 mt-2 text-[11px] text-slate-500">Version {{ POLICY_VERSION }}<br>Effective {{ POLICY_EFFECTIVE }}</div>
+      <button onclick="window.print()" class="mt-2 w-full py-1.5 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50">Print / save as PDF</button>
+      {% endblock %}
+    </div>
+  </aside>
+  <article class="lg:col-span-3 bg-white rounded-xl border border-slate-200 shadow-sm p-6 md:p-8 legal text-sm text-slate-700 leading-relaxed space-y-4">
+    {% block doc %}{% endblock %}
+  </article>
+</div>
+{% endblock %}
+{% block head %}<style>
+  .legal h1 { font-size: 1.5rem; font-weight: 800; color: #0a1f44; }
+  .legal h2 { font-size: 1rem; font-weight: 700; color: #0a1f44; margin-top: 1.5rem; padding-top: .75rem; border-top: 1px solid #e2e8f0; }
+  .legal h3 { font-size: .875rem; font-weight: 700; color: #334155; margin-top: .75rem; }
+  .legal ul { list-style: disc; padding-left: 1.25rem; } .legal ol { list-style: decimal; padding-left: 1.25rem; }
+  .legal li { margin: .2rem 0; } .legal a { color: #681197; text-decoration: underline; }
+  .legal table { width: 100%; font-size: .75rem; border-collapse: collapse; } .legal th, .legal td { border: 1px solid #e2e8f0; padding: .4rem .5rem; text-align: left; vertical-align: top; } .legal th { background: #f8fafc; }
+  .legal tr:target td { background: #faf3fe; } .legal [id] { scroll-margin-top: 1rem; }
+  .legal details { border: 1px solid #e2e8f0; border-radius: .5rem; padding: .5rem .75rem; } .legal summary { cursor: pointer; font-weight: 600; color: #0a1f44; } .legal details p { margin-top: .4rem; }
+</style>{% endblock %}

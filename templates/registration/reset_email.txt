@@ -1,0 +1,10 @@
+Hello {{ user.get_full_name|default:user.username }},
+
+Someone (hopefully you) asked to reset the password for your XPRISM account "{{ user.username }}".
+
+Open this link to choose a new password (valid for 3 days):
+{{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}
+
+If you did not ask for this, ignore this e-mail; your password will not change.
+
+XPRISM

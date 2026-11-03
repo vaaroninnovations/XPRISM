@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Trial users{% endblock %}
+{% block content %}
+<div class="flex flex-wrap items-end justify-between gap-3">
+  <div><h1 class="text-xl font-bold text-slate-900">Free-trial users</h1><p class="text-xs text-slate-500">Self-registered accounts. Grant an individual subscription to unlock unlimited access, or reset a trial.</p></div>
+  <form class="flex gap-2"><input name="q" value="{{ q }}" placeholder="Search name, e-mail, institution…" class="bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs w-64"><button class="px-3 py-1.5 rounded-lg bg-slate-800 text-white text-xs">Search</button></form>
+</div>
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+<table class="obs-table w-full text-xs text-left"><thead><tr><th>Name</th><th>E-mail / username</th><th>Institution</th><th>I am a</th><th>Joined</th><th>Last sign-in</th><th>Modules used</th><th>Ethics</th><th>Access</th><th>Actions</th></tr></thead><tbody>
+{% for u in page %}<tr>
+  <td class="font-semibold">{{ u.get_full_name|default:"—" }}</td><td class="mono">{{ u.username }}</td><td>{{ u.institution|default:"—" }}</td><td>{{ u.occupation|default:"—" }}</td>
+  <td class="mono">{{ u.date_joined|date:"d M Y" }}</td><td class="mono">{{ u.last_login|date:"d M H:i"|default:"never" }}</td>
+  <td><div class="flex items-center gap-2"><span class="mono font-bold">{{ u.n_used }}/{{ n_exp }}</span><div class="w-16 h-1.5 bg-slate-100 rounded"><div class="h-full bg-amber-400 rounded" style="width: {% widthratio u.n_used n_exp 100 %}%"></div></div></div></td>
+  <td>{% if u.ethics_version %}<span class="text-emerald-700">✓ {{ u.ethics_at|date:"d M" }}</span>{% else %}<span class="text-slate-400">pending</span>{% endif %}</td>
+  <td>{% if u.subscribed_until and u.subscribed_until >= today %}<span class="text-emerald-700 font-semibold">Subscribed to {{ u.subscribed_until|date:"d M Y" }}</span>{% else %}<span class="text-amber-700">Trial</span>{% endif %}</td>
+  <td class="whitespace-nowrap">
+    <form method="post" class="inline-flex gap-1 items-center">{% csrf_token %}<input type="hidden" name="user" value="{{ u.pk }}"><input type="date" name="until" class="border rounded px-1 py-0.5 text-[11px]" aria-label="Subscription end date"><button name="action" value="grant" class="px-2 py-0.5 rounded bg-teal-600 text-white text-[11px]">Grant</button></form>
+    {% if u.subscribed_until %}<form method="post" class="inline">{% csrf_token %}<input type="hidden" name="user" value="{{ u.pk }}"><button name="action" value="revoke" class="text-rose-600 hover:underline text-[11px]">Revoke</button></form>{% endif %}
+    <form method="post" class="inline" onsubmit="return confirm('Reset the free trial for {{ u.username }}?')">{% csrf_token %}<input type="hidden" name="user" value="{{ u.pk }}"><button name="action" value="reset" class="text-slate-600 hover:underline text-[11px]">Reset trial</button></form>
+  </td></tr>
+{% empty %}<tr><td colspan="10" class="text-slate-400 py-4">No trial users yet.</td></tr>{% endfor %}
+</tbody></table></div>
+{% if page.has_other_pages %}<div class="flex justify-between text-xs">{% if page.has_previous %}<a href="?q={{ q }}&page={{ page.previous_page_number }}" class="text-teal-700">← Previous</a>{% else %}<span></span>{% endif %}<span>Page {{ page.number }} / {{ page.paginator.num_pages }}</span>{% if page.has_next %}<a href="?q={{ q }}&page={{ page.next_page_number }}" class="text-teal-700">Next →</a>{% endif %}</div>{% endif %}
+{% endblock %}

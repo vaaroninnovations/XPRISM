@@ -1,0 +1,46 @@
+{% extends 'legal/_base.html' %}
+{% block title %}Conditions of Use{% endblock %}
+{% block doc %}
+<div class="mono text-[11px] text-teal-700 font-bold">CONDITIONS OF USE</div>
+<h1>Conditions of Use & Academic Integrity</h1>
+<p class="text-xs text-slate-500">Version {{ POLICY_VERSION }} • effective {{ POLICY_EFFECTIVE }} • part of the <a href="{% url 'terms' %}">Terms of Service</a></p>
+<p>These conditions set out what is and is not allowed when using XPRISM (Experimental Pharmacology Research &amp; Interactive Student Module). They apply to every user, whatever their role.</p>
+
+<h2>1. Academic integrity (students)</h2>
+<ul>
+  <li>Submit only your own work. Do not let anyone else operate your account or complete your experiments, and do not do so for others.</li>
+  <li>Each student receives their own randomised "unknown" drugs, test solutions and tissue sensitivities. Copying another student's answers is detectable and will not match your own experiment.</li>
+  <li>In <b>exam mode</b> you must work alone, within the time limit, without assistance or unauthorised material. Do not attempt to bypass the timer, re-enable disabled controls, inspect or modify the page's code, or open several attempts in parallel.</li>
+  <li>Breaches may be reported to your college and handled under its academic-misconduct rules. Faculty may set aside marks obtained dishonestly.</li>
+</ul>
+
+<h2>2. Responsibilities of faculty and administrators</h2>
+<ul>
+  <li>Access only the data of students and staff you are responsible for, and only for teaching, assessment or administration.</li>
+  <li>Distribute temporary passwords and credential sheets securely (e.g. individually, not on public notice boards or open groups), and delete downloaded credential files once distributed.</li>
+  <li>Exported marks sheets contain personal data: store them securely and share them only with those entitled to see them.</li>
+  <li>Handle data-protection requests promptly (within 30 days) through the Requests page.</li>
+  <li>Deactivate accounts of staff and students who have left.</li>
+</ul>
+
+<h2>3. Prohibited use (everyone)</h2>
+<ul>
+  <li>Attempting to access accounts, data or pages you are not authorised for; probing, scanning or testing the vulnerability of the Lab; or circumventing authentication, rate limits or role restrictions.</li>
+  <li>Automated access (bots, scrapers, scripts) other than normal use of a web browser.</li>
+  <li>Uploading files that contain malware, or personal data of people who have not agreed to it.</li>
+  <li>Interfering with the operation of the Lab or other users' use of it, including overloading the server.</li>
+  <li>Using the Lab or its content for commercial purposes, or copying or redistributing simulations, without written permission.</li>
+  <li>Harassing, impersonating or misrepresenting yourself as another person or role.</li>
+  <li>Creating more than one free-trial account, or sharing a trial or subscribed account, to get around the <a href="{% url 'ethics' %}">one-visit-per-module trial rule</a>.</li>
+  <li>Using simulated results as real experimental data, or as guidance for treating humans or animals.</li>
+</ul>
+
+<h2>4. Reporting problems</h2>
+<p>If you find a security problem, an error in a simulation, or content that seems wrong, please report it to <a href="mailto:{{ LEGAL.contact_email }}">{{ LEGAL.contact_email }}</a>. Do not exploit or publicise a security problem before it is fixed. Good-faith reports are welcome.</p>
+
+<h2>5. Consequences</h2>
+<p>Breach of these conditions may lead to suspension or closure of the account, notification of the college, and, where the law is broken, reporting to the appropriate authorities.</p>
+
+<h2>6. Ethical use of animals</h2>
+<p>All users accept the <a href="{% url 'ethics' %}">ethical-use undertaking</a>, based on the 3Rs (Replacement, Reduction, Refinement), the CCSEA framework under the Prevention of Cruelty to Animals Act, 1960, and the Pharmacy Council of India's requirement for computer-assisted modules in place of animal experiments. Simulations do not replace the registration, IAEC approval, training and supervision required for any real work with animals.</p>
+{% endblock %}

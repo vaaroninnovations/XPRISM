@@ -1,0 +1,15 @@
+Hello {{ name }},
+
+Welcome to {{ site_name }}! Your account is ready.
+
+Username: {{ user.username }}{% if batch %}
+Class: {{ batch.name }}{% if batch.college %} ({{ batch.college.name }}){% endif %}{% endif %}{% if is_trial %}
+Plan: Free trial{% endif %}
+
+{% if is_trial %}With the free trial you can explore each experiment once. For unlimited access, see {{ subscribe_url }} or write to {{ subscription_contact }}.{% else %}Your assignments from your faculty will appear on your dashboard. Sign in with the username above and the password you chose.{% endif %}
+
+Open the lab: {{ login_url }}
+
+We have also sent a separate e-mail asking you to verify your address. Please click the link in it.
+
+{{ site_name }}

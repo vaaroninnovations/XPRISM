@@ -1,0 +1,10 @@
+Hello {{ name }},
+
+Please confirm that {{ user.email }} is your e-mail address so we can reach you about your {{ site_name }} account (for example, to reset your password).
+
+Open this link to verify (valid for {{ valid_days }} day{{ valid_days|pluralize }}):
+{{ verify_url }}
+
+If you did not create an account, you can ignore this e-mail.
+
+{{ site_name }}

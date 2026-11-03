@@ -1,0 +1,68 @@
+{# Blocking pop-up after sign-in: free-trial rules (trial users) + ethical-use-of-animals agreement (everyone) #}
+<div id="ethicsModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-[70] flex items-center justify-center p-3" role="dialog" aria-modal="true" aria-labelledby="ethicsTitle">
+  <div class="bg-white rounded-2xl max-w-3xl w-full shadow-2xl border border-slate-200 flex flex-col max-h-[92vh]">
+    <div class="h-1.5 rounded-t-2xl xp-gradient"></div>
+    <div class="px-6 pt-4 pb-3 border-b flex gap-4 items-start">
+      {% load static %}<img src="{% static 'img/xprism-mark.png' %}" alt="" class="w-14 h-14 shrink-0 hidden sm:block" width="56" height="56">
+      <div>
+      <div class="mono text-[11px] text-teal-700 font-bold">{% if IS_TRIAL %}FREE TRIAL RULES & {% endif %}ETHICAL USE AGREEMENT • v{{ ETHICS_VERSION }}</div>
+      <h2 id="ethicsTitle" class="text-lg font-bold text-slate-900">Welcome to XPRISM: before you enter the virtual laboratory</h2>
+      <p class="text-xs text-teal-800 mt-1"><b>Our aim:</b> {{ SITE_AIM_SHORT }}</p>
+      <p class="text-xs text-slate-500">Please read and accept. You need to do this once{% if IS_TRIAL %}; the rules below apply to your free trial{% endif %}.</p>
+      </div>
+    </div>
+    <div class="px-6 py-4 overflow-y-auto text-sm text-slate-700 space-y-4">
+      {% if IS_TRIAL %}
+      <section class="p-4 rounded-xl bg-amber-50 border border-amber-200">
+        <h3 class="text-sm font-bold text-amber-900 mb-2">1. Free-trial rules</h3>
+        <ul class="list-disc pl-5 space-y-1 text-xs text-amber-950">
+          <li>You can open and explore <b>every experiment module once</b>, free of charge.</li>
+          <li>A visit lasts while you stay on that experiment (reloading the page is fine). It ends when you <b>go back to the lab index or a dashboard</b>, <b>open another experiment</b>, <b>sign out</b>, or after <b>{{ TRIAL_HOURS }} hours</b>.</li>
+          <li>Once a visit has ended, that module shows <b>"Subscription only"</b>. Plan your exploration: run the experiment, look at the observation sheet and try the viva before leaving.</li>
+          <li>Trial work is not saved or submitted to any faculty. Full, unlimited access (with assignments, marks and exam mode) is available through a college or individual subscription.</li>
+          <li>One trial per person. Creating extra accounts to repeat the trial is not allowed.</li>
+        </ul>
+      </section>
+      {% endif %}
+      <section class="p-4 rounded-xl bg-teal-50/60 border border-teal-200">
+        <h3 class="text-sm font-bold text-teal-900 mb-2">{% if IS_TRIAL %}2{% else %}1{% endif %}. Why this lab exists: the 3Rs</h3>
+        <p class="text-xs mb-2">These simulations follow the principle of the <b>3Rs</b> for the humane use of animals in science (Russell & Burch, 1959):</p>
+        <div class="grid sm:grid-cols-3 gap-2 text-xs">
+          <div class="p-2 rounded-lg bg-white border border-teal-100"><b class="text-teal-800">Replacement</b><br>Use methods that avoid animals altogether, such as computer simulations, in-vitro methods and models, wherever they achieve the learning objective.</div>
+          <div class="p-2 rounded-lg bg-white border border-teal-100"><b class="text-teal-800">Reduction</b><br>Where animals are unavoidable, use the fewest animals needed for a valid result, through good design and statistics.</div>
+          <div class="p-2 rounded-lg bg-white border border-teal-100"><b class="text-teal-800">Refinement</b><br>Modify procedures, housing and care to minimise pain, distress and lasting harm, and to improve welfare.</div>
+        </div>
+      </section>
+      <section class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+        <h3 class="text-sm font-bold text-slate-900 mb-2">{% if IS_TRIAL %}3{% else %}2{% endif %}. Regulatory and professional framework in India</h3>
+        <ul class="list-disc pl-5 space-y-1.5 text-xs">
+          <li><b>Prevention of Cruelty to Animals Act, 1960</b> and the <b>Breeding of and Experiments on Animals (Control and Supervision) Rules, 1998</b> (amended 2001 and 2006) govern all experiments on animals.</li>
+          <li><b>CCSEA</b>: the Committee for Control and Supervision of Experiments on Animals (known as CPCSEA until its renaming in January 2023) is the statutory committee under the Act. Institutions using animals must be registered with CCSEA, constitute an Institutional Animal Ethics Committee (IAEC), and obtain approval before any experiment. CCSEA's duty is to ensure animals are not subjected to unnecessary pain or suffering.</li>
+          <li><b>PCI</b>: the Pharmacy Council of India has amended its Education Regulations so that, wherever animal experiments are prescribed in the pharmacy curriculum, the required knowledge and skills are to be imparted using <b>computer-assisted modules</b>. This follows the 2012 Ministry of Environment & Forests guidelines recommending alternatives to dissection and animal experimentation in teaching.</li>
+          <li><b>PETA India</b>: People for the Ethical Treatment of Animals (India) is an animal-protection organisation, not a regulator. It campaigned for these changes and promotes non-animal teaching methods, including simulation software, in pharmacy and life-science education.</li>
+        </ul>
+      </section>
+      <section class="p-4 rounded-xl bg-white border border-slate-200">
+        <h3 class="text-sm font-bold text-slate-900 mb-2">{% if IS_TRIAL %}4{% else %}3{% endif %}. My undertaking</h3>
+        <ul class="list-disc pl-5 space-y-1 text-xs">
+          <li>I will use these simulations as teaching aids that <b>replace</b> the use of live animals in routine practical training.</li>
+          <li>I understand that simulated results are generated by models for learning. They are <b>not real data</b> and must not be used for treating humans or animals, or for research or regulatory decisions.</li>
+          <li>If I ever take part in real animal work, I will do so only in a CCSEA-registered establishment, with IAEC approval, proper training and supervision, and with full respect for the 3Rs.</li>
+          <li>I will not use any material from this lab to promote cruelty to animals.</li>
+        </ul>
+        <p class="text-[11px] text-slate-500 mt-2">Full text: <a href="{% url 'ethics' %}" target="_blank" class="text-teal-700 underline">Ethical use of animals & trial rules</a> • <a href="{% url 'terms' %}" target="_blank" class="text-teal-700 underline">Terms</a> • <a href="{% url 'privacy' %}" target="_blank" class="text-teal-700 underline">Privacy</a></p>
+      </section>
+    </div>
+    <form method="post" action="{% url 'ethics_agreement' %}" class="px-6 py-4 border-t bg-slate-50 rounded-b-2xl space-y-2">{% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.GET.next|default:request.get_full_path }}">
+      {% if IS_TRIAL %}<label class="flex items-start gap-2 text-xs text-slate-800"><input type="checkbox" name="agree_trial" required class="accent-teal-600 w-4 h-4 mt-0.5"> <span>I understand the <b>free-trial rules</b>: each module can be explored <b>once</b>, and after I leave it, it is available by subscription only.</span></label>{% endif %}
+      <label class="flex items-start gap-2 text-xs text-slate-800"><input type="checkbox" name="agree_ethics" required class="accent-teal-600 w-4 h-4 mt-0.5"> <span>I have read the <b>3Rs</b> and the <b>CCSEA, PCI and PETA India</b> information above and agree to the <b>ethical-use undertaking</b>.</span></label>
+      <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+        <button form="ethicsLogout" class="text-xs text-slate-500 hover:underline">I do not agree: sign me out</button>
+        <button class="px-5 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow">I agree, enter the lab</button>
+      </div>
+    </form>
+    <form id="ethicsLogout" method="post" action="{% url 'logout' %}" class="hidden">{% csrf_token %}</form>
+  </div>
+</div>
+<script>document.documentElement.style.overflow = 'hidden';</script>

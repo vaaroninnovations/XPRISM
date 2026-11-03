@@ -1,0 +1,1496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exp 07: Ciliary Motility of Frog Oesophagus • XPRISM</title>
+  <meta name="description" content="Hands-on virtual practical: prepare Frog Ringer, ACh, physostigmine and atropine, open and pin the frog oesophagus, apply each drug, time poppy-seed transport with a stopwatch and analyse your own readings.">
+  <meta name="theme-color" content="#0a1f44">
+  <meta name="color-scheme" content="light">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
+  <link rel="stylesheet" href="../assets/css/tailwind.css">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <script src="../assets/js/tone.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    :root { color-scheme: light; }
+    input, select, textarea { background-color: #ffffff; color: #0f172a; -webkit-text-fill-color: #0f172a; caret-color: #0f172a; color-scheme: light; opacity: 1; }
+    input::placeholder { color: #94a3b8; -webkit-text-fill-color: #94a3b8; }
+    input:disabled, select:disabled { background-color: #f1f5f9; color: #64748b; -webkit-text-fill-color: #64748b; }
+    input:focus, select:focus { outline: 2px solid #7e13b5; outline-offset: 1px; }
+    body { font-family: 'Inter', sans-serif; background: #f1f5f9; color: #0a1f44; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .seg { font-family: 'DSEG7', 'JetBrains Mono', monospace; }
+    .obs-table th, .obs-table td { padding: 4px 6px; border-bottom: 1px solid #e2e8f0; }
+    .obs-table thead th { background: #f8fafc; color: #475569; font-weight: 600; }
+    .scroll-thin::-webkit-scrollbar { height: 8px; width: 8px; }
+    .scroll-thin::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+
+    /* ---------- bench layout (self-contained styles) ---------- */
+    .xb-wrap { display: flex; gap: 14px; flex: 1; align-items: flex-start; }
+    .xb-wrap.hidden { display: none; }
+    .xb-main { flex: 1; min-width: 0; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+    .xb-side { width: 340px; flex-shrink: 0; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; max-height: calc(100vh - 150px); }
+    @media (max-width: 1100px) { .xb-wrap { flex-direction: column; } .xb-side { width: 100%; max-height: none; } }
+    .xb-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
+    .xb-st { display: flex; gap: 4px; }
+    .xb-st button { font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; color: #334155; cursor: pointer; }
+    .xb-st button.on { background: #0a1f44; color: #fff; border-color: #0a1f44; }
+    .xb-st button .n { display: inline-block; width: 18px; height: 18px; line-height: 18px; text-align: center; border-radius: 50%; background: #e2e8f0; color: #334155; font-size: 10px; margin-right: 5px; }
+    .xb-st button.on .n { background: #f59e0b; color: #111; }
+    .xb-st button.done .n { background: #10b981; color: #fff; }
+    .xb-scene { position: relative; background: #2a3442; }
+    #scene { display: block; width: 100%; height: auto; touch-action: none; user-select: none; -webkit-user-select: none; }
+    #scene text { pointer-events: none; }
+    #scene .hot { cursor: pointer; }
+    #scene .hot:hover { filter: drop-shadow(0 0 5px rgba(253,224,71,.95)); }
+    #scene .pulse { animation: xpulse 1.4s ease-in-out infinite; }
+    @keyframes xpulse { 0%,100% { filter: drop-shadow(0 0 2px rgba(56,189,248,.3)); } 50% { filter: drop-shadow(0 0 9px rgba(56,189,248,1)); } }
+    .xb-fb { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #0f172a; color: #fff; padding: 8px 14px; font-size: 12px; min-height: 38px; }
+    .xb-fb b { color: #fde68a; }
+    .xb-card { border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; }
+    .xb-h { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #475569; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .xb-now { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 10px; padding: 10px; font-size: 12px; color: #78350f; line-height: 1.45; }
+    .xb-now .t { font-weight: 700; color: #92400e; font-size: 12.5px; margin-bottom: 3px; }
+    .xb-ctx { font-size: 12px; color: #1e293b; line-height: 1.45; }
+    .xb-ctx .row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
+    .xb-in { width: 92px; border: 1px solid #94a3b8; border-radius: 6px; padding: 4px 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+    .xb-btn { font-size: 12px; font-weight: 600; padding: 6px 10px; border-radius: 7px; border: 1px solid transparent; cursor: pointer; background: #0a1f44; color: #fff; }
+    .xb-btn:hover { filter: brightness(1.15); }
+    .xb-btn.sec { background: #fff; color: #0a1f44; border-color: #cbd5e1; }
+    .xb-btn.warn { background: #b91c1c; }
+    .xb-btn:disabled { opacity: .45; cursor: not-allowed; }
+    .xb-steps { list-style: none; margin: 0; padding: 0; font-size: 11.5px; }
+    .xb-steps li { display: flex; gap: 6px; padding: 3px 0; color: #94a3b8; }
+    .xb-steps li.done { color: #047857; }
+    .xb-steps li.cur { color: #92400e; font-weight: 700; }
+    .xb-steps li .k { width: 16px; flex-shrink: 0; text-align: center; }
+    .xb-steps .grp { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: #64748b; font-weight: 700; padding-top: 6px; }
+    .xb-tbl { width: 100%; border-collapse: collapse; font-size: 11px; }
+    .xb-tbl th { background: #f1f5f9; color: #475569; font-weight: 600; padding: 3px; text-align: center; }
+    .xb-tbl td { border-top: 1px solid #e2e8f0; padding: 3px; text-align: center; font-family: 'JetBrains Mono', monospace; }
+    .xb-tbl input { width: 58px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 3px; font-family: 'JetBrains Mono', monospace; font-size: 11px; text-align: center; }
+    .ok-in { border-color: #10b981 !important; background-color: #ecfdf5 !important; color: #065f46 !important; -webkit-text-fill-color: #065f46 !important; font-weight: 700; }
+    .bad-in { border-color: #e11d48 !important; background-color: #fff1f2 !important; color: #9f1239 !important; -webkit-text-fill-color: #9f1239 !important; font-weight: 700; }
+    .flag { display: inline-block; font-size: 9.5px; padding: 0 4px; border-radius: 4px; background: #fee2e2; color: #9f1239; margin: 1px; font-family: Inter, sans-serif; }
+    .xb-speed button { font-size: 11px; font-family: 'JetBrains Mono', monospace; font-weight: 700; padding: 2px 7px; border-radius: 5px; border: 0; background: transparent; color: #475569; cursor: pointer; }
+    .xb-speed { display: flex; border: 1px solid #cbd5e1; border-radius: 7px; background: #fff; padding: 2px; }
+    .xb-strip { background: #1b1b1b; border-top: 1px solid #000; position: relative; }
+    .xb-strip-h { display: flex; justify-content: space-between; color: #a3a3a3; font-size: 10.5px; padding: 5px 10px 0; text-transform: uppercase; letter-spacing: .06em; font-weight: 700; }
+    #kymoStrip { overflow-x: auto; }
+    .xb-man summary { cursor: pointer; font-size: 11px; font-weight: 700; color: #334155; text-transform: uppercase; letter-spacing: .06em; }
+    .xb-man table { width: 100%; font-size: 11px; border-collapse: collapse; margin-top: 6px; }
+    .xb-man td { border-top: 1px solid #e2e8f0; padding: 2px 4px; }
+    .xb-pl { width: 100%; }
+    .tgl { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #475569; }
+    .obs-in { width: 64px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; text-align: center; }
+    @media print {
+      header, #subHeader, #viewTask, #viewExperiment, .no-print { display: none !important; }
+      #viewObservation { display: flex !important; box-shadow: none; border: none; }
+    }
+    .xb-nbk { padding: 10px 12px; background: #fff; border-top: 1px solid #e2e8f0; }
+    .xb-calc { font-size: 12px; color: #1e293b; margin-bottom: 8px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .xb-tbl input { width: 60px; }
+    .xb-bar select.xb-in { font-family: Inter, sans-serif; font-size: 12px; padding: 3px 6px; }
+    .xb-ctx .mono { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-100 overflow-x-hidden">
+
+  <!-- TOP BRANDING BAR (XPRISM Header) -->
+  <header class="site-header bg-white border-b border-slate-200 px-4 md:px-6 py-2 flex items-center justify-between gap-3 shadow-sm shrink-0">
+    <div class="flex items-center gap-3 min-w-0">
+    <a href="../index.html" title="Back to Lab Home" class="shrink-0"><img src="../assets/img/xprism-lockup.png" alt="XPRISM" class="h-11 w-auto" width="146" height="49"></a>
+      <div class="min-w-0 border-l border-slate-200 pl-3">
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="text-[10px] uppercase font-bold bg-teal-50 text-teal-700 px-2 py-0.5 rounded-full border border-teal-200 font-display tracking-wide">Virtual Lab</span>
+        <a href="../index.html" class="text-[11px] font-semibold text-teal-700 hover:underline">← All experiments</a>
+      </div>
+      <p class="text-xs text-slate-500">Aaron Innovations • Experimental Pharmacology Research &amp; Interactive Student Module</p>
+    </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="hidden md:block text-right">
+        <div class="text-xs font-semibold text-slate-800 flex items-center justify-end space-x-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Dr. Vara Prasad Saka</span>
+        </div>
+        <div class="text-[11px] text-slate-500 font-mono">ID: 8019152501 • Dept. of Pharmacology</div>
+      </div>
+      <div class="flex items-center gap-2 border-l pl-4 border-slate-200">
+        <a class="site-nav-btn" href="06-hepatic-enzyme-induction-phenobarbitone-sleeping-time.html" title="Previous: Exp #6 Hepatic Enzyme Induction: Phenobarbitone Sleeping Time">‹</a><a class="site-nav-btn" href="08-local-anaesthetics.html" title="Next: Exp #8 Local Anaesthetics">›</a>
+        <button id="audioToggleBtn" class="p-2 rounded-lg bg-teal-100 hover:bg-teal-200 text-teal-800 transition" title="Toggle sound feedback" aria-label="Toggle sound feedback">
+          <svg id="soundIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+        </button>
+        <span class="hidden sm:inline bg-indigo-100 text-indigo-800 text-xs px-2.5 py-1 rounded-md font-medium border border-indigo-200 whitespace-nowrap">Exp #7</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- SUB-HEADER / VIEW TABS -->
+
+  <div id="subHeader" class="site-subheader bg-slate-800 text-white px-4 md:px-6 py-2 flex flex-wrap items-center justify-between gap-3 shadow shrink-0">
+    <div class="text-sm font-semibold tracking-wide flex items-center space-x-2 min-w-0">
+      <span class="text-teal-400 font-mono text-xs px-1.5 py-0.5 rounded bg-teal-950/80 border border-teal-500/40 shrink-0">MODULE 07</span>
+      <span>Examination 07: To Study the Effect of Acetylcholine and Atropine on the Ciliary Motility of Frog Oesophagus</span>
+    </div>
+    <div class="flex items-center space-x-1.5 bg-slate-900/80 p-1 rounded-lg border border-slate-700" role="tablist">
+      <button id="tabTask" onclick="switchTab('task')" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white transition">Task Description</button>
+      <button id="tabExperiment" onclick="switchTab('experiment')" class="px-3.5 py-1.5 rounded-md text-xs font-semibold bg-teal-500 text-white shadow transition">Experiment Bench</button>
+      <button id="tabObservation" onclick="switchTab('observation')" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white transition">Observation Sheet &amp; Graphs</button>
+    </div>
+  </div>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-5 flex flex-col min-h-0">
+
+    <!-- TAB 1: TASK DESCRIPTION -->
+    <div id="viewTask" class="hidden flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between overflow-y-auto">
+      <div class="max-w-5xl space-y-6">
+        <div class="border-b pb-4">
+          <div class="inline-block px-2.5 py-1 rounded bg-teal-50 text-teal-800 text-xs font-bold font-mono mb-2">EXPERIMENT OBJECTIVE</div>
+          <h2 class="text-xl font-bold text-slate-900">Effect of Drugs on Ciliary Motility of the Frog Oesophagus</h2>
+          <p class="text-sm text-slate-600 mt-2 leading-relaxed">The ciliated epithelium of the frog's buccal cavity and oesophagus carries particles towards the stomach. Place a <strong>poppy seed</strong> at the oral end of the opened oesophagus and measure the <strong>time it takes to travel a fixed distance (20 mm)</strong> in frog Ringer (control), after <strong>acetylcholine</strong>, after <strong>physostigmine</strong>, after <strong>atropine</strong>, and after <strong>acetylcholine in the presence of atropine</strong>.</p>
+          <p class="text-sm text-slate-600 mt-2 leading-relaxed">You do every step yourself: weigh the salts and make Frog Ringer, dilute the ACh ampoule (C<sub>1</sub>V<sub>1</sub> = C<sub>2</sub>V<sub>2</sub>) and make the physostigmine and atropine solutions; pin the (staff-pithed) frog, remove the lower jaw, open the oesophagus, pin it mucosa upwards and mark 20 mm; apply each drug with a dropper, wait the contact time, place the seed with forceps, run the stopwatch yourself, rinse and wait for recovery. You type every time into the notebook and calculate the means, velocities and % changes. Mistakes (dry mucosa, wrong dilution, short contact, poor washing, wrong order, unrinsed dropper) show up in your data.</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-4">
+          <div class="p-4 rounded-xl bg-sky-50/70 border border-sky-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-sky-500 text-white flex items-center justify-center font-bold text-sm shadow">1</div>
+            <h3 class="text-sm font-bold text-sky-950">Principle</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">Ciliary beating and mucus secretion in the frog oesophagus are increased by <strong>muscarinic (M) stimulation</strong>. Faster beating moves the seed faster, so the travel time falls.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-amber-50/70 border border-amber-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center font-bold text-sm shadow">2</div>
+            <h3 class="text-sm font-bold text-amber-950">Expected</h3>
+            <p class="text-xs text-slate-600 leading-relaxed"><strong>ACh</strong>: time ↓ (motility ↑). <strong>Physostigmine</strong>: time ↓ (more endogenous ACh). <strong>Atropine</strong>: time ↑ slightly and it <strong>blocks</strong> the ACh effect.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-emerald-50/70 border border-emerald-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center font-bold text-sm shadow">3</div>
+            <h3 class="text-sm font-bold text-emerald-950">Measure</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">Start the stop-watch when the seed crosses the <strong>start mark</strong> and stop it at the <strong>finish mark</strong>. Velocity (mm/s) = 20 &divide; time. Take 3 readings per treatment.</p>
+          </div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Requirements</h4>
+            <ul class="text-xs text-slate-600 space-y-1 list-disc pl-4"><li>Frog (Rana tigrina), pithed by trained staff (brain and spinal cord destroyed) as approved by the IAEC / CCSEA</li><li>Dissection board, pins, scissors, forceps, frog Ringer solution, dropper</li><li>Poppy seeds, stop-watch, scale (marks 20 mm apart)</li><li>Acetylcholine 100 &micro;g/mL, physostigmine 1 mg/mL, atropine sulphate 1 mg/mL</li></ul>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Procedure</h4>
+            <ol class="text-xs text-slate-600 space-y-1 list-decimal pl-4"><li>Cut the lower jaw and open the oesophagus to the stomach; pin it on the board, mucosa upwards.</li><li>Keep the tissue moist with Ringer. Mark start and finish points 20 mm apart.</li><li>Place a poppy seed at the oral end and time its travel (3 trials). This is the control.</li><li>Add 2&ndash;3 drops of ACh, wait 5 min and take 3 readings. Wash with Ringer and allow 10 min.</li><li>Repeat with physostigmine; then atropine; then ACh in the presence of atropine.</li></ol>
+          </div>
+        </div>
+      </div>
+      <div class="pt-6 border-t flex justify-end mt-6">
+        <button onclick="switchTab('experiment')" class="px-6 py-2.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-semibold text-sm shadow flex items-center space-x-2 transition">
+          <span>Go to Experiment Stage</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 2: EXPERIMENT BENCH -->
+    <div id="viewExperiment" class="xb-wrap">
+      <div class="xb-main">
+        <div class="xb-bar">
+          <div class="xb-st" id="stationBtns">
+            <button data-s="1" onclick="goStation(1)"><span class="n">1</span>Solutions</button>
+            <button data-s="2" onclick="goStation(2)"><span class="n">2</span>Frog preparation</button>
+            <button data-s="3" onclick="goStation(3)"><span class="n">3</span>Ciliary transport</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:11px;color:#64748b;font-weight:600">Lab time</span>
+            <span id="labClock" class="mono" style="font-size:12px;font-weight:700;color:#0a1f44">09:00</span>
+            <div class="xb-speed" id="speedBtns" title="Time runs faster; you still do every step"></div>
+          </div>
+        </div>
+        <div class="xb-scene">
+          <svg id="scene" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet"></svg>
+        </div>
+        <div class="xb-fb" id="actionFeedback">
+          <div style="display:flex;align-items:center;gap:8px"><span id="feedbackIcon" style="color:#2dd4bf;font-weight:700">ℹ</span><span id="feedbackText">Ready.</span></div>
+          <span id="phaseIndicator" class="mono" style="font-size:11px;color:#94a3b8"></span>
+        </div>
+        <div class="xb-nbk">
+          <div class="xb-h"><span>Lab notebook: type every reading yourself (green = matches the instrument, red = check again)</span></div>
+          <div id="nbCalc" class="xb-calc"></div>
+          <div style="max-height:300px;overflow:auto" class="scroll-thin">
+            <table class="xb-tbl"><thead><tr><th style="text-align:left">Treatment</th><th>Time 1 (s)</th><th>Time 2 (s)</th><th>Time 3 (s)</th><th>Mean (s)</th><th>Velocity (mm/s)</th><th style="text-align:left">Technique flags</th></tr></thead><tbody id="nbBody"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <aside class="xb-side">
+        <div class="xb-now" id="nowBox"></div>
+        <div class="xb-card"><div class="xb-h"><span id="ctxTitle">Bench</span></div><div class="xb-ctx" id="ctx"></div></div>
+        <div class="xb-card">
+          <div class="xb-h"><span>Protocol checklist</span><label class="tgl"><input type="checkbox" id="hintToggle" checked onchange="HINTS=this.checked;refreshHints()"> highlight next</label></div>
+          <ul class="xb-steps" id="checklist"></ul>
+        </div>
+        <details class="xb-card xb-man">
+          <summary>Lab manual: quick reference</summary>
+          <table>
+            <tr><td>Frog Ringer (100 mL)</td><td class="mono">NaCl 650, KCl 14, CaCl₂ 12, NaHCO₃ 20 mg</td></tr>
+            <tr><td>ACh</td><td class="mono">100 µg/mL (from 1 mg/mL)</td></tr>
+            <tr><td>Physostigmine</td><td class="mono">1 mg/mL</td></tr>
+            <tr><td>Atropine sulphate</td><td class="mono">1 mg/mL</td></tr>
+            <tr><td>Drug dose</td><td class="mono">2–3 drops on the mucosa</td></tr>
+            <tr><td>Contact time</td><td class="mono">5 min</td></tr>
+            <tr><td>Wash &amp; recovery</td><td class="mono">Ringer rinse, 10 min</td></tr>
+            <tr><td>Distance</td><td class="mono">20 mm (start → finish)</td></tr>
+            <tr><td>Readings</td><td class="mono">3 per treatment</td></tr>
+          </table>
+        </details>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="xb-btn sec" onclick="switchTab('observation')">Observation sheet →</button>
+          <button class="xb-btn sec" onclick="if(confirm('Discard everything and start the practical again from the beginning?')) newExperiment()">Restart practical</button>
+        </div>
+      </aside>
+    </div>
+
+    <!-- TAB 3: OBSERVATION SHEET -->
+    <div id="viewObservation" class="hidden flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between overflow-y-auto">
+      <div class="space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b pb-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Observation Table: Time Taken by Poppy Seed to Travel 20 mm</h2>
+            <p class="text-xs text-slate-500">Pithed frog • opened oesophagus on the board • frog Ringer • 5-min drug contact • 10-min wash recovery • values come from your notebook</p>
+          </div>
+          <div class="flex items-center space-x-3 no-print">
+            <button onclick="renderObservation()" class="px-3.5 py-1.5 rounded-lg bg-teal-50 border border-teal-300 hover:bg-teal-100 text-teal-800 text-xs font-semibold transition">Refresh from notebook</button>
+          </div>
+        </div>
+        <div class="border border-slate-200 rounded-xl overflow-x-auto shadow-sm" id="sumBox"></div>
+        <div class="grid lg:grid-cols-3 gap-4">
+          <div class="border border-slate-200 rounded-xl p-3 shadow-sm"><div class="text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">Travel time (s), mean &plusmn; SEM</div><svg id="chartTime" viewBox="0 0 420 260" class="w-full"></svg></div>
+          <div class="border border-slate-200 rounded-xl p-3 shadow-sm"><div class="text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">Ciliary transport velocity (mm/s)</div><svg id="chartVel" viewBox="0 0 420 260" class="w-full"></svg></div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+            <div class="text-[10px] text-slate-500 uppercase font-semibold font-mono">Inference</div>
+            <div id="lblInference" class="text-sm font-bold text-slate-800">Pending</div>
+            <p id="lblInferenceDetail" class="text-[11px] text-slate-600 leading-relaxed">Record at least three control readings and one drug treatment.</p>
+          </div>
+        </div>
+      </div>
+      <div class="pt-6 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 mt-6 no-print">
+        <div class="text-xs text-slate-500 font-mono">XPRISM • Ciliary Motility (Frog Oesophagus) Practical Evaluation</div>
+        <div class="flex items-center space-x-3">
+          <button onclick="openModal('modalQuestions')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow transition">Answer Viva Questions</button>
+          <button onclick="openResultsModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow transition">Results &amp; Summary</button>
+          <button onclick="window.print()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg shadow transition">Print Report</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer no-print border-t border-slate-200 bg-white shrink-0">
+    <div class="max-w-7xl mx-auto px-6 py-3 text-xs text-slate-500 font-mono flex justify-between flex-wrap gap-2">
+      <span>XPRISM • Exp #07 • © 2026 Aaron Innovations • Dr. Vara Prasad Saka</span>
+      <span>Simulations are teaching aids that reduce animal use, in line with CCSEA 3Rs guidance. • <a href="../index.html" class="text-teal-700 hover:underline">All experiments</a></span>
+    </div>
+  </footer>
+
+  <!-- MODAL: VIVA -->
+  <div id="modalQuestions" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-base font-bold text-slate-800">Ciliary Motility: Viva-Voce</h3>
+        <button onclick="closeModal('modalQuestions')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+      <div id="quizScore" class="hidden p-2.5 rounded-lg text-xs font-semibold"></div>
+      <div id="quizBody" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2 text-xs text-slate-700"></div>
+      <div class="pt-3 border-t flex justify-end space-x-2">
+        <button onclick="renderQuiz()" class="px-4 py-2 border rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">Reset</button>
+        <button onclick="evaluateQuestions()" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-lg shadow">Submit Answers</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: RESULTS -->
+  <div id="modalResults" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-base font-bold text-slate-800">Laboratory Results Summary</h3>
+        <button onclick="closeModal('modalResults')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+      <div id="resBody" class="space-y-2 text-xs"></div>
+      <div id="resExplanation" class="p-3 rounded-lg bg-teal-50 border border-teal-200 text-teal-900 leading-relaxed text-[11px]"></div>
+      <div class="pt-3 border-t flex justify-end">
+        <button onclick="closeModal('modalResults')" class="px-6 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg shadow">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =====================================================================
+    // XPRISM shared simulation toolkit (tabs, sound, stats, charts, viva)
+    // =====================================================================
+    const $ = id => document.getElementById(id);
+    const svgNS = "http://www.w3.org/2000/svg";
+    function el(tag, attrs = {}, parent) {
+      const e = document.createElementNS(svgNS, tag);
+      for (const k in attrs) e.setAttribute(k, attrs[k]);
+      if (parent) parent.appendChild(e);
+      return e;
+    }
+    function svgPoint(svg, evt) {
+      const pt = svg.createSVGPoint();
+      const src = evt.touches ? evt.touches[0] : evt;
+      pt.x = src.clientX; pt.y = src.clientY;
+      return pt.matrixTransform(svg.getScreenCTM().inverse());
+    }
+    function gauss() {
+      let u = 0, v = 0;
+      while (u === 0) u = Math.random();
+      while (v === 0) v = Math.random();
+      return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    }
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+    const shuffle = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+    const mean = a => a.length ? a.reduce((s, x) => s + x, 0) / a.length : NaN;
+    const sd = a => { if (a.length < 2) return 0; const m = mean(a); return Math.sqrt(a.reduce((s, x) => s + (x - m) ** 2, 0) / (a.length - 1)); };
+    const sem = a => a.length < 2 ? 0 : sd(a) / Math.sqrt(a.length);
+    const fx = (v, d = 1) => (v === null || v === undefined || !isFinite(v)) ? '—' : (+v).toFixed(d);
+    const fmtMS = s => { s = Math.max(0, Math.round(s)); return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
+    const fmtHMS = s => { s = Math.max(0, Math.round(s)); const h = Math.floor(s / 3600); return `${h}:${String(Math.floor(s % 3600 / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
+    const log10 = Math.log10;
+
+    // ---- t-distribution (two-tailed p) via regularised incomplete beta ----
+    function betacf(a, b, x) {
+      let qab = a + b, qap = a + 1, qam = a - 1, c = 1, d = 1 - qab * x / qap;
+      if (Math.abs(d) < 1e-30) d = 1e-30; d = 1 / d; let h = d;
+      for (let m = 1; m <= 200; m++) {
+        const m2 = 2 * m; let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+        d = 1 + aa * d; if (Math.abs(d) < 1e-30) d = 1e-30; c = 1 + aa / c; if (Math.abs(c) < 1e-30) c = 1e-30; d = 1 / d; h *= d * c;
+        aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+        d = 1 + aa * d; if (Math.abs(d) < 1e-30) d = 1e-30; c = 1 + aa / c; if (Math.abs(c) < 1e-30) c = 1e-30; d = 1 / d;
+        const del = d * c; h *= del; if (Math.abs(del - 1) < 3e-7) break;
+      }
+      return h;
+    }
+    function gammaln(x) {
+      const c = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5];
+      let y = x, t = x + 5.5; t -= (x + 0.5) * Math.log(t); let s = 1.000000000190015;
+      for (let j = 0; j < 6; j++) s += c[j] / ++y;
+      return -t + Math.log(2.5066282746310005 * s / x);
+    }
+    function betai(a, b, x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      const bt = Math.exp(gammaln(a + b) - gammaln(a) - gammaln(b) + a * Math.log(x) + b * Math.log(1 - x));
+      return x < (a + 1) / (a + b + 2) ? bt * betacf(a, b, x) / a : 1 - bt * betacf(b, a, 1 - x) / b;
+    }
+    function tTest(a, b) { // unpaired Student's t (pooled variance)
+      if (a.length < 2 || b.length < 2) return { t: NaN, df: NaN, p: NaN };
+      const df = a.length + b.length - 2;
+      const sp2 = ((a.length - 1) * sd(a) ** 2 + (b.length - 1) * sd(b) ** 2) / df;
+      const se = Math.sqrt(sp2 * (1 / a.length + 1 / b.length));
+      const t = se === 0 ? (mean(a) === mean(b) ? 0 : 99) : (mean(a) - mean(b)) / se;
+      return { t, df, p: betai(df / 2, 0.5, df / (df + t * t)) };
+    }
+    const pLabel = p => !isFinite(p) ? '—' : p < 0.001 ? 'p < 0.001' : p < 0.01 ? 'p < 0.01' : p < 0.05 ? 'p < 0.05' : 'p > 0.05 (ns)';
+    const stars = p => !isFinite(p) ? '' : p < 0.001 ? '***' : p < 0.01 ? '**' : p < 0.05 ? '*' : 'ns';
+    function linreg(xs, ys) {
+      const n = xs.length; if (n < 2) return null;
+      const mx = mean(xs), my = mean(ys);
+      let sxy = 0, sxx = 0, syy = 0;
+      for (let i = 0; i < n; i++) { sxy += (xs[i] - mx) * (ys[i] - my); sxx += (xs[i] - mx) ** 2; syy += (ys[i] - my) ** 2; }
+      const slope = sxy / sxx, intercept = my - slope * mx;
+      return { slope, intercept, r2: syy === 0 ? 1 : (sxy * sxy) / (sxx * syy) };
+    }
+    // log-linear interpolation of the dose giving response `target` on an ascending curve [[dose, resp], ...]
+    function interpDose(pts, target) {
+      const s = pts.filter(p => p[0] > 0).slice().sort((a, b) => a[0] - b[0]);
+      for (let i = 0; i < s.length - 1; i++) {
+        const [d1, r1] = s[i], [d2, r2] = s[i + 1];
+        if ((r1 <= target && r2 >= target) && r2 !== r1) {
+          const f = (target - r1) / (r2 - r1);
+          return Math.pow(10, log10(d1) + f * (log10(d2) - log10(d1)));
+        }
+      }
+      return NaN;
+    }
+
+    // ---- Sound ----
+    let soundOn = true, synth = null;
+    function beep(type = 'click') {
+      if (!soundOn || typeof Tone === 'undefined') return;
+      try {
+        if (!synth) { Tone.start(); synth = new Tone.PolySynth(Tone.Synth).toDestination(); synth.volume.value = -16; }
+        const n = { click: 'C6', ok: 'E5', warn: 'A3', done: 'G5', tick: 'C7', low: 'E3' }[type] || 'C6';
+        synth.triggerAttackRelease(n, type === 'done' ? '8n' : '32n');
+      } catch (e) { /* audio optional */ }
+    }
+
+    // ---- Feedback / stepper ----
+    function showFeedback(msg, isAlert = false) {
+      $('feedbackText').innerHTML = msg;
+      const icon = $('feedbackIcon');
+      icon.innerText = isAlert ? "⚠️" : "ℹ";
+      icon.className = isAlert ? "text-amber-400 font-bold" : "text-teal-400 font-bold";
+      if (isAlert) beep('warn');
+    }
+    function setPhase(t) { $('phaseIndicator').innerText = t || ''; }
+    function renderSteps(steps) {
+      let active = steps.findIndex(s => !s.done);
+      $('stepper').innerHTML = steps.map((s, i) => {
+        const cls = s.done ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : i === active ? 'bg-amber-50 text-amber-800 border-amber-300 ring-1 ring-amber-200' : 'bg-slate-50 text-slate-400 border-slate-200';
+        return `<span class="px-2 py-1 rounded-md border ${cls}">${s.done ? '✓' : (i + 1)} ${s.t}</span>`;
+      }).join('');
+    }
+
+    // ---- Speed ----
+    let SPEED = 1, SPEEDS = [1, 5, 20, 60];
+    function renderSpeed() {
+      $('speedBtns').innerHTML = SPEEDS.map(s => `<button onclick="setSpeed(${s})" class="px-2 py-0.5 text-[11px] rounded font-mono font-semibold ${s === SPEED ? 'bg-teal-600 text-white' : 'text-slate-600 hover:bg-slate-100'}">${s}×</button>`).join('');
+    }
+    function setSpeed(s) { SPEED = s; renderSpeed(); beep('tick'); }
+
+    // ---- Generic wait timer (simulated seconds) ----
+    let WAIT = null;
+    function startWait(title, seconds, onDone) {
+      WAIT = { title, total: seconds, left: seconds, onDone };
+      $('waitTitle').innerText = title; $('waitCard').classList.remove('hidden');
+    }
+    function skipWait() { if (WAIT) WAIT.left = 0; }
+    function cancelWait() { WAIT = null; $('waitCard').classList.add('hidden'); }
+    function tickWait(dtSim) {
+      if (!WAIT) return;
+      WAIT.left -= dtSim;
+      $('waitClock').innerText = WAIT.total >= 3600 ? fmtHMS(WAIT.left) : fmtMS(WAIT.left);
+      $('waitBar').style.width = `${clamp(100 * (1 - WAIT.left / WAIT.total), 0, 100)}%`;
+      if (WAIT.left <= 0) { const w = WAIT; WAIT = null; $('waitCard').classList.add('hidden'); beep('done'); w.onDone && w.onDone(); }
+    }
+    let _lastTs = null;
+    function startLoop(cb) {
+      const f = ts => {
+        if (_lastTs === null) _lastTs = ts;
+        const dtR = Math.min(0.1, Math.max(0, (ts - _lastTs) / 1000)); _lastTs = ts;
+        tickWait(dtR * SPEED);
+        cb && cb(dtR * SPEED, dtR);
+        requestAnimationFrame(f);
+      };
+      requestAnimationFrame(f);
+    }
+
+    // ---- Tabs / modals ----
+    function openModal(id) { $(id).classList.remove('hidden'); }
+    function closeModal(id) { $(id).classList.add('hidden'); }
+    function switchTab(tabId) {
+      const map = { task: ['viewTask', 'tabTask'], experiment: ['viewExperiment', 'tabExperiment'], observation: ['viewObservation', 'tabObservation'] };
+      Object.values(map).forEach(([v, t]) => {
+        $(v).classList.add('hidden');
+        const b = $(t); b.classList.remove('bg-teal-500', 'text-white', 'shadow'); b.classList.add('text-slate-300');
+      });
+      $(map[tabId][0]).classList.remove('hidden');
+      $(map[tabId][1]).classList.add('bg-teal-500', 'text-white', 'shadow');
+      if (tabId === 'observation') renderObservation();
+    }
+
+    // ---- Viva ----
+    function renderQuiz() {
+      $('quizScore').classList.add('hidden');
+      $('quizBody').innerHTML = QUIZ.map((q, i) => `<div class="space-y-1.5" id="qwrap${i}">
+        <p class="font-semibold text-slate-800">${i + 1}. ${q.q}</p>
+        ${q.o.map((o, j) => `<label class="flex items-start gap-2 p-1.5 rounded hover:bg-slate-50 cursor-pointer"><input type="radio" name="q${i}" value="${j}" class="mt-0.5 accent-teal-600"><span>${o}</span></label>`).join('')}
+        <p id="qexp${i}" class="hidden text-[11px] p-2 rounded"></p></div>`).join('');
+    }
+    function evaluateQuestions() {
+      const ans = QUIZ.map((_, i) => document.querySelector(`input[name="q${i}"]:checked`)?.value);
+      if (ans.some(a => a === undefined)) { const s = $('quizScore'); s.className = 'p-2.5 rounded-lg text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200'; s.innerText = `Please answer all ${QUIZ.length} questions before submitting.`; return; }
+      let score = 0;
+      QUIZ.forEach((q, i) => {
+        const ok = +ans[i] === q.a; if (ok) score++;
+        const e = $('qexp' + i); e.classList.remove('hidden');
+        e.className = `text-[11px] p-2 rounded ${ok ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-rose-50 text-rose-800 border border-rose-200'}`;
+        e.innerHTML = `${ok ? '✓ Correct.' : `✗ Correct answer: <b>${q.o[q.a]}</b>.`} ${q.e || ''}`;
+      });
+      const s = $('quizScore'); s.className = `p-2.5 rounded-lg text-xs font-semibold ${score / QUIZ.length >= 0.6 ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-amber-50 text-amber-800 border border-amber-200'}`;
+      s.innerText = `Viva score: ${score}/${QUIZ.length} (${Math.round(score / QUIZ.length * 100)}%)`;
+      beep(score / QUIZ.length >= 0.6 ? 'done' : 'warn');
+      $('quizBody').scrollTop = 0;
+    }
+
+    // ---- Results modal ----
+    function openResultsModal() {
+      const r = buildResults();
+      $('resBody').innerHTML = r.rows.map(([k, v]) => `<div class="flex justify-between gap-3 border-b border-slate-100 pb-1"><span class="text-slate-500">${k}</span><span class="font-semibold text-slate-800 text-right">${v}</span></div>`).join('');
+      $('resExplanation').innerHTML = r.text;
+      openModal('modalResults');
+    }
+    // numeric answer verification (bioassays / unknowns)
+    function verifyNumber(inputId, outId, truth, tolPct, unit, explain) {
+      const v = parseFloat($(inputId).value), o = $(outId);
+      if (!isFinite(v)) { o.className = 'text-xs font-semibold text-amber-700'; o.innerText = 'Enter a number first.'; return; }
+      const err = Math.abs(v - truth) / truth * 100;
+      const ok = err <= tolPct;
+      o.className = `text-xs font-semibold ${ok ? 'text-emerald-700' : 'text-rose-700'}`;
+      o.innerHTML = ok ? `✓ Accepted (${fx(err, 1)}% from the true value of ${fx(truth, 3)} ${unit}). ${explain || ''}` : `✗ ${fx(err, 0)}% away from the true value. Re-check your matching/calculation (accepted within ±${tolPct}%).`;
+      beep(ok ? 'done' : 'warn');
+    }
+
+    // ---- SVG charts ----
+    const PALETTE = { teal: '#7e13b5', indigo: '#4f46e5', rose: '#e11d48', amber: '#d97706', slate: '#475569', emerald: '#059669', sky: '#0284c7', violet: '#7c3aed' };
+    function niceTicks(min, max, n = 5) {
+      if (!(max > min)) { max = min + 1; }
+      const span = max - min, step0 = span / n, mag = Math.pow(10, Math.floor(log10(step0)));
+      const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => span / s <= n) || mag * 10;
+      const out = []; for (let v = Math.ceil(min / step - 1e-9) * step; v <= max + 1e-9; v += step) out.push(+v.toFixed(10));
+      return out;
+    }
+    function chartFrame(svg, o) {
+      svg.innerHTML = '';
+      const W = +(svg.getAttribute('viewBox').split(' ')[2]), H = +(svg.getAttribute('viewBox').split(' ')[3]);
+      const m = { l: 46, r: 12, t: 12, b: 38 };
+      const X = v => m.l + (v - o.xMin) / (o.xMax - o.xMin) * (W - m.l - m.r);
+      const Y = v => H - m.b - (v - o.yMin) / (o.yMax - o.yMin) * (H - m.t - m.b);
+      const yt = o.yTicks || niceTicks(o.yMin, o.yMax, 5);
+      yt.forEach(v => { el('line', { x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), stroke: '#e2e8f0' }, svg); const t = el('text', { x: m.l - 5, y: Y(v) + 3, 'text-anchor': 'end', 'font-size': 9, fill: '#64748b' }, svg); t.textContent = o.yFmt ? o.yFmt(v) : +v.toFixed(3); });
+      const xt = o.xTicks || niceTicks(o.xMin, o.xMax, 6).map(v => [v, o.xFmt ? o.xFmt(v) : +v.toFixed(3)]);
+      xt.forEach(([v, lab]) => { el('line', { x1: X(v), x2: X(v), y1: H - m.b, y2: H - m.b + 4, stroke: '#94a3b8' }, svg); const t = el('text', { x: X(v), y: H - m.b + 14, 'text-anchor': 'middle', 'font-size': 9, fill: '#64748b' }, svg); t.textContent = lab; });
+      el('line', { x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b, stroke: '#475569' }, svg);
+      el('line', { x1: m.l, x2: m.l, y1: m.t, y2: H - m.b, stroke: '#475569' }, svg);
+      if (o.xLabel) { const t = el('text', { x: (m.l + W - m.r) / 2, y: H - 6, 'text-anchor': 'middle', 'font-size': 10, fill: '#334155', 'font-weight': 600 }, svg); t.textContent = o.xLabel; }
+      if (o.yLabel) { const t = el('text', { x: 11, y: (m.t + H - m.b) / 2, 'text-anchor': 'middle', 'font-size': 10, fill: '#334155', 'font-weight': 600, transform: `rotate(-90 11 ${(m.t + H - m.b) / 2})` }, svg); t.textContent = o.yLabel; }
+      return { X, Y, W, H, m };
+    }
+    function emptyChart(svg, msg) {
+      svg.innerHTML = '';
+      const vb = svg.getAttribute('viewBox').split(' ');
+      const t = el('text', { x: vb[2] / 2, y: vb[3] / 2, 'text-anchor': 'middle', 'font-size': 11, fill: '#94a3b8' }, svg); t.textContent = msg || 'No data yet';
+    }
+    // series: [{name, color, pts:[[x,y,err?]], dash, noLine, line:{slope,intercept,x1,x2}}]
+    function lineChart(id, o) {
+      const svg = $(id);
+      const all = o.series.flatMap(s => s.pts);
+      if (!all.length) { emptyChart(svg, o.empty); return; }
+      const xs = all.map(p => p[0]), ys = all.map(p => p[1] + (p[2] || 0));
+      const xMin = o.xMin ?? Math.min(...xs), xMax = o.xMax ?? Math.max(...xs);
+      const pad = (xMax - xMin) * 0.05 || 1;
+      const f = chartFrame(svg, { ...o, xMin: o.xMin ?? xMin - pad, xMax: o.xMax ?? xMax + pad, yMin: o.yMin ?? Math.min(0, ...all.map(p => p[1])), yMax: o.yMax ?? (Math.max(...ys) * 1.12 || 1) });
+      (o.hlines || []).forEach(h => { el('line', { x1: f.m.l, x2: f.W - f.m.r, y1: f.Y(h.y), y2: f.Y(h.y), stroke: h.color || '#94a3b8', 'stroke-dasharray': '4 3' }, svg); if (h.label) { const t = el('text', { x: f.W - f.m.r - 2, y: f.Y(h.y) - 3, 'text-anchor': 'end', 'font-size': 8.5, fill: h.color || '#64748b' }, svg); t.textContent = h.label; } });
+      (o.vlines || []).forEach(h => { el('line', { x1: f.X(h.x), x2: f.X(h.x), y1: f.m.t, y2: f.H - f.m.b, stroke: h.color || '#94a3b8', 'stroke-dasharray': '3 3' }, svg); if (h.label) { const t = el('text', { x: f.X(h.x) + 3, y: f.m.t + 9, 'font-size': 8.5, fill: h.color || '#64748b' }, svg); t.textContent = h.label; } });
+      o.series.forEach(s => {
+        const pts = s.pts.slice().sort((a, b) => a[0] - b[0]);
+        if (s.line) { el('line', { x1: f.X(s.line.x1), y1: f.Y(s.line.slope * s.line.x1 + s.line.intercept), x2: f.X(s.line.x2), y2: f.Y(s.line.slope * s.line.x2 + s.line.intercept), stroke: s.color, 'stroke-width': 1.5, 'stroke-dasharray': '5 3' }, svg); }
+        if (!s.noLine && pts.length > 1) el('polyline', { points: pts.map(p => `${f.X(p[0])},${f.Y(p[1])}`).join(' '), fill: 'none', stroke: s.color, 'stroke-width': 2, 'stroke-dasharray': s.dash || '' }, svg);
+        pts.forEach(p => {
+          if (p[2]) { el('line', { x1: f.X(p[0]), x2: f.X(p[0]), y1: f.Y(p[1] - p[2]), y2: f.Y(p[1] + p[2]), stroke: s.color }, svg); [-1, 1].forEach(k => el('line', { x1: f.X(p[0]) - 3, x2: f.X(p[0]) + 3, y1: f.Y(p[1] + k * p[2]), y2: f.Y(p[1] + k * p[2]), stroke: s.color }, svg)); }
+          el('circle', { cx: f.X(p[0]), cy: f.Y(p[1]), r: 3.2, fill: s.hollow ? '#fff' : s.color, stroke: s.color, 'stroke-width': 1.5 }, svg);
+        });
+      });
+      // legend
+      const named = o.series.filter(s => s.name);
+      named.forEach((s, i) => { const x = f.m.l + 8, y = f.m.t + 8 + i * 12; el('rect', { x, y: y - 6, width: 10, height: 4, fill: s.color }, svg); const t = el('text', { x: x + 14, y: y - 1, 'font-size': 9, fill: '#334155' }, svg); t.textContent = s.name; });
+    }
+    // bars: [{label, v, e, color, note}]
+    function barChart(id, o) {
+      const svg = $(id);
+      const bars = o.bars.filter(b => isFinite(b.v));
+      if (!bars.length) { emptyChart(svg, o.empty); return; }
+      const top = Math.max(...bars.map(b => b.v + (b.e || 0))) * 1.2 || 1;
+      const n = o.bars.length;
+      const f = chartFrame(svg, { ...o, xMin: 0, xMax: n, yMin: o.yMin ?? 0, yMax: o.yMax ?? top, xTicks: [] });
+      const bw = (f.X(1) - f.X(0)) * 0.56;
+      o.bars.forEach((b, i) => {
+        const cx = f.X(i + 0.5);
+        const t = el('text', { x: cx, y: f.H - f.m.b + 13, 'text-anchor': 'middle', 'font-size': 9, fill: '#334155' }, svg); t.textContent = b.label;
+        if (!isFinite(b.v)) return;
+        el('rect', { x: cx - bw / 2, y: f.Y(Math.max(b.v, 0)), width: bw, height: Math.abs(f.Y(0) - f.Y(b.v)), fill: b.color || PALETTE.teal, rx: 2, opacity: .9 }, svg);
+        if (b.e) { el('line', { x1: cx, x2: cx, y1: f.Y(b.v), y2: f.Y(b.v + b.e), stroke: '#0a1f44' }, svg); el('line', { x1: cx - 5, x2: cx + 5, y1: f.Y(b.v + b.e), y2: f.Y(b.v + b.e), stroke: '#0a1f44' }, svg); }
+        if (b.note) { const s = el('text', { x: cx, y: f.Y(b.v + (b.e || 0)) - 4, 'text-anchor': 'middle', 'font-size': 10, 'font-weight': 700, fill: '#0a1f44' }, svg); s.textContent = b.note; }
+      });
+    }
+    // ---- small HTML helpers ----
+    function tableHTML(head, rows, cls = '') {
+      return `<table class="obs-table w-full text-[11px] text-center ${cls}"><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody class="font-mono">${rows.length ? rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${head.length}" class="text-slate-400 py-3 font-sans">No readings yet</td></tr>`}</tbody></table>`;
+    }
+    $('audioToggleBtn') && $('audioToggleBtn').addEventListener('click', () => {
+      soundOn = !soundOn;
+      $('audioToggleBtn').className = `p-2 rounded-lg transition ${soundOn ? 'bg-teal-100 hover:bg-teal-200 text-teal-800' : 'bg-slate-200 text-slate-500'}`;
+      if (soundOn) beep('ok');
+    });
+    window.addEventListener('DOMContentLoaded', () => { renderSpeed(); renderQuiz(); init(); });
+
+  </script>
+  <script>
+    // =====================================================================
+    // Shared realistic rodent art (albino Wistar rat / Swiss albino mouse).
+    // Anatomical silhouettes, strand-textured fur with fuzzy edge, rim light,
+    // veined ears, glossy ruby eyes, whiskers, ringed tail, toed paws.
+    // Side views face +x, top views have the head at +x.  Origin = body centre.
+    // =====================================================================
+    const ANI_DEFS = `
+      <filter id="furStrand" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".55 .08" numOctaves="3" seed="12" result="n"/><feColorMatrix in="n" values="0 0 0 0 .52  0 0 0 0 .46  0 0 0 0 .43  0 0 0 .75 -.2"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+      <filter id="furStrandT" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".12 .6" numOctaves="3" seed="21" result="n"/><feColorMatrix in="n" values="0 0 0 0 .52  0 0 0 0 .46  0 0 0 0 .43  0 0 0 .75 -.2"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+      <filter id="furFuzz" x="-6%" y="-8%" width="112%" height="116%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="3" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+      <filter id="aniBlur"><feGaussianBlur stdDeviation="1.6"/></filter>
+      <filter id="aniSoft"><feGaussianBlur stdDeviation=".5"/></filter>
+      <linearGradient id="aniBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".4" stop-color="#f7f3f0"/><stop offset=".78" stop-color="#e6ddd9"/><stop offset="1" stop-color="#c9bcb7"/></linearGradient>
+      <linearGradient id="aniBodyT" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#fbf8f6"/><stop offset=".5" stop-color="#f1ebe7"/><stop offset="1" stop-color="#ddd2cd"/></linearGradient>
+      <linearGradient id="aniShade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".6" stop-color="#9a8782" stop-opacity="0"/><stop offset="1" stop-color="#5f4c48" stop-opacity=".38"/></linearGradient>
+      <linearGradient id="aniTail" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#efbdc6"/><stop offset="1" stop-color="#dc98a8"/></linearGradient>
+      <radialGradient id="aniEye" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ff8097"/><stop offset=".5" stop-color="#b3122c"/><stop offset="1" stop-color="#430410"/></radialGradient>
+      <radialGradient id="aniEar" cx=".5" cy=".62" r=".65"><stop offset="0" stop-color="#fcd7df"/><stop offset=".7" stop-color="#f2adbf"/><stop offset="1" stop-color="#e48fa6"/></radialGradient>
+      <linearGradient id="aniPaw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6bcc8"/><stop offset="1" stop-color="#e395a8"/></linearGradient>`;
+
+    const _ANI_SIDE = 'M45 1.5 C42 -2 37 -7 29 -10 C22 -13 14 -16 3 -16.5 C-9 -17 -21 -14.5 -28 -8 C-33 -3 -33 6 -29 11 C-25 15 -17 15.5 -9 15.5 C0 15.5 9 14.5 17 12 C24 10 31 8.5 37 6 C41 4.5 44 3 45 1.5Z';
+    const _ANI_TOP = 'M27 0 C25 -2.4 22 -4.6 18 -5.8 C15 -7 12.5 -8.6 8 -9.4 C1 -10.6 -8 -10.2 -13.5 -7.8 C-18 -5.8 -20.5 -2.8 -20.5 0 C-20.5 2.8 -18 5.8 -13.5 7.8 C-8 10.2 1 10.6 8 9.4 C12.5 8.6 15 7 18 5.8 C22 4.6 25 2.4 27 0Z';
+    const _toes = (x, y, n, len, dx, dy, w = .5) => Array.from({ length: n }, (_, i) => { const a = (i - (n - 1) / 2) * .42; return `<line x1="${x}" y1="${y}" x2="${(x + (dx * Math.cos(a) - dy * Math.sin(a)) * len).toFixed(2)}" y2="${(y + (dx * Math.sin(a) + dy * Math.cos(a)) * len).toFixed(2)}" stroke="#c77a8f" stroke-width="${w}" stroke-linecap="round"/>`; }).join('');
+    const _whisk = (x, y, dir, sc) => [[-9, -14], [-3, -17], [4, -16], [9, -11], [12, -5]].map(([a, b], i) => `<path d="M${x} ${y + (i - 2) * .55 * sc} Q${x + dir * (8 + i) * sc} ${y + (a * .55) * sc} ${x + dir * (19 + i * 1.5) * sc} ${y + b * sc * .8}" fill="none" stroke="#fff" stroke-opacity=".62" stroke-width=".28"/>`).join('');
+
+    // ---- side view. o: {flip, sw (paw swelling 0..1), ink, kind:'rat'|'mouse'}  Returns art only (no marks).
+    function animalSideArt(o = {}) {
+        const mouse = o.kind === 'mouse', sc = mouse ? .47 : 1, sw = o.sw || 0;
+        const pawC = `rgb(${Math.round(240 - 16 * sw)},${Math.round(160 - 70 * sw)},${Math.round(176 - 70 * sw)})`;
+        const tail = mouse ? 'M-30 3 C-48 5 -58 -2 -70 5 C-80 10 -90 8 -96 14' : 'M-30 3 C-44 4 -52 12 -64 10 C-72 9 -76 14 -82 12';
+        const earRot = mouse ? -12 : -20, earS = mouse ? 1.5 : 1;
+        return `<g transform="scale(${sc})">
+        <ellipse cx="2" cy="16.5" rx="${mouse ? 40 : 36}" ry="3.6" fill="#000" opacity=".3" filter="url(#aniBlur)"/>
+        <path d="${tail}" fill="none" stroke="url(#aniTail)" stroke-width="${mouse ? 3.2 : 2.7}" stroke-linecap="round"/>
+        <path d="${tail}" fill="none" stroke="#b97585" stroke-width="${mouse ? 3.2 : 2.7}" stroke-linecap="round" stroke-dasharray=".55 1.5" opacity=".6"/>
+        <g opacity=".85"><path d="M22 10 Q26 14 25 16.6 L31 16.8 Q31 13 28 10Z" fill="#d9a2ae"/><path d="M-20 12 Q-18 16 -16 16.4 L-7 16.6 Q-7 14 -10 12Z" fill="#d9a2ae"/></g>
+        <path d="${_ANI_SIDE}" fill="url(#aniBody)" filter="url(#furFuzz)"/>
+        <path d="${_ANI_SIDE}" fill="#fff" filter="url(#furStrand)" opacity=".85"/>
+        <path d="${_ANI_SIDE}" fill="url(#aniShade)"/>
+        <path d="M-27 -8 C-20 -14.5 -8 -16.8 3 -16.3 C13 -15.8 21 -13.4 28 -10" fill="none" stroke="#fff" stroke-width="1.5" stroke-opacity=".85" filter="url(#aniSoft)"/>
+        <ellipse cx="-15" cy="3" rx="13.5" ry="11.5" fill="#fff" opacity=".28"/><path d="M-27 4 C-26 -4 -20 -9 -13 -9.5" fill="none" stroke="#d8cdc8" stroke-width=".6" opacity=".55"/>
+        <ellipse cx="19" cy="2.5" rx="9" ry="9.5" fill="#fff" opacity=".16"/>
+        <g transform="rotate(${earRot} 23 -12) translate(${(23 * (1 - earS)).toFixed(1)} ${(-13 * (1 - earS)).toFixed(1)}) scale(${earS})"><ellipse cx="23" cy="-14" rx="4.8" ry="6.2" fill="#f4eae6" stroke="#e6d9d4" stroke-width=".4"/><ellipse cx="23.2" cy="-13.6" rx="3.5" ry="4.8" fill="url(#aniEar)"/><path d="M23 -9.5 Q23.4 -13 22.2 -17 M23.8 -10 Q25 -13 25.4 -16" fill="none" stroke="#d2728d" stroke-width=".35" opacity=".65"/></g>
+        <ellipse cx="34" cy="-4.8" rx="2.5" ry="2.25" fill="#3a0a14"/><ellipse cx="34" cy="-4.8" rx="2" ry="1.8" fill="url(#aniEye)"/><circle cx="33.2" cy="-5.6" r=".68" fill="#fff"/><circle cx="35" cy="-4" r=".3" fill="#fff" opacity=".6"/><path d="M31.6 -6.4 Q34 -8 36.5 -6.2" fill="none" stroke="#e5d6d1" stroke-width=".55"/>
+        <ellipse cx="44.6" cy="1.6" rx="2" ry="1.55" fill="#e98aa1"/><circle cx="45.4" cy="1.2" r=".5" fill="#8a2d44"/><path d="M43 4.2 Q40 5.6 37.4 5.3" fill="none" stroke="#b49a98" stroke-width=".4"/>
+        ${_whisk(41, 2.6, 1, 1)}
+        <path d="M17 9 Q23 12 22 15.5 L29 16 Q29 12 26 8.5Z" fill="url(#aniPaw)" opacity=".95"/>${_toes(22.5, 15.7, 3, 4.2, 1, 0.25)}
+        <ellipse cx="-13" cy="14.2" rx="${(6.8 + sw * 3.2).toFixed(1)}" ry="${(2.5 + sw * 1.3).toFixed(1)}" fill="${pawC}"/><ellipse cx="-13" cy="13.6" rx="${(5.4 + sw * 3).toFixed(1)}" ry="${(1.3 + sw * .8).toFixed(1)}" fill="#fff" opacity=".22"/>${_toes(-7.5, 15, 4, 4.4, 1, .18)}
+        ${o.ink ? `<line x1="-18" y1="11" x2="-8" y2="11" stroke="#1e3a8a" stroke-width="1.2"/>` : ''}
+        </g>`;
+    }
+    // ---- top view (head to +x). o: {kind}
+    function animalTopArt(o = {}) {
+        const mouse = o.kind !== 'rat';
+        return `<g transform="scale(.72)">
+        <ellipse cx="0" cy="2.6" rx="24" ry="11" fill="#000" opacity=".26" filter="url(#aniBlur)"/>
+        <path d="M-20 0 C-30 3 -38 -3 -50 2 C-56 5 -60 2 -64 5" fill="none" stroke="url(#aniTail)" stroke-width="2.3" stroke-linecap="round"/>
+        <path d="M-20 0 C-30 3 -38 -3 -50 2 C-56 5 -60 2 -64 5" fill="none" stroke="#b97585" stroke-width="2.3" stroke-linecap="round" stroke-dasharray=".5 1.4" opacity=".6"/>
+        ${[-1, 1].map(s => `<g>
+          <ellipse cx="11" cy="${s * 8.6}" rx="3.3" ry="2" fill="#f1ebe7" stroke="#ddd2cd" stroke-width=".3" transform="rotate(${s * 28} 11 ${s * 8.6})"/>
+          <ellipse cx="13.6" cy="${s * 10.6}" rx="2.2" ry="1.25" fill="url(#aniPaw)" stroke="#d58a9c" stroke-width=".25" transform="rotate(${s * 40} 13.6 ${s * 10.6})"/>
+          <ellipse cx="-9.5" cy="${s * 9.2}" rx="5" ry="3" fill="#f1ebe7" stroke="#ddd2cd" stroke-width=".3" transform="rotate(${s * -18} -9.5 ${s * 9.2})"/>
+          <ellipse cx="-5.4" cy="${s * 11.6}" rx="3.8" ry="1.5" fill="url(#aniPaw)" stroke="#d58a9c" stroke-width=".25" transform="rotate(${s * -14} -5.4 ${s * 11.6})"/>
+          ${_toes(-2.6, s * 11.9, 4, 1.9, .8, s * .2, .3)}${_toes(15.3, s * 11.6, 3, 1.5, .6, s * .7, .3)}
+        </g>`).join('')}
+        <path d="${_ANI_TOP}" fill="url(#aniBodyT)" filter="url(#furFuzz)"/>
+        <path d="${_ANI_TOP}" fill="#fff" filter="url(#furStrandT)" opacity=".85"/>
+        <path d="M-16 0 L16 0" stroke="#d5c9c4" stroke-width=".9" opacity=".35" filter="url(#aniSoft)"/>
+        <ellipse cx="-9" cy="-5.6" rx="8" ry="5" fill="#fff" opacity=".3"/><ellipse cx="-9" cy="5.6" rx="8" ry="5" fill="#fff" opacity=".3"/>
+        <path d="M-18 -4 C-12 -9.4 2 -9.6 9 -8.4" fill="none" stroke="#fff" stroke-width="1.1" stroke-opacity=".7" filter="url(#aniSoft)"/>
+        ${[-1, 1].map(s => `<g><ellipse cx="14.5" cy="${s * 6.4}" rx="3.9" ry="3.3" fill="#f3e9e5" stroke="#e5d8d3" stroke-width=".35"/><ellipse cx="14.7" cy="${s * 6.4}" rx="2.7" ry="2.3" fill="url(#aniEar)"/><path d="M13 ${s * 6.4} Q15 ${s * 6.8} 17 ${s * 6.2}" fill="none" stroke="#d2728d" stroke-width=".3" opacity=".6"/>
+          <ellipse cx="21.4" cy="${s * 3}" rx="1.35" ry="1.2" fill="#3a0a14"/><ellipse cx="21.4" cy="${s * 3}" rx="1.05" ry=".95" fill="url(#aniEye)"/><circle cx="21" cy="${s * 3 - .45}" r=".38" fill="#fff"/></g>`).join('')}
+        <ellipse cx="27" cy="0" rx="1.5" ry="1.3" fill="#e98aa1"/>
+        ${[-1, 1].map(s => [[-12, 5], [-6, 7], [1, 8]].map(([a, b]) => `<path d="M25.5 ${s * 1} Q${31 + b * .3} ${s * (1 + b * .6)} ${34 + b} ${s * (3 + b * 1.5 + a * -.1)}" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width=".26"/>`).join('')).join('')}
+        </g>`;
+    }
+
+    // =====================================================================
+    // XPRISM in-vivo bench kit (shared by Exp 21 and Exp 25)
+    // realistic SVG art: room, cages, animals, balances, bottles, syringes;
+    // station switching, click routing, checklist + hint engine
+    // =====================================================================
+    let HINTS = true;
+    SPEEDS = [1, 5, 20, 60];
+    function say(msg, alert) { showFeedback(msg, alert); }
+    function once(key, msg, alert) { if (S.warned[key]) return; S.warned[key] = 1; say(msg, alert); }
+    const R2 = v => Math.round(v * 100) / 100;
+    const lbl = (x, y, t, o = {}) => `<text x="${x}" y="${y}" font-size="${o.s || 10}" fill="${o.c || '#1e293b'}" text-anchor="${o.a || 'middle'}" font-weight="${o.w || 600}" font-family="${o.f || 'Inter, sans-serif'}"${o.extra || ''}>${t}</text>`;
+    const tag = (x, y, t, c = '#0f172a') => `<g><rect x="${x - t.length * 3.1 - 6}" y="${y - 11}" width="${t.length * 6.2 + 12}" height="16" rx="4" fill="${c}" opacity=".82"/>${lbl(x, y + 1, t, { c: '#fff', s: 10 })}</g>`;
+    const clockStr = t => { const m = Math.floor(9 * 60 + t / 60); return `${String(Math.floor(m / 60) % 24).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`; };
+
+    const DEFS = `<defs>
+      <filter id="sh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="3" dy="5" stdDeviation="4" flood-color="#000" flood-opacity=".42"/></filter>
+      <filter id="sh2" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="1" dy="2" stdDeviation="1.5" flood-color="#000" flood-opacity=".5"/></filter>
+      <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+      <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="7" result="n"/><feColorMatrix in="n" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .07 0"/></filter>
+      <filter id="furF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 .55  0 0 0 0 .5  0 0 0 0 .48  0 0 0 .22 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+      <filter id="beddingF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".35" numOctaves="3" seed="12"/><feColorMatrix values="0 0 0 0 .45  0 0 0 0 .3  0 0 0 0 .1  0 0 0 .55 0"/></filter>
+      <filter id="paperF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".5" numOctaves="2" seed="21"/><feColorMatrix values="0 0 0 0 .7  0 0 0 0 .7  0 0 0 0 .65  0 0 0 .12 0"/></filter>
+      <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#26313d"/><stop offset="1" stop-color="#1c252f"/></linearGradient>
+      <radialGradient id="spot" cx=".5" cy=".35" r=".7"><stop offset="0" stop-color="#5b6b7c" stop-opacity=".45"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+      <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2d3946"/><stop offset="1" stop-color="#27323e"/></linearGradient>
+      <linearGradient id="bench" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a4048"/><stop offset=".06" stop-color="#23272d"/><stop offset="1" stop-color="#16191d"/></linearGradient>
+      <linearGradient id="steel" x1="0" x2="1"><stop offset="0" stop-color="#6b7280"/><stop offset=".35" stop-color="#f3f4f6"/><stop offset=".55" stop-color="#d1d5db"/><stop offset="1" stop-color="#4b5563"/></linearGradient>
+      <linearGradient id="steelH" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9ca3af"/><stop offset=".4" stop-color="#f9fafb"/><stop offset="1" stop-color="#6b7280"/></linearGradient>
+      <linearGradient id="glass" x1="0" x2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".7"/><stop offset=".12" stop-color="#ffffff" stop-opacity=".22"/><stop offset=".5" stop-color="#e0f2fe" stop-opacity=".14"/><stop offset=".85" stop-color="#ffffff" stop-opacity=".3"/><stop offset="1" stop-color="#bae6fd" stop-opacity=".65"/></linearGradient>
+      <linearGradient id="glassEdge" x1="0" x2="1"><stop offset="0" stop-color="#f8fafc"/><stop offset=".5" stop-color="#e2e8f0" stop-opacity=".75"/><stop offset="1" stop-color="#f8fafc"/></linearGradient>
+      <linearGradient id="liquid" x1="0" x2="1"><stop offset="0" stop-color="#60a5fa" stop-opacity=".8"/><stop offset=".5" stop-color="#bfdbfe" stop-opacity=".7"/><stop offset="1" stop-color="#3b82f6" stop-opacity=".85"/></linearGradient>
+      <linearGradient id="milk" x1="0" x2="1"><stop offset="0" stop-color="#e2e8f0"/><stop offset=".5" stop-color="#ffffff"/><stop offset="1" stop-color="#cbd5e1"/></linearGradient>
+      <linearGradient id="oil" x1="0" x2="1"><stop offset="0" stop-color="#ca8a04" stop-opacity=".85"/><stop offset=".5" stop-color="#fde68a" stop-opacity=".85"/><stop offset="1" stop-color="#a16207" stop-opacity=".9"/></linearGradient>
+      <linearGradient id="amber" x1="0" x2="1"><stop offset="0" stop-color="#3b1d06"/><stop offset=".3" stop-color="#9a5a17"/><stop offset=".5" stop-color="#b8752a"/><stop offset="1" stop-color="#3b1d06"/></linearGradient>
+      <linearGradient id="hdpe" x1="0" x2="1"><stop offset="0" stop-color="#cbd5e1"/><stop offset=".4" stop-color="#f8fafc"/><stop offset="1" stop-color="#94a3b8"/></linearGradient>
+      <linearGradient id="plasticW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f8fafc"/><stop offset="1" stop-color="#cbd5e1"/></linearGradient>
+      <linearGradient id="cabFront" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1f5f9"/><stop offset="1" stop-color="#a3b1c2"/></linearGradient>
+      <radialGradient id="lcd" cx=".5" cy=".5" r=".8"><stop offset="0" stop-color="#c7d9b4"/><stop offset="1" stop-color="#9fb58a"/></radialGradient>
+      <radialGradient id="contactShadow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#000" stop-opacity="0.6"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+      <linearGradient id="cageTub" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2e8f0" stop-opacity="0.32"/><stop offset="1" stop-color="#cbd5e1" stop-opacity="0.6"/></linearGradient>
+      <linearGradient id="bedding" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9d3a6"/><stop offset="1" stop-color="#c9a76b"/></linearGradient>
+      <radialGradient id="furGrad" cx="0.42" cy="0.32" r="0.78"><stop offset="0" stop-color="#ffffff"/><stop offset="0.6" stop-color="#f6f3f1"/><stop offset="1" stop-color="#d8d0cc"/></radialGradient>
+      <linearGradient id="bellyShade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.65" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#6b5a58" stop-opacity="0.25"/></linearGradient>
+      <radialGradient id="earGrad" cx="0.5" cy="0.55" r="0.6"><stop offset="0" stop-color="#f9d0d9"/><stop offset="0.7" stop-color="#f1adbf"/><stop offset="1" stop-color="#e293a8"/></radialGradient>
+      <radialGradient id="eyeGrad" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#ff5d77"/><stop offset="0.55" stop-color="#c0142f"/><stop offset="1" stop-color="#5c0614"/></radialGradient>
+      <linearGradient id="glove" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a5b4fc"/><stop offset="0.55" stop-color="#7c83e6"/><stop offset="1" stop-color="#5b5fc7"/></linearGradient>
+      <linearGradient id="sleeve" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f8fafc"/><stop offset="1" stop-color="#cbd5e1"/></linearGradient>
+      <radialGradient id="btnYellow" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#fde047"/><stop offset="1" stop-color="#ca8a04"/></radialGradient>
+      <linearGradient id="fluid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7dd3fc" stop-opacity="0.6"/><stop offset="1" stop-color="#0284c7" stop-opacity="0.75"/></linearGradient>
+      <linearGradient id="cellGlass" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#bae6fd" stop-opacity="0.55"/><stop offset="0.12" stop-color="#ffffff" stop-opacity="0.55"/><stop offset="0.25" stop-color="#e0f2fe" stop-opacity="0.08"/><stop offset="0.8" stop-color="#e0f2fe" stop-opacity="0.08"/><stop offset="0.9" stop-color="#ffffff" stop-opacity="0.35"/><stop offset="1" stop-color="#7dd3fc" stop-opacity="0.55"/></linearGradient>
+      <linearGradient id="wood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a16207"/><stop offset="1" stop-color="#713f12"/></linearGradient>
+    ${ANI_DEFS}</defs>`;
+
+    function room(benchY = 430) {
+      let tiles = '';
+      for (let y = 0; y < benchY; y += 38) for (let x = (y / 38) % 2 ? -26 : 0; x < 1000; x += 52) tiles += `<rect x="${x}" y="${y}" width="51" height="37" fill="url(#tile)" stroke="#1a222b" stroke-width="1"/>`;
+      return `<rect width="1000" height="560" fill="url(#wall)"/>${tiles}<rect width="1000" height="${benchY}" fill="url(#spot)"/>
+        <rect y="${benchY - 6}" width="1000" height="8" fill="#5b636d"/>
+        <rect y="${benchY}" width="1000" height="${560 - benchY}" fill="url(#bench)"/>
+        <rect y="${benchY}" width="1000" height="${560 - benchY}" filter="url(#grain)" opacity=".7"/>
+        <rect y="${benchY + 2}" width="1000" height="2" fill="#fff" opacity=".08"/>`;
+    }
+    // wall clock showing lab time (hands updated per frame)
+    function wallClock(x, y, r = 34) {
+      return `<g transform="translate(${x} ${y})" filter="url(#sh)"><circle r="${r}" fill="#f8fafc" stroke="#111827" stroke-width="4"/>
+        ${Array.from({ length: 12 }, (_, i) => `<line x1="0" y1="${-r + 5}" x2="0" y2="${i % 3 ? -r + 9 : -r + 12}" stroke="#1f2937" stroke-width="${i % 3 ? 1.2 : 2.4}" transform="rotate(${i * 30})"/>`).join('')}
+        <line class="ckH" x1="0" y1="3" x2="0" y2="${-r * 0.5}" stroke="#111827" stroke-width="3.2" stroke-linecap="round"/>
+        <line class="ckM" x1="0" y1="4" x2="0" y2="${-r * 0.78}" stroke="#111827" stroke-width="2.2" stroke-linecap="round"/>
+        <circle r="2.6" fill="#dc2626"/></g>`;
+    }
+    function updClocks() {
+      const m = 9 * 60 + S.t / 60;
+      document.querySelectorAll('#scene .ckM').forEach(e => e.setAttribute('transform', `rotate(${(m % 60) * 6})`));
+      document.querySelectorAll('#scene .ckH').forEach(e => e.setAttribute('transform', `rotate(${(m / 60 % 12) * 30})`));
+    }
+
+    // ------------------------------------------------ animals
+    // picric acid code → spots (rat side coordinates, facing right)
+    const MARK_POS = { head: [32, -9], neck: [18, -12], back: [0, -14], rump: [-20, -10], tail: [-34, -2] };
+    const MARK_CODE = [[], ['head'], ['neck'], ['back'], ['rump'], ['tail'], ['head', 'back'], ['head', 'rump'], ['head', 'tail'], ['neck', 'back'], ['neck', 'rump'], ['back', 'tail'], ['head', 'neck', 'back'],
+      ['neck', 'tail'], ['rump', 'tail'], ['head', 'neck'], ['back', 'rump'], ['head', 'neck', 'tail'], ['neck', 'back', 'rump']];
+    const markText = id => id ? MARK_CODE[id].join(' + ') : 'unmarked';
+    // side-view rat in a cage. o: {id, marks, ink, paw (0..1 swelling), flip, sel}
+    function ratSide(o = {}) {
+      const spots = o.id ? MARK_CODE[o.id].map(p => `<ellipse cx="${MARK_POS[p][0]}" cy="${MARK_POS[p][1] * .86}" rx="6.5" ry="4" fill="#facc15" opacity=".82"/>`).join('') : '';
+      return `<g transform="scale(${o.flip ? -1 : 1} 1)">${animalSideArt({ kind: 'rat', sw: o.paw || 0, ink: o.ink })}${spots}</g>
+        ${o.sel ? `<ellipse cx="0" cy="2" rx="44" ry="22" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="4 3"/>` : ''}
+        ${o.id ? `<rect x="-11" y="-30" width="22" height="11" rx="2" fill="${o.tagc || '#fff'}" stroke="#94a3b8" stroke-width="0.5"/><text x="0" y="-21.8" text-anchor="middle" font-family="JetBrains Mono" font-size="7" font-weight="800" fill="#0f172a">R${o.id}</text>` : ''}`;
+    }
+    // side-view mouse (facing right) with picric spots
+    function mouseSide(o = {}) {
+      const spots = o.id ? MARK_CODE[o.id].map(p => `<ellipse cx="${MARK_POS[p][0] * 0.5}" cy="${MARK_POS[p][1] * 0.5}" rx="3.4" ry="2.2" fill="#facc15" opacity=".85"/>`).join('') : '';
+      return `<g transform="scale(${o.flip ? -1 : 1} 1)">${animalSideArt({ kind: 'mouse' })}${spots}</g>
+        ${o.sel ? `<ellipse cx="0" cy="0" rx="26" ry="14" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-dasharray="3 2"/>` : ''}
+        ${o.id ? `<rect x="-9" y="-21" width="18" height="9" rx="2" fill="${o.tagc || '#fff'}" stroke="#94a3b8" stroke-width="0.5"/><text x="0" y="-14.3" text-anchor="middle" font-family="JetBrains Mono" font-size="6" font-weight="800" fill="#0f172a">${o.code || 'M' + o.id}</text>` : ''}`;
+    }
+    // top-view mouse (head to the right)
+    function mouseTop(o = {}) {
+      const spots = o.id ? MARK_CODE[o.id].map(p => { const X = { head: 16, neck: 9, back: 0, rump: -8, tail: -14 }[p]; return `<ellipse cx="${X}" cy="0" rx="3.4" ry="4.4" fill="#facc15" opacity=".82"/>`; }).join('') : '';
+      return `<g>${animalTopArt({ kind: 'mouse' })}${spots}</g>`;
+    }
+    // side-view cage (polycarbonate tub, steel lid). inner = SVG drawn inside (coordinates relative to cage)
+    function cageSide(x, y, w, h, act, title, sub, inner, o = {}) {
+      let bars = ''; for (let bx = 2; bx < w; bx += 7) bars += `<line x1="${bx}" y1="3" x2="${bx}" y2="13" stroke="#9ca3af" stroke-width="1.2"/>`;
+      return `<g transform="translate(${x} ${y})" ${act ? `class="hot" data-act="${act}"` : ''}>
+        <ellipse cx="${w / 2}" cy="${h + 4}" rx="${w / 2 + 10}" ry="8" fill="url(#contactShadow)"/>
+        <polygon points="0,12 ${w},12 ${w - 8},${h} 8,${h}" fill="#0b1220" opacity=".35"/>
+        <polygon points="12,${h - 22} ${w - 12},${h - 22} ${w - 8},${h} 8,${h}" fill="url(#bedding)"/>
+        <polygon points="12,${h - 22} ${w - 12},${h - 22} ${w - 8},${h} 8,${h}" filter="url(#beddingF)"/>
+        ${o.food ? `<path d="M12 14 L60 14 L52 52 L20 52 Z" fill="#6b7280" opacity=".8" stroke="#374151"/>${Array.from({ length: 12 }, (_, i) => `<ellipse cx="${22 + (i % 4) * 9}" cy="${22 + Math.floor(i / 4) * 9}" rx="5" ry="3.4" fill="#a16207" stroke="#713f12" stroke-width=".5"/>`).join('')}` : ''}
+        ${inner || ''}
+        <polygon points="0,12 ${w},12 ${w - 8},${h} 8,${h}" fill="url(#cageTub)" stroke="#cbd5e1" stroke-width="1.2"/>
+        <line x1="6" y1="16" x2="12" y2="${h - 4}" stroke="#fff" stroke-width="2.5" opacity=".35"/>
+        <rect x="-6" y="2" width="${w + 12}" height="12" rx="3" fill="url(#steelH)" stroke="#6b7280" stroke-width="0.8"/>${bars}
+        ${title ? `<rect x="${w - 96}" y="18" width="88" height="28" rx="2" fill="#fef3c7" stroke="#d97706" stroke-width="0.8"/>${lbl(w - 52, 29, title, { s: 7.5, w: 800, c: '#7c2d12' })}${lbl(w - 52, 40, sub || '', { s: 6.5, c: '#451a03', w: 600, f: 'JetBrains Mono' })}` : ''}
+      </g>`;
+    }
+    // top-loading animal balance with a plastic container. display text id = dispId
+    function animalBalance(x, y, dispId, act = 'balance') {
+      return `<g class="hot" data-act="${act}" filter="url(#sh)">
+        <rect x="${x}" y="${y + 40}" width="170" height="60" rx="8" fill="url(#plasticW)" stroke="#94a3b8"/>
+        <rect x="${x + 10}" y="${y + 70}" width="150" height="24" rx="4" fill="#1f2937"/>
+        <rect x="${x + 18}" y="${y + 74}" width="84" height="16" rx="2" fill="url(#lcd)"/>
+        <text id="${dispId}" x="${x + 96}" y="${y + 87}" font-size="12" text-anchor="end" fill="#1f2d14" font-family="DSEG7, JetBrains Mono, monospace">0.0</text>
+        <text x="${x + 106}" y="${y + 87}" font-size="7.5" fill="#cbd5e1" font-weight="700">g</text>
+        <circle cx="${x + 128}" cy="${y + 82}" r="6" fill="#dc2626"/><text x="${x + 128}" y="${y + 84.5}" font-size="4.6" fill="#fff" text-anchor="middle" font-weight="700">TARE</text>
+        <circle cx="${x + 146}" cy="${y + 82}" r="6" fill="#475569"/><text x="${x + 146}" y="${y + 84.5}" font-size="5" fill="#fff" text-anchor="middle" font-weight="700">ON</text>
+        <rect x="${x + 25}" y="${y + 34}" width="120" height="8" rx="2" fill="url(#steelH)"/>
+        <path d="M${x + 38} ${y - 26} L${x + 132} ${y - 26} L${x + 126} ${y + 34} L${x + 44} ${y + 34} Z" fill="url(#cageTub)" stroke="#e2e8f0" stroke-width="1.4"/>
+        <line x1="${x + 46}" y1="${y - 20}" x2="${x + 50}" y2="${y + 30}" stroke="#fff" stroke-width="2.5" opacity=".4"/>
+        ${lbl(x + 85, y + 62, 'Animal balance  max 600 g  d = 0.1 g', { s: 6.5, c: '#475569' })}
+      </g>`;
+    }
+    // analytical balance with draft shield
+    function anaBalance(x, y, dispId, act = 'abal') {
+      return `<g class="hot" data-act="${act}" filter="url(#sh)">
+        <rect x="${x}" y="${y + 70}" width="200" height="66" rx="8" fill="url(#plasticW)" stroke="#94a3b8"/>
+        <rect x="${x + 12}" y="${y + 104}" width="176" height="26" rx="4" fill="#1f2937"/>
+        <rect x="${x + 20}" y="${y + 108}" width="104" height="18" rx="2" fill="url(#lcd)"/>
+        <text id="${dispId}" x="${x + 118}" y="${y + 122.5}" font-size="13" text-anchor="end" fill="#1f2d14" font-family="DSEG7, JetBrains Mono, monospace">0.0000</text>
+        <text x="${x + 128}" y="${y + 122}" font-size="8" fill="#cbd5e1" font-weight="700">g</text>
+        <circle cx="${x + 152}" cy="${y + 117}" r="7" fill="#dc2626"/><text x="${x + 152}" y="${y + 119.5}" font-size="5" fill="#fff" text-anchor="middle" font-weight="700">TARE</text>
+        <circle cx="${x + 172}" cy="${y + 117}" r="7" fill="#475569"/><text x="${x + 172}" y="${y + 119.5}" font-size="5.5" fill="#fff" text-anchor="middle" font-weight="700">ON</text>
+        <rect x="${x + 22}" y="${y - 20}" width="156" height="92" fill="url(#glass)" stroke="url(#glassEdge)" stroke-width="2"/>
+        <rect x="${x + 18}" y="${y - 26}" width="164" height="8" rx="2" fill="url(#steelH)"/>
+        <ellipse cx="${x + 100}" cy="${y + 66}" rx="40" ry="4" fill="#d1d5db" stroke="#9ca3af"/>
+        <g id="${dispId}Boat"></g>
+        ${lbl(x + 100, y + 96, 'Analytical balance  d = 0.1 mg', { s: 7, c: '#475569' })}
+      </g>`;
+    }
+    // reagent bottle: o {act, title, sub, cap, kind:'hdpe'|'amber'|'glass', liq, level(0..1), w, h}
+    function bottle(x, y, o) {
+      const w = o.w || 56, h = o.h || 92, lv = clamp(o.level ?? 0.7, 0, 1);
+      const body = o.kind === 'amber' ? 'url(#amber)' : o.kind === 'glass' ? 'url(#glass)' : 'url(#hdpe)';
+      return `<g ${o.act ? `class="hot" data-act="${o.act}"` : ''} filter="url(#sh)">
+        <rect x="${x + w * 0.28}" y="${y - 16}" width="${w * 0.44}" height="14" rx="2" fill="${o.cap || '#1d4ed8'}"/>
+        <rect x="${x + w * 0.32}" y="${y - 4}" width="${w * 0.36}" height="8" fill="#e5e7eb"/>
+        ${o.liq ? `<rect x="${x + 3}" y="${y + 4 + (h - 8) * (1 - lv)}" width="${w - 6}" height="${(h - 8) * lv}" rx="4" fill="${o.liq}"/>` : ''}
+        <rect x="${x}" y="${y + 2}" width="${w}" height="${h}" rx="9" fill="${body}" stroke="${o.kind === 'amber' ? '#3b1d06' : '#cbd5e1'}" opacity="${o.kind === 'glass' ? 1 : 0.96}"/>
+        <rect x="${x + 4}" y="${y + h * 0.36}" width="${w - 8}" height="${h * 0.42}" rx="2" fill="#fff" stroke="#cbd5e1"/>
+        <rect x="${x + 4}" y="${y + h * 0.36}" width="${w - 8}" height="7" fill="${o.cap || '#1d4ed8'}"/>
+        ${lbl(x + w / 2, y + h * 0.36 + h * 0.2, o.title, { s: o.ts || 7.4, w: 800, c: '#0f172a' })}
+        ${lbl(x + w / 2, y + h * 0.36 + h * 0.31, o.sub || '', { s: o.ss || 5.6, c: '#334155', w: 600 })}
+        <rect x="${x + 5}" y="${y + 8}" width="5" height="${h - 14}" rx="2.5" fill="#fff" opacity=".35"/>
+      </g>`;
+    }
+    // syringe lying horizontally. o {act, cap mL, fill mL, needle:'gavage'|'26G'|'feed', col, len}
+    function syringeArt(x, y, o) {
+      const L = o.len || 120, f = clamp((o.fill || 0) / o.cap, 0, 1);
+      const needle = o.needle === 'gavage' || o.needle === 'feed'
+        ? `<path d="M${x + L + 8} ${y} q ${o.needle === 'gavage' ? 34 : 24} 0 ${o.needle === 'gavage' ? 52 : 36} ${o.needle === 'gavage' ? 14 : 9}" stroke="url(#steel)" stroke-width="${o.needle === 'gavage' ? 3 : 2.2}" fill="none"/><circle cx="${x + L + 8 + (o.needle === 'gavage' ? 52 : 36)}" cy="${y + (o.needle === 'gavage' ? 14 : 9)}" r="${o.needle === 'gavage' ? 3.6 : 2.6}" fill="#e5e7eb" stroke="#6b7280"/>`
+        : `<line x1="${x + L + 8}" y1="${y}" x2="${x + L + 46}" y2="${y}" stroke="#d1d5db" stroke-width="1.1"/><rect x="${x + L + 2}" y="${y - 3}" width="8" height="6" fill="#f97316"/>`;
+      let ticks = ''; for (let i = 0; i <= 10; i++) ticks += `<line x1="${x + 8 + i * (L - 12) / 10}" y1="${y - 7}" x2="${x + 8 + i * (L - 12) / 10}" y2="${y - (i % 5 ? 4 : 2)}" stroke="#334155" stroke-width=".6"/>`;
+      return `<g ${o.act ? `class="hot" data-act="${o.act}"` : ''} filter="url(#sh2)">
+        <rect x="${x + 4 + (L - 12) * (1 - f) - L}" y="${y - 1.8}" width="${L}" height="3.6" fill="#e2e8f0" stroke="#94a3b8" stroke-width=".5"/>
+        <rect x="${x + 4 + (L - 12) * (1 - f) - L - 6}" y="${y - 9}" width="6" height="18" rx="1.5" fill="#e2e8f0" stroke="#94a3b8"/>
+        <rect x="${x}" y="${y - 8}" width="${L}" height="16" rx="3" fill="url(#glass)" stroke="#cbd5e1" stroke-width="1.2"/>
+        ${f > 0 ? `<rect x="${x + L - 4 - (L - 12) * f}" y="${y - 6}" width="${(L - 12) * f}" height="12" fill="${o.col || '#bfdbfe'}" opacity=".9"/>` : ''}
+        <rect x="${x + 4 + (L - 12) * (1 - f)}" y="${y - 7}" width="5" height="14" fill="#1f2937"/>
+        ${ticks}<rect x="${x + L}" y="${y - 3}" width="8" height="6" fill="#cbd5e1"/>${needle}
+        <rect x="${x - 6}" y="${y - 11}" width="6" height="22" rx="2" fill="#f1f5f9" stroke="#94a3b8"/>
+      </g>`;
+    }
+    // gloved hand (for held-animal views)
+    function handMarkup() {
+      const f = (y, len) => `<path d="M 26 ${y} C 14 ${y - 2}, -6 ${y - 1}, ${-len} ${y + 3}" stroke="url(#glove)" stroke-width="9.5" stroke-linecap="round" fill="none"/>`;
+      return `<path d="M 34 -60 L 200 -214 L 244 -168 L 66 -20 Z" fill="url(#sleeve)" stroke="#94a3b8"/>
+        <path d="M 34 -60 L 66 -20 L 76 -30 L 44 -70 Z" fill="#a5b4fc" stroke="#6366f1" stroke-width="0.6"/>
+        <path d="M 10 -44 C 22 -60, 52 -58, 62 -38 C 70 -20, 58 4, 38 12 C 22 18, 8 10, 6 -6 Z" fill="url(#glove)" stroke="#4c51b8" stroke-width="0.8"/>
+        ${f(-34, 24)}${f(-22, 27)}${f(-10, 26)}${f(2, 22)}
+        <path d="M 30 -44 C 22 -56, 10 -60, 0 -58" stroke="url(#glove)" stroke-width="10" stroke-linecap="round" fill="none"/>`;
+    }
+
+    // ------------------------------------------------ stations, click routing, checklist + hints
+    function goStation(n) {
+      S.station = n;
+      document.querySelectorAll('#stationBtns button').forEach(b => b.classList.toggle('on', +b.dataset.s === n));
+      buildScene(); renderCtx(); refreshChecklist(true);
+    }
+    function onSceneClick(e) {
+      const t = e.target.closest('[data-act]'); if (!t) return;
+      const [a, arg0] = t.dataset.act.split(':');
+      const arg = arg0 !== undefined && /^-?\d+$/.test(arg0) ? +arg0 : arg0;
+      act(a, arg);
+    }
+    function currentStep() { return STEPS.find(s => !s.opt && !s.done()); }
+    function refreshChecklist() {
+      const ul = $('checklist'); if (!ul) return;
+      const cur = currentStep(); let g = '', h = '';
+      STEPS.forEach(s => { if (s.g !== g) { g = s.g; h += `<li class="grp">${g}</li>`; } const d = s.done(); h += `<li class="${d ? 'done' : s === cur ? 'cur' : ''}"><span class="k">${d ? '✓' : s === cur ? '▸' : s.opt ? '○' : '·'}</span><span>${typeof s.t === 'function' ? s.t() : s.t}</span></li>`; });
+      if (ul._h !== h) { ul.innerHTML = h; ul._h = h; }
+      const nb = $('nowBox');
+      const nh = cur ? `<div class="t">Next: ${typeof cur.t === 'function' ? cur.t() : cur.t}${cur.st && cur.st !== S.station ? ` <span style="font-weight:600;color:#b45309">(station ${cur.st})</span>` : ''}</div>${typeof cur.how === 'function' ? cur.how() : cur.how}` : `<div class="t">Practical complete</div>Open the observation sheet, finish the calculations, answer the viva and submit.`;
+      if (nb._h !== nh) { nb.innerHTML = nh; nb._h = nh; }
+      document.querySelectorAll('#stationBtns button').forEach(b => { const st = +b.dataset.s; b.classList.toggle('done', STEPS.filter(x => x.st === st && !x.opt).every(x => x.done())); });
+      refreshHints();
+    }
+    let _hintKey = '';
+    function refreshHints() {
+      const cur = currentStep();
+      const want = HINTS && cur && cur.st === S.station ? (cur.tg() || []) : [];
+      const key = S.station + '|' + want.join(',') + '|' + document.querySelectorAll('#scene [data-act]').length + '|' + (S._sceneV || 0);
+      if (key === _hintKey && document.querySelector('#scene .pulse')) return;
+      _hintKey = key;
+      document.querySelectorAll('#scene .pulse').forEach(e => e.classList.remove('pulse'));
+      want.forEach(a => document.querySelectorAll(`#scene [data-act="${a}"]`).forEach(e => e.classList.add('pulse')));
+    }
+    // group statistics vs a control group. groups: [{key,label,vals:[]}]
+    function groupStats(groups, ctrlKey) {
+      const ctrl = groups.find(g => g.key === ctrlKey);
+      return groups.map(g => { const t = (ctrl && g.key !== ctrlKey && g.vals.length > 1 && ctrl.vals.length > 1) ? tTest(g.vals, ctrl.vals) : null; return { ...g, n: g.vals.length, m: mean(g.vals), sd: sd(g.vals), se: sem(g.vals), t, p: t ? t.p : NaN }; });
+    }
+    // a number typed by the student, checked against the truth: returns class
+    function chk(v, truth, tol) { if (v === '' || v === undefined || v === null || !isFinite(+v) || truth === null || truth === undefined || !isFinite(truth)) return ''; return Math.abs(+v - truth) <= tol ? 'ok-in' : 'bad-in'; }
+  </script>
+  <script>
+    // =====================================================================
+    // EXP 07: ciliary motility of the frog oesophagus (poppy-seed transport).
+    // Every step is performed by the student; the model only reacts.
+    // =====================================================================
+    const TREAT = {
+      ringer: { label: 'Frog Ringer (control)', short: 'Control', color: PALETTE.slate },
+      ach: { label: 'Acetylcholine 100 µg/mL', short: 'ACh', color: PALETTE.teal },
+      physo: { label: 'Physostigmine 1 mg/mL', short: 'Physostig.', color: PALETTE.sky },
+      atr: { label: 'Atropine 1 mg/mL', short: 'Atropine', color: PALETTE.amber },
+      atrach: { label: 'Atropine + ACh', short: 'Atr + ACh', color: PALETTE.rose }
+    };
+    const ORDER = ['ringer', 'ach', 'physo', 'atr', 'atrach'];
+    const RX = { // Frog Ringer, mg per 100 mL
+      NaCl: { name: 'Sodium chloride', mg: 650, cap: '#1d4ed8' }, KCl: { name: 'Potassium chloride', mg: 14, cap: '#b91c1c' },
+      CaCl2: { name: 'Calcium chloride', mg: 12, cap: '#0f766e' }, NaHCO3: { name: 'Sodium bicarbonate', mg: 20, cap: '#15803d' }
+    };
+    const STOCK_ACH = 1000;                       // µg/mL ampoule
+    const DRUG = { ach: { tau: 25, std: 100 }, phy: { tau: 45, std: 1000 }, atr: { tau: 150, std: 1000 } };   // wash-out tau (min), standard conc µg/mL
+    let S;
+    function freshFrog(n) {
+      return { n, v0: clamp(0.56 + gauss() * 0.06, 0.42, 0.7), pins: [0, 0, 0, 0], tool: null, cutL: 0, cutR: 0, jaw: 0, slit: 0, flaps: [0, 0, 0, 0], marks: [0, 0], dist: null, wet: 0.7, dry: 0 };
+    }
+    function freshState() {
+      return {
+        t: 0, station: 1, sel: null, warned: {}, balOn: false,
+        abal: { boat: false, tared: false, mg: 0, what: null },
+        ringer: { salts: {}, made: false, vol: 0, left: 0, q: 1, worst: 0 },
+        sol: { phy: { mg: 0, inFl: false, vol: 0, labelled: false, conc: 0, left: 0 }, atr: { mg: 0, inFl: false, vol: 0, labelled: false, conc: 0, left: 0 } },
+        ach: { vol: 0, stockMl: 0, ringerMl: 0, conc: 0, made: false, made_t: 0, left: 0 },
+        calc: { dil: '' },
+        frog: freshFrog(1),
+        // tissue pharmacology state: residual occupancy 0..1.25 and application time
+        R: { ach: 0, phy: 0, atr: 0 }, Rt: 0, applied: { t: -1e9, keys: [] },
+        drop: { src: null, vol: 0, dirty: null }, forceps: null, seed: null, sw: { t: 0, run: false, shown: 0, t0: 0 }, rows: [], trialNo: 0,
+        calcN: 0, notes: { mean: {}, chg: {} }, nb: Object.fromEntries(ORDER.map(k => [k, { t: ['', '', ''], mean: '', vel: '' }])), flags: [], _sceneV: 0
+      };
+    }
+    const minNow = () => S.t / 60;
+    // residuals decay with wash-out time; each Ringer rinse removes 60%
+    function decay(dt) { Object.keys(DRUG).forEach(k => S.R[k] *= Math.exp(-dt / 60 / DRUG[k].tau)); }
+    function condKey() {
+      const R = S.R; if (R.atr > 0.3 && R.ach > 0.3) return 'atrach'; if (R.ach > 0.3 && R.phy < 0.3) return 'ach'; if (R.phy > 0.3 && R.ach < 0.3) return 'physo'; if (R.atr > 0.3 && R.ach <= 0.3 && R.phy <= 0.3) return 'atr';
+      if (R.ach > 0.3 || R.phy > 0.3) return R.atr > 0.3 ? 'atrach' : 'ach'; return 'ringer';
+    }
+    function contactF() { const mins = (S.t - S.applied.t) / 60; return mins >= 1e5 ? 1 : 1 - Math.exp(-mins / 1.3); }
+    // ciliary transport velocity (mm/s) right now
+    function velocity() {
+      const F = S.frog, R = S.R, cf = contactF();
+      const stim = (1.0 * R.ach + 0.42 * R.phy) / (1 + 20 * R.atr);
+      let f = (1 + stim * cf) * (1 - 0.18 * (R.atr * cf) / (R.atr * cf + 0.3));
+      const w = F.wet; if (w < 0.5) f *= clamp(0.1 + 1.8 * w, 0.05, 1);                  // drying mucosa
+      return F.v0 * S.ringer.q * f;
+    }
+    function applyDrug(key, drops, conc) {
+      const x = (drops / 2.5) * (conc / DRUG[key].std), sat = 1.25 * x / (x + 0.25);
+      S.R[key] = Math.min(1.35, S.R[key] + sat); S.applied.t = S.t; S.applied.keys.push(key); S.frog.wet = 1;
+    }
+    const clockStr2 = t => { const m = Math.floor(9 * 60 + t / 60); return `${String(Math.floor(m / 60) % 24).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`; };
+  </script>
+  <script>
+    // ================================================================ STATION 1: Frog Ringer, physostigmine, atropine, ACh dilution
+    const SALT_X = { NaCl: 28, KCl: 106, CaCl2: 184, NaHCO3: 262 }, VESSEL = { ringer: 318, phy: 438, atr: 548, ach: 664 };
+    function flaskArt(x, base, w, neckH, bodyH, id, label, big) {
+      const p = `M${x - 7} ${base - bodyH - neckH} L${x + 7} ${base - bodyH - neckH} L${x + 7} ${base - bodyH} Q${x + w} ${base - bodyH + 10} ${x + w} ${base - w * 0.55} Q${x + w} ${base} ${x} ${base} Q${x - w} ${base} ${x - w} ${base - w * 0.55} Q${x - w} ${base - bodyH + 10} ${x - 7} ${base - bodyH} Z`;
+      return `<ellipse cx="${x}" cy="${base}" rx="${w + 4}" ry="6" fill="#000" opacity=".35"/><clipPath id="c_${id}"><path d="${p}"/></clipPath>
+        <g clip-path="url(#c_${id})"><rect id="liq_${id}" x="${x - w - 2}" y="${base}" width="${2 * w + 4}" height="0" fill="url(#liquid)"/></g>
+        <path d="${p}" fill="url(#glass)" stroke="url(#glassEdge)" stroke-width="2"/><path d="M${x - w + 8} ${base - bodyH + 14} L${x - w + 6} ${base - w * 0.6}" stroke="#fff" stroke-width="3" opacity=".35" stroke-linecap="round"/>
+        <rect x="${x - 9}" y="${base - bodyH - neckH - 3}" width="18" height="6" rx="2" fill="#e2e8f0" stroke="#94a3b8"/><line x1="${x - 7}" x2="${x + 7}" y1="${base - bodyH - neckH * 0.45}" y2="${base - bodyH - neckH * 0.45}" stroke="#fde68a" stroke-width="1.6"/>
+        ${lbl(x, base + 20, label, { c: '#cbd5e1', s: 9 })}${lbl(x, base - w * 0.25, big, { s: 9, w: 800, c: '#0f172a' })}<g id="tag_${id}"></g>`;
+    }
+    function sceneSolutions() {
+      let s = room(430) + wallClock(954, 56, 30);
+      s += `<rect x="14" y="186" width="650" height="12" fill="url(#steelH)" filter="url(#sh2)"/><rect x="24" y="198" width="6" height="26" fill="#6b7280"/><rect x="648" y="198" width="6" height="26" fill="#6b7280"/>`;
+      Object.entries(RX).forEach(([k, r]) => { s += bottle(SALT_X[k], 88, { act: 'salt:' + k, title: { NaCl: 'NaCl', KCl: 'KCl', CaCl2: 'CaCl₂', NaHCO3: 'NaHCO₃' }[k], sub: r.name.split(' ')[0] + ' • AR', cap: r.cap, kind: 'hdpe', w: 62, h: 98, ts: 7.4, ss: 5 }); });
+      s += bottle(346, 92, { act: 'jar:phy', title: 'PHYSOSTIGMINE', sub: 'salicylate • 1 g', cap: '#0f766e', kind: 'amber', w: 70, ts: 5.6, ss: 5 });
+      s += bottle(432, 92, { act: 'jar:atr', title: 'ATROPINE', sub: 'sulphate IP • 5 g', cap: '#b91c1c', kind: 'amber', w: 70, ts: 6.6, ss: 5 });
+      s += bottle(520, 92, { act: 'stock', title: 'ACh CHLORIDE', sub: '1 mg/mL • 10 mL', cap: '#7e13b5', kind: 'glass', liq: 'url(#liquid)', level: .6, w: 56, h: 90, ts: 5.2, ss: 5 });
+      s += bottle(590, 80, { act: 'water', title: 'DIST. WATER', sub: '1 L', cap: '#0369a1', kind: 'glass', liq: 'url(#liquid)', level: .75, w: 60, h: 102, ts: 6.2 });
+      s += anaBalance(14, 286, 'abalDisp');
+      s += `<g class="hot" data-act="fl:ringer">${flaskArt(VESSEL.ringer, 428, 46, 70, 78, 'ringer', 'Volumetric flask 100 mL', '100 mL')}</g>`;
+      s += `<g class="hot" data-act="fl:phy">${flaskArt(VESSEL.phy, 428, 34, 60, 56, 'phy', 'Flask: physostigmine', '10 mL')}</g>`;
+      s += `<g class="hot" data-act="fl:atr">${flaskArt(VESSEL.atr, 428, 34, 60, 56, 'atr', 'Flask: atropine', '10 mL')}</g>`;
+      let tk = ''; for (let i = 0; i <= 10; i++) tk += `<line x1="${VESSEL.ach - 14}" x2="${VESSEL.ach - (i % 5 ? 9 : 5)}" y1="${420 - i * 12}" y2="${420 - i * 12}" stroke="#e2e8f0" stroke-width="1"/>${i % 5 ? '' : lbl(VESSEL.ach - 18, 423 - i * 12, String(i), { s: 7, c: '#e2e8f0', a: 'end' })}`;
+      s += `<g class="hot" data-act="tube"><ellipse cx="${VESSEL.ach}" cy="430" rx="22" ry="5" fill="#000" opacity=".35"/><rect id="liq_ach" x="${VESSEL.ach - 14}" y="420" width="28" height="0" fill="url(#liquid)"/>
+        <path d="M${VESSEL.ach - 15} 288 L${VESSEL.ach - 15} 420 Q${VESSEL.ach - 15} 432 ${VESSEL.ach} 432 Q${VESSEL.ach + 15} 432 ${VESSEL.ach + 15} 420 L${VESSEL.ach + 15} 288" fill="url(#glass)" stroke="url(#glassEdge)" stroke-width="2"/>${tk}
+        <rect x="${VESSEL.ach - 17}" y="284" width="34" height="6" rx="2" fill="#e2e8f0" stroke="#94a3b8"/><g id="tag_ach"></g>${lbl(VESSEL.ach, 450, 'Test tube 10 mL (ACh)', { c: '#cbd5e1', s: 9 })}</g>`;
+      s += `<g transform="translate(730 20)" filter="url(#sh)"><rect width="250" height="196" fill="#fffdf6"/>${lbl(125, 20, 'SOLUTIONS TO PREPARE', { s: 10.5, w: 800, c: '#0a1f44' })}
+        ${lbl(10, 40, 'Frog Ringer (100 mL): NaCl 0.65 g,', { s: 8.4, a: 'start', c: '#13294f' })}${lbl(10, 53, 'KCl 14 mg, CaCl₂ 12 mg, NaHCO₃ 20 mg', { s: 8.4, a: 'start', c: '#13294f' })}
+        ${lbl(10, 72, 'ACh 100 µg/mL (10 mL) from the 1 mg/mL', { s: 8.4, a: 'start', c: '#13294f' })}${lbl(10, 85, 'ampoule: C₁V₁ = C₂V₂, diluent = Ringer', { s: 8.4, a: 'start', c: '#13294f' })}
+        ${lbl(10, 104, 'Physostigmine 1 mg/mL: 10 mg in 10 mL', { s: 8.4, a: 'start', c: '#13294f' })}${lbl(10, 117, 'Atropine 1 mg/mL: 10 mg in 10 mL', { s: 8.4, a: 'start', c: '#13294f' })}
+        ${lbl(10, 137, 'Dilute the drugs with FROG RINGER.', { s: 8.4, a: 'start', c: '#b91c1c', w: 700 })}${lbl(10, 150, 'Make ACh freshly (it is hydrolysed).', { s: 8.4, a: 'start', c: '#b91c1c', w: 700 })}
+        ${lbl(10, 170, 'Weigh: boat → TARE → jar → tip in.', { s: 8.4, a: 'start', c: '#13294f' })}${lbl(10, 183, 'Make up to the mark, mix, label.', { s: 8.4, a: 'start', c: '#13294f' })}</g>`;
+      return s;
+    }
+    const liqSet = (id, frac, base = 428, full = 100) => { const e = $('liq_' + id); if (!e) return; const h = Math.max(0, full * clamp(frac, 0, 1)); e.setAttribute('y', base - h); e.setAttribute('height', h); };
+    const tagSet = (id, x, y, t1, t2) => { const e = $('tag_' + id); if (e) e.innerHTML = t1 ? `<rect x="${x - 29}" y="${y}" width="58" height="25" fill="#fff" stroke="#ca8a04"/>${lbl(x, y + 10, t1, { s: 5.8, w: 800 })}${lbl(x, y + 20, t2, { s: 6, c: '#b91c1c', w: 700 })}` : ''; };
+    function dyn1() {
+      if (S.station !== 1) return;
+      const A = S.abal;
+      $('abalDisp').textContent = !A.boat ? '0.0000' : (A.tared ? A.mg / 1000 : 0.3521 + A.mg / 1000).toFixed(4);
+      $('abalDispBoat').innerHTML = A.boat ? `<path d="M100 348 l48 0 l-6 9 l-36 0z" fill="#e2e8f0" stroke="#94a3b8"/>${A.mg ? `<ellipse cx="124" cy="348" rx="${Math.min(14, 3 + A.mg / 60)}" ry="2.8" fill="#fefce8"/>` : ''}` : '';
+      const R = S.ringer; liqSet('ringer', R.made ? R.left / 100 * .72 : (Object.keys(R.salts).length ? .02 : 0), 428, 92); tagSet('ringer', VESSEL.ringer, 360, R.made ? 'FROG RINGER' : '', R.made ? fx(R.left, 0) + ' mL left' : '');
+      ['phy', 'atr'].forEach(k => { const F = S.sol[k]; liqSet(k, F.vol ? (F.labelled ? F.left / 10 * .8 : .8) : F.inFl ? .03 : 0, 428, 72); tagSet(k, VESSEL[k], 380, F.labelled ? (k === 'phy' ? 'PHYSOSTIG.' : 'ATROPINE') : '', F.labelled ? fx(F.conc, 2) + ' mg/mL' : ''); });
+      const C = S.ach; liqSet('ach', C.made ? C.left / 10 : C.vol / 10, 420, 120); tagSet('ach', VESSEL.ach, 300, C.made ? 'ACh' : '', C.made ? fx(C.conc, 1) + ' µg/mL' : '');
+    }
+    function act1(a, arg) {
+      const A = S.abal;
+      if (a === 'abal') {
+        if (!A.boat) { A.boat = true; A.tared = false; A.mg = 0; A.what = null; beep('tick'); say('Weighing boat placed (0.3521 g). Click again to TARE.'); }
+        else if (!A.tared) { A.tared = true; beep('tick'); say('Tared: 0.0000 g. Click the jar to weigh from.'); }
+        else say(A.mg ? `Boat holds ${fx(A.mg, 1)} mg. Tip it into its vessel.` : 'Choose a jar.');
+      } else if (a === 'salt' || a === 'jar') {
+        if (!A.boat || !A.tared) { say('Place a weighing boat on the analytical balance and TARE first.', true); return; }
+        if (A.mg && A.what !== arg) { say('The boat already holds another powder.', true); return; }
+        if (a === 'salt' && S.ringer.made) { say('The Ringer is already made up.', true); return; }
+        S.sel = { kind: 'weigh', what: arg }; say(`Enter the mass of ${arg} to weigh (mg).`);
+      } else if (a === 'fl') {
+        if (arg === 'ringer') {
+          if (S.ringer.made) { S.sel = { kind: 'ringerDone' }; return; }
+          if (A.mg) {
+            if (!RX[A.what]) { say('That powder is not a Ringer salt.', true); return; }
+            S.ringer.salts[A.what] = (S.ringer.salts[A.what] || 0) + A.mg; A.mg = 0; A.boat = false; S.t += 30; beep('ok'); say(`${fx(S.ringer.salts[A.what], 1)} mg ${A.what} tipped into the 100 mL flask.`);
+          }
+          S.sel = Object.keys(S.ringer.salts).length ? { kind: 'ringer' } : null; if (!S.sel) say('The flask is empty.');
+        } else {
+          const F = S.sol[arg];
+          if (F.labelled) { S.sel = { kind: 'flDone', k: arg }; return; }
+          if (A.mg) { if (A.what !== arg) { say('That flask is for the other drug.', true); return; } F.mg += A.mg; F.inFl = true; A.mg = 0; A.boat = false; S.t += 30; beep('ok'); say(`${fx(F.mg, 1)} mg tipped into the 10 mL flask.`); }
+          if (F.inFl) S.sel = { kind: 'fl', k: arg }; else say('The flask is empty.');
+        }
+      } else if (a === 'tube') {
+        if (!S.ringer.made) { say('Make the Frog Ringer first: it is the diluent.', true); return; }
+        S.sel = S.ach.made ? { kind: 'achDone' } : { kind: 'ach' };
+      } else if (a === 'stock') say('ACh ampoule 1 mg/mL: pipette from it in the ACh test-tube step.');
+      else if (a === 'water') say('Distilled water is used to make up the Ringer flask.');
+    }
+    function weighPowder() {
+      const v = parseFloat($('inMg').value), w = S.sel.what;
+      if (!(v > 0) || v > 3000) { say('Enter a mass in mg (e.g. 14).', true); return; }
+      S.abal.mg = +(v * (1 + (Math.random() - 0.5) * 0.004) + (Math.random() - 0.5) * 0.15).toFixed(1); S.abal.what = w; S.t += 90; beep('click');
+      say(`Balance reads ${(S.abal.mg / 1000).toFixed(4)} g. Tip it into ${RX[w] ? 'the 100 mL flask' : 'its 10 mL flask'}.`);
+      S.sel = null; renderCtx(); drawDyn();
+    }
+    function makeRinger() {
+      const R = S.ringer; let worst = 0, sumO = 0;
+      Object.entries(RX).forEach(([k, r]) => { const ratio = (R.salts[k] || 0) / r.mg, d = Math.abs(ratio - 1); if (k === 'NaCl') worst = d; else sumO += Math.min(d, 1); });
+      R.q = 1 - clamp(0.8 * worst + 0.2 * sumO, 0, 0.45); R.made = true; R.left = 100; R.worst = Math.max(worst, sumO / 3); S.t += 150; beep('done');
+      const bad = worst > 0.05 || sumO > 0.2;
+      say(`Made up to 100 mL with distilled water, mixed and labelled Frog Ringer.${bad ? ' ⚠ A salt is off by more than 5%: the saline is not isotonic for frog tissue.' : ''}`, bad);
+      if (bad) S.flags.push('Ringer salts inaccurate');
+      S.sel = null; renderCtx(); drawDyn(); refreshChecklist();
+    }
+    function makeUp(k) {
+      const F = S.sol[k]; F.vol = 10; F.conc = F.mg / 10; F.left = 10; F.labelled = true; S.t += 120; beep('done');
+      const off = Math.abs(F.conc / 1 - 1);
+      say(`Made up to 10 mL with Frog Ringer and labelled: <b>${fx(F.conc, 2)} mg/mL</b>${off > 0.1 ? ' ⚠ (1 mg/mL intended)' : ''}.`, off > 0.1);
+      if (off > 0.1) S.flags.push(`${k === 'phy' ? 'physostigmine' : 'atropine'} ${fx(F.conc, 2)} mg/mL`);
+      S.sel = null; renderCtx(); drawDyn(); refreshChecklist();
+    }
+    function makeAch() {
+      const vs = parseFloat($('inVs').value), vr = parseFloat($('inVr').value);
+      if (!(vs > 0) || !(vr >= 0) || vs + vr > 10) { say('Enter pipette volumes (mL) of stock and Ringer; the total cannot exceed 10 mL.', true); return; }
+      const C = S.ach; C.stockMl = vs; C.ringerMl = vr; C.vol = vs + vr; C.left = C.vol; C.conc = STOCK_ACH * vs / (vs + vr) * (1 + (Math.random() - 0.5) * 0.03); C.made = true; C.made_t = S.t; S.t += 120; beep('done');
+      const off = Math.abs(C.conc / 100 - 1);
+      say(`${fx(vs, 2)} mL stock + ${fx(vr, 2)} mL Frog Ringer, mixed: <b>${fx(C.conc, 1)} µg/mL</b>${off > 0.1 ? ' ⚠ (100 µg/mL intended)' : ''}.`, off > 0.1);
+      if (off > 0.1) S.flags.push(`ACh ${fx(C.conc, 0)} µg/mL`);
+      S.sel = null; renderCtx(); drawDyn(); refreshChecklist();
+    }
+    function newBatch(k) {
+      if (k === 'ringer') S.ringer = { salts: {}, made: false, vol: 0, left: 0, q: 1, worst: 0 }; else if (k === 'ach') S.ach = { vol: 0, stockMl: 0, ringerMl: 0, conc: 0, made: false, made_t: 0, left: 0 };
+      else S.sol[k] = { mg: 0, inFl: false, vol: 0, labelled: false, conc: 0, left: 0 };
+      S.sel = null; say('Vessel emptied and rinsed. Prepare it again.'); renderCtx(); drawDyn(); refreshChecklist();
+    }
+  </script>
+  <script>
+    // ================================================================ STATION 2: frog preparation (pinned, jaw removed, oesophagus opened, marked)
+    // The frog arrives already pithed by trained staff (IAEC / CCSEA); everything drawn here is neutral anatomy.
+    const LIMB_PIN = [[142, 170], [520, 170], [138, 380], [524, 380]], FLAP_PIN = [[262, 214], [398, 214], [262, 324], [398, 324]];
+    const pinArt = (x, y, c = '#facc15') => `<g filter="url(#sh2)"><line x1="${x}" y1="${y}" x2="${x + 4}" y2="${y - 24}" stroke="url(#steel)" stroke-width="1.8"/><circle cx="${x + 4}" cy="${y - 25}" r="4.6" fill="${c}" stroke="#a16207" stroke-width=".6"/><circle cx="${x + 2.8}" cy="${y - 26.4}" r="1.4" fill="#fff" opacity=".8"/></g>`;
+    function limbPath(d, w) { return `<path d="${d}" fill="none" stroke="#2f3a12" stroke-width="${w + 4}" stroke-linecap="round" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="url(#frogSkin)" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="#efe6bf" stroke-width="${w * .42}" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/><path d="${d}" fill="none" stroke="url(#skinTex)" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" opacity=".35" filter="url(#skinF)"/>`; }
+    function toes(x, y, ang, n) { return Array.from({ length: n }, (_, i) => { const a = (ang + (i - (n - 1) / 2) * 24) * Math.PI / 180, L = 26; return `<line x1="${x}" y1="${y}" x2="${(x + Math.cos(a) * L).toFixed(1)}" y2="${(y + Math.sin(a) * L).toFixed(1)}" stroke="#4d5b22" stroke-width="5" stroke-linecap="round"/><circle cx="${(x + Math.cos(a) * L).toFixed(1)}" cy="${(y + Math.sin(a) * L).toFixed(1)}" r="3" fill="#dcd0a0"/>`; }).join(''); }
+    function sceneFrog() {
+      let s = room(430) + `<defs><linearGradient id="rulerG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f8fafc"/><stop offset="1" stop-color="#cbd5e1"/></linearGradient><radialGradient id="frogSkin" cx=".5" cy=".4" r=".8"><stop offset="0" stop-color="#8aa04a"/><stop offset=".6" stop-color="#5f7430"/><stop offset="1" stop-color="#3c4c1b"/></radialGradient>
+        <radialGradient id="belly" cx=".5" cy=".4" r=".7"><stop offset="0" stop-color="#f4ecc9"/><stop offset=".7" stop-color="#e0d4a2"/><stop offset="1" stop-color="#b6a874"/></radialGradient>
+        <linearGradient id="mucG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f8b6ae"/><stop offset=".5" stop-color="#f09a94"/><stop offset="1" stop-color="#d9777a"/></linearGradient>
+        <filter id="skinF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".22" numOctaves="3" seed="5"/><feColorMatrix values="0 0 0 0 .1  0 0 0 0 .13  0 0 0 0 .02  0 0 0 .9 -.15"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+        <filter id="waxF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".05 .7" numOctaves="3" seed="2"/><feColorMatrix values="0 0 0 0 .3  0 0 0 0 .3  0 0 0 0 .32  0 0 0 .5 0"/></filter>
+        <filter id="wetF" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".03 .05" numOctaves="2" seed="9" result="n"/><feSpecularLighting in="n" surfaceScale="4" specularConstant=".9" specularExponent="22" lighting-color="#fff" result="sp"><fePointLight x="200" y="40" z="80"/></feSpecularLighting><feComposite in="sp" in2="SourceGraphic" operator="in"/></filter></defs>`;
+      s += `<g filter="url(#sh)"><rect x="40" y="26" width="580" height="402" rx="10" fill="#1d2430" stroke="#4b5563" stroke-width="3"/><rect x="40" y="26" width="580" height="402" rx="10" fill="#0f141c" opacity=".45"/><rect x="40" y="26" width="580" height="402" rx="10" filter="url(#waxF)"/></g>${lbl(330, 446, 'Dissection board (black wax)', { c: '#cbd5e1', s: 9 })}`;
+      s += `<g id="frogG"></g><g id="pinG"></g>`;
+      // tools
+      s += `<g class="hot" data-act="tool:scis" id="scisT" filter="url(#sh2)"><path d="M0 6 L74 2 L77 6 L0 11 Z" fill="url(#steel)"/><path d="M0 16 L74 10 L77 6 L0 6 Z" fill="url(#steelH)"/><ellipse cx="-10" cy="1" rx="10" ry="7" fill="none" stroke="#1f2937" stroke-width="4"/><ellipse cx="-10" cy="18" rx="10" ry="7" fill="none" stroke="#1f2937" stroke-width="4"/><circle cx="9" cy="9" r="2.3" fill="#475569"/></g>`;
+      s += `<g class="hot" data-act="tool:forc" id="forcT" filter="url(#sh2)"><path d="M0 2 L96 8 L96 11 L0 8 Z" fill="url(#steel)"/><path d="M0 14 L96 10 L96 8 L0 8 Z" fill="url(#steelH)"/><path d="M0 2 Q-10 8 0 14" fill="#9ca3af"/></g>`;
+      s += `<g id="toolLbl"></g>`;
+      s += `<g class="hot" data-act="ringerB" filter="url(#sh)"><rect x="718" y="298" width="42" height="94" rx="8" fill="url(#glass)" stroke="url(#glassEdge)" stroke-width="2"/><rect x="722" y="340" width="34" height="48" rx="6" fill="url(#liquid)"/><rect x="727" y="284" width="24" height="16" rx="3" fill="#0369a1"/><path d="M732 284 L732 262 Q739 254 746 262 L746 284Z" fill="#e5e7eb" stroke="#94a3b8"/><rect x="722" y="324" width="34" height="22" fill="#fff" stroke="#ca8a04"/>${lbl(739, 333, 'FROG', { s: 5.6, w: 800 })}${lbl(739, 342, 'RINGER', { s: 5.6, w: 800 })}</g>${lbl(739, 410, 'Ringer dropper', { c: '#cbd5e1', s: 9 })}`;
+      s += `<g filter="url(#sh)"><rect x="660" y="330" width="46" height="70" rx="3" fill="#374151" stroke="#6b7280"/>${[0, 1, 2, 3, 4, 5].map(i => `<circle cx="${672 + (i % 3) * 12}" cy="${346 + Math.floor(i / 3) * 14}" r="4" fill="#facc15"/>`).join('')}${lbl(683, 392, 'PINS', { s: 7, w: 800, c: '#e5e7eb' })}</g>`;
+      s += `<g class="hot" data-act="rulerT" filter="url(#sh)"><rect x="780" y="318" width="190" height="34" fill="url(#rulerG)" stroke="#64748b"/>${Array.from({ length: 101 }, (_, i) => `<line x1="${782 + i * 1.84}" x2="${782 + i * 1.84}" y1="318" y2="${i % 10 ? (i % 5 ? 324 : 327) : 331}" stroke="#0f172a" stroke-width=".6"/>`).join('')}${Array.from({ length: 11 }, (_, i) => `<text x="${782 + i * 18.4}" y="345" font-size="7" text-anchor="middle" font-family="JetBrains Mono" font-weight="700" fill="#0f172a">${i * 10}</text>`).join('')}</g>${lbl(875, 372, 'Steel rule (mm)  +  marker pen', { c: '#cbd5e1', s: 9 })}`;
+      s += `<g transform="translate(680 24)" filter="url(#sh)"><rect width="300" height="150" fill="#fffdf6"/>${lbl(150, 18, 'PREPARING THE OESOPHAGUS', { s: 10, w: 800, c: '#0a1f44' })}
+        ${['1  Frog arrives pithed (done by staff).', '2  Pin the four limbs, belly up.', '3  Scissors: cut both mouth angles; forceps lift', '    and remove the lower jaw.', '4  Scissors: slit the oesophagus midline (3 cuts).', '5  Pin the flaps out, mucosa up. Keep it moist!', '6  Mark START and FINISH 20 mm apart.'].map((t, i) => lbl(10, 38 + i * 14, t, { s: 8.4, a: 'start', c: i === 5 ? '#b91c1c' : '#13294f', w: i === 5 ? 700 : 600 })).join('')}</g>`;
+      return s;
+    }
+    function dyn2() {
+      if (S.station !== 2) return;
+      const F = S.frog, open = F.slit >= 3;
+      let h = '';
+      h += limbPath('M285 200 C240 214 200 190 150 168', 22) + limbPath('M375 200 C420 214 462 190 512 168', 22) + toes(145, 168, 200, 4) + toes(516, 168, -20, 4);
+      h += limbPath('M285 300 C230 330 200 372 148 384', 30) + limbPath('M375 300 C430 330 462 372 514 384', 30) + toes(138, 384, 160, 5) + toes(526, 384, 20, 5);
+      h += `<path d="M330 150 C 412 150, 442 200, 440 262 C 438 322, 400 372, 330 378 C 260 372, 222 322, 220 262 C 218 200, 248 150, 330 150Z" fill="url(#belly)" stroke="#6a7a2c" stroke-width="3.5"/>
+        <path d="M330 150 C 412 150, 442 200, 440 262 C 438 322, 400 372, 330 378 C 260 372, 222 322, 220 262 C 218 200, 248 150, 330 150Z" fill="#fff" opacity=".35" filter="url(#skinF)"/>
+        <path d="M240 190 C226 230 226 300 270 350 M420 190 C434 230 434 300 390 350" stroke="#6a7a2c" stroke-width="9" fill="none" opacity=".45" stroke-linecap="round"/>`;
+      // head
+      h += `<ellipse cx="330" cy="104" rx="84" ry="68" fill="url(#frogSkin)" stroke="#2f3a12" stroke-width="3"/><ellipse cx="330" cy="104" rx="84" ry="68" fill="#fff" filter="url(#skinF)" opacity=".4"/>`;
+      h += [-1, 1].map(s => `<g><ellipse cx="${330 + s * 52}" cy="64" rx="19" ry="17" fill="#6c7f35" stroke="#2f3a12" stroke-width="2"/><ellipse cx="${330 + s * 52}" cy="64" rx="13" ry="12" fill="#caa63a"/><ellipse cx="${330 + s * 52}" cy="64" rx="9" ry="6.5" fill="#12100a" transform="rotate(${s * 8} ${330 + s * 52} 64)"/><circle cx="${330 + s * 49}" cy="60" r="2.4" fill="#fff" opacity=".85"/></g>`).join('');
+      h += `<circle cx="322" cy="38" r="1.6" fill="#2b3511"/><circle cx="338" cy="38" r="1.6" fill="#2b3511"/>`;
+      if (F.jaw) {
+        h += `<path d="M262 118 C 290 100, 370 100, 398 118 L 392 168 C 362 178, 298 178, 268 168 Z" fill="url(#mucG)" stroke="#8b3a3a" stroke-width="1.6"/><path d="M300 140 C 318 132, 342 132, 360 140 C 352 156, 308 156, 300 140Z" fill="#d86a73"/><path d="M308 108 C 322 114, 338 114, 352 108" stroke="#fde8e4" stroke-width="2" fill="none" opacity=".7"/><ellipse cx="330" cy="122" rx="30" ry="6" fill="#fff" opacity=".22"/>`;
+        h += lbl(330, 180, 'pharynx', { s: 7.5, c: '#fde68a' });
+      } else h += `<path d="M262 124 C 300 150, 360 150, 398 124" stroke="#2f3a12" stroke-width="2.4" fill="none"/>${F.cutL ? '<path d="M262 124 L246 112" stroke="#3b0d12" stroke-width="3.5" stroke-linecap="round"/>' : ''}${F.cutR ? '<path d="M398 124 L414 112" stroke="#3b0d12" stroke-width="3.5" stroke-linecap="round"/>' : ''}`;
+      // oesophagus
+      const y0 = 178, y1 = 340;
+      if (F.jaw && !open) {
+        h += `<path d="M310 ${y0} L350 ${y0} L350 ${y1} L310 ${y1} Z" fill="url(#mucG)" stroke="#8b3a3a" stroke-width="1.6"/><path d="M310 ${y0} L350 ${y0} L350 ${y1} L310 ${y1} Z" fill="#fff" filter="url(#wetF)" opacity=".5"/>`;
+        for (let i = 0; i < F.slit; i++) h += `<line x1="330" y1="${y0 + i * 54}" x2="330" y2="${y0 + (i + 1) * 54}" stroke="#4a0f14" stroke-width="2.4"/>`;
+        h += `<ellipse cx="330" cy="${y1 + 18}" rx="42" ry="22" fill="#e9b8a5" stroke="#9c5a4a" stroke-width="1.4"/>${lbl(330, y1 + 46, 'stomach', { s: 7.5, c: '#fde68a' })}`;
+      } else if (open) {
+        h += `<ellipse cx="330" cy="${y1 + 20}" rx="52" ry="24" fill="#e9b8a5" stroke="#9c5a4a" stroke-width="1.4"/>${lbl(330, y1 + 50, 'stomach', { s: 7.5, c: '#fde68a' })}`;
+        const xl = F.flaps[0] || F.flaps[2] ? 262 : 300, xr = F.flaps[1] || F.flaps[3] ? 398 : 360;
+        h += `<path d="M310 ${y0} L350 ${y0} L${xr} 214 L${xr} 324 L350 ${y1} L310 ${y1} L${xl} 324 L${xl} 214 Z" fill="url(#mucG)" stroke="#8b3a3a" stroke-width="1.6"/>`;
+        for (let i = 0; i < 14; i++) h += `<path d="M${xl + 6} ${200 + i * 9.5} q ${(xr - xl) / 2 - 6} ${i % 2 ? 5 : -5} ${xr - xl - 12} 0" stroke="#c35a63" stroke-width="1.1" fill="none" opacity=".6"/>`;
+        h += `<path d="M310 ${y0} L350 ${y0} L${xr} 214 L${xr} 324 L350 ${y1} L310 ${y1} L${xl} 324 L${xl} 214 Z" fill="#fff" filter="url(#wetF)" opacity="${.25 + .5 * F.wet}"/>`;
+        h += lbl(330, 282, F.wet < 0.4 ? 'DRY: moisten!' : 'mucosa', { s: 8, c: F.wet < 0.4 ? '#fef08a' : '#fff0ee', w: 700 });
+      }
+      // hot spots
+      if (!F.jaw) { h += `<g class="hot" data-act="cut:L"><circle cx="258" cy="124" r="13" fill="#fde047" opacity=".001"/></g><g class="hot" data-act="cut:R"><circle cx="402" cy="124" r="13" fill="#fde047" opacity=".001"/></g><g class="hot" data-act="jaw"><ellipse cx="330" cy="150" rx="46" ry="16" fill="#fde047" opacity=".001"/></g>`; }
+      if (F.jaw && !open) [0, 1, 2].forEach(i => h += `<g class="hot" data-act="slit:${i}"><rect x="300" y="${y0 + i * 54}" width="60" height="54" fill="#fde047" opacity=".001"/></g>`);
+      LIMB_PIN.forEach(([x, y], i) => { if (!F.pins[i]) h += `<g class="hot" data-act="pin:${i}"><circle cx="${x}" cy="${y}" r="18" fill="#fde047" opacity=".001"/><circle cx="${x}" cy="${y}" r="3" fill="#94a3b8" opacity=".5"/></g>`; });
+      if (open) FLAP_PIN.forEach(([x, y], i) => { if (!F.flaps[i]) h += `<g class="hot" data-act="fp:${i}"><circle cx="${x + 20 * (i % 2 ? -1 : 1) * 0}" cy="${y}" r="16" fill="#fde047" opacity=".001"/><circle cx="${x}" cy="${y}" r="2.6" fill="#e5e7eb" opacity=".6"/></g>`; });
+      $('frogG').innerHTML = h;
+      $('pinG').innerHTML = LIMB_PIN.map(([x, y], i) => F.pins[i] ? pinArt(x, y) : '').join('') + (open ? FLAP_PIN.map(([x, y], i) => F.flaps[i] ? pinArt(x, y, '#38bdf8') : '').join('') : '') +
+        (F.marks[0] ? `<line x1="268" x2="392" y1="236" y2="236" stroke="#7e13b5" stroke-width="3" stroke-dasharray="6 3"/>${lbl(330, 230, 'START', { s: 8, c: '#e9d5ff', w: 800 })}<line x1="268" x2="392" y1="${236 + (F.dist || 20) * 4.4}" y2="${236 + (F.dist || 20) * 4.4}" stroke="#fb7185" stroke-width="3" stroke-dasharray="6 3"/>${lbl(330, 252 + (F.dist || 20) * 4.4, 'FINISH', { s: 8, c: '#fecdd3', w: 800 })}` : '');
+      const t = S.frog.tool; $('scisT').setAttribute('transform', t === 'scis' ? 'translate(468 150) rotate(-24)' : 'translate(640 236)'); $('forcT').setAttribute('transform', t === 'forc' ? 'translate(470 200) rotate(-12)' : 'translate(600 276)');
+      $('toolLbl').innerHTML = lbl(676, 226, t === 'scis' ? 'scissors in hand' : 'Fine scissors', { c: t === 'scis' ? '#fde68a' : '#cbd5e1', s: 9 }) + lbl(640, 300, t === 'forc' ? 'forceps in hand' : 'Forceps', { c: t === 'forc' ? '#fde68a' : '#cbd5e1', s: 9 });
+    }
+    function need(tool) { if (S.frog.tool !== tool) { say(`Pick up the ${tool === 'scis' ? 'scissors' : 'forceps'} first.`, true); return false; } return true; }
+    function act2(a, arg) {
+      const F = S.frog;
+      if (a === 'tool') { F.tool = F.tool === arg ? null : arg; beep('tick'); }
+      else if (a === 'pin') { F.pins[arg] = 1; S.t += 8; beep('click'); say(F.pins.every(Boolean) ? 'All four limbs pinned: the frog lies flat, belly up.' : 'Limb pinned to the wax.'); }
+      else if (a === 'cut') {
+        if (!need('scis')) return; if (!F.pins.every(Boolean)) { say('Pin the four limbs first.', true); return; }
+        if (arg === 'L') F.cutL = 1; else F.cutR = 1; S.t += 10; beep('click'); say(`Mouth angle cut (${arg === 'L' ? 'left' : 'right'}).`);
+      } else if (a === 'jaw') {
+        if (!(F.cutL && F.cutR)) { say('Cut both angles of the mouth with the scissors first.', true); return; }
+        if (!need('forc')) return; F.jaw = 1; S.t += 20; beep('ok'); say('Lower jaw lifted and removed: the pharynx and oesophagus are exposed. Slit the oesophagus midline with the scissors, top to bottom.');
+      } else if (a === 'slit') {
+        if (!need('scis')) return; if (arg !== F.slit) { say(arg > F.slit ? 'Cut in order from the pharynx downwards.' : 'That segment is already cut.', true); return; }
+        F.slit++; S.t += 15; beep('click'); say(F.slit >= 3 ? 'Oesophagus slit open to the stomach. Pin the four flaps out, mucosa upwards.' : `Cut ${F.slit}/3 made along the midline.`);
+      } else if (a === 'fp') {
+        if (!(F.slit >= 3)) return; F.flaps[arg] = 1; S.t += 8; beep('click'); say(F.flaps.every(Boolean) ? 'Mucosa spread flat and pinned. Moisten it with Ringer now, then mark START and FINISH.' : 'Flap pinned.');
+      } else if (a === 'ringerB') {
+        if (!S.ringer.made) { say('You have not made any Frog Ringer yet (station 1).', true); return; }
+        if (!F.jaw) { say('Nothing to moisten yet.'); return; }
+        F.wet = 1; S.ringer.left = Math.max(0, S.ringer.left - 0.5); S.t += 8; beep('ok'); say('A few drops of Frog Ringer applied: the mucosa glistens again.');
+        if (S.applied.keys.length) { decay(0); }
+      } else if (a === 'rulerT') say('Type the distance between the marks in the panel and press the button.');
+    }
+    function setMarks() {
+      const F = S.frog, v = parseFloat($('inDist').value);
+      if (!F.slit || !F.flaps.every(Boolean)) { say('Open and pin the oesophagus first.', true); return; }
+      if (!(v >= 5 && v <= 40)) { say('Enter a distance in mm (the practical uses 20 mm).', true); return; }
+      F.dist = +(v + (Math.random() - 0.5) * 0.4).toFixed(1); F.marks = [1, 1]; S.t += 40; beep('ok');
+      say(`START and FINISH marked ${fx(F.dist, 1)} mm apart.${Math.abs(v - 20) > 1 ? ' ⚠ The protocol uses 20 mm: your velocity calculations must use YOUR distance.' : ''}`, Math.abs(v - 20) > 1);
+      if (Math.abs(v - 20) > 1) S.flags.push(`marks ${fx(F.dist, 0)} mm apart`);
+      renderCtx(); drawDyn(); refreshChecklist();
+    }
+  </script>
+  <script>
+    // ================================================================ STATION 3: drug application, seed transport, stopwatch
+    const PXMM = 21.5, X0 = 215, SEEDX0 = -6;
+    const mmX = mm => X0 + mm * PXMM, TY = 196;
+    function sceneBench() {
+      const D = S.frog.dist || 20;
+      let s = room(430) + wallClock(948, 36, 26) + `<defs><filter id="ciliaF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".6 .12" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 1  0 0 0 0 .75  0 0 0 0 .75  0 0 0 .5 -.1"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+        <filter id="mucTex" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".012 .1" numOctaves="3" seed="8" result="n"/><feDiffuseLighting in="n" surfaceScale="3.5" diffuseConstant="1.15" lighting-color="#ffe3de" result="d"><feDistantLight azimuth="235" elevation="55"/></feDiffuseLighting><feComposite in="d" in2="SourceGraphic" operator="in"/></filter><linearGradient id="mucM" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f9bfb6"/><stop offset=".5" stop-color="#f19a95"/><stop offset="1" stop-color="#d8767a"/></linearGradient>
+        <linearGradient id="rulerG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f8fafc"/><stop offset="1" stop-color="#cbd5e1"/></linearGradient>
+        <radialGradient id="seedG" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#8da0bd"/><stop offset=".6" stop-color="#3b4a66"/><stop offset="1" stop-color="#151c2c"/></radialGradient></defs>`;
+      s += `<g filter="url(#sh)"><rect x="24" y="30" width="760" height="320" rx="10" fill="#1b212b" stroke="#4b5563" stroke-width="3"/><rect x="24" y="30" width="760" height="320" rx="10" filter="url(#waxF)" opacity=".8"/></g>`;
+      s += `<path d="M64 ${TY - 66} C 260 ${TY - 78}, 520 ${TY - 74}, 752 ${TY - 60} L 752 ${TY + 66} C 520 ${TY + 78}, 260 ${TY + 76}, 64 ${TY + 64} Z" fill="url(#mucM)" stroke="#8b3a3a" stroke-width="2.2" filter="url(#sh2)"/>`;
+      for (let i = 0; i < 17; i++) s += `<path d="M${72 + i * 0} ${TY - 56 + i * 7} Q ${400} ${TY - 56 + i * 7 + (i % 2 ? 7 : -7)} 746 ${TY - 50 + i * 6.8}" stroke="#c35a63" stroke-width="1.2" fill="none" opacity=".5"/>`;
+      s += `<path d="M64 ${TY - 66} C 260 ${TY - 78}, 520 ${TY - 74}, 752 ${TY - 60} L 752 ${TY + 66} C 520 ${TY + 78}, 260 ${TY + 76}, 64 ${TY + 64} Z" fill="#fff" filter="url(#ciliaF)" opacity=".22"/><path d="M64 ${TY - 66} C 260 ${TY - 78}, 520 ${TY - 74}, 752 ${TY - 60} L 752 ${TY + 66} C 520 ${TY + 78}, 260 ${TY + 76}, 64 ${TY + 64} Z" fill="#fff" filter="url(#mucTex)" opacity=".65" style="mix-blend-mode:multiply"/><path d="M64 ${TY - 60} C 260 ${TY - 72}, 520 ${TY - 68}, 752 ${TY - 54} L 752 ${TY - 46} C 520 ${TY - 60}, 260 ${TY - 64}, 64 ${TY - 52} Z" fill="#fff" opacity=".13"/><g id="wetG"></g><g id="ciliaG"></g>`;
+      s += `<rect x="24" y="${TY - 66}" width="38" height="132" fill="#d9777a" opacity=".5"/>${lbl(44, TY, 'ORAL', { s: 8, c: '#fff', w: 800 })}${lbl(44, TY + 11, 'END', { s: 8, c: '#fff', w: 800 })}${lbl(768, TY - 4, 'TO', { s: 8, c: '#cbd5e1', w: 800, a: 'end' })}${lbl(770, TY + 8, 'STOMACH', { s: 7, c: '#cbd5e1', w: 800, a: 'end' })}`;
+      s += `<line x1="${mmX(0)}" x2="${mmX(0)}" y1="${TY - 78}" y2="${TY + 82}" stroke="#c084fc" stroke-width="2.6" stroke-dasharray="7 4"/><line x1="${mmX(D)}" x2="${mmX(D)}" y1="${TY - 78}" y2="${TY + 82}" stroke="#fb7185" stroke-width="2.6" stroke-dasharray="7 4"/>${lbl(mmX(0), TY - 86, 'START', { s: 10, c: '#e9d5ff', w: 800 })}${lbl(mmX(D), TY - 86, 'FINISH', { s: 10, c: '#fecdd3', w: 800 })}`;
+      // scale strip along the bottom of the tissue
+      let sc = `<rect x="${mmX(-6)}" y="${TY + 92}" width="${(D + 12) * PXMM}" height="22" fill="url(#rulerG)" stroke="#64748b"/>`;
+      for (let m = -6; m <= D + 6; m++) sc += `<line x1="${mmX(m)}" x2="${mmX(m)}" y1="${TY + 92}" y2="${TY + (m % 5 ? 100 : 106)}" stroke="#0f172a" stroke-width=".8"/>${m % 5 === 0 && m >= 0 ? `<text x="${mmX(m)}" y="${TY + 113}" font-size="8" text-anchor="middle" font-family="JetBrains Mono" font-weight="700" fill="#0f172a">${m}</text>` : ''}`;
+      s += sc + lbl(mmX(D / 2), TY + 130, 'millimetre scale (marks 0 and ' + fx(D, 0) + ' mm)', { c: '#cbd5e1', s: 9 });
+      s += `<g class="hot" data-act="place"><rect x="64" y="${TY - 62}" width="146" height="124" fill="#fde047" opacity=".001"/></g><g id="seedG" style="pointer-events:none"></g><g id="dropG"></g>`;
+      // stopwatch
+      s += `<g transform="translate(804 70)" filter="url(#sh)"><rect x="0" y="0" width="184" height="152" rx="22" fill="#1f2937" stroke="#4b5563" stroke-width="3"/><rect x="2" y="2" width="180" height="40" rx="20" fill="#fff" opacity=".07"/>
+        <rect x="14" y="18" width="156" height="58" rx="6" fill="url(#lcd)" stroke="#111827" stroke-width="2"/><text id="swTxt" x="160" y="64" text-anchor="end" font-size="36" fill="#1f2d14" font-family="DSEG7, JetBrains Mono, monospace">0.00</text><text x="20" y="32" font-size="8" fill="#3f4f2a" font-family="JetBrains Mono" font-weight="700">STOPWATCH  s</text><text id="swState" x="20" y="70" font-size="8" fill="#3f4f2a" font-family="JetBrains Mono" font-weight="700"></text>
+        <g class="hot" data-act="swS"><circle cx="54" cy="112" r="21" fill="#16a34a" stroke="#052e16" stroke-width="2"/><circle cx="48" cy="105" r="6" fill="#fff" opacity=".25"/>${lbl(54, 116, 'START/STOP', { s: 6.6, c: '#fff', w: 800 })}</g>
+        <g class="hot" data-act="swR"><circle cx="130" cy="112" r="21" fill="#dc2626" stroke="#450a0a" stroke-width="2"/><circle cx="124" cy="105" r="6" fill="#fff" opacity=".25"/>${lbl(130, 116, 'RESET', { s: 7, c: '#fff', w: 800 })}</g></g>`;
+      s += `<g id="seedBox"></g>`;
+      s += `<g class="hot" data-act="dish" filter="url(#sh)"><ellipse cx="822" cy="252" rx="38" ry="12" fill="url(#glass)" stroke="url(#glassEdge)" stroke-width="2"/>${Array.from({ length: 16 }, (_, i) => `<ellipse cx="${804 + (i % 6) * 7 + (i > 11 ? 5 : 0)}" cy="${252 + Math.floor(i / 6) * 3 - 3}" rx="2.3" ry="1.7" fill="url(#seedG)"/>`).join('')}</g>${lbl(822, 276, 'Poppy seeds', { c: '#cbd5e1', s: 9 })}`;
+      s += `<g class="hot" data-act="forc" id="forcB" filter="url(#sh2)"><path d="M0 2 L96 8 L96 11 L0 8 Z" fill="url(#steel)"/><path d="M0 14 L96 10 L96 8 L0 8 Z" fill="url(#steelH)"/><path d="M0 2 Q-10 8 0 14" fill="#9ca3af"/><g id="forcSeed"></g></g>`;
+      // dropper bottles + wash
+      const B = [['b:ach', 'ACh', '100 µg/mL', '#7e13b5', 'ach'], ['b:phy', 'PHYSOSTIG.', '1 mg/mL', '#0f766e', 'phy'], ['b:atr', 'ATROPINE', '1 mg/mL', '#b91c1c', 'atr'], ['b:ringer', 'FROG RINGER', 'wash / moisten', '#0369a1', 'ringer']];
+      B.forEach(([act, t, sub, cap, k], i) => { s += bottle(40 + i * 108, 366, { act, title: t, sub, cap, kind: k === 'ringer' ? 'glass' : 'amber', liq: k === 'ringer' ? 'url(#liquid)' : null, level: .7, w: 60, h: 84, ts: 5.8, ss: 5.2 }); });
+      s += `<g class="hot" data-act="dropper" id="dropperB" filter="url(#sh)"><path d="M0 0 L0 -6 Q9 -16 18 -6 L18 0 Z" fill="#111827"/><rect x="2" y="0" width="14" height="70" rx="3" fill="url(#glass)" stroke="url(#glassEdge)" stroke-width="1.4"/><path d="M5 70 L9 92 L13 70 Z" fill="url(#glass)" stroke="#cbd5e1"/><rect id="dropLiq" x="4" y="70" width="10" height="0" fill="#bfdbfe" opacity=".9"/></g>${lbl(520, 454, 'Dropper pipette', { c: '#cbd5e1', s: 9 })}`;
+      s += `<g class="hot" data-act="rinseD" filter="url(#sh)"><path d="M634 390 L700 390 L694 440 L640 440 Z" fill="url(#glass)" stroke="url(#glassEdge)" stroke-width="2"/><path d="M638 408 L696 408 L692 436 L642 436 Z" fill="url(#liquid)" opacity=".8"/></g>${lbl(667, 454, 'Rinse beaker', { c: '#cbd5e1', s: 9 })}`;
+      s += `<g transform="translate(720 392)" filter="url(#sh)"><rect width="268" height="150" fill="#fffdf6"/>${lbl(134, 18, 'EACH TREATMENT', { s: 10, w: 800, c: '#0a1f44' })}
+        ${['1  Dropper: draw drug, 2–3 drops on the mucosa.', '2  Wait 5 min contact; keep it moist.', '3  Seed on forceps → oral end (before START).', '4  Start watch at START, stop at FINISH; ×3.', '5  Write times; velocity = distance ÷ time.', '6  Rinse (≥3 mL Ringer) and wait 10 min.', '   Order: control, ACh, physostigmine,', '   atropine, atropine + ACh (no wash).'].map((t, i) => lbl(8, 36 + i * 13, t, { s: 8, a: 'start', c: i > 5 ? '#b91c1c' : '#13294f', w: i > 5 ? 700 : 600 })).join('')}</g>`;
+      return s;
+    }
+    function dyn3() {
+      if (S.station !== 3) return;
+      const F = S.frog, D = F.dist || 20, sd = S.seed;
+      $('seedG').innerHTML = sd ? `<g transform="translate(${mmX(sd.p)} ${TY + Math.sin(sd.p * 1.7) * 5})" filter="url(#sh2)"><ellipse rx="5.6" ry="4.6" fill="url(#seedG)"/><ellipse cx="-1.6" cy="-1.6" rx="1.8" ry="1.1" fill="#fff" opacity=".5"/></g>` : '';
+      const fg = S.forceps === 'seed' ? { x: 620, y: 90, r: -18 } : S.forceps === 'empty' ? { x: 640, y: 100, r: -14 } : { x: 700, y: 330, r: 0 };
+      $('forcB').setAttribute('transform', `translate(${S.forceps ? 560 : 706} ${S.forceps ? 76 : 300}) rotate(${S.forceps ? 6 : -4})`);
+      $('forcSeed').innerHTML = S.forceps === 'seed' ? `<ellipse cx="2" cy="10" rx="4.5" ry="3.8" fill="url(#seedG)"/>` : '';
+      $('swTxt').textContent = S.sw.t.toFixed(2); $('swState').textContent = S.sw.run ? '● RUNNING' : S.sw.t > 0 ? 'STOPPED' : 'READY';
+      const dr = S.drop; $('dropperB').setAttribute('transform', dr.src ? 'translate(500 330)' : 'translate(500 366)'); const dl = $('dropLiq'); dl.setAttribute('height', dr.src ? 38 : 0); dl.setAttribute('y', 70 - (dr.src ? 38 : 0)); dl.setAttribute('fill', { ach: '#d8b4fe', phy: '#99f6e4', atr: '#fecaca', ringer: '#bfdbfe' }[dr.src] || '#bfdbfe');
+      let w = ''; if (F.wet > 0.5) w = `<path d="M70 ${TY - 50} C 280 ${TY - 62}, 520 ${TY - 58}, 746 ${TY - 44} L 746 ${TY - 20} C 520 ${TY - 34}, 280 ${TY - 38}, 70 ${TY - 26}Z" fill="#fff" opacity="${.12 + .16 * F.wet}"/>`;
+      $('wetG').innerHTML = w;
+      let c = ''; const ph = performance.now() / 160 * (S.cilSpeed || 1);
+      for (let x = 70; x < 745; x += 13) for (let r = 0; r < 5; r++) { const y = TY - 50 + r * 25 + (x % 3), a = Math.sin(ph - x * .06 + r) * 3.2; c += `<line x1="${x}" y1="${y}" x2="${x + 5 + a}" y2="${y - 4 + Math.abs(a) * .3}" stroke="#fff" stroke-width="1" opacity=".5" stroke-linecap="round"/>`; }
+      $('ciliaG').innerHTML = c;
+    }
+    function act3(a, arg) {
+      const F = S.frog;
+      if (!F.marks[0]) { say('Open the oesophagus, pin it and mark START/FINISH in station 2 first.', true); return; }
+      if (a === 'b') {
+        S.drop.pick = arg; S.sel = { kind: 'draw', src: arg };
+        say(arg === 'ringer' ? 'Ringer: moisten, or rinse the tissue (enter mL).' : `Dropper into the ${{ ach: 'ACh', phy: 'physostigmine', atr: 'atropine' }[arg]} bottle: choose the number of drops.`);
+      } else if (a === 'dropper') say('Click a bottle to draw up the liquid.');
+      else if (a === 'rinseD') { S.drop = { src: null, vol: 0, dirty: null }; S.t += 10; beep('tick'); say('Dropper rinsed in the beaker and emptied.'); }
+      else if (a === 'place') placeSeed();
+      else if (a === 'forc') { if (S.forceps) { S.forceps = null; say('Forceps put down.'); } else { S.forceps = 'empty'; say('Forceps picked up. Click the dish of poppy seeds.'); } }
+      else if (a === 'dish') {
+        if (S.forceps !== 'empty') { say('Pick up the forceps first.', true); return; }
+        S.forceps = 'seed'; beep('tick'); say('Poppy seed picked up. Place it on the mucosa at the oral end (left of START).');
+      } else if (a === 'swS') {
+        const W = S.sw;
+        if (!W.run) { if (W.t > 0) { say('Press RESET before the next timing.', true); return; } W.run = true; W.t0 = S.t; W.startP = S.seed ? S.seed.p : null; beep('tick'); if (S.seed && Math.abs(S.seed.p) > 2.5) say(`Started ${S.seed.p < 0 ? 'before' : 'after'} the seed reached START: this reading will be inaccurate.`, true); }
+        else { W.run = false; beep('tick'); stopTrial(); }
+      } else if (a === 'swR') { if (S.sw.run) { say('Stop the watch first.', true); return; } S.sw.t = 0; beep('tick'); }
+    }
+    function placeSeed(bad) {
+      if (S.forceps !== 'seed') { say('Pick up a seed with the forceps first.', true); return; }
+      if (S.seed) { say('A seed is still travelling.', true); return; }
+      const F = S.frog, fl = [];
+      if (F.wet < 0.4) fl.push('tissue drying');
+      const mins = (S.t - S.applied.t) / 60, key = condKey();
+      if (key !== 'ringer' && key !== 'atrach' && mins < 4.5) fl.push(`only ${fx(mins, 1)} min contact`);
+      if (key === 'atrach' && mins < 4.5) fl.push(`only ${fx(mins, 1)} min contact with ACh`);
+      S.trialNo++;
+      S.seed = { p: SEEDX0, key, noise: 1 + gauss() * 0.07, ph: Math.random() * 6, tStart: null, tFin: null, flags: fl, contact: mins };
+      S.forceps = 'empty'; S.t += 5; beep('tick');
+      say(`Seed placed at the oral end (${TREAT[key].short}).${fl.length ? ' ⚠ ' + fl.join(', ') + '.' : ''} Start the watch as it crosses START.`, fl.length > 0);
+    }
+    function stopTrial() {
+      const sd = S.seed, W = S.sw, D = S.frog.dist || 20;
+      if (!sd) { say(`Watch stopped at ${fx(W.t, 2)} s, but no seed was travelling.`, true); S.flags.push('timed without a seed'); return; }
+      const tTrue = sd.tFin !== null && sd.tStart !== null ? sd.tFin - sd.tStart : null;
+      const key = sd.key, fl = sd.flags.slice();
+      const eT = tTrue === null ? NaN : Math.abs(W.t - tTrue);
+      if (tTrue !== null && eT > 2.5) fl.push(`timing ${fx(eT, 1)} s off`);
+      if (tTrue === null) fl.push('stopped before the seed finished');
+      S.rows.push({ n: S.rows.length + 1, key, t: +W.t.toFixed(2), tTrue, flags: fl, contact: sd.contact });
+      say(`Reading ${S.rows.length}: ${fx(W.t, 2)} s (${TREAT[key].short}). Write it down, then RESET.${fl.length ? ' ⚠ ' + fl.join(', ') + '.' : ''}`, fl.length > 0);
+      renderNotebook(); renderCtx(); refreshChecklist();
+    }
+    function drawDrops() {
+      const n = parseFloat($('inDrops').value), src = S.sel.src;
+      if (!(n >= 1 && n <= 20)) { say('Enter the number of drops (1–20).', true); return; }
+      let conc = 0, left = 1;
+      if (src === 'ach') { if (!S.ach.made) { say('Prepare the ACh solution first.', true); return; } conc = S.ach.conc; left = S.ach.left; }
+      else if (src === 'phy' || src === 'atr') { const F = S.sol[src]; if (!F.labelled) { say('Prepare that solution first (station 1).', true); return; } conc = F.conc * 1000; left = F.left; }
+      else if (src === 'ringer') { if (!S.ringer.made) { say('Make the Frog Ringer first.', true); return; } left = S.ringer.left; }
+      const vol = n * 0.05; if (left < vol) { say('That bottle is nearly empty: prepare more.', true); return; }
+      if (S.drop.src && S.drop.src !== src && S.drop.src !== 'ringer' && !S.drop.rinsed) { }
+      const fl = [];
+      if (S.drop.dirty && S.drop.dirty !== src && S.drop.dirty !== 'ringer' && src !== 'ringer') { const k = S.drop.dirty; if (DRUG[k]) { S.R[k] += 0.18; fl.push(`dropper not rinsed (${k} carried over)`); } }
+      if (src === 'ringer') { if (S.ringer) S.ringer.left = +(S.ringer.left - vol).toFixed(2); S.frog.wet = 1; S.t += 8; say(`${fx(vol, 2)} mL Ringer put on the mucosa: moistened.`); }
+      else {
+        if (src === 'ach') S.ach.left = +(S.ach.left - vol).toFixed(2); else S.sol[src].left = +(S.sol[src].left - vol).toFixed(2);
+        const key = src; const key2 = key; applyDrug(key2, n, conc || DRUG[key2].std);
+        if (key2 === 'atr' && S.R.ach > 0.25 && S.R.atr < 0.6) fl.push('ACh still on the tissue');
+        if (n < 2 || n > 4) fl.push(`${n} drops (2–3 intended)`);
+        if (Math.abs(conc / DRUG[key2].std - 1) > 0.15) fl.push(`${fx(conc, 0)} µg/mL (${DRUG[key2].std} intended)`);
+        S.drop.dirty = src; S.t += 12;
+        say(`${n} drops of ${TREAT[key2 === 'phy' ? 'physo' : key2].short} applied at ${clockStr(S.t)}. Contact for 5 min before the seeds.${fl.length ? ' ⚠ ' + fl.join(', ') + '.' : ''}`, fl.length > 0);
+      }
+      fl.forEach(f => S.flags.push(f)); beep('ok'); S.sel = null; renderCtx(); drawDyn(); refreshChecklist();
+    }
+    function rinseTissue() {
+      const ml = parseFloat($('inRinse').value);
+      if (!(ml > 0)) { say('Enter the volume of Ringer for the rinse (mL).', true); return; }
+      if (!S.ringer.made || S.ringer.left < ml) { say('Not enough Frog Ringer left.', true); return; }
+      S.ringer.left = +(S.ringer.left - ml).toFixed(2); Object.keys(DRUG).forEach(k => S.R[k] *= Math.exp(-0.38 * ml)); S.frog.wet = 1; S.rinsedAt = S.t; S.t += 30; beep('low');
+      say(`Tissue rinsed with ${fx(ml, 1)} mL Ringer. ${ml < 3 ? '⚠ A small rinse leaves drug behind. ' : ''}Allow about 10 min for recovery.`, ml < 3);
+      if (ml < 3) S.flags.push('poor washing');
+      S.sel = null; renderCtx(); drawDyn(); refreshChecklist();
+    }
+  </script>
+  <script>
+    // ================================================================ dispatcher, context panel, notebook, frame loop
+    function act(a, arg) {
+      if (S.station === 1) act1(a, arg); else if (S.station === 2) act2(a, arg); else act3(a, arg);
+      renderCtx(); drawDyn(); refreshChecklist(); renderNotebook();
+    }
+    function buildScene() { $('scene').innerHTML = DEFS + (S.station === 1 ? sceneSolutions() : S.station === 2 ? sceneFrog() : sceneBench()); drawDyn(); }
+    function drawDyn() { S._sceneV++; dyn1(); dyn2(); dyn3(); updClocks(); refreshHints(); }
+    const btn = (t, f, c = '') => `<button class="xb-btn ${c}" onclick="${f}">${t}</button>`;
+    function renderCtx() {
+      const c = $('ctx'); let t = 'Bench', h = '', sel = S.sel, F = S.frog;
+      if (S.station === 1) {
+        t = 'Preparation bench';
+        if (sel && sel.kind === 'weigh') h = `<b>Weigh ${sel.what}</b><div class="row">Mass <input id="inMg" class="xb-in" placeholder="mg"> mg ${btn('Weigh out', 'weighPowder()')}</div>`;
+        else if (sel && sel.kind === 'ringer') h = `<b>100 mL flask:</b> ${Object.entries(S.ringer.salts).map(([k, v]) => `${k} ${fx(v, 1)} mg`).join(', ')}<div class="row">${btn('Add distilled water to the mark, mix & label', 'makeRinger()')}</div><p style="color:#64748b;margin-top:4px">Weigh and tip in all four salts before making up.</p>`;
+        else if (sel && sel.kind === 'ringerDone') h = `<b>Frog Ringer</b> ${fx(S.ringer.left, 1)} mL left<div class="row">${btn('Discard & prepare again', "newBatch('ringer')", 'sec')}</div>`;
+        else if (sel && sel.kind === 'fl') h = `<b>10 mL flask:</b> ${fx(S.sol[sel.k].mg, 1)} mg ${sel.k === 'phy' ? 'physostigmine' : 'atropine'}<div class="row">${btn('Dissolve, make up to 10 mL with Frog Ringer & label', `makeUp('${sel.k}')`)}</div>`;
+        else if (sel && sel.kind === 'flDone') h = `<b>${sel.k === 'phy' ? 'Physostigmine' : 'Atropine'}</b> ${fx(S.sol[sel.k].conc, 2)} mg/mL • ${fx(S.sol[sel.k].left, 2)} mL left<div class="row">${btn('Discard & prepare again', `newBatch('${sel.k}')`, 'sec')}</div>`;
+        else if (sel && sel.kind === 'ach') h = `<b>ACh dilution (target 100 µg/mL, 10 mL)</b><div class="row">Stock 1 mg/mL <input id="inVs" class="xb-in" style="width:64px" placeholder="mL"> mL</div><div class="row">Frog Ringer <input id="inVr" class="xb-in" style="width:64px" placeholder="mL"> mL</div><div class="row">${btn('Pipette both into the tube & mix', 'makeAch()')}</div>`;
+        else if (sel && sel.kind === 'achDone') h = `<b>ACh</b> ${fx(S.ach.conc, 1)} µg/mL • ${fx(S.ach.left, 2)} mL left<div class="row">${btn('Discard & prepare again', "newBatch('ach')", 'sec')}</div>`;
+        else h = `<p style="color:#64748b">Frog Ringer: boat on the analytical balance → TARE → weigh each salt for 100 mL → tip into the flask → water to the mark. Then the ACh dilution (C₁V₁ = C₂V₂) and the two 10 mL drug flasks, all in Frog Ringer.</p>`;
+      } else if (S.station === 2) {
+        t = 'Frog preparation';
+        const o = F.slit >= 3 && F.flaps.every(Boolean);
+        h = `<p style="color:#64748b">Frog no. ${F.n}, pithed by trained staff. Tool in hand: <b>${F.tool === 'scis' ? 'scissors' : F.tool === 'forc' ? 'forceps' : 'none'}</b>. Mucosa wetness: <b>${F.wet > 0.6 ? 'moist' : F.wet > 0.35 ? 'drying' : 'DRY'}</b>.</p>`;
+        if (o) h += `<div class="row">Distance between marks <input id="inDist" class="xb-in" style="width:64px" placeholder="mm"> mm</div><div class="row">${btn(F.marks[0] ? 'Re-mark' : 'Mark START & FINISH', 'setMarks()')}</div>`;
+      } else {
+        t = 'Ciliary transport';
+        if (sel && sel.kind === 'draw') h = sel.src === 'ringer'
+          ? `<b>Frog Ringer</b><div class="row">Moisten: <input id="inDrops" class="xb-in" style="width:56px" value="5"> drops ${btn('Apply', 'drawDrops()', 'sec')}</div><div class="row">Rinse: <input id="inRinse" class="xb-in" style="width:56px" placeholder="mL"> mL ${btn('Rinse tissue', 'rinseTissue()')}</div>`
+          : `<b>Drug on the mucosa</b><div class="row">Drops <input id="inDrops" class="xb-in" style="width:56px" placeholder="n"> ${btn('Apply to mucosa', 'drawDrops()')}</div><div class="row">${btn('Rinse the dropper first', "act('rinseD')", 'sec')}</div>`;
+        else { const mins = (S.t - S.applied.t) / 60; h = `<p style="color:#64748b">Clock ${clockStr(S.t)}. ${S.applied.keys.length ? `Last drug applied ${clockStr(S.applied.t)} (${fx(mins, 1)} min ago).` : 'No drug applied yet.'} Mucosa: <b>${F.wet > 0.6 ? 'moist' : F.wet > 0.35 ? 'drying' : 'DRY'}</b>. Readings taken: ${S.rows.length}.</p>`; }
+        if (S.forceps) h += `<p style="color:#64748b;margin-top:4px">Forceps: ${S.forceps === 'seed' ? 'holding a seed' : 'empty'}.</p>`;
+      }
+      $('ctxTitle').textContent = t; c.innerHTML = h;
+    }
+    // ---------------------------------------------------------------- notebook (typed by the student)
+    const rowsOf = k => S.rows.filter(r => r.key === k).slice(0, 3);
+    const nbDist = () => S.frog.dist || 20;
+    function nbSetT(k, i, v) { S.nb[k].t[i] = v.trim(); renderNotebook(); renderObservation(); refreshChecklist(); }
+    function nbSetF(k, f, v) { S.nb[k][f] = v.trim(); renderNotebook(); renderObservation(); refreshChecklist(); }
+    function calcSet(f, v) { S.calc[f] = v.trim(); renderNotebook(); refreshChecklist(); }
+    const tvals = k => S.nb[k].t.map(v => parseFloat(v)).filter(isFinite);
+    const nbMeanTruth = k => { const a = tvals(k); return a.length === 3 ? mean(a) : NaN; };
+    function renderNotebook() {
+      $('nbCalc').innerHTML = `Stock volume for 10 mL of 100 µg/mL ACh (stock 1 mg/mL): <input class="obs-in ${chk(S.calc.dil, 1, 0.02)}" value="${S.calc.dil}" onchange="calcSet('dil',this.value)"> mL <span style="color:#64748b">• velocity = distance ÷ time (use YOUR distance between the marks: ${fx(nbDist(), 1)} mm)</span>`;
+      $('nbBody').innerHTML = ORDER.map((k, i) => {
+        const R = rowsOf(k), fl = [...new Set(R.flatMap(r => r.flags))];
+        const ins = [0, 1, 2].map(j => `<td><input class="${R[j] ? chk(S.nb[k].t[j], R[j].t, 0.06) : (S.nb[k].t[j] ? 'bad-in' : '')}" value="${S.nb[k].t[j]}" onchange="nbSetT('${k}',${j},this.value)"></td>`).join('');
+        const mt = nbMeanTruth(k);
+        return `<tr${fl.length ? ' style="background:#fff7ed"' : ''}><td style="text-align:left;font-family:Inter"><b>${TREAT[k].short}</b></td>${ins}
+          <td><input class="${chk(S.nb[k].mean, mt, 0.15)}" value="${S.nb[k].mean}" onchange="nbSetF('${k}','mean',this.value)"></td>
+          <td><input class="${chk(S.nb[k].vel, isFinite(mt) ? nbDist() / mt : NaN, 0.012)}" value="${S.nb[k].vel}" onchange="nbSetF('${k}','vel',this.value)"></td>
+          <td style="text-align:left">${fl.map(f => `<span class="flag">${f}</span>`).join('')}</td></tr>`;
+      }).join('');
+    }
+    function frame(dt, dtR) {
+      S.t += dt; decay(dt); S.frog.wet = Math.max(0, S.frog.wet - dt / 900);
+      $('labClock').textContent = clockStr(S.t) + ' (' + fmtHMS(S.t) + ')';
+      if (S.sw.run) S.sw.t = S.t - S.sw.t0;
+      const sd = S.seed, D = S.frog.dist || 20;
+      if (sd) {
+        const v = velocity() * sd.noise * (1 + 0.1 * Math.sin(S.t / 7 + sd.ph)), p0 = sd.p; sd.p += v * dt;
+        if (sd.tStart === null && p0 < 0 && sd.p >= 0) sd.tStart = S.t - sd.p / v;
+        if (sd.tFin === null && p0 < D && sd.p >= D) sd.tFin = S.t - (sd.p - D) / v;
+        if (sd.p > D + 5.4) { if (S.sw.run) { say('The seed reached the stomach before the watch was stopped. Stop and discard this timing.', true); S.flags.push('seed lost before stop'); } S.seed = null; }
+      }
+      S.cilSpeed = velocity() / 0.56;
+      frame.n = (frame.n || 0) + 1;
+      if (frame.n % 15 === 0) { updClocks(); refreshChecklist(); }
+      if (S.station === 3 && (frame.n % 2 === 0)) dyn3(); if (S.station === 2 && frame.n % 30 === 0) dyn2();
+      if (frame.n % 40 === 0 && S.station !== 1 && !$('ctx').contains(document.activeElement)) renderCtx();
+    }
+  </script>
+  <script>
+    // ================================================================ checklist
+    const okT = k => { const R = rowsOf(k); return R.length >= 3 && [0, 1, 2].every(j => chk(S.nb[k].t[j], R[j].t, 0.06) === 'ok-in'); };
+    const okCalc = k => okT(k) && chk(S.nb[k].mean, nbMeanTruth(k), 0.15) === 'ok-in' && chk(S.nb[k].vel, nbDist() / nbMeanTruth(k), 0.012) === 'ok-in';
+    function tgTreat(k) {
+      const key = condKey(), mins = (S.t - S.applied.t) / 60, need = { ach: 'ach', physo: 'phy', atr: 'atr', atrach: 'ach' }[k];
+      if (S.sw.run) return ['swS']; if (S.sw.t > 0 && !S.seed) return ['swR']; if (S.seed) return ['swS'];
+      if (key !== k) { if (key !== 'ringer' && !(k === 'atrach' && key === 'atr')) return ['b:ringer']; if (k === 'ringer') return []; return ['b:' + need]; }
+      if (k !== 'ringer' && mins < 4.5) return [];
+      if (S.forceps === 'seed') return ['place']; if (S.forceps === 'empty') return ['dish']; return ['forc'];
+    }
+    const STEPS = [
+      { g: 'Solutions', st: 1, t: 'Frog Ringer 100 mL', done: () => S.ringer.made, how: 'Boat → TARE → weigh NaCl 650 mg, KCl 14 mg, CaCl₂ 12 mg, NaHCO₃ 20 mg, tipping each into the 100 mL flask; then water to the mark.', tg: () => { const A = S.abal; if (Object.keys(S.ringer.salts).length === 4) return ['fl:ringer']; if (A.mg) return ['fl:ringer']; if (!A.boat || !A.tared) return ['abal']; const k = Object.keys(RX).find(x => !S.ringer.salts[x]); return ['salt:' + k]; } },
+      { g: 'Solutions', st: 1, t: 'Stock volume for the ACh dilution calculated', done: () => chk(S.calc.dil, 1, 0.02) === 'ok-in', how: 'C₁V₁ = C₂V₂: 1000 µg/mL × V₁ = 100 µg/mL × 10 mL. Type V₁ in the notebook.', tg: () => [] },
+      { g: 'Solutions', st: 1, t: 'ACh 100 µg/mL (10 mL) made', done: () => S.ach.made, how: 'Click the test tube; type the stock and Ringer volumes you calculated.', tg: () => ['tube'] },
+      ...['phy', 'atr'].map(k => ({ g: 'Solutions', st: 1, t: `${k === 'phy' ? 'Physostigmine' : 'Atropine'} 1 mg/mL, 10 mL`, done: () => S.sol[k].labelled, how: `Weigh 10 mg → tip into the ${k === 'phy' ? 'physostigmine' : 'atropine'} flask → Frog Ringer to 10 mL.`, tg: () => { const A = S.abal; if (S.sol[k].inFl || (A.mg && A.what === k)) return ['fl:' + k]; if (!A.boat || !A.tared) return ['abal']; return ['jar:' + k]; } })),
+      { g: 'Frog', st: 2, t: 'Pin the four limbs, belly up', done: () => S.frog.pins.every(Boolean), how: 'Click each limb end.', tg: () => S.frog.pins.map((p, i) => p ? null : 'pin:' + i).filter(Boolean) },
+      { g: 'Frog', st: 2, t: 'Cut the mouth angles and remove the lower jaw', done: () => !!S.frog.jaw, how: 'Scissors → both mouth angles; forceps → lift off the lower jaw.', tg: () => { const F = S.frog; if (!(F.cutL && F.cutR)) return F.tool === 'scis' ? ['cut:L', 'cut:R'] : ['tool:scis']; return F.tool === 'forc' ? ['jaw'] : ['tool:forc']; } },
+      { g: 'Frog', st: 2, t: 'Slit the oesophagus and pin the flaps', done: () => S.frog.slit >= 3 && S.frog.flaps.every(Boolean), how: 'Scissors: three cuts down the midline, top to bottom; then pin all four flaps with the mucosa upwards.', tg: () => { const F = S.frog; if (F.slit < 3) return F.tool === 'scis' ? ['slit:' + F.slit] : ['tool:scis']; return F.flaps.map((p, i) => p ? null : 'fp:' + i).filter(Boolean); } },
+      { g: 'Frog', st: 2, t: 'Moisten & mark START/FINISH 20 mm apart', done: () => !!S.frog.marks[0], how: 'Drop Ringer on the mucosa; type the distance in the panel and press Mark.', tg: () => S.frog.wet < 0.6 ? ['ringerB'] : [] },
+      ...ORDER.map(k => ({ g: 'Measurements', st: 3, t: `${TREAT[k].label}: 3 timings, noted & calculated`, done: () => okCalc(k),
+        how: k === 'ringer' ? 'Seed on the oral end with the forceps; start the watch at START, stop at FINISH; reset; ×3. Write each time and the mean/velocity in the notebook.'
+          : k === 'atrach' ? 'Do NOT wash: add ACh on top of the atropine (2–3 drops), wait 5 min, then 3 timings.'
+          : k === 'atr' ? 'Rinse well, wait for recovery (10 min), 2–3 drops atropine, 5 min contact, 3 timings.' : 'Rinse (≥3 mL) and wait 10 min, then 2–3 drops of the drug, 5 min contact, 3 timings.',
+        tg: () => tgTreat(k) })),
+      { g: 'Analysis', st: 0, t: 'Mean time, velocity & % change in velocity', done: () => analysisOk(), how: 'Open the Observation Sheet and enter the mean time and the % change in velocity of each treatment.', tg: () => [] }
+    ];
+    // ================================================================ observation sheet
+    function analysis() { return groupStats(ORDER.map(k => ({ key: k, label: TREAT[k].short, color: TREAT[k].color, vals: tvals(k) })), 'ringer'); }
+    const velOf = g => g.n ? nbDist() / g.m : NaN;
+    const chgV = (A, i) => A[0].n && A[i].n ? (velOf(A[i]) / velOf(A[0]) - 1) * 100 : NaN;
+    function analysisOk() { const A = analysis(); return A.every(x => x.n >= 3) && A.every((g, i) => chk(S.notes.mean[g.key], g.m, 0.2) === 'ok-in' && (i === 0 || chk(S.notes.chg[g.key], chgV(A, i), 2.5) === 'ok-in')); }
+    function noteSet(f, g, v) { S.notes[f][g] = v.trim(); renderObservation(); refreshChecklist(); }
+    function renderObservation() {
+      const A = analysis();
+      $('sumBox').innerHTML = `<table class="obs-table w-full text-[11px] text-center"><thead><tr><th>Treatment</th><th>Readings (s)</th><th>Mean time ± SEM (s)</th><th>Mean time (your calc.)</th><th>Velocity (mm/s)</th><th>% change in velocity (your calc.)</th><th>t (vs control)</th><th>p</th></tr></thead><tbody class="font-mono">${A.map((g, i) => `<tr><td class="font-sans text-left">${TREAT[g.key].label}</td><td>${g.vals.map(v => fx(v, 1)).join(', ') || '—'}</td><td>${g.n ? fx(g.m, 2) + ' ± ' + fx(g.se, 2) : '—'}</td>
+        <td><input id="mt_${g.key}" class="obs-in ${g.n >= 3 ? chk(S.notes.mean[g.key], g.m, 0.2) : ''}" value="${S.notes.mean[g.key] || ''}" onchange="noteSet('mean','${g.key}',this.value)"></td><td>${g.n ? fx(velOf(g), 3) : '—'}</td>
+        <td>${i ? `<input id="cv_${g.key}" class="obs-in ${g.n >= 3 && A[0].n >= 3 ? chk(S.notes.chg[g.key], chgV(A, i), 2.5) : ''}" value="${S.notes.chg[g.key] || ''}" onchange="noteSet('chg','${g.key}',this.value)"> %` : '—'}</td><td>${g.t ? fx(g.t.t, 2) : '—'}</td><td>${g.t ? pLabel(g.p) : '—'}</td></tr>`).join('')}</tbody></table>`;
+      barChart('chartTime', { bars: A.map(g => ({ label: g.label, v: g.n ? g.m : NaN, e: g.se, color: g.color, note: g.key === 'ringer' ? '' : stars(g.p) })), yLabel: 'Time (s)', empty: 'Enter your timings in the notebook' });
+      barChart('chartVel', { bars: A.map(g => ({ label: g.label, v: g.n ? velOf(g) : NaN, color: g.color })), yLabel: 'mm/s', empty: 'Enter your timings in the notebook' });
+      const c = A[0], g = k => A.find(x => x.key === k);
+      if (c.n < 2 || A.filter(x => x.n >= 2).length < 2) { $('lblInference').innerText = 'Pending'; $('lblInferenceDetail').innerText = 'Record at least three control readings and one drug treatment.'; return; }
+      $('lblInference').innerText = 'Muscarinic stimulation ↑ ciliary transport';
+      $('lblInferenceDetail').innerHTML = `Control: ${fx(c.m, 1)} s. ${g('ach').n ? `ACh shortened the time to ${fx(g('ach').m, 1)} s (${pLabel(g('ach').p)}). ` : ''}${g('physo').n ? `Physostigmine also shortened it (${fx(g('physo').m, 1)} s) by preserving endogenous ACh. ` : ''}${g('atr').n ? `Atropine slightly prolonged it (${fx(g('atr').m, 1)} s) ` : ''}${g('atrach').n ? `and abolished the effect of ACh (${fx(g('atrach').m, 1)} s with atropine + ACh). ` : ''}Ciliary motility of the frog oesophagus is increased through muscarinic receptors.`;
+    }
+    function buildResults() {
+      const A = analysis();
+      const cells = ORDER.flatMap(k => rowsOf(k).map((r, j) => chk(S.nb[k].t[j], r.t, 0.06))).filter(Boolean);
+      return { rows: [['Preparation', 'Pithed frog, oesophagus'], ['Distance', fx(nbDist(), 0) + ' mm'], ...A.map(g => [TREAT[g.key].short, g.n ? `${fx(g.m, 2)} s (${fx(velOf(g), 3)} mm/s)` : '—']), ['Timings entered correctly', `${cells.filter(x => x === 'ok-in').length} / ${cells.length}`], ['Technique flags', [...new Set([...S.flags, ...S.rows.flatMap(r => r.flags)])].length]],
+        text: 'ACh and physostigmine increased the speed of ciliary transport (shorter time), whereas atropine reduced it slightly and blocked the response to ACh. The ciliary activity and mucus secretion of the frog oesophagus are therefore under cholinergic, muscarinic control. Similar muscarinic mechanisms enhance mucociliary clearance in the airways, and anticholinergics dry secretions.' };
+    }
+    const QUIZ = [
+      { q: 'Why is the frog pithed rather than anaesthetised?', o: ['Anaesthetics may depress ciliary activity and pithing removes pain perception', 'To increase heart rate', 'Pithing stimulates the cilia', 'Anaesthetics are expensive'], a: 0 },
+      { q: 'ACh increases ciliary motility in the frog oesophagus through:', o: ['Nicotinic receptors', 'Muscarinic receptors', 'β₂ receptors', 'H₁ receptors'], a: 1 },
+      { q: 'Effect of atropine on the response to ACh here:', o: ['Potentiates it', 'Blocks it', 'No effect', 'Reverses it into a block of cilia'], a: 1 },
+      { q: 'Physostigmine shortens travel time because it:', o: ['Directly stimulates cilia', 'Inhibits cholinesterase, increasing ACh', 'Blocks M receptors', 'Releases histamine'], a: 1 },
+      { q: 'The poppy seed moves towards:', o: ['The mouth', 'The stomach', 'Randomly', 'The trachea'], a: 1 },
+      { q: 'If the seed takes 25 s for 20 mm, the velocity is:', o: ['0.5 mm/s', '0.8 mm/s', '1.25 mm/s', '5 mm/s'], a: 1 },
+      { q: 'Which solution keeps the frog tissue moist during the experiment?', o: ['Tyrode', 'Krebs–Henseleit', 'Frog Ringer', 'De Jalon'], a: 2 },
+      { q: 'Why must the mucosa be kept moist and the ACh solution made freshly?', o: ['Dry cilia stop beating and ACh is hydrolysed on standing', 'Moisture speeds the stopwatch', 'ACh is light-sensitive only', 'It is not necessary'], a: 0 }
+    ];
+    // Reference data for automated platform tests only (no button; blocked in exam mode)
+    function loadReferenceDataset() {
+      S = freshState(); S.balOn = true; S.calc.dil = '1'; S.ringer = { salts: { NaCl: 650, KCl: 14, CaCl2: 12, NaHCO3: 20 }, made: true, vol: 100, left: 80, q: 1, worst: 0 };
+      S.ach = { vol: 10, stockMl: 1, ringerMl: 9, conc: 100, made: true, made_t: 0, left: 8 };
+      ['phy', 'atr'].forEach(k => S.sol[k] = { mg: 10, inFl: false, vol: 10, labelled: true, conc: 1, left: 8 });
+      const F = S.frog; Object.assign(F, { pins: [1, 1, 1, 1], cutL: 1, cutR: 1, jaw: 1, slit: 3, flaps: [1, 1, 1, 1], marks: [1, 1], dist: 20, v0: 0.6 });
+      const mu = { ringer: 33.3, ach: 16.7, physo: 21.5, atr: 40.4, atrach: 38.5 };
+      ORDER.forEach(k => { for (let i = 0; i < 3; i++) { const t = +(mu[k] * (1 + gauss() * 0.05)).toFixed(2); S.rows.push({ n: S.rows.length + 1, key: k, t, tTrue: t, flags: [], contact: 5 }); S.nb[k].t[i] = String(t); } const m = mean(tvals(k)); S.nb[k].mean = m.toFixed(2); S.nb[k].vel = (20 / m).toFixed(3); });
+      const A = analysis(); A.forEach((g, i) => { S.notes.mean[g.key] = g.m.toFixed(2); if (i) S.notes.chg[g.key] = chgV(A, i).toFixed(1); });
+      goStation(3); renderNotebook(); renderObservation(); refreshChecklist(); say('Reference dataset loaded.');
+    }
+    function newExperiment() { S = freshState(); goStation(1); renderNotebook(); refreshChecklist(); say('New practical: nothing is prepared yet. Start with the Frog Ringer.'); }
+    function init() {
+      S = freshState();
+      $('scene').addEventListener('pointerdown', e => { if (e.button === 0) onSceneClick(e); });
+      goStation(1); renderNotebook(); refreshChecklist();
+      say('Prepare the Frog Ringer and drug solutions first (switch on the analytical balance: click it).');
+      startLoop((dt, dtR) => frame(dt, dtR));
+      const _sw = switchTab; window.switchTab = function (id) { _sw(id); if (id === 'experiment') { buildScene(); renderNotebook(); } };
+    }
+  </script>
+  <script src="../assets/js/viva.js"></script>
+</body>
+</html>

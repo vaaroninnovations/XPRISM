@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Subscription only{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto space-y-4">
+  <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 md:p-8 space-y-4 text-center">
+    <div class="text-4xl">🔒</div>
+    <div class="mono text-[11px] text-rose-700 font-bold">SUBSCRIPTION ONLY</div>
+    {% if exp %}
+    <h1 class="text-xl font-bold text-slate-900">You have already explored “{{ exp.title }}”</h1>
+    <p class="text-sm text-slate-600">Your free-trial visit to <b>Exp #{{ exp.no|stringformat:"02d" }}</b> has ended. Each module can be explored once in the free trial. Subscribe to use it again, as often as you like.</p>
+    {% elif expired_college %}
+    <h1 class="text-xl font-bold text-slate-900">Your college's subscription has ended</h1>
+    <p class="text-sm text-slate-600">Until it is renewed, you can explore each module once. Please ask your college admin to renew.</p>
+    {% else %}
+    <h1 class="text-xl font-bold text-slate-900">Unlimited access to all experiments</h1>
+    <p class="text-sm text-slate-600">The free trial lets you explore each module once. A subscription unlocks unlimited use.</p>
+    {% endif %}
+  </div>
+  <div class="grid md:grid-cols-2 gap-4">
+    <div class="bg-white rounded-xl border border-teal-200 shadow-sm p-5 space-y-2">
+      <div class="text-[11px] font-bold text-teal-700 uppercase tracking-wider">For colleges</div>
+      <h2 class="text-base font-bold text-slate-900">College subscription</h2>
+      <ul class="text-xs text-slate-600 list-disc pl-5 space-y-1"><li>All 25 experiments, unlimited use, for every student and teacher</li><li>Batches, class codes, assignments, automatic marking, exam mode</li><li>Grading, feedback, Excel marks sheets, audit log</li><li>Supports PCI's requirement for computer-assisted modules in place of animal experiments</li></ul>
+      <a href="mailto:{{ contact }}?subject=College%20subscription%20enquiry" class="inline-block mt-2 px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow">Request a college subscription</a>
+    </div>
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-2">
+      <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">For individuals</div>
+      <h2 class="text-base font-bold text-slate-900">Individual subscription</h2>
+      <ul class="text-xs text-slate-600 list-disc pl-5 space-y-1"><li>All experiments, unlimited practice</li><li>Observation sheets, statistics and viva for every module</li><li>Ideal for revision before practical examinations</li></ul>
+      <a href="mailto:{{ contact }}?subject=Individual%20subscription%20{% if user.is_authenticated %}({{ user.username|urlencode }}){% endif %}" class="inline-block mt-2 px-4 py-2 rounded-lg border border-slate-300 text-slate-800 text-sm font-semibold hover:bg-slate-50">Ask about individual access</a>
+      <p class="text-[11px] text-slate-500">Already a student of a subscribed college? <a href="{% url 'signup' %}" class="text-teal-700 underline">Join with your class code</a>.</p>
+    </div>
+  </div>
+  {% if left %}
+  <div class="bg-white rounded-xl border border-amber-200 shadow-sm p-5">
+    <h2 class="text-sm font-bold text-slate-800 mb-2">Still free to explore once <span class="mono text-xs text-amber-700">({{ left|length }})</span></h2>
+    <div class="flex flex-wrap gap-1.5">{% for e in left %}<a href="{{ e.url }}" class="text-[11px] px-2 py-1 rounded-md border border-amber-200 bg-amber-50 text-amber-900 hover:bg-amber-100"><b class="mono">#{{ e.no|stringformat:"02d" }}</b> {{ e.title }}</a>{% endfor %}</div>
+  </div>
+  {% endif %}
+  <p class="text-center"><a href="/modules/" class="text-sm text-teal-700 hover:underline">← Back to the lab</a></p>
+</div>
+{% endblock %}

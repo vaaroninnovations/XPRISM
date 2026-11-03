@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}My assignments{% endblock %}
+{% block content %}
+<div class="flex flex-wrap items-end justify-between gap-3">
+  <div><h1 class="text-xl font-bold text-slate-900">My assignments</h1><p class="text-xs text-slate-500">{% for b in batches %}{{ b.name }}{% if not forloop.last %} • {% endif %}{% empty %}You are not in any batch yet: ask your faculty for a class code.{% endfor %}</p></div>
+  <div class="flex gap-3">
+    <div class="bg-white rounded-xl border border-slate-200 px-4 py-2 text-center"><div class="text-[10px] uppercase text-slate-500 font-mono">To do</div><div class="text-xl font-extrabold mono">{{ todo|length }}</div></div>
+    <div class="bg-white rounded-xl border border-slate-200 px-4 py-2 text-center"><div class="text-[10px] uppercase text-slate-500 font-mono">Done</div><div class="text-xl font-extrabold mono">{{ done|length }}</div></div>
+    <div class="bg-white rounded-xl border border-slate-200 px-4 py-2 text-center"><div class="text-[10px] uppercase text-slate-500 font-mono">Average</div><div class="text-xl font-extrabold mono text-teal-700">{% if avg is not None %}{{ avg }}%{% else %}—{% endif %}</div></div>
+  </div>
+</div>
+<h2 class="text-sm font-bold text-slate-700 uppercase tracking-wider pt-2">To do</h2>
+<div class="space-y-2">{% for r in todo %}{% include 'lab/_assign_row.html' %}{% empty %}<p class="text-sm text-slate-500 bg-white rounded-xl border border-dashed border-slate-300 p-6 text-center">Nothing pending. You can still practise any experiment from the <a href="/modules/" class="text-teal-700 underline">lab</a>.</p>{% endfor %}</div>
+<h2 class="text-sm font-bold text-slate-700 uppercase tracking-wider pt-2">Submitted</h2>
+<div class="space-y-2">{% for r in done %}{% include 'lab/_assign_row.html' %}{% empty %}<p class="text-sm text-slate-500">No submissions yet.</p>{% endfor %}</div>
+{% endblock %}

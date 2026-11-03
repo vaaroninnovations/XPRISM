@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Experiment catalogue{% endblock %}
+{% block content %}
+<div><h1 class="text-xl font-bold text-slate-900">Experiment catalogue</h1><p class="text-xs text-slate-500"><b>Live</b> makes an experiment available on the platform. Free-trial users can explore every live experiment once; subscribed users have unlimited access.</p></div>
+<form method="post" class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 overflow-x-auto">{% csrf_token %}
+<table class="obs-table w-full text-xs text-left"><thead><tr><th>#</th><th>Experiment</th><th>Category</th><th class="text-center">Live</th><th></th></tr></thead><tbody>
+{% for e in exps %}<tr><td class="mono font-bold text-teal-700">{{ e.no|stringformat:"02d" }}</td><td>{{ e.title }}</td><td>{{ e.category }}</td><td class="text-center"><input type="checkbox" name="active_{{ e.pk }}" class="accent-teal-600" {% if e.is_active %}checked{% endif %} aria-label="Live"></td><td><a href="{{ e.url }}" target="_blank" class="text-teal-700 hover:underline">Open ↗</a></td></tr>{% endfor %}
+</tbody></table>
+<button class="mt-3 px-5 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow">Save catalogue</button>
+</form>
+{% endblock %}

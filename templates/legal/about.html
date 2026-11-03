@@ -1,0 +1,31 @@
+{% extends 'legal/_base.html' %}{% load static %}
+{% block title %}About XPRISM{% endblock %}
+{% block doc %}
+<div class="mono text-[11px] text-teal-700 font-bold">ABOUT</div>
+<h1 class="sr-only">XPRISM: {{ SITE_FULL_NAME }}</h1>
+<img src="{% static 'img/xprism-logo.png' %}" alt="XPRISM: Experimental Pharmacology Research &amp; Interactive Student Module" class="w-full max-w-md h-auto" width="963" height="440">
+
+<div class="rounded-xl border border-teal-200 bg-teal-50 p-4">
+  <div class="text-[10px] uppercase tracking-wider text-teal-700 font-mono font-bold">Aim</div>
+  <p class="mt-1 text-slate-800">{{ SITE_AIM }}</p>
+</div>
+
+<h2>What XPRISM offers</h2>
+<ul>
+  <li><b>Replacement:</b> interactive simulations of the experimental pharmacology practicals in the B.Pharm curriculum, including behavioural studies, isolated tissue preparations and bioassays, so that they can be learned without using animals.</li>
+  <li><b>Reduction:</b> students can repeat a practical as often as they need, so where animal work is still required, it only begins after the method has been mastered.</li>
+  <li><b>Refinement:</b> each module teaches correct handling, dosing, humane end-points and the observations that matter, so any future animal work causes the least possible distress.</li>
+  <li><b>Ethics and compliance:</b> every user accepts an <a href="{% url 'ethics' %}">ethics agreement</a> based on the 3Rs and on the guidelines of CCSEA and the Pharmacy Council of India.</li>
+  <li><b>Learning that can be assessed:</b> faculty assign experiments, students submit observation sheets and viva answers, and marks are recorded securely.</li>
+</ul>
+
+<h2>Creator</h2>
+<table>
+  <tr><th style="width:30%">Created by</th><td>{{ SITE_CREATOR }}</td></tr>
+  <tr><th>Institution</th><td>{{ SITE_INSTITUTION }}</td></tr>
+  <tr><th>E-mail</th><td><a href="mailto:{{ SITE_CREATOR_EMAIL }}">{{ SITE_CREATOR_EMAIL }}</a></td></tr>
+</table>
+<p>For subscriptions, institutional access, feedback or collaboration, please write to the e-mail address above.</p>
+
+<p class="text-xs text-slate-500">© 2026 {{ SITE_INSTITUTION }}. XPRISM simulations are teaching aids. They do not replace the approvals required for any real research involving animals.</p>
+{% endblock %}

@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exp 03: Anticonvulsant Activity: MES (Electroconvulsometer) • XPRISM</title>
+  <meta name="description" content="Hands-on virtual practical: mark, weigh and randomise mice, prepare and inject the anticonvulsant, set the electroconvulsometer (150 mA, 0.2 s, saline-wet electrodes), apply the stimulus and time the seizure phases; abolition of hind-limb tonic extension is the end-point.">
+  <meta name="theme-color" content="#0a1f44">
+  <meta name="color-scheme" content="light">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
+  <link rel="stylesheet" href="../assets/css/tailwind.css">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <script src="../assets/js/tone.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    :root { color-scheme: light; }
+    input, select, textarea { background-color: #ffffff; color: #0f172a; -webkit-text-fill-color: #0f172a; caret-color: #0f172a; color-scheme: light; opacity: 1; }
+    input::placeholder { color: #94a3b8; -webkit-text-fill-color: #94a3b8; }
+    input:disabled, select:disabled { background-color: #f1f5f9; color: #64748b; -webkit-text-fill-color: #64748b; }
+    input:focus, select:focus { outline: 2px solid #7e13b5; outline-offset: 1px; }
+    body { font-family: 'Inter', sans-serif; background: #f1f5f9; color: #0a1f44; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .seg { font-family: 'DSEG7', 'JetBrains Mono', monospace; }
+    .obs-table th, .obs-table td { padding: 4px 6px; border-bottom: 1px solid #e2e8f0; }
+    .obs-table thead th { background: #f8fafc; color: #475569; font-weight: 600; }
+    .scroll-thin::-webkit-scrollbar { height: 8px; width: 8px; }
+    .scroll-thin::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+
+    /* ---------- bench layout (self-contained styles) ---------- */
+    .xb-wrap { display: flex; gap: 14px; flex: 1; align-items: flex-start; }
+    .xb-wrap.hidden { display: none; }
+    .xb-main { flex: 1; min-width: 0; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+    .xb-side { width: 340px; flex-shrink: 0; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; max-height: calc(100vh - 150px); }
+    @media (max-width: 1100px) { .xb-wrap { flex-direction: column; } .xb-side { width: 100%; max-height: none; } }
+    .xb-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
+    .xb-st { display: flex; gap: 4px; }
+    .xb-st button { font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; color: #334155; cursor: pointer; }
+    .xb-st button.on { background: #0a1f44; color: #fff; border-color: #0a1f44; }
+    .xb-st button .n { display: inline-block; width: 18px; height: 18px; line-height: 18px; text-align: center; border-radius: 50%; background: #e2e8f0; color: #334155; font-size: 10px; margin-right: 5px; }
+    .xb-st button.on .n { background: #f59e0b; color: #111; }
+    .xb-st button.done .n { background: #10b981; color: #fff; }
+    .xb-scene { position: relative; background: #2a3442; }
+    #scene { display: block; width: 100%; height: auto; touch-action: none; user-select: none; -webkit-user-select: none; }
+    #scene text { pointer-events: none; }
+    #scene .hot { cursor: pointer; }
+    #scene .hot:hover { filter: drop-shadow(0 0 5px rgba(253,224,71,.95)); }
+    #scene .pulse { animation: xpulse 1.4s ease-in-out infinite; }
+    @keyframes xpulse { 0%,100% { filter: drop-shadow(0 0 2px rgba(56,189,248,.3)); } 50% { filter: drop-shadow(0 0 9px rgba(56,189,248,1)); } }
+    .xb-fb { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #0f172a; color: #fff; padding: 8px 14px; font-size: 12px; min-height: 38px; }
+    .xb-fb b { color: #fde68a; }
+    .xb-card { border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; }
+    .xb-h { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #475569; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .xb-now { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 10px; padding: 10px; font-size: 12px; color: #78350f; line-height: 1.45; }
+    .xb-now .t { font-weight: 700; color: #92400e; font-size: 12.5px; margin-bottom: 3px; }
+    .xb-ctx { font-size: 12px; color: #1e293b; line-height: 1.45; }
+    .xb-ctx .row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
+    .xb-in { width: 92px; border: 1px solid #94a3b8; border-radius: 6px; padding: 4px 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+    .xb-btn { font-size: 12px; font-weight: 600; padding: 6px 10px; border-radius: 7px; border: 1px solid transparent; cursor: pointer; background: #0a1f44; color: #fff; }
+    .xb-btn:hover { filter: brightness(1.15); }
+    .xb-btn.sec { background: #fff; color: #0a1f44; border-color: #cbd5e1; }
+    .xb-btn.warn { background: #b91c1c; }
+    .xb-btn:disabled { opacity: .45; cursor: not-allowed; }
+    .xb-steps { list-style: none; margin: 0; padding: 0; font-size: 11.5px; }
+    .xb-steps li { display: flex; gap: 6px; padding: 3px 0; color: #94a3b8; }
+    .xb-steps li.done { color: #047857; }
+    .xb-steps li.cur { color: #92400e; font-weight: 700; }
+    .xb-steps li .k { width: 16px; flex-shrink: 0; text-align: center; }
+    .xb-steps .grp { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: #64748b; font-weight: 700; padding-top: 6px; }
+    .xb-tbl { width: 100%; border-collapse: collapse; font-size: 11px; }
+    .xb-tbl th { background: #f1f5f9; color: #475569; font-weight: 600; padding: 3px; text-align: center; }
+    .xb-tbl td { border-top: 1px solid #e2e8f0; padding: 3px; text-align: center; font-family: 'JetBrains Mono', monospace; }
+    .xb-tbl input { width: 58px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 3px; font-family: 'JetBrains Mono', monospace; font-size: 11px; text-align: center; }
+    .ok-in { border-color: #10b981 !important; background-color: #ecfdf5 !important; color: #065f46 !important; -webkit-text-fill-color: #065f46 !important; font-weight: 700; }
+    .bad-in { border-color: #e11d48 !important; background-color: #fff1f2 !important; color: #9f1239 !important; -webkit-text-fill-color: #9f1239 !important; font-weight: 700; }
+    .flag { display: inline-block; font-size: 9.5px; padding: 0 4px; border-radius: 4px; background: #fee2e2; color: #9f1239; margin: 1px; font-family: Inter, sans-serif; }
+    .xb-speed button { font-size: 11px; font-family: 'JetBrains Mono', monospace; font-weight: 700; padding: 2px 7px; border-radius: 5px; border: 0; background: transparent; color: #475569; cursor: pointer; }
+    .xb-speed { display: flex; border: 1px solid #cbd5e1; border-radius: 7px; background: #fff; padding: 2px; }
+    .xb-strip { background: #1b1b1b; border-top: 1px solid #000; position: relative; }
+    .xb-strip-h { display: flex; justify-content: space-between; color: #a3a3a3; font-size: 10.5px; padding: 5px 10px 0; text-transform: uppercase; letter-spacing: .06em; font-weight: 700; }
+    #kymoStrip { overflow-x: auto; }
+    .xb-man summary { cursor: pointer; font-size: 11px; font-weight: 700; color: #334155; text-transform: uppercase; letter-spacing: .06em; }
+    .xb-man table { width: 100%; font-size: 11px; border-collapse: collapse; margin-top: 6px; }
+    .xb-man td { border-top: 1px solid #e2e8f0; padding: 2px 4px; }
+    .xb-pl { width: 100%; }
+    .tgl { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #475569; }
+    .obs-in { width: 64px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; text-align: center; }
+    @media print {
+      header, #subHeader, #viewTask, #viewExperiment, .no-print { display: none !important; }
+      #viewObservation { display: flex !important; box-shadow: none; border: none; }
+    }
+    .xb-nbk { padding: 10px 12px; background: #fff; border-top: 1px solid #e2e8f0; }
+    .xb-calc { font-size: 12px; color: #1e293b; margin-bottom: 8px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .xb-tbl input { width: 60px; }
+    .xb-bar select.xb-in { font-family: Inter, sans-serif; font-size: 12px; padding: 3px 6px; background: #fff; color: #0f172a; }
+    .xb-ctx .mono { font-family: 'JetBrains Mono', monospace; }
+    .xb-ctx select, .xb-ctx input { background: #fff; color: #0f172a; -webkit-text-fill-color: #0f172a; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-100 overflow-x-hidden">
+
+  <!-- TOP BRANDING BAR (XPRISM Header) -->
+  <!-- ============================================== -->
+  <header class="site-header bg-white border-b border-slate-200 px-4 md:px-6 py-2 flex items-center justify-between gap-3 shadow-sm shrink-0">
+    <div class="flex items-center gap-3 min-w-0">
+    <a href="../index.html" title="Back to Lab Home" class="shrink-0"><img src="../assets/img/xprism-lockup.png" alt="XPRISM" class="h-11 w-auto" width="146" height="49"></a>
+      <div class="min-w-0 border-l border-slate-200 pl-3">
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="text-[10px] uppercase font-bold bg-teal-50 text-teal-700 px-2 py-0.5 rounded-full border border-teal-200 font-display tracking-wide">Virtual Lab</span>
+        <a href="../index.html" class="text-[11px] font-semibold text-teal-700 hover:underline">← All experiments</a>
+      </div>
+      <p class="text-xs text-slate-500">Aaron Innovations • Experimental Pharmacology Research &amp; Interactive Student Module</p>
+    </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="hidden md:block text-right">
+        <div class="text-xs font-semibold text-slate-800 flex items-center justify-end space-x-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Dr. Vara Prasad Saka</span>
+        </div>
+        <div class="text-[11px] text-slate-500 font-mono">ID: 8019152501 • Dept. of Pharmacology</div>
+      </div>
+      <div class="flex items-center gap-2 border-l pl-4 border-slate-200">
+        <a class="site-nav-btn" href="02-effects-of-drugs-on-rabbit-eye.html" title="Previous: Exp #2 Effects of Drugs on Rabbit Eye">‹</a><a class="site-nav-btn" href="04-muscle-relaxant-activity-rota-rod.html" title="Next: Exp #4 Muscle Relaxant Activity: Rota-Rod">›</a>
+        <button id="audioToggleBtn" class="p-2 rounded-lg bg-teal-100 hover:bg-teal-200 text-teal-800 transition" title="Toggle sound feedback" aria-label="Toggle sound feedback">
+          <svg id="soundIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+        </button>
+        <span class="hidden sm:inline bg-indigo-100 text-indigo-800 text-xs px-2.5 py-1 rounded-md font-medium border border-indigo-200 whitespace-nowrap">Exp #3</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================== -->
+  <!-- SUB-HEADER / VIEW TABS -->
+  <!-- ============================================== -->
+
+  <div id="subHeader" class="site-subheader bg-slate-800 text-white px-4 md:px-6 py-2 flex flex-wrap items-center justify-between gap-3 shadow shrink-0">
+    <div class="text-sm font-semibold tracking-wide flex items-center space-x-2 min-w-0">
+      <span class="text-teal-400 font-mono text-xs px-1.5 py-0.5 rounded bg-teal-950/80 border border-teal-500/40 shrink-0">MODULE 03</span>
+      <span>Examination 3: Anticonvulsant Screening by Maximal Electroshock Seizure (MES)</span>
+    </div>
+    <div class="flex items-center space-x-1.5 bg-slate-900/80 p-1 rounded-lg border border-slate-700" role="tablist">
+      <button id="tabTask" onclick="switchTab('task')" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white transition">Task Description</button>
+      <button id="tabExperiment" onclick="switchTab('experiment')" class="px-3.5 py-1.5 rounded-md text-xs font-semibold bg-teal-500 text-white shadow transition">Experiment Bench</button>
+      <button id="tabObservation" onclick="switchTab('observation')" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white transition">Observation Sheet &amp; Graphs</button>
+    </div>
+  </div>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-5 flex flex-col min-h-0">
+
+    <!-- TAB 1: TASK DESCRIPTION -->
+    <div id="viewTask" class="hidden flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between overflow-y-auto">
+      <div class="max-w-5xl space-y-6">
+        <div class="border-b pb-4">
+          <div class="inline-block px-2.5 py-1 rounded bg-teal-50 text-teal-800 text-xs font-bold font-mono mb-2">EXPERIMENT OBJECTIVE</div>
+          <h2 class="text-xl font-bold text-slate-900">Evaluation of Anticonvulsant Activity of Drugs Using the Electroconvulsometer (Maximal Electroshock Seizure, MES)</h2>
+          <p class="text-sm text-slate-600 mt-2 leading-relaxed">The <strong>maximal electroshock seizure (MES)</strong> test is the standard preclinical screen for drugs against <strong>generalised tonic-clonic (grand mal) and partial seizures</strong>. A supramaximal electrical stimulus is applied through ear-clip or corneal electrodes; <strong>abolition of the tonic hind-limb extension (HTE)</strong> is the end-point that shows protection.</p>
+          <p class="text-sm text-slate-600 mt-2 leading-relaxed">You do every step yourself: take mice from the stock cage, mark them with picric acid, weigh them and allocate them by drawing lots (vehicle or test drug); calculate and prepare the drug solution; inject each mouse i.p.; wait <strong>30 min</strong>; then set the electroconvulsometer (<strong>50 mA, 0.2 s</strong>), wet the electrodes with saline, apply the stimulus and time the phases of the seizure with the chronometer: <strong>tonic flexion, tonic hind-limb extension, clonus and recovery</strong>. Finally enter your timings, calculate % protection and compare the groups by Fisher's exact test and the t-test. Seizure phases are shown as neutral clinical observation states; terminal procedures are carried out by trained staff off-screen, following CCSEA guidelines.</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-4">
+          <div class="p-4 rounded-xl bg-sky-50/70 border border-sky-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-sky-500 text-white flex items-center justify-center font-bold text-sm shadow">1</div>
+            <h3 class="text-sm font-bold text-sky-950">Electrical induction</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">A 50 Hz alternating current (<b>50 mA for 0.2 s</b> as set in this practical) is passed through <strong>ear-clip electrodes wetted with 0.9% saline</strong> (corneal electrodes need a drop of local anaesthetic first). Dry electrodes have a very high impedance and no current flows; too low a current gives only a sub-maximal seizure.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-amber-50/70 border border-amber-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center font-bold text-sm shadow">2</div>
+            <h3 class="text-sm font-bold text-amber-950">Phases to time</h3>
+            <p class="text-xs text-slate-600 leading-relaxed"><b>Tonic flexion</b> (~1.5–3 s) → <b>tonic hind-limb extension</b> (~10–14 s in controls; hind limbs rigid, parallel to the tail) → <b>clonus</b> (~12–18 s) → <b>post-ictal depression</b> until the righting reflex returns (~1–1.5 min). Protected mice skip the extension phase.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-emerald-50/70 border border-emerald-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center font-bold text-sm shadow">3</div>
+            <h3 class="text-sm font-bold text-emerald-950">Expected</h3>
+            <p class="text-xs text-slate-600 leading-relaxed"><b>Phenytoin</b> (Na⁺-channel block) abolishes HTE and spares clonus. <b>Valproate</b> abolishes HTE and shortens clonus. <b>Diazepam</b> (GABA-A) abolishes HTE, suppresses clonus and prolongs the sedated post-ictal period.</p>
+          </div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Requirements</h4>
+            <ul class="text-xs text-slate-600 space-y-1 list-disc pl-4"><li>Swiss albino mice 20–30 g, 6 per group (vehicle, test drug)</li><li>Vehicle: 0.9% saline 10 mL/kg i.p.</li><li>Test drugs (i.p., 10 mL/kg): phenytoin sodium 25 mg/kg, sodium valproate 300 mg/kg, diazepam 4 mg/kg, or the coded Drug X</li><li>Electroconvulsometer with ear-clip / corneal electrodes, 0.9% saline, saline gauze, proparacaine 0.5% (corneal)</li><li>Analytical balance, animal balance, 1 mL syringes + 26 G needles, picric acid, chronometer</li></ul>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Procedure</h4>
+            <ol class="text-xs text-slate-600 space-y-1 list-decimal pl-4"><li>Mark, weigh and randomise 12 mice into vehicle (6) and test drug (6) groups.</li><li>Calculate and make up 10 mL of the drug solution (mg/mL = dose ÷ 10 mL/kg); work out each dose volume (10 mL/kg × weight).</li><li>Inject saline or drug i.p. and note the time; wait 30 min.</li><li>Switch on the stimulator, set 50 mA and 0.2 s, wet the electrodes with saline, attach them to the mouse and press SHOCK.</li><li>Press the phase buttons as each phase begins (flexion, extension, clonus, end of clonus, righting reflex).</li><li>Calculate each duration, record whether HTE occurred, then work out % protection, mean extension, Fisher's exact test and t-test.</li></ol>
+          </div>
+        </div>
+      </div>
+      <div class="pt-6 border-t flex justify-end mt-6">
+        <button onclick="switchTab('experiment')" class="px-6 py-2.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-semibold text-sm shadow flex items-center space-x-2 transition">
+          <span>Go to Experiment Stage</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+      </div>
+    </div>
+
+<!-- TAB 2: EXPERIMENT BENCH -->
+    <div id="viewExperiment" class="xb-wrap">
+      <div class="xb-main">
+        <div class="xb-bar">
+          <div class="xb-st" id="stationBtns">
+            <button data-s="1" onclick="goStation(1)"><span class="n">1</span>Animal house</button>
+            <button data-s="2" onclick="goStation(2)"><span class="n">2</span>Solutions</button>
+            <button data-s="3" onclick="goStation(3)"><span class="n">3</span>Dosing &amp; timing</button>
+            <button data-s="4" onclick="goStation(4)"><span class="n">4</span>Electroconvulsometer</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:11px;color:#64748b;font-weight:600">Test drug</span>
+            <select id="drugSel" class="xb-in" style="width:auto;max-width:190px" onchange="onDrugChange(this.value)"></select>
+            <span style="font-size:11px;color:#64748b;font-weight:600">Lab time</span>
+            <span id="labClock" class="mono" style="font-size:12px;font-weight:700;color:#0a1f44">09:00</span>
+            <div class="xb-speed" id="speedBtns" title="Time runs faster; you still do every step"></div>
+          </div>
+        </div>
+        <div class="xb-scene">
+          <svg id="scene" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet"></svg>
+        </div>
+        <div class="xb-fb" id="actionFeedback">
+          <div style="display:flex;align-items:center;gap:8px"><span id="feedbackIcon" style="color:#2dd4bf;font-weight:700">ℹ</span><span id="feedbackText">Ready.</span></div>
+          <span id="phaseIndicator" class="mono" style="font-size:11px;color:#94a3b8"></span>
+        </div>
+        <div class="xb-nbk">
+          <div class="xb-h"><span>Lab notebook: type every reading yourself (green = matches the instrument, red = check again)</span></div>
+          <div id="nbCalc" class="xb-calc"></div>
+          <div style="max-height:300px;overflow:auto" class="scroll-thin">
+            <table class="xb-tbl"><thead><tr><th>Mouse</th><th>Grp</th><th>Wt (g)</th><th>Dose (mL)</th><th>Flexion (s)</th><th>Extension (s)</th><th>Clonus (s)</th><th>Recovery (s)</th><th>HTE y/n</th><th style="text-align:left">Technique flags</th></tr></thead><tbody id="nbBody"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <aside class="xb-side">
+        <div class="xb-now" id="nowBox"></div>
+        <div class="xb-card"><div class="xb-h"><span id="ctxTitle">Bench</span></div><div class="xb-ctx" id="ctx"></div></div>
+        <div class="xb-card">
+          <div class="xb-h"><span>Protocol checklist</span><label class="tgl"><input type="checkbox" id="hintToggle" checked onchange="HINTS=this.checked;refreshHints()"> highlight next</label></div>
+          <ul class="xb-steps" id="checklist"></ul>
+        </div>
+        <details class="xb-card xb-man">
+          <summary>Lab manual: quick reference</summary>
+          <table><tr><td>Mice</td><td class="mono">Swiss albino, 20–30 g, n = 6/group</td></tr><tr><td>Vehicle</td><td class="mono">saline 10 mL/kg i.p.</td></tr><tr><td>Phenytoin Na</td><td class="mono">25 mg/kg i.p. = 2.5 mg/mL</td></tr><tr><td>Valproate Na</td><td class="mono">300 mg/kg i.p. = 30 mg/mL</td></tr><tr><td>Diazepam</td><td class="mono">4 mg/kg i.p. = 0.4 mg/mL</td></tr><tr><td>Pretreatment time</td><td class="mono">30 min after i.p.</td></tr><tr><td>Stimulus</td><td class="mono">50 mA, 0.2 s, 50 Hz</td></tr><tr><td>Electrodes</td><td class="mono">ear-clip / corneal, saline-wet</td></tr><tr><td>End-point</td><td class="mono">abolition of HTE</td></tr><tr><td>Tests</td><td class="mono">Fisher (protection), t (HTE s)</td></tr></table>
+        </details>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="xb-btn sec" onclick="switchTab('observation')">Observation sheet →</button>
+          <button class="xb-btn sec" onclick="if(confirm('Discard everything and start the practical again from the beginning?')) newExperiment()">Restart practical</button>
+        </div>
+      </aside>
+    </div>
+
+    
+    <!-- TAB 3: OBSERVATION SHEET -->
+    <div id="viewObservation" class="hidden flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between overflow-y-auto">
+      <div class="space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b pb-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Observation Table: Maximal Electroshock Seizure (MES) in Mice</h2>
+            <p class="text-xs text-slate-500">50 mA, 0.2 s, ear-clip electrodes wetted with saline • stimulus 30 min after i.p. drug • values come from your notebook</p>
+          </div>
+          <div class="flex items-center space-x-3 no-print">
+            <button onclick="renderObservation()" class="px-3.5 py-1.5 rounded-lg bg-teal-50 border border-teal-300 hover:bg-teal-100 text-teal-800 text-xs font-semibold transition">Refresh from notebook</button>
+          </div>
+        </div>
+        <div class="border border-slate-200 rounded-xl overflow-x-auto shadow-sm" id="rawBox"></div>
+        <div class="border border-slate-200 rounded-xl overflow-x-auto shadow-sm" id="sumBox"></div>
+        <div class="grid lg:grid-cols-3 gap-4">
+          <div class="border border-slate-200 rounded-xl p-3 shadow-sm lg:col-span-2"><div class="text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">Duration of hind-limb tonic extension (mean ± SEM)</div><svg id="chartT" viewBox="0 0 640 260" class="w-full"></svg></div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+            <div class="text-[10px] text-slate-500 uppercase font-semibold font-mono">Inference</div>
+            <div id="lblInference" class="text-sm font-bold text-slate-800">Pending</div>
+            <p id="lblInferenceDetail" class="text-[11px] text-slate-600 leading-relaxed">Complete the electroshock testing of both groups.</p>
+          </div>
+        </div>
+        <div class="p-4 rounded-xl border border-teal-200 bg-teal-50/50 space-y-3 no-print">
+          <div class="space-y-1">
+            <h3 class="text-sm font-bold text-slate-800">Identification of Unknown Drug Compound (Exam Deduction)</h3>
+            <p class="text-xs text-slate-600">Select "Unknown mystery drug" as the test drug on the bench, run both groups, then deduce the compound from HTE abolition, clonus and the post-ictal period.</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-3">
+            <select id="unknownDeductionSelect" class="bg-white border border-slate-300 text-slate-800 text-xs rounded-lg px-3 py-2 font-medium shadow-sm focus:ring-2 focus:ring-teal-500"><option value="">-- Choose deduced compound --</option></select>
+            <button onclick="verifyUnknownDeduction()" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-lg shadow transition">Verify Answer</button>
+          </div>
+          <div id="unknownVerdictBox" class="hidden"></div>
+        </div>
+      </div>
+      <div class="pt-6 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 mt-6 no-print">
+        <div class="text-xs text-slate-500 font-mono">XPRISM • MES Anticonvulsant Practical Evaluation</div>
+        <div class="flex items-center space-x-3">
+          <button onclick="openModal('modalQuestions')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow transition">Answer Viva Questions</button>
+          <button onclick="openResultsModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow transition">Results &amp; Summary</button>
+          <button onclick="window.print()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg shadow transition">Print Report</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer no-print border-t border-slate-200 bg-white shrink-0">
+    <div class="max-w-7xl mx-auto px-6 py-3 text-xs text-slate-500 font-mono flex justify-between flex-wrap gap-2">
+      <span>XPRISM • Exp #03 • © 2026 Aaron Innovations • Dr. Vara Prasad Saka</span>
+      <span>Simulations are teaching aids that reduce animal use, in line with CCSEA 3Rs guidance. • <a href="../index.html" class="text-teal-700 hover:underline">All experiments</a></span>
+    </div>
+  </footer>
+
+  <!-- MODAL: VIVA -->
+  <div id="modalQuestions" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-base font-bold text-slate-800">MES Anticonvulsant Screen: Viva-Voce</h3>
+        <button onclick="closeModal('modalQuestions')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+      <div id="quizScore" class="hidden p-2.5 rounded-lg text-xs font-semibold"></div>
+      <div id="quizBody" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2 text-xs text-slate-700"></div>
+      <div class="pt-3 border-t flex justify-end space-x-2">
+        <button onclick="renderQuiz()" class="px-4 py-2 border rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">Reset</button>
+        <button onclick="evaluateQuestions()" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-lg shadow">Submit Answers</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: RESULTS -->
+  <div id="modalResults" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-base font-bold text-slate-800">Laboratory Results Summary</h3>
+        <button onclick="closeModal('modalResults')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+      <div id="resBody" class="space-y-2 text-xs"></div>
+      <div id="resExplanation" class="p-3 rounded-lg bg-teal-50 border border-teal-200 text-teal-900 leading-relaxed text-[11px]"></div>
+      <div class="pt-3 border-t flex justify-end">
+        <button onclick="closeModal('modalResults')" class="px-6 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg shadow">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =====================================================================
+    // XPRISM shared simulation toolkit (tabs, sound, stats, charts, viva)
+    // =====================================================================
+    const $ = id => document.getElementById(id);
+    const svgNS = "http://www.w3.org/2000/svg";
+    function el(tag, attrs = {}, parent) {
+      const e = document.createElementNS(svgNS, tag);
+      for (const k in attrs) e.setAttribute(k, attrs[k]);
+      if (parent) parent.appendChild(e);
+      return e;
+    }
+    function svgPoint(svg, evt) {
+      const pt = svg.createSVGPoint();
+      const src = evt.touches ? evt.touches[0] : evt;
+      pt.x = src.clientX; pt.y = src.clientY;
+      return pt.matrixTransform(svg.getScreenCTM().inverse());
+    }
+    function gauss() {
+      let u = 0, v = 0;
+      while (u === 0) u = Math.random();
+      while (v === 0) v = Math.random();
+      return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    }
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+    const shuffle = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+    const mean = a => a.length ? a.reduce((s, x) => s + x, 0) / a.length : NaN;
+    const sd = a => { if (a.length < 2) return 0; const m = mean(a); return Math.sqrt(a.reduce((s, x) => s + (x - m) ** 2, 0) / (a.length - 1)); };
+    const sem = a => a.length < 2 ? 0 : sd(a) / Math.sqrt(a.length);
+    const fx = (v, d = 1) => (v === null || v === undefined || !isFinite(v)) ? '—' : (+v).toFixed(d);
+    const fmtMS = s => { s = Math.max(0, Math.round(s)); return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
+    const fmtHMS = s => { s = Math.max(0, Math.round(s)); const h = Math.floor(s / 3600); return `${h}:${String(Math.floor(s % 3600 / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
+    const log10 = Math.log10;
+
+    // ---- t-distribution (two-tailed p) via regularised incomplete beta ----
+    function betacf(a, b, x) {
+      let qab = a + b, qap = a + 1, qam = a - 1, c = 1, d = 1 - qab * x / qap;
+      if (Math.abs(d) < 1e-30) d = 1e-30; d = 1 / d; let h = d;
+      for (let m = 1; m <= 200; m++) {
+        const m2 = 2 * m; let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+        d = 1 + aa * d; if (Math.abs(d) < 1e-30) d = 1e-30; c = 1 + aa / c; if (Math.abs(c) < 1e-30) c = 1e-30; d = 1 / d; h *= d * c;
+        aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+        d = 1 + aa * d; if (Math.abs(d) < 1e-30) d = 1e-30; c = 1 + aa / c; if (Math.abs(c) < 1e-30) c = 1e-30; d = 1 / d;
+        const del = d * c; h *= del; if (Math.abs(del - 1) < 3e-7) break;
+      }
+      return h;
+    }
+    function gammaln(x) {
+      const c = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5];
+      let y = x, t = x + 5.5; t -= (x + 0.5) * Math.log(t); let s = 1.000000000190015;
+      for (let j = 0; j < 6; j++) s += c[j] / ++y;
+      return -t + Math.log(2.5066282746310005 * s / x);
+    }
+    function betai(a, b, x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      const bt = Math.exp(gammaln(a + b) - gammaln(a) - gammaln(b) + a * Math.log(x) + b * Math.log(1 - x));
+      return x < (a + 1) / (a + b + 2) ? bt * betacf(a, b, x) / a : 1 - bt * betacf(b, a, 1 - x) / b;
+    }
+    function tTest(a, b) { // unpaired Student's t (pooled variance)
+      if (a.length < 2 || b.length < 2) return { t: NaN, df: NaN, p: NaN };
+      const df = a.length + b.length - 2;
+      const sp2 = ((a.length - 1) * sd(a) ** 2 + (b.length - 1) * sd(b) ** 2) / df;
+      const se = Math.sqrt(sp2 * (1 / a.length + 1 / b.length));
+      const t = se === 0 ? (mean(a) === mean(b) ? 0 : 99) : (mean(a) - mean(b)) / se;
+      return { t, df, p: betai(df / 2, 0.5, df / (df + t * t)) };
+    }
+    const pLabel = p => !isFinite(p) ? '—' : p < 0.001 ? 'p < 0.001' : p < 0.01 ? 'p < 0.01' : p < 0.05 ? 'p < 0.05' : 'p > 0.05 (ns)';
+    const stars = p => !isFinite(p) ? '' : p < 0.001 ? '***' : p < 0.01 ? '**' : p < 0.05 ? '*' : 'ns';
+    function linreg(xs, ys) {
+      const n = xs.length; if (n < 2) return null;
+      const mx = mean(xs), my = mean(ys);
+      let sxy = 0, sxx = 0, syy = 0;
+      for (let i = 0; i < n; i++) { sxy += (xs[i] - mx) * (ys[i] - my); sxx += (xs[i] - mx) ** 2; syy += (ys[i] - my) ** 2; }
+      const slope = sxy / sxx, intercept = my - slope * mx;
+      return { slope, intercept, r2: syy === 0 ? 1 : (sxy * sxy) / (sxx * syy) };
+    }
+    // log-linear interpolation of the dose giving response `target` on an ascending curve [[dose, resp], ...]
+    function interpDose(pts, target) {
+      const s = pts.filter(p => p[0] > 0).slice().sort((a, b) => a[0] - b[0]);
+      for (let i = 0; i < s.length - 1; i++) {
+        const [d1, r1] = s[i], [d2, r2] = s[i + 1];
+        if ((r1 <= target && r2 >= target) && r2 !== r1) {
+          const f = (target - r1) / (r2 - r1);
+          return Math.pow(10, log10(d1) + f * (log10(d2) - log10(d1)));
+        }
+      }
+      return NaN;
+    }
+
+    // ---- Sound ----
+    let soundOn = true, synth = null;
+    function beep(type = 'click') {
+      if (!soundOn || typeof Tone === 'undefined') return;
+      try {
+        if (!synth) { Tone.start(); synth = new Tone.PolySynth(Tone.Synth).toDestination(); synth.volume.value = -16; }
+        const n = { click: 'C6', ok: 'E5', warn: 'A3', done: 'G5', tick: 'C7', low: 'E3' }[type] || 'C6';
+        synth.triggerAttackRelease(n, type === 'done' ? '8n' : '32n');
+      } catch (e) { /* audio optional */ }
+    }
+
+    // ---- Feedback / stepper ----
+    function showFeedback(msg, isAlert = false) {
+      $('feedbackText').innerHTML = msg;
+      const icon = $('feedbackIcon');
+      icon.innerText = isAlert ? "⚠️" : "ℹ";
+      icon.className = isAlert ? "text-amber-400 font-bold" : "text-teal-400 font-bold";
+      if (isAlert) beep('warn');
+    }
+    function setPhase(t) { $('phaseIndicator').innerText = t || ''; }
+    function renderSteps(steps) {
+      let active = steps.findIndex(s => !s.done);
+      $('stepper').innerHTML = steps.map((s, i) => {
+        const cls = s.done ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : i === active ? 'bg-amber-50 text-amber-800 border-amber-300 ring-1 ring-amber-200' : 'bg-slate-50 text-slate-400 border-slate-200';
+        return `<span class="px-2 py-1 rounded-md border ${cls}">${s.done ? '✓' : (i + 1)} ${s.t}</span>`;
+      }).join('');
+    }
+
+    // ---- Speed ----
+    let SPEED = 1, SPEEDS = [1, 5, 20, 60];
+    function renderSpeed() {
+      $('speedBtns').innerHTML = SPEEDS.map(s => `<button onclick="setSpeed(${s})" class="px-2 py-0.5 text-[11px] rounded font-mono font-semibold ${s === SPEED ? 'bg-teal-600 text-white' : 'text-slate-600 hover:bg-slate-100'}">${s}×</button>`).join('');
+    }
+    function setSpeed(s) { SPEED = s; renderSpeed(); beep('tick'); }
+
+    // ---- Generic wait timer (simulated seconds) ----
+    let WAIT = null;
+    function startWait(title, seconds, onDone) {
+      WAIT = { title, total: seconds, left: seconds, onDone };
+      $('waitTitle').innerText = title; $('waitCard').classList.remove('hidden');
+    }
+    function skipWait() { if (WAIT) WAIT.left = 0; }
+    function cancelWait() { WAIT = null; $('waitCard').classList.add('hidden'); }
+    function tickWait(dtSim) {
+      if (!WAIT) return;
+      WAIT.left -= dtSim;
+      $('waitClock').innerText = WAIT.total >= 3600 ? fmtHMS(WAIT.left) : fmtMS(WAIT.left);
+      $('waitBar').style.width = `${clamp(100 * (1 - WAIT.left / WAIT.total), 0, 100)}%`;
+      if (WAIT.left <= 0) { const w = WAIT; WAIT = null; $('waitCard').classList.add('hidden'); beep('done'); w.onDone && w.onDone(); }
+    }
+    let _lastTs = null;
+    function startLoop(cb) {
+      const f = ts => {
+        if (_lastTs === null) _lastTs = ts;
+        const dtR = Math.min(0.1, Math.max(0, (ts - _lastTs) / 1000)); _lastTs = ts;
+        tickWait(dtR * SPEED);
+        cb && cb(dtR * SPEED, dtR);
+        requestAnimationFrame(f);
+      };
+      requestAnimationFrame(f);
+    }
+
+    // ---- Tabs / modals ----
+    function openModal(id) { $(id).classList.remove('hidden'); }
+    function closeModal(id) { $(id).classList.add('hidden'); }
+    function switchTab(tabId) {
+      const map = { task: ['viewTask', 'tabTask'], experiment: ['viewExperiment', 'tabExperiment'], observation: ['viewObservation', 'tabObservation'] };
+      Object.values(map).forEach(([v, t]) => {
+        $(v).classList.add('hidden');
+        const b = $(t); b.classList.remove('bg-teal-500', 'text-white', 'shadow'); b.classList.add('text-slate-300');
+      });
+      $(map[tabId][0]).classList.remove('hidden');
+      $(map[tabId][1]).classList.add('bg-teal-500', 'text-white', 'shadow');
+      if (tabId === 'observation') renderObservation();
+    }
+
+    // ---- Viva ----
+    function renderQuiz() {
+      $('quizScore').classList.add('hidden');
+      $('quizBody').innerHTML = QUIZ.map((q, i) => `<div class="space-y-1.5" id="qwrap${i}">
+        <p class="font-semibold text-slate-800">${i + 1}. ${q.q}</p>
+        ${q.o.map((o, j) => `<label class="flex items-start gap-2 p-1.5 rounded hover:bg-slate-50 cursor-pointer"><input type="radio" name="q${i}" value="${j}" class="mt-0.5 accent-teal-600"><span>${o}</span></label>`).join('')}
+        <p id="qexp${i}" class="hidden text-[11px] p-2 rounded"></p></div>`).join('');
+    }
+    function evaluateQuestions() {
+      const ans = QUIZ.map((_, i) => document.querySelector(`input[name="q${i}"]:checked`)?.value);
+      if (ans.some(a => a === undefined)) { const s = $('quizScore'); s.className = 'p-2.5 rounded-lg text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200'; s.innerText = `Please answer all ${QUIZ.length} questions before submitting.`; return; }
+      let score = 0;
+      QUIZ.forEach((q, i) => {
+        const ok = +ans[i] === q.a; if (ok) score++;
+        const e = $('qexp' + i); e.classList.remove('hidden');
+        e.className = `text-[11px] p-2 rounded ${ok ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-rose-50 text-rose-800 border border-rose-200'}`;
+        e.innerHTML = `${ok ? '✓ Correct.' : `✗ Correct answer: <b>${q.o[q.a]}</b>.`} ${q.e || ''}`;
+      });
+      const s = $('quizScore'); s.className = `p-2.5 rounded-lg text-xs font-semibold ${score / QUIZ.length >= 0.6 ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-amber-50 text-amber-800 border border-amber-200'}`;
+      s.innerText = `Viva score: ${score}/${QUIZ.length} (${Math.round(score / QUIZ.length * 100)}%)`;
+      beep(score / QUIZ.length >= 0.6 ? 'done' : 'warn');
+      $('quizBody').scrollTop = 0;
+    }
+
+    // ---- Results modal ----
+    function openResultsModal() {
+      const r = buildResults();
+      $('resBody').innerHTML = r.rows.map(([k, v]) => `<div class="flex justify-between gap-3 border-b border-slate-100 pb-1"><span class="text-slate-500">${k}</span><span class="font-semibold text-slate-800 text-right">${v}</span></div>`).join('');
+      $('resExplanation').innerHTML = r.text;
+      openModal('modalResults');
+    }
+    // numeric answer verification (bioassays / unknowns)
+    function verifyNumber(inputId, outId, truth, tolPct, unit, explain) {
+      const v = parseFloat($(inputId).value), o = $(outId);
+      if (!isFinite(v)) { o.className = 'text-xs font-semibold text-amber-700'; o.innerText = 'Enter a number first.'; return; }
+      const err = Math.abs(v - truth) / truth * 100;
+      const ok = err <= tolPct;
+      o.className = `text-xs font-semibold ${ok ? 'text-emerald-700' : 'text-rose-700'}`;
+      o.innerHTML = ok ? `✓ Accepted (${fx(err, 1)}% from the true value of ${fx(truth, 3)} ${unit}). ${explain || ''}` : `✗ ${fx(err, 0)}% away from the true value. Re-check your matching/calculation (accepted within ±${tolPct}%).`;
+      beep(ok ? 'done' : 'warn');
+    }
+
+    // ---- SVG charts ----
+    const PALETTE = { teal: '#7e13b5', indigo: '#4f46e5', rose: '#e11d48', amber: '#d97706', slate: '#475569', emerald: '#059669', sky: '#0284c7', violet: '#7c3aed' };
+    function niceTicks(min, max, n = 5) {
+      if (!(max > min)) { max = min + 1; }
+      const span = max - min, step0 = span / n, mag = Math.pow(10, Math.floor(log10(step0)));
+      const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => span / s <= n) || mag * 10;
+      const out = []; for (let v = Math.ceil(min / step - 1e-9) * step; v <= max + 1e-9; v += step) out.push(+v.toFixed(10));
+      return out;
+    }
+    function chartFrame(svg, o) {
+      svg.innerHTML = '';
+      const W = +(svg.getAttribute('viewBox').split(' ')[2]), H = +(svg.getAttribute('viewBox').split(' ')[3]);
+      const m = { l: 46, r: 12, t: 12, b: 38 };
+      const X = v => m.l + (v - o.xMin) / (o.xMax - o.xMin) * (W - m.l - m.r);
+      const Y = v => H - m.b - (v - o.yMin) / (o.yMax - o.yMin) * (H - m.t - m.b);
+      const yt = o.yTicks || niceTicks(o.yMin, o.yMax, 5);
+      yt.forEach(v => { el('line', { x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), stroke: '#e2e8f0' }, svg); const t = el('text', { x: m.l - 5, y: Y(v) + 3, 'text-anchor': 'end', 'font-size': 9, fill: '#64748b' }, svg); t.textContent = o.yFmt ? o.yFmt(v) : +v.toFixed(3); });
+      const xt = o.xTicks || niceTicks(o.xMin, o.xMax, 6).map(v => [v, o.xFmt ? o.xFmt(v) : +v.toFixed(3)]);
+      xt.forEach(([v, lab]) => { el('line', { x1: X(v), x2: X(v), y1: H - m.b, y2: H - m.b + 4, stroke: '#94a3b8' }, svg); const t = el('text', { x: X(v), y: H - m.b + 14, 'text-anchor': 'middle', 'font-size': 9, fill: '#64748b' }, svg); t.textContent = lab; });
+      el('line', { x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b, stroke: '#475569' }, svg);
+      el('line', { x1: m.l, x2: m.l, y1: m.t, y2: H - m.b, stroke: '#475569' }, svg);
+      if (o.xLabel) { const t = el('text', { x: (m.l + W - m.r) / 2, y: H - 6, 'text-anchor': 'middle', 'font-size': 10, fill: '#334155', 'font-weight': 600 }, svg); t.textContent = o.xLabel; }
+      if (o.yLabel) { const t = el('text', { x: 11, y: (m.t + H - m.b) / 2, 'text-anchor': 'middle', 'font-size': 10, fill: '#334155', 'font-weight': 600, transform: `rotate(-90 11 ${(m.t + H - m.b) / 2})` }, svg); t.textContent = o.yLabel; }
+      return { X, Y, W, H, m };
+    }
+    function emptyChart(svg, msg) {
+      svg.innerHTML = '';
+      const vb = svg.getAttribute('viewBox').split(' ');
+      const t = el('text', { x: vb[2] / 2, y: vb[3] / 2, 'text-anchor': 'middle', 'font-size': 11, fill: '#94a3b8' }, svg); t.textContent = msg || 'No data yet';
+    }
+    // series: [{name, color, pts:[[x,y,err?]], dash, noLine, line:{slope,intercept,x1,x2}}]
+    function lineChart(id, o) {
+      const svg = $(id);
+      const all = o.series.flatMap(s => s.pts);
+      if (!all.length) { emptyChart(svg, o.empty); return; }
+      const xs = all.map(p => p[0]), ys = all.map(p => p[1] + (p[2] || 0));
+      const xMin = o.xMin ?? Math.min(...xs), xMax = o.xMax ?? Math.max(...xs);
+      const pad = (xMax - xMin) * 0.05 || 1;
+      const f = chartFrame(svg, { ...o, xMin: o.xMin ?? xMin - pad, xMax: o.xMax ?? xMax + pad, yMin: o.yMin ?? Math.min(0, ...all.map(p => p[1])), yMax: o.yMax ?? (Math.max(...ys) * 1.12 || 1) });
+      (o.hlines || []).forEach(h => { el('line', { x1: f.m.l, x2: f.W - f.m.r, y1: f.Y(h.y), y2: f.Y(h.y), stroke: h.color || '#94a3b8', 'stroke-dasharray': '4 3' }, svg); if (h.label) { const t = el('text', { x: f.W - f.m.r - 2, y: f.Y(h.y) - 3, 'text-anchor': 'end', 'font-size': 8.5, fill: h.color || '#64748b' }, svg); t.textContent = h.label; } });
+      (o.vlines || []).forEach(h => { el('line', { x1: f.X(h.x), x2: f.X(h.x), y1: f.m.t, y2: f.H - f.m.b, stroke: h.color || '#94a3b8', 'stroke-dasharray': '3 3' }, svg); if (h.label) { const t = el('text', { x: f.X(h.x) + 3, y: f.m.t + 9, 'font-size': 8.5, fill: h.color || '#64748b' }, svg); t.textContent = h.label; } });
+      o.series.forEach(s => {
+        const pts = s.pts.slice().sort((a, b) => a[0] - b[0]);
+        if (s.line) { el('line', { x1: f.X(s.line.x1), y1: f.Y(s.line.slope * s.line.x1 + s.line.intercept), x2: f.X(s.line.x2), y2: f.Y(s.line.slope * s.line.x2 + s.line.intercept), stroke: s.color, 'stroke-width': 1.5, 'stroke-dasharray': '5 3' }, svg); }
+        if (!s.noLine && pts.length > 1) el('polyline', { points: pts.map(p => `${f.X(p[0])},${f.Y(p[1])}`).join(' '), fill: 'none', stroke: s.color, 'stroke-width': 2, 'stroke-dasharray': s.dash || '' }, svg);
+        pts.forEach(p => {
+          if (p[2]) { el('line', { x1: f.X(p[0]), x2: f.X(p[0]), y1: f.Y(p[1] - p[2]), y2: f.Y(p[1] + p[2]), stroke: s.color }, svg); [-1, 1].forEach(k => el('line', { x1: f.X(p[0]) - 3, x2: f.X(p[0]) + 3, y1: f.Y(p[1] + k * p[2]), y2: f.Y(p[1] + k * p[2]), stroke: s.color }, svg)); }
+          el('circle', { cx: f.X(p[0]), cy: f.Y(p[1]), r: 3.2, fill: s.hollow ? '#fff' : s.color, stroke: s.color, 'stroke-width': 1.5 }, svg);
+        });
+      });
+      // legend
+      const named = o.series.filter(s => s.name);
+      named.forEach((s, i) => { const x = f.m.l + 8, y = f.m.t + 8 + i * 12; el('rect', { x, y: y - 6, width: 10, height: 4, fill: s.color }, svg); const t = el('text', { x: x + 14, y: y - 1, 'font-size': 9, fill: '#334155' }, svg); t.textContent = s.name; });
+    }
+    // bars: [{label, v, e, color, note}]
+    function barChart(id, o) {
+      const svg = $(id);
+      const bars = o.bars.filter(b => isFinite(b.v));
+      if (!bars.length) { emptyChart(svg, o.empty); return; }
+      const top = Math.max(...bars.map(b => b.v + (b.e || 0))) * 1.2 || 1;
+      const n = o.bars.length;
+      const f = chartFrame(svg, { ...o, xMin: 0, xMax: n, yMin: o.yMin ?? 0, yMax: o.yMax ?? top, xTicks: [] });
+      const bw = (f.X(1) - f.X(0)) * 0.56;
+      o.bars.forEach((b, i) => {
+        const cx = f.X(i + 0.5);
+        const t = el('text', { x: cx, y: f.H - f.m.b + 13, 'text-anchor': 'middle', 'font-size': 9, fill: '#334155' }, svg); t.textContent = b.label;
+        if (!isFinite(b.v)) return;
+        el('rect', { x: cx - bw / 2, y: f.Y(Math.max(b.v, 0)), width: bw, height: Math.abs(f.Y(0) - f.Y(b.v)), fill: b.color || PALETTE.teal, rx: 2, opacity: .9 }, svg);
+        if (b.e) { el('line', { x1: cx, x2: cx, y1: f.Y(b.v), y2: f.Y(b.v + b.e), stroke: '#0a1f44' }, svg); el('line', { x1: cx - 5, x2: cx + 5, y1: f.Y(b.v + b.e), y2: f.Y(b.v + b.e), stroke: '#0a1f44' }, svg); }
+        if (b.note) { const s = el('text', { x: cx, y: f.Y(b.v + (b.e || 0)) - 4, 'text-anchor': 'middle', 'font-size': 10, 'font-weight': 700, fill: '#0a1f44' }, svg); s.textContent = b.note; }
+      });
+    }
+    // ---- small HTML helpers ----
+    function tableHTML(head, rows, cls = '') {
+      return `<table class="obs-table w-full text-[11px] text-center ${cls}"><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody class="font-mono">${rows.length ? rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${head.length}" class="text-slate-400 py-3 font-sans">No readings yet</td></tr>`}</tbody></table>`;
+    }
+    $('audioToggleBtn') && $('audioToggleBtn').addEventListener('click', () => {
+      soundOn = !soundOn;
+      $('audioToggleBtn').className = `p-2 rounded-lg transition ${soundOn ? 'bg-teal-100 hover:bg-teal-200 text-teal-800' : 'bg-slate-200 text-slate-500'}`;
+      if (soundOn) beep('ok');
+    });
+    window.addEventListener('DOMContentLoaded', () => { renderSpeed(); renderQuiz(); init(); });
+
+  </script>
+  <script>
+    // =====================================================================
+    // Shared realistic rodent art (albino Wistar rat / Swiss albino mouse).
+    // Anatomical silhouettes, strand-textured fur with fuzzy edge, rim light,
+    // veined ears, glossy ruby eyes, whiskers, ringed tail, toed paws.
+    // Side views face +x, top views have the head at +x.  Origin = body centre.
+    // =====================================================================
+    const ANI_DEFS = `
+      <filter id="furStrand" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".55 .08" numOctaves="3" seed="12" result="n"/><feColorMatrix in="n" values="0 0 0 0 .52  0 0 0 0 .46  0 0 0 0 .43  0 0 0 .75 -.2"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+      <filter id="furStrandT" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".12 .6" numOctaves="3" seed="21" result="n"/><feColorMatrix in="n" values="0 0 0 0 .52  0 0 0 0 .46  0 0 0 0 .43  0 0 0 .75 -.2"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+      <filter id="furFuzz" x="-6%" y="-8%" width="112%" height="116%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="3" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+      <filter id="aniBlur"><feGaussianBlur stdDeviation="1.6"/></filter>
+      <filter id="aniSoft"><feGaussianBlur stdDeviation=".5"/></filter>
+      <linearGradient id="aniBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".4" stop-color="#f7f3f0"/><stop offset=".78" stop-color="#e6ddd9"/><stop offset="1" stop-color="#c9bcb7"/></linearGradient>
+      <linearGradient id="aniBodyT" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#fbf8f6"/><stop offset=".5" stop-color="#f1ebe7"/><stop offset="1" stop-color="#ddd2cd"/></linearGradient>
+      <linearGradient id="aniShade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".6" stop-color="#9a8782" stop-opacity="0"/><stop offset="1" stop-color="#5f4c48" stop-opacity=".38"/></linearGradient>
+      <linearGradient id="aniTail" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#efbdc6"/><stop offset="1" stop-color="#dc98a8"/></linearGradient>
+      <radialGradient id="aniEye" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ff8097"/><stop offset=".5" stop-color="#b3122c"/><stop offset="1" stop-color="#430410"/></radialGradient>
+      <radialGradient id="aniEar" cx=".5" cy=".62" r=".65"><stop offset="0" stop-color="#fcd7df"/><stop offset=".7" stop-color="#f2adbf"/><stop offset="1" stop-color="#e48fa6"/></radialGradient>
+      <linearGradient id="aniPaw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6bcc8"/><stop offset="1" stop-color="#e395a8"/></linearGradient>`;
+
+    const _ANI_SIDE = 'M45 1.5 C42 -2 37 -7 29 -10 C22 -13 14 -16 3 -16.5 C-9 -17 -21 -14.5 -28 -8 C-33 -3 -33 6 -29 11 C-25 15 -17 15.5 -9 15.5 C0 15.5 9 14.5 17 12 C24 10 31 8.5 37 6 C41 4.5 44 3 45 1.5Z';
+    const _ANI_TOP = 'M27 0 C25 -2.4 22 -4.6 18 -5.8 C15 -7 12.5 -8.6 8 -9.4 C1 -10.6 -8 -10.2 -13.5 -7.8 C-18 -5.8 -20.5 -2.8 -20.5 0 C-20.5 2.8 -18 5.8 -13.5 7.8 C-8 10.2 1 10.6 8 9.4 C12.5 8.6 15 7 18 5.8 C22 4.6 25 2.4 27 0Z';
+    const _toes = (x, y, n, len, dx, dy, w = .5) => Array.from({ length: n }, (_, i) => { const a = (i - (n - 1) / 2) * .42; return `<line x1="${x}" y1="${y}" x2="${(x + (dx * Math.cos(a) - dy * Math.sin(a)) * len).toFixed(2)}" y2="${(y + (dx * Math.sin(a) + dy * Math.cos(a)) * len).toFixed(2)}" stroke="#c77a8f" stroke-width="${w}" stroke-linecap="round"/>`; }).join('');
+    const _whisk = (x, y, dir, sc) => [[-9, -14], [-3, -17], [4, -16], [9, -11], [12, -5]].map(([a, b], i) => `<path d="M${x} ${y + (i - 2) * .55 * sc} Q${x + dir * (8 + i) * sc} ${y + (a * .55) * sc} ${x + dir * (19 + i * 1.5) * sc} ${y + b * sc * .8}" fill="none" stroke="#fff" stroke-opacity=".62" stroke-width=".28"/>`).join('');
+
+    // ---- side view. o: {flip, sw (paw swelling 0..1), ink, kind:'rat'|'mouse'}  Returns art only (no marks).
+    function animalSideArt(o = {}) {
+        const mouse = o.kind === 'mouse', sc = mouse ? .47 : 1, sw = o.sw || 0;
+        const pawC = `rgb(${Math.round(240 - 16 * sw)},${Math.round(160 - 70 * sw)},${Math.round(176 - 70 * sw)})`;
+        const tail = mouse ? 'M-30 3 C-48 5 -58 -2 -70 5 C-80 10 -90 8 -96 14' : 'M-30 3 C-44 4 -52 12 -64 10 C-72 9 -76 14 -82 12';
+        const earRot = mouse ? -12 : -20, earS = mouse ? 1.5 : 1;
+        return `<g transform="scale(${sc})">
+        <ellipse cx="2" cy="16.5" rx="${mouse ? 40 : 36}" ry="3.6" fill="#000" opacity=".3" filter="url(#aniBlur)"/>
+        <path d="${tail}" fill="none" stroke="url(#aniTail)" stroke-width="${mouse ? 3.2 : 2.7}" stroke-linecap="round"/>
+        <path d="${tail}" fill="none" stroke="#b97585" stroke-width="${mouse ? 3.2 : 2.7}" stroke-linecap="round" stroke-dasharray=".55 1.5" opacity=".6"/>
+        <g opacity=".85"><path d="M22 10 Q26 14 25 16.6 L31 16.8 Q31 13 28 10Z" fill="#d9a2ae"/><path d="M-20 12 Q-18 16 -16 16.4 L-7 16.6 Q-7 14 -10 12Z" fill="#d9a2ae"/></g>
+        <path d="${_ANI_SIDE}" fill="url(#aniBody)" filter="url(#furFuzz)"/>
+        <path d="${_ANI_SIDE}" fill="#fff" filter="url(#furStrand)" opacity=".85"/>
+        <path d="${_ANI_SIDE}" fill="url(#aniShade)"/>
+        <path d="M-27 -8 C-20 -14.5 -8 -16.8 3 -16.3 C13 -15.8 21 -13.4 28 -10" fill="none" stroke="#fff" stroke-width="1.5" stroke-opacity=".85" filter="url(#aniSoft)"/>
+        <ellipse cx="-15" cy="3" rx="13.5" ry="11.5" fill="#fff" opacity=".28"/><path d="M-27 4 C-26 -4 -20 -9 -13 -9.5" fill="none" stroke="#d8cdc8" stroke-width=".6" opacity=".55"/>
+        <ellipse cx="19" cy="2.5" rx="9" ry="9.5" fill="#fff" opacity=".16"/>
+        <g transform="rotate(${earRot} 23 -12) translate(${(23 * (1 - earS)).toFixed(1)} ${(-13 * (1 - earS)).toFixed(1)}) scale(${earS})"><ellipse cx="23" cy="-14" rx="4.8" ry="6.2" fill="#f4eae6" stroke="#e6d9d4" stroke-width=".4"/><ellipse cx="23.2" cy="-13.6" rx="3.5" ry="4.8" fill="url(#aniEar)"/><path d="M23 -9.5 Q23.4 -13 22.2 -17 M23.8 -10 Q25 -13 25.4 -16" fill="none" stroke="#d2728d" stroke-width=".35" opacity=".65"/></g>
+        <ellipse cx="34" cy="-4.8" rx="2.5" ry="2.25" fill="#3a0a14"/><ellipse cx="34" cy="-4.8" rx="2" ry="1.8" fill="url(#aniEye)"/><circle cx="33.2" cy="-5.6" r=".68" fill="#fff"/><circle cx="35" cy="-4" r=".3" fill="#fff" opacity=".6"/><path d="M31.6 -6.4 Q34 -8 36.5 -6.2" fill="none" stroke="#e5d6d1" stroke-width=".55"/>
+        <ellipse cx="44.6" cy="1.6" rx="2" ry="1.55" fill="#e98aa1"/><circle cx="45.4" cy="1.2" r=".5" fill="#8a2d44"/><path d="M43 4.2 Q40 5.6 37.4 5.3" fill="none" stroke="#b49a98" stroke-width=".4"/>
+        ${_whisk(41, 2.6, 1, 1)}
+        <path d="M17 9 Q23 12 22 15.5 L29 16 Q29 12 26 8.5Z" fill="url(#aniPaw)" opacity=".95"/>${_toes(22.5, 15.7, 3, 4.2, 1, 0.25)}
+        <ellipse cx="-13" cy="14.2" rx="${(6.8 + sw * 3.2).toFixed(1)}" ry="${(2.5 + sw * 1.3).toFixed(1)}" fill="${pawC}"/><ellipse cx="-13" cy="13.6" rx="${(5.4 + sw * 3).toFixed(1)}" ry="${(1.3 + sw * .8).toFixed(1)}" fill="#fff" opacity=".22"/>${_toes(-7.5, 15, 4, 4.4, 1, .18)}
+        ${o.ink ? `<line x1="-18" y1="11" x2="-8" y2="11" stroke="#1e3a8a" stroke-width="1.2"/>` : ''}
+        </g>`;
+    }
+    // ---- top view (head to +x). o: {kind}
+    function animalTopArt(o = {}) {
+        const mouse = o.kind !== 'rat';
+        return `<g transform="scale(.72)">
+        <ellipse cx="0" cy="2.6" rx="24" ry="11" fill="#000" opacity=".26" filter="url(#aniBlur)"/>
+        <path d="M-20 0 C-30 3 -38 -3 -50 2 C-56 5 -60 2 -64 5" fill="none" stroke="url(#aniTail)" stroke-width="2.3" stroke-linecap="round"/>
+        <path d="M-20 0 C-30 3 -38 -3 -50 2 C-56 5 -60 2 -64 5" fill="none" stroke="#b97585" stroke-width="2.3" stroke-linecap="round" stroke-dasharray=".5 1.4" opacity=".6"/>
+        ${[-1, 1].map(s => `<g>
+          <ellipse cx="11" cy="${s * 8.6}" rx="3.3" ry="2" fill="#f1ebe7" stroke="#ddd2cd" stroke-width=".3" transform="rotate(${s * 28} 11 ${s * 8.6})"/>
+          <ellipse cx="13.6" cy="${s * 10.6}" rx="2.2" ry="1.25" fill="url(#aniPaw)" stroke="#d58a9c" stroke-width=".25" transform="rotate(${s * 40} 13.6 ${s * 10.6})"/>
+          <ellipse cx="-9.5" cy="${s * 9.2}" rx="5" ry="3" fill="#f1ebe7" stroke="#ddd2cd" stroke-width=".3" transform="rotate(${s * -18} -9.5 ${s * 9.2})"/>
+          <ellipse cx="-5.4" cy="${s * 11.6}" rx="3.8" ry="1.5" fill="url(#aniPaw)" stroke="#d58a9c" stroke-width=".25" transform="rotate(${s * -14} -5.4 ${s * 11.6})"/>
+          ${_toes(-2.6, s * 11.9, 4, 1.9, .8, s * .2, .3)}${_toes(15.3, s * 11.6, 3, 1.5, .6, s * .7, .3)}
+        </g>`).join('')}
+        <path d="${_ANI_TOP}" fill="url(#aniBodyT)" filter="url(#furFuzz)"/>
+        <path d="${_ANI_TOP}" fill="#fff" filter="url(#furStrandT)" opacity=".85"/>
+        <path d="M-16 0 L16 0" stroke="#d5c9c4" stroke-width=".9" opacity=".35" filter="url(#aniSoft)"/>
+        <ellipse cx="-9" cy="-5.6" rx="8" ry="5" fill="#fff" opacity=".3"/><ellipse cx="-9" cy="5.6" rx="8" ry="5" fill="#fff" opacity=".3"/>
+        <path d="M-18 -4 C-12 -9.4 2 -9.6 9 -8.4" fill="none" stroke="#fff" stroke-width="1.1" stroke-opacity=".7" filter="url(#aniSoft)"/>
+        ${[-1, 1].map(s => `<g><ellipse cx="14.5" cy="${s * 6.4}" rx="3.9" ry="3.3" fill="#f3e9e5" stroke="#e5d8d3" stroke-width=".35"/><ellipse cx="14.7" cy="${s * 6.4}" rx="2.7" ry="2.3" fill="url(#aniEar)"/><path d="M13 ${s * 6.4} Q15 ${s * 6.8} 17 ${s * 6.2}" fill="none" stroke="#d2728d" stroke-width=".3" opacity=".6"/>
+          <ellipse cx="21.4" cy="${s * 3}" rx="1.35" ry="1.2" fill="#3a0a14"/><ellipse cx="21.4" cy="${s * 3}" rx="1.05" ry=".95" fill="url(#aniEye)"/><circle cx="21" cy="${s * 3 - .45}" r=".38" fill="#fff"/></g>`).join('')}
+        <ellipse cx="27" cy="0" rx="1.5" ry="1.3" fill="#e98aa1"/>
+        ${[-1, 1].map(s => [[-12, 5], [-6, 7], [1, 8]].map(([a, b]) => `<path d="M25.5 ${s * 1} Q${31 + b * .3} ${s * (1 + b * .6)} ${34 + b} ${s * (3 + b * 1.5 + a * -.1)}" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width=".26"/>`).join('')).join('')}
+        </g>`;
+    }
+
+    // =====================================================================
+    // XPRISM in-vivo bench kit (shared by Exp 21 and Exp 25)
+    // realistic SVG art: room, cages, animals, balances, bottles, syringes;
+    // station switching, click routing, checklist + hint engine
+    // =====================================================================
+    let HINTS = true;
+    SPEEDS = [1, 5, 20, 60];
+    function say(msg, alert) { showFeedback(msg, alert); }
+    function once(key, msg, alert) { if (S.warned[key]) return; S.warned[key] = 1; say(msg, alert); }
+    const R2 = v => Math.round(v * 100) / 100;
+    const lbl = (x, y, t, o = {}) => `<text x="${x}" y="${y}" font-size="${o.s || 10}" fill="${o.c || '#1e293b'}" text-anchor="${o.a || 'middle'}" font-weight="${o.w || 600}" font-family="${o.f || 'Inter, sans-serif'}"${o.extra || ''}>${t}</text>`;
+    const tag = (x, y, t, c = '#0f172a') => `<g><rect x="${x - t.length * 3.1 - 6}" y="${y - 11}" width="${t.length * 6.2 + 12}" height="16" rx="4" fill="${c}" opacity=".82"/>${lbl(x, y + 1, t, { c: '#fff', s: 10 })}</g>`;
+    const clockStr = t => { const m = Math.floor(9 * 60 + t / 60); return `${String(Math.floor(m / 60) % 24).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`; };
+
+    const DEFS = `<defs>
+      <filter id="sh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="3" dy="5" stdDeviation="4" flood-color="#000" flood-opacity=".42"/></filter>
+      <filter id="sh2" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="1" dy="2" stdDeviation="1.5" flood-color="#000" flood-opacity=".5"/></filter>
+      <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+      <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="7" result="n"/><feColorMatrix in="n" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .07 0"/></filter>
+      <filter id="furF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 .55  0 0 0 0 .5  0 0 0 0 .48  0 0 0 .22 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+      <filter id="beddingF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".35" numOctaves="3" seed="12"/><feColorMatrix values="0 0 0 0 .45  0 0 0 0 .3  0 0 0 0 .1  0 0 0 .55 0"/></filter>
+      <filter id="paperF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".5" numOctaves="2" seed="21"/><feColorMatrix values="0 0 0 0 .7  0 0 0 0 .7  0 0 0 0 .65  0 0 0 .12 0"/></filter>
+      <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#26313d"/><stop offset="1" stop-color="#1c252f"/></linearGradient>
+      <radialGradient id="spot" cx=".5" cy=".35" r=".7"><stop offset="0" stop-color="#5b6b7c" stop-opacity=".45"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+      <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2d3946"/><stop offset="1" stop-color="#27323e"/></linearGradient>
+      <linearGradient id="bench" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a4048"/><stop offset=".06" stop-color="#23272d"/><stop offset="1" stop-color="#16191d"/></linearGradient>
+      <linearGradient id="steel" x1="0" x2="1"><stop offset="0" stop-color="#6b7280"/><stop offset=".35" stop-color="#f3f4f6"/><stop offset=".55" stop-color="#d1d5db"/><stop offset="1" stop-color="#4b5563"/></linearGradient>
+      <linearGradient id="steelH" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9ca3af"/><stop offset=".4" stop-color="#f9fafb"/><stop offset="1" stop-color="#6b7280"/></linearGradient>
+      <linearGradient id="glass" x1="0" x2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".7"/><stop offset=".12" stop-color="#ffffff" stop-opacity=".22"/><stop offset=".5" stop-color="#e0f2fe" stop-opacity=".14"/><stop offset=".85" stop-color="#ffffff" stop-opacity=".3"/><stop offset="1" stop-color="#bae6fd" stop-opacity=".65"/></linearGradient>
+      <linearGradient id="glassEdge" x1="0" x2="1"><stop offset="0" stop-color="#f8fafc"/><stop offset=".5" stop-color="#e2e8f0" stop-opacity=".75"/><stop offset="1" stop-color="#f8fafc"/></linearGradient>
+      <linearGradient id="liquid" x1="0" x2="1"><stop offset="0" stop-color="#60a5fa" stop-opacity=".8"/><stop offset=".5" stop-color="#bfdbfe" stop-opacity=".7"/><stop offset="1" stop-color="#3b82f6" stop-opacity=".85"/></linearGradient>
+      <linearGradient id="milk" x1="0" x2="1"><stop offset="0" stop-color="#e2e8f0"/><stop offset=".5" stop-color="#ffffff"/><stop offset="1" stop-color="#cbd5e1"/></linearGradient>
+      <linearGradient id="oil" x1="0" x2="1"><stop offset="0" stop-color="#ca8a04" stop-opacity=".85"/><stop offset=".5" stop-color="#fde68a" stop-opacity=".85"/><stop offset="1" stop-color="#a16207" stop-opacity=".9"/></linearGradient>
+      <linearGradient id="amber" x1="0" x2="1"><stop offset="0" stop-color="#3b1d06"/><stop offset=".3" stop-color="#9a5a17"/><stop offset=".5" stop-color="#b8752a"/><stop offset="1" stop-color="#3b1d06"/></linearGradient>
+      <linearGradient id="hdpe" x1="0" x2="1"><stop offset="0" stop-color="#cbd5e1"/><stop offset=".4" stop-color="#f8fafc"/><stop offset="1" stop-color="#94a3b8"/></linearGradient>
+      <linearGradient id="plasticW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f8fafc"/><stop offset="1" stop-color="#cbd5e1"/></linearGradient>
+      <linearGradient id="cabFront" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1f5f9"/><stop offset="1" stop-color="#a3b1c2"/></linearGradient>
+      <radialGradient id="lcd" cx=".5" cy=".5" r=".8"><stop offset="0" stop-color="#c7d9b4"/><stop offset="1" stop-color="#9fb58a"/></radialGradient>
+      <radialGradient id="contactShadow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#000" stop-opacity="0.6"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+      <linearGradient id="cageTub" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2e8f0" stop-opacity="0.32"/><stop offset="1" stop-color="#cbd5e1" stop-opacity="0.6"/></linearGradient>
+      <linearGradient id="bedding" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9d3a6"/><stop offset="1" stop-color="#c9a76b"/></linearGradient>
+      <radialGradient id="furGrad" cx="0.42" cy="0.32" r="0.78"><stop offset="0" stop-color="#ffffff"/><stop offset="0.6" stop-color="#f6f3f1"/><stop offset="1" stop-color="#d8d0cc"/></radialGradient>
+      <linearGradient id="bellyShade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.65" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#6b5a58" stop-opacity="0.25"/></linearGradient>
+      <radialGradient id="earGrad" cx="0.5" cy="0.55" r="0.6"><stop offset="0" stop-color="#f9d0d9"/><stop offset="0.7" stop-color="#f1adbf"/><stop offset="1" stop-color="#e293a8"/></radialGradient>
+      <radialGradient id="eyeGrad" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#ff5d77"/><stop offset="0.55" stop-color="#c0142f"/><stop offset="1" stop-color="#5c0614"/></radialGradient>
+      <linearGradient id="glove" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a5b4fc"/><stop offset="0.55" stop-color="#7c83e6"/><stop offset="1" stop-color="#5b5fc7"/></linearGradient>
+      <linearGradient id="sleeve" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f8fafc"/><stop offset="1" stop-color="#cbd5e1"/></linearGradient>
+      <radialGradient id="btnYellow" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#fde047"/><stop offset="1" stop-color="#ca8a04"/></radialGradient>
+      <linearGradient id="fluid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7dd3fc" stop-opacity="0.6"/><stop offset="1" stop-color="#0284c7" stop-opacity="0.75"/></linearGradient>
+      <linearGradient id="cellGlass" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#bae6fd" stop-opacity="0.55"/><stop offset="0.12" stop-color="#ffffff" stop-opacity="0.55"/><stop offset="0.25" stop-color="#e0f2fe" stop-opacity="0.08"/><stop offset="0.8" stop-color="#e0f2fe" stop-opacity="0.08"/><stop offset="0.9" stop-color="#ffffff" stop-opacity="0.35"/><stop offset="1" stop-color="#7dd3fc" stop-opacity="0.55"/></linearGradient>
+      <linearGradient id="wood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a16207"/><stop offset="1" stop-color="#713f12"/></linearGradient>
+    ${ANI_DEFS}</defs>`;
+
+    function room(benchY = 430) {
+      let tiles = '';
+      for (let y = 0; y < benchY; y += 38) for (let x = (y / 38) % 2 ? -26 : 0; x < 1000; x += 52) tiles += `<rect x="${x}" y="${y}" width="51" height="37" fill="url(#tile)" stroke="#1a222b" stroke-width="1"/>`;
+      return `<rect width="1000" height="560" fill="url(#wall)"/>${tiles}<rect width="1000" height="${benchY}" fill="url(#spot)"/>
+        <rect y="${benchY - 6}" width="1000" height="8" fill="#5b636d"/>
+        <rect y="${benchY}" width="1000" height="${560 - benchY}" fill="url(#bench)"/>
+        <rect y="${benchY}" width="1000" height="${560 - benchY}" filter="url(#grain)" opacity=".7"/>
+        <rect y="${benchY + 2}" width="1000" height="2" fill="#fff" opacity=".08"/>`;
+    }
+    // wall clock showing lab time (hands updated per frame)
+    function wallClock(x, y, r = 34) {
+      return `<g transform="translate(${x} ${y})" filter="url(#sh)"><circle r="${r}" fill="#f8fafc" stroke="#111827" stroke-width="4"/>
+        ${Array.from({ length: 12 }, (_, i) => `<line x1="0" y1="${-r + 5}" x2="0" y2="${i % 3 ? -r + 9 : -r + 12}" stroke="#1f2937" stroke-width="${i % 3 ? 1.2 : 2.4}" transform="rotate(${i * 30})"/>`).join('')}
+        <line class="ckH" x1="0" y1="3" x2="0" y2="${-r * 0.5}" stroke="#111827" stroke-width="3.2" stroke-linecap="round"/>
+        <line class="ckM" x1="0" y1="4" x2="0" y2="${-r * 0.78}" stroke="#111827" stroke-width="2.2" stroke-linecap="round"/>
+        <circle r="2.6" fill="#dc2626"/></g>`;
+    }
+    function updClocks() {
+      const m = 9 * 60 + S.t / 60;
+      document.querySelectorAll('#scene .ckM').forEach(e => e.setAttribute('transform', `rotate(${(m % 60) * 6})`));
+      document.querySelectorAll('#scene .ckH').forEach(e => e.setAttribute('transform', `rotate(${(m / 60 % 12) * 30})`));
+    }
+
+    // ------------------------------------------------ animals
+    // picric acid code → spots (rat side coordinates, facing right)
+    const MARK_POS = { head: [32, -9], neck: [18, -12], back: [0, -14], rump: [-20, -10], tail: [-34, -2] };
+    const MARK_CODE = [[], ['head'], ['neck'], ['back'], ['rump'], ['tail'], ['head', 'back'], ['head', 'rump'], ['head', 'tail'], ['neck', 'back'], ['neck', 'rump'], ['back', 'tail'], ['head', 'neck', 'back'],
+      ['neck', 'tail'], ['rump', 'tail'], ['head', 'neck'], ['back', 'rump'], ['head', 'neck', 'tail'], ['neck', 'back', 'rump']];
+    const markText = id => id ? MARK_CODE[id].join(' + ') : 'unmarked';
+    // side-view rat in a cage. o: {id, marks, ink, paw (0..1 swelling), flip, sel}
+    function ratSide(o = {}) {
+      const spots = o.id ? MARK_CODE[o.id].map(p => `<ellipse cx="${MARK_POS[p][0]}" cy="${MARK_POS[p][1] * .86}" rx="6.5" ry="4" fill="#facc15" opacity=".82"/>`).join('') : '';
+      return `<g transform="scale(${o.flip ? -1 : 1} 1)">${animalSideArt({ kind: 'rat', sw: o.paw || 0, ink: o.ink })}${spots}</g>
+        ${o.sel ? `<ellipse cx="0" cy="2" rx="44" ry="22" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="4 3"/>` : ''}
+        ${o.id ? `<rect x="-11" y="-30" width="22" height="11" rx="2" fill="${o.tagc || '#fff'}" stroke="#94a3b8" stroke-width="0.5"/><text x="0" y="-21.8" text-anchor="middle" font-family="JetBrains Mono" font-size="7" font-weight="800" fill="#0f172a">R${o.id}</text>` : ''}`;
+    }
+    // side-view mouse (facing right) with picric spots
+    function mouseSide(o = {}) {
+      const spots = o.id ? MARK_CODE[o.id].map(p => `<ellipse cx="${MARK_POS[p][0] * 0.5}" cy="${MARK_POS[p][1] * 0.5}" rx="3.4" ry="2.2" fill="#facc15" opacity=".85"/>`).join('') : '';
+      return `<g transform="scale(${o.flip ? -1 : 1} 1)">${animalSideArt({ kind: 'mouse' })}${spots}</g>
+        ${o.sel ? `<ellipse cx="0" cy="0" rx="26" ry="14" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-dasharray="3 2"/>` : ''}
+        ${o.id ? `<rect x="-9" y="-21" width="18" height="9" rx="2" fill="${o.tagc || '#fff'}" stroke="#94a3b8" stroke-width="0.5"/><text x="0" y="-14.3" text-anchor="middle" font-family="JetBrains Mono" font-size="6" font-weight="800" fill="#0f172a">${o.code || 'M' + o.id}</text>` : ''}`;
+    }
+    // top-view mouse (head to the right)
+    function mouseTop(o = {}) {
+      const spots = o.id ? MARK_CODE[o.id].map(p => { const X = { head: 16, neck: 9, back: 0, rump: -8, tail: -14 }[p]; return `<ellipse cx="${X}" cy="0" rx="3.4" ry="4.4" fill="#facc15" opacity=".82"/>`; }).join('') : '';
+      return `<g>${animalTopArt({ kind: 'mouse' })}${spots}</g>`;
+    }
+    // side-view cage (polycarbonate tub, steel lid). inner = SVG drawn inside (coordinates relative to cage)
+    function cageSide(x, y, w, h, act, title, sub, inner, o = {}) {
+      let bars = ''; for (let bx = 2; bx < w; bx += 7) bars += `<line x1="${bx}" y1="3" x2="${bx}" y2="13" stroke="#9ca3af" stroke-width="1.2"/>`;
+      return `<g transform="translate(${x} ${y})" ${act ? `class="hot" data-act="${act}"` : ''}>
+        <ellipse cx="${w / 2}" cy="${h + 4}" rx="${w / 2 + 10}" ry="8" fill="url(#contactShadow)"/>
+        <polygon points="0,12 ${w},12 ${w - 8},${h} 8,${h}" fill="#0b1220" opacity=".35"/>
+        <polygon points="12,${h - 22} ${w - 12},${h - 22} ${w - 8},${h} 8,${h}" fill="url(#bedding)"/>
+        <polygon points="12,${h - 22} ${w - 12},${h - 22} ${w - 8},${h} 8,${h}" filter="url(#beddingF)"/>
+        ${o.food ? `<path d="M12 14 L60 14 L52 52 L20 52 Z" fill="#6b7280" opacity=".8" stroke="#374151"/>${Array.from({ length: 12 }, (_, i) => `<ellipse cx="${22 + (i % 4) * 9}" cy="${22 + Math.floor(i / 4) * 9}" rx="5" ry="3.4" fill="#a16207" stroke="#713f12" stroke-width=".5"/>`).join('')}` : ''}
+        ${inner || ''}
+        <polygon points="0,12 ${w},12 ${w - 8},${h} 8,${h}" fill="url(#cageTub)" stroke="#cbd5e1" stroke-width="1.2"/>
+        <line x1="6" y1="16" x2="12" y2="${h - 4}" stroke="#fff" stroke-width="2.5" opacity=".35"/>
+        <rect x="-6" y="2" width="${w + 12}" height="12" rx="3" fill="url(#steelH)" stroke="#6b7280" stroke-width="0.8"/>${bars}
+        ${title ? `<rect x="${w - 96}" y="18" width="88" height="28" rx="2" fill="#fef3c7" stroke="#d97706" stroke-width="0.8"/>${lbl(w - 52, 29, title, { s: 7.5, w: 800, c: '#7c2d12' })}${lbl(w - 52, 40, sub || '', { s: 6.5, c: '#451a03', w: 600, f: 'JetBrains Mono' })}` : ''}
+      </g>`;
+    }
+    // top-loading animal balance with a plastic container. display text id = dispId
+    function animalBalance(x, y, dispId, act = 'balance') {
+      return `<g class="hot" data-act="${act}" filter="url(#sh)">
+        <rect x="${x}" y="${y + 40}" width="170" height="60" rx="8" fill="url(#plasticW)" stroke="#94a3b8"/>
+        <rect x="${x + 10}" y="${y + 70}" width="150" height="24" rx="4" fill="#1f2937"/>
+        <rect x="${x + 18}" y="${y + 74}" width="84" height="16" rx="2" fill="url(#lcd)"/>
+        <text id="${dispId}" x="${x + 96}" y="${y + 87}" font-size="12" text-anchor="end" fill="#1f2d14" font-family="DSEG7, JetBrains Mono, monospace">0.0</text>
+        <text x="${x + 106}" y="${y + 87}" font-size="7.5" fill="#cbd5e1" font-weight="700">g</text>
+        <circle cx="${x + 128}" cy="${y + 82}" r="6" fill="#dc2626"/><text x="${x + 128}" y="${y + 84.5}" font-size="4.6" fill="#fff" text-anchor="middle" font-weight="700">TARE</text>
+        <circle cx="${x + 146}" cy="${y + 82}" r="6" fill="#475569"/><text x="${x + 146}" y="${y + 84.5}" font-size="5" fill="#fff" text-anchor="middle" font-weight="700">ON</text>
+        <rect x="${x + 25}" y="${y + 34}" width="120" height="8" rx="2" fill="url(#steelH)"/>
+        <path d="M${x + 38} ${y - 26} L${x + 132} ${y - 26} L${x + 126} ${y + 34} L${x + 44} ${y + 34} Z" fill="url(#cageTub)" stroke="#e2e8f0" stroke-width="1.4"/>
+        <line x1="${x + 46}" y1="${y - 20}" x2="${x + 50}" y2="${y + 30}" stroke="#fff" stroke-width="2.5" opacity=".4"/>
+        ${lbl(x + 85, y + 62, 'Animal balance  max 600 g  d = 0.1 g', { s: 6.5, c: '#475569' })}
+      </g>`;
+    }
+    // analytical balance with draft shield
+    function anaBalance(x, y, dispId, act = 'abal') {
+      return `<g class="hot" data-act="${act}" filter="url(#sh)">
+        <rect x="${x}" y="${y + 70}" width="200" height="66" rx="8" fill="url(#plasticW)" stroke="#94a3b8"/>
+        <rect x="${x + 12}" y="${y + 104}" width="176" height="26" rx="4" fill="#1f2937"/>
+        <rect x="${x + 20}" y="${y + 108}" width="104" height="18" rx="2" fill="url(#lcd)"/>
+        <text id="${dispId}" x="${x + 118}" y="${y + 122.5}" font-size="13" text-anchor="end" fill="#1f2d14" font-family="DSEG7, JetBrains Mono, monospace">0.0000</text>
+        <text x="${x + 128}" y="${y + 122}" font-size="8" fill="#cbd5e1" font-weight="700">g</text>
+        <circle cx="${x + 152}" cy="${y + 117}" r="7" fill="#dc2626"/><text x="${x + 152}" y="${y + 119.5}" font-size="5" fill="#fff" text-anchor="middle" font-weight="700">TARE</text>
+        <circle cx="${x + 172}" cy="${y + 117}" r="7" fill="#475569"/><text x="${x + 172}" y="${y + 119.5}" font-size="5.5" fill="#fff" text-anchor="middle" font-weight="700">ON</text>
+        <rect x="${x + 22}" y="${y - 20}" width="156" height="92" fill="url(#glass)" stroke="url(#glassEdge)" stroke-width="2"/>
+        <rect x="${x + 18}" y="${y - 26}" width="164" height="8" rx="2" fill="url(#steelH)"/>
+        <ellipse cx="${x + 100}" cy="${y + 66}" rx="40" ry="4" fill="#d1d5db" stroke="#9ca3af"/>
+        <g id="${dispId}Boat"></g>
+        ${lbl(x + 100, y + 96, 'Analytical balance  d = 0.1 mg', { s: 7, c: '#475569' })}
+      </g>`;
+    }
+    // reagent bottle: o {act, title, sub, cap, kind:'hdpe'|'amber'|'glass', liq, level(0..1), w, h}
+    function bottle(x, y, o) {
+      const w = o.w || 56, h = o.h || 92, lv = clamp(o.level ?? 0.7, 0, 1);
+      const body = o.kind === 'amber' ? 'url(#amber)' : o.kind === 'glass' ? 'url(#glass)' : 'url(#hdpe)';
+      return `<g ${o.act ? `class="hot" data-act="${o.act}"` : ''} filter="url(#sh)">
+        <rect x="${x + w * 0.28}" y="${y - 16}" width="${w * 0.44}" height="14" rx="2" fill="${o.cap || '#1d4ed8'}"/>
+        <rect x="${x + w * 0.32}" y="${y - 4}" width="${w * 0.36}" height="8" fill="#e5e7eb"/>
+        ${o.liq ? `<rect x="${x + 3}" y="${y + 4 + (h - 8) * (1 - lv)}" width="${w - 6}" height="${(h - 8) * lv}" rx="4" fill="${o.liq}"/>` : ''}
+        <rect x="${x}" y="${y + 2}" width="${w}" height="${h}" rx="9" fill="${body}" stroke="${o.kind === 'amber' ? '#3b1d06' : '#cbd5e1'}" opacity="${o.kind === 'glass' ? 1 : 0.96}"/>
+        <rect x="${x + 4}" y="${y + h * 0.36}" width="${w - 8}" height="${h * 0.42}" rx="2" fill="#fff" stroke="#cbd5e1"/>
+        <rect x="${x + 4}" y="${y + h * 0.36}" width="${w - 8}" height="7" fill="${o.cap || '#1d4ed8'}"/>
+        ${lbl(x + w / 2, y + h * 0.36 + h * 0.2, o.title, { s: o.ts || 7.4, w: 800, c: '#0f172a' })}
+        ${lbl(x + w / 2, y + h * 0.36 + h * 0.31, o.sub || '', { s: o.ss || 5.6, c: '#334155', w: 600 })}
+        <rect x="${x + 5}" y="${y + 8}" width="5" height="${h - 14}" rx="2.5" fill="#fff" opacity=".35"/>
+      </g>`;
+    }
+    // syringe lying horizontally. o {act, cap mL, fill mL, needle:'gavage'|'26G'|'feed', col, len}
+    function syringeArt(x, y, o) {
+      const L = o.len || 120, f = clamp((o.fill || 0) / o.cap, 0, 1);
+      const needle = o.needle === 'gavage' || o.needle === 'feed'
+        ? `<path d="M${x + L + 8} ${y} q ${o.needle === 'gavage' ? 34 : 24} 0 ${o.needle === 'gavage' ? 52 : 36} ${o.needle === 'gavage' ? 14 : 9}" stroke="url(#steel)" stroke-width="${o.needle === 'gavage' ? 3 : 2.2}" fill="none"/><circle cx="${x + L + 8 + (o.needle === 'gavage' ? 52 : 36)}" cy="${y + (o.needle === 'gavage' ? 14 : 9)}" r="${o.needle === 'gavage' ? 3.6 : 2.6}" fill="#e5e7eb" stroke="#6b7280"/>`
+        : `<line x1="${x + L + 8}" y1="${y}" x2="${x + L + 46}" y2="${y}" stroke="#d1d5db" stroke-width="1.1"/><rect x="${x + L + 2}" y="${y - 3}" width="8" height="6" fill="#f97316"/>`;
+      let ticks = ''; for (let i = 0; i <= 10; i++) ticks += `<line x1="${x + 8 + i * (L - 12) / 10}" y1="${y - 7}" x2="${x + 8 + i * (L - 12) / 10}" y2="${y - (i % 5 ? 4 : 2)}" stroke="#334155" stroke-width=".6"/>`;
+      return `<g ${o.act ? `class="hot" data-act="${o.act}"` : ''} filter="url(#sh2)">
+        <rect x="${x + 4 + (L - 12) * (1 - f) - L}" y="${y - 1.8}" width="${L}" height="3.6" fill="#e2e8f0" stroke="#94a3b8" stroke-width=".5"/>
+        <rect x="${x + 4 + (L - 12) * (1 - f) - L - 6}" y="${y - 9}" width="6" height="18" rx="1.5" fill="#e2e8f0" stroke="#94a3b8"/>
+        <rect x="${x}" y="${y - 8}" width="${L}" height="16" rx="3" fill="url(#glass)" stroke="#cbd5e1" stroke-width="1.2"/>
+        ${f > 0 ? `<rect x="${x + L - 4 - (L - 12) * f}" y="${y - 6}" width="${(L - 12) * f}" height="12" fill="${o.col || '#bfdbfe'}" opacity=".9"/>` : ''}
+        <rect x="${x + 4 + (L - 12) * (1 - f)}" y="${y - 7}" width="5" height="14" fill="#1f2937"/>
+        ${ticks}<rect x="${x + L}" y="${y - 3}" width="8" height="6" fill="#cbd5e1"/>${needle}
+        <rect x="${x - 6}" y="${y - 11}" width="6" height="22" rx="2" fill="#f1f5f9" stroke="#94a3b8"/>
+      </g>`;
+    }
+    // gloved hand (for held-animal views)
+    function handMarkup() {
+      const f = (y, len) => `<path d="M 26 ${y} C 14 ${y - 2}, -6 ${y - 1}, ${-len} ${y + 3}" stroke="url(#glove)" stroke-width="9.5" stroke-linecap="round" fill="none"/>`;
+      return `<path d="M 34 -60 L 200 -214 L 244 -168 L 66 -20 Z" fill="url(#sleeve)" stroke="#94a3b8"/>
+        <path d="M 34 -60 L 66 -20 L 76 -30 L 44 -70 Z" fill="#a5b4fc" stroke="#6366f1" stroke-width="0.6"/>
+        <path d="M 10 -44 C 22 -60, 52 -58, 62 -38 C 70 -20, 58 4, 38 12 C 22 18, 8 10, 6 -6 Z" fill="url(#glove)" stroke="#4c51b8" stroke-width="0.8"/>
+        ${f(-34, 24)}${f(-22, 27)}${f(-10, 26)}${f(2, 22)}
+        <path d="M 30 -44 C 22 -56, 10 -60, 0 -58" stroke="url(#glove)" stroke-width="10" stroke-linecap="round" fill="none"/>`;
+    }
+
+    // ------------------------------------------------ stations, click routing, checklist + hints
+    function goStation(n) {
+      S.station = n;
+      document.querySelectorAll('#stationBtns button').forEach(b => b.classList.toggle('on', +b.dataset.s === n));
+      buildScene(); renderCtx(); refreshChecklist(true);
+    }
+    function onSceneClick(e) {
+      const t = e.target.closest('[data-act]'); if (!t) return;
+      const [a, arg0] = t.dataset.act.split(':');
+      const arg = arg0 !== undefined && /^-?\d+$/.test(arg0) ? +arg0 : arg0;
+      act(a, arg);
+    }
+    function currentStep() { return STEPS.find(s => !s.opt && !s.done()); }
+    function refreshChecklist() {
+      const ul = $('checklist'); if (!ul) return;
+      const cur = currentStep(); let g = '', h = '';
+      STEPS.forEach(s => { if (s.g !== g) { g = s.g; h += `<li class="grp">${g}</li>`; } const d = s.done(); h += `<li class="${d ? 'done' : s === cur ? 'cur' : ''}"><span class="k">${d ? '✓' : s === cur ? '▸' : s.opt ? '○' : '·'}</span><span>${typeof s.t === 'function' ? s.t() : s.t}</span></li>`; });
+      if (ul._h !== h) { ul.innerHTML = h; ul._h = h; }
+      const nb = $('nowBox');
+      const nh = cur ? `<div class="t">Next: ${typeof cur.t === 'function' ? cur.t() : cur.t}${cur.st && cur.st !== S.station ? ` <span style="font-weight:600;color:#b45309">(station ${cur.st})</span>` : ''}</div>${typeof cur.how === 'function' ? cur.how() : cur.how}` : `<div class="t">Practical complete</div>Open the observation sheet, finish the calculations, answer the viva and submit.`;
+      if (nb._h !== nh) { nb.innerHTML = nh; nb._h = nh; }
+      document.querySelectorAll('#stationBtns button').forEach(b => { const st = +b.dataset.s; b.classList.toggle('done', STEPS.filter(x => x.st === st && !x.opt).every(x => x.done())); });
+      refreshHints();
+    }
+    let _hintKey = '';
+    function refreshHints() {
+      const cur = currentStep();
+      const want = HINTS && cur && cur.st === S.station ? (cur.tg() || []) : [];
+      const key = S.station + '|' + want.join(',') + '|' + document.querySelectorAll('#scene [data-act]').length + '|' + (S._sceneV || 0);
+      if (key === _hintKey && document.querySelector('#scene .pulse')) return;
+      _hintKey = key;
+      document.querySelectorAll('#scene .pulse').forEach(e => e.classList.remove('pulse'));
+      want.forEach(a => document.querySelectorAll(`#scene [data-act="${a}"]`).forEach(e => e.classList.add('pulse')));
+    }
+    // group statistics vs a control group. groups: [{key,label,vals:[]}]
+    function groupStats(groups, ctrlKey) {
+      const ctrl = groups.find(g => g.key === ctrlKey);
+      return groups.map(g => { const t = (ctrl && g.key !== ctrlKey && g.vals.length > 1 && ctrl.vals.length > 1) ? tTest(g.vals, ctrl.vals) : null; return { ...g, n: g.vals.length, m: mean(g.vals), sd: sd(g.vals), se: sem(g.vals), t, p: t ? t.p : NaN }; });
+    }
+    // a number typed by the student, checked against the truth: returns class
+    function chk(v, truth, tol) { if (v === '' || v === undefined || v === null || !isFinite(+v) || truth === null || truth === undefined || !isFinite(truth)) return ''; return Math.abs(+v - truth) <= tol ? 'ok-in' : 'bad-in'; }
+  </script>
+  <script>
+    // =====================================================================
+    // Shared core for the two anticonvulsant screens (MES and PTZ):
+    // 12 mice (6 vehicle / 6 test drug), mark, weigh, randomise, prepare, dose.
+    // Needs CFG, PROFILES, DRUG/UNKNOWN/mysteryEff() from the module's own a.js.
+    // =====================================================================
+    let S;
+    const GK = k => CFG.groups.find(g => g.key === k);
+    const GNAME = { C: 'CONTROL (VEHICLE)', T: 'TEST DRUG' };
+    const ROUTES = { ip: 'Intraperitoneal (i.p.)', sc: 'Subcutaneous (s.c.)', po: 'Oral, gavage (p.o.)' };
+    const SRCN = { sal: 'Normal saline', drug: 'Test drug', ptz: 'Pentylenetetrazole (PTZ)' };
+    const effDrug = () => UNKNOWN ? mysteryEff() : DRUG;
+    const drugP = () => PROFILES[effDrug()];
+    function freshMouse(i) {
+      return { uid: i, wt: +clamp(25 + gauss() * 2.2, 20.5, 29.8).toFixed(1), sens: Math.exp(gauss() * 0.25), id: null, weighed: false, wtShown: null, lot: null,
+        group: null, loc: 'stock', flags: [], dose: null, ptz: null, test: null, nb: CFG.nbInit() };
+    }
+    function blankSol() { return { mg: 0, what: null, inFl: false, vol: 0, labelled: false, conc: 0, left: 0, ready: false }; }
+    function freshState() {
+      const st = {
+        t: 0, station: 1, mice: Array.from({ length: 12 }, (_, i) => freshMouse(i)), hand: null, handPos: 'towel',
+        lots: shuffle([].concat(Array(6).fill('C'), Array(6).fill('T'))), nextId: 1, balOn: false, balTared: false,
+        abal: { boat: false, tared: false, mg: 0, what: null }, sol: { drug: blankSol(), ptz: blankSol() },
+        calc: { conc: '', mass: '', pmass: '' }, syr: { tub: { vol: 0, src: null } }, syrSel: 'tub', sel: null, warned: {}, _sceneV: 0, notes: CFG.notes()
+      };
+      if (CFG.extra) CFG.extra(st);
+      if (UNKNOWN) st.sol.drug = { mg: 0, what: mysteryEff(), inFl: false, vol: 10, labelled: true, conc: PROFILES[mysteryEff()].conc, left: 10, ready: true };
+      return st;
+    }
+    const handM = () => S.hand === null ? null : S.mice[S.hand];
+    const inGroup = g => S.mice.filter(m => m.group === g);
+    const placed = () => S.mice.filter(m => m.group);
+    const minsSince = t => (S.t - t) / 60;
+    const nOk = f => S.mice.filter(m => m.group && f(m)).length;
+    const all12 = f => placed().length === 12 && placed().every(f);
+    const solName = s => s === 'sal' ? 'Normal saline' : s === 'ptz' ? `PTZ ${S.sol.ptz.labelled ? fx(S.sol.ptz.conc, 2) + ' mg/mL' : ''}` : `${UNKNOWN ? 'Drug X (10 mL/kg)' : drugP().short} ${S.sol.drug.labelled && !UNKNOWN ? fx(S.sol.drug.conc, 2) + ' mg/mL' : ''}`;
+    const anyDosed = () => S.mice.some(m => m.dose);
+    // test-drug selector (bench bar). Changing it re-stocks the shelf; not allowed once dosing has started.
+    function onDrugChange(v) {
+      if (S && anyDosed()) { $('drugSel').value = UNKNOWN ? 'unknown' : DRUG; say('The test drug cannot be changed once animals have been dosed. Use Restart practical.', true); return; }
+      if (v === 'unknown') UNKNOWN = true; else { UNKNOWN = false; DRUG = v; }
+      if (S) { S.sol.drug = UNKNOWN ? { mg: 0, what: mysteryEff(), inFl: false, vol: 10, labelled: true, conc: PROFILES[mysteryEff()].conc, left: 10, ready: true } : blankSol(); S.sel = null; S.calc.conc = S.calc.mass = ''; }
+      buildScene(); renderCtx(); renderNotebook(); refreshChecklist();
+      say(UNKNOWN ? 'Test drug: coded vial DRUG X (unknown). Treat it as a ready-made solution and identify it from its profile.' : `Test drug: ${drugP().name}.`);
+    }
+    function fillDrugSel() {
+      $('drugSel').innerHTML = CFG.testKeys.map(k => `<option value="${k}">${PROFILES[k].name}</option>`).join('') + '<option value="unknown">Unknown mystery drug (exam)</option>';
+      $('drugSel').value = UNKNOWN ? 'unknown' : DRUG;
+    }
+    // ---- group statistics + small tests
+    function groupStats(groups, ctrlKey) {
+      const ctrl = groups.find(g => g.key === ctrlKey);
+      return groups.map(g => { const t = (ctrl && g.key !== ctrlKey && g.vals.length > 1 && ctrl.vals.length > 1) ? tTest(g.vals, ctrl.vals) : null; return { ...g, n: g.vals.length, m: mean(g.vals), sd: sd(g.vals), se: sem(g.vals), t, p: t ? t.p : NaN }; });
+    }
+    function chk(v, truth, tol) { if (v === '' || v === undefined || v === null || !isFinite(+v) || truth === null || truth === undefined || !isFinite(truth)) return ''; return Math.abs(+v - truth) <= tol ? 'ok-in' : 'bad-in'; }
+    function chkYN(v, truthYes) { v = String(v || '').trim().toLowerCase(); if (!v) return ''; const y = /^(y|yes)$/.test(v), n = /^(n|no)$/.test(v); if (!y && !n) return 'bad-in'; return y === !!truthYes ? 'ok-in' : 'bad-in'; }
+    function fisher(a, b, c, d) { // two-sided Fisher exact for [[a,b],[c,d]]
+      const lf = [0]; for (let i = 1; i <= a + b + c + d + 1; i++) lf[i] = lf[i - 1] + Math.log(i);
+      const pr = (x, y, z, w) => Math.exp(lf[x + y] + lf[z + w] + lf[x + z] + lf[y + w] - lf[x + y + z + w] - lf[x] - lf[y] - lf[z] - lf[w]);
+      const p0 = pr(a, b, c, d), r1 = a + b, c1 = a + c, n = a + b + c + d; let p = 0;
+      for (let x = Math.max(0, c1 - (n - r1)); x <= Math.min(r1, c1); x++) { const q = pr(x, r1 - x, c1 - x, n - r1 - c1 + x); if (q <= p0 * (1 + 1e-9)) p += q; }
+      return Math.min(1, p);
+    }
+    const seg = (x, y, w, h, id, txt, fs = 13) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="2" fill="url(#lcd)"/><text id="${id}" x="${x + w - 5}" y="${y + h - 5}" font-size="${fs}" text-anchor="end" fill="#1f2d14" font-family="DSEG7, JetBrains Mono, monospace">${txt}</text>`;
+  </script>
+  <script>
+    // =====================================================================
+    // Clinical observation poses for a mouse seen from above (neutral, non-graphic).
+    // States: normal, twitch, jerks, forelimb, flex, ext, clon, stupor, rec, dead.
+    // Built once per state change; pzAnim() then only moves transforms each frame.
+    // =====================================================================
+    const PZ_LABEL = {
+      normal: 'Normal behaviour', twitch: 'Facial / ear twitching', jerks: 'Myoclonic jerks', forelimb: 'Forelimb clonus, rearing', flex: 'Tonic flexion',
+      ext: 'Tonic hind-limb extension (HTE)', clon: 'Clonic movements', clonL: 'Generalised clonus, righting lost', stupor: 'Post-ictal: motionless, no righting', rec: 'Righting reflex regained',
+      dead: 'No movement/respiration: mortality'
+    };
+    const PZ_BASE = [[8, -5.5], [8, 5.5], [-6, -6.2], [-6, 6.2]];
+    const pzTail = d => `<path d="${d}" fill="none" stroke="url(#aniTail)" stroke-width="1.7" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#b97585" stroke-width="1.7" stroke-linecap="round" stroke-dasharray=".4 1.1" opacity=".6"/>`;
+    const PZ_TAILS = { n: 'M-14 0 C-22 3 -28 -3 -36 2 C-41 5 -44 2 -47 4', st: 'M-14 0 L-52 0', fl: 'M-14 0 C-19 6 -24 8 -28 4 C-30 2 -27 -1 -24 1', lo: 'M-14 1 C-24 5 -30 9 -38 7 C-44 6 -47 10 -50 9' };
+    function pzLimb(k, x2, y2, w = 2.5, paw = true) { // tapered fur limb from base k to (x2,y2) with a small toed paw
+      const [bx, by] = PZ_BASE[k], dx = x2 - bx, dy = y2 - by, L = Math.hypot(dx, dy), nx = -dy / L, ny = dx / L, w0 = w * 0.62, w1 = w * 0.3, a = Math.atan2(dy, dx) * 57.3;
+      const f = v => v.toFixed(2), P = (x, y) => `${f(x)},${f(y)}`;
+      const toes = [-.5, 0, .5].map(o => `<line x1="${x2}" y1="${y2}" x2="${f(x2 + Math.cos(a / 57.3 + o) * 2.1)}" y2="${f(y2 + Math.sin(a / 57.3 + o) * 2.1)}" stroke="#d58a9c" stroke-width=".45" stroke-linecap="round"/>`).join('');
+      return `<g id="#ID#L${k}" data-b="${bx} ${by}"><polygon points="${P(bx + nx * w0, by + ny * w0)} ${P(x2 + nx * w1, y2 + ny * w1)} ${P(x2 - nx * w1, y2 - ny * w1)} ${P(bx - nx * w0, by - ny * w0)}" fill="#f6f1ee" stroke="#d3c8c3" stroke-width=".35"/>
+        <line x1="${f(bx + nx * w0 * .5)}" y1="${f(by + ny * w0 * .5)}" x2="${f(x2 + nx * w1 * .4)}" y2="${f(y2 + ny * w1 * .4)}" stroke="#fff" stroke-width=".5" opacity=".7"/>
+        ${paw ? `${toes}<ellipse cx="${x2}" cy="${y2}" rx="1.5" ry=".95" fill="url(#aniPaw)" stroke="#d58a9c" stroke-width=".25" transform="rotate(${a.toFixed(0)} ${x2} ${y2})"/>` : ''}</g>`;
+    }
+    function pzMouse(id, state, k, rot, opt = {}) {
+      let art = animalTopArt({ kind: 'mouse' }).replace(/<path d="M-20 0 C-30 3[^>]*>/g, ''), tail = PZ_TAILS.n, limbs = '', tf = '';
+      if (state === 'flex') { tf = 'scale(.86 1.14)'; tail = PZ_TAILS.fl; limbs = pzLimb(0, 12, -2.6, 2.6) + pzLimb(1, 12, 2.6, 2.6) + pzLimb(2, -1, -4, 2.8) + pzLimb(3, -1, 4, 2.8); }
+      else if (state === 'ext') { tail = PZ_TAILS.st; limbs = pzLimb(2, -38, -4.2, 2.3) + pzLimb(3, -38, 4.2, 2.3) + pzLimb(0, 21, -9.5, 2.1) + pzLimb(1, 21, 9.5, 2.1); }
+      else if (state === 'forelimb') { tf = 'scale(.94 1)'; limbs = pzLimb(0, 17, -7, 2.1) + pzLimb(1, 17, 7, 2.1); }
+      else if (state === 'clon' || state === 'clonL') { tf = 'scale(1.02 .92)'; tail = PZ_TAILS.lo; limbs = pzLimb(0, 16, -9, 2.2) + pzLimb(1, 16, 9, 2.2) + pzLimb(2, -17, -9.5, 2.3) + pzLimb(3, -17, 9.5, 2.3); }
+      else if (state === 'stupor' || state === 'dead') { tf = 'scale(1.05 .9)'; tail = PZ_TAILS.lo; limbs = pzLimb(0, 14, -9.5, 2.1) + pzLimb(1, 14, 9.5, 2.1) + pzLimb(2, -13, -10, 2.3) + pzLimb(3, -13, 10, 2.3); }
+      return `<g transform="translate(${opt.x || 0} ${opt.y || 0}) rotate(${rot}) scale(${k})" ${state === 'dead' ? 'opacity=".93"' : ''}><g id="${id}A">${pzTail(tail)}<g transform="${tf}">${art}</g>${limbs.replace(/#ID#/g, id)}</g></g>`;
+    }
+    // per-frame motion (t = real seconds); returns nothing
+    function pzAnim(id, state, t, phase = 0) {
+      const A = document.getElementById(id + 'A'); if (!A) return;
+      t += phase; let tx = 0, ty = 0, r = 0, lim = 0, fore = false;
+      const step = (v, p) => Math.max(0, Math.sin(v)) ** p;
+      if (state === 'twitch') { const s = step(t * 1.1, 6); r = s * 1.2 * Math.sin(t * 38); }
+      else if (state === 'jerks') { const s = step(t * 1.7, 14); tx = s * 1.3 * Math.sin(t * 41); r = s * 5 * Math.sin(t * 33); }
+      else if (state === 'forelimb') { r = 1.6 * Math.sin(t * 9); lim = 24; fore = true; }
+      else if (state === 'ext') { tx = .15 * Math.sin(t * 52); }
+      else if (state === 'clon' || state === 'clonL') { tx = 1.3 * Math.sin(t * 17); ty = 1.0 * Math.sin(t * 23); r = 5 * Math.sin(t * 15); lim = 30; }
+      A.setAttribute('transform', `translate(${tx.toFixed(2)} ${ty.toFixed(2)}) rotate(${r.toFixed(2)})`);
+      if (lim) for (let k = 0; k < 4; k++) { const g = document.getElementById(id + 'AL' + k) || document.getElementById(id + 'L' + k); if (!g || (fore && k > 1)) continue; const a = lim * Math.sin(t * (fore ? 10 : 13) + k * 1.7); g.setAttribute('transform', `rotate(${a.toFixed(1)} ${g.dataset.b})`); }
+    }
+  </script>
+  <script>
+    // ================================================================ STATION 1: animal house (mark, weigh, randomise 12 mice)
+    const ST = { x: 16, y: 300, w: 330, h: 128 };
+    const HC = { C: { x: 372, y: 168, w: 296, h: 122 }, T: { x: 688, y: 168, w: 296, h: 122 } };
+    const ST_SPOTS = Array.from({ length: 12 }, (_, i) => [40 + (i % 6) * 46 + Math.floor(i / 6) * 14, 84 + Math.floor(i / 6) * 16]);
+    const HC_SPOTS = [[40, 76], [110, 80], [180, 76], [250, 80], [78, 104], [148, 106]];
+    function sceneAnimals() {
+      let s = room(430) + wallClock(946, 62);
+      s += `<g transform="translate(20 18)" filter="url(#sh)"><rect width="332" height="208" fill="#fffdf6"/><circle cx="166" cy="8" r="4" fill="#dc2626"/>
+        ${lbl(166, 28, 'IDENTIFICATION & RANDOMISATION', { s: 11, w: 800, c: '#0a1f44' })}
+        ${lbl(12, 44, 'Picric acid code (M1–M12):', { s: 8.6, a: 'start', c: '#13294f', w: 700 })}
+        ${Array.from({ length: 12 }, (_, k) => lbl(k < 6 ? 14 : 172, 58 + (k % 6) * 12, `M${k + 1}: ${markText(k + 1)}`, { s: 7.6, a: 'start', c: '#1e293b', w: 500, f: 'JetBrains Mono' })).join('')}
+        ${lbl(12, 144, `• Swiss albino mice, 20–30 g, ${CFG.fasting}`, { s: 8.4, a: 'start', c: '#b91c1c', w: 700 })}
+        ${lbl(12, 158, '• Mark each mouse (picric acid), weigh it, then draw a lot', { s: 8.4, a: 'start', c: '#13294f' })}
+        ${lbl(12, 172, '• 6 lots VEHICLE (C) and 6 lots TEST DRUG (T) in the jar', { s: 8.4, a: 'start', c: '#13294f' })}
+        ${lbl(12, 186, '• Handle gently by the base of the tail; towel for support', { s: 8.4, a: 'start', c: '#13294f' })}
+        ${lbl(12, 200, '• CCSEA / IAEC approved protocol; 3Rs applied', { s: 8.4, a: 'start', c: '#13294f' })}</g>`;
+      s += `<rect x="360" y="290" width="630" height="10" fill="url(#steelH)" filter="url(#sh2)"/><rect x="376" y="300" width="6" height="22" fill="#6b7280"/><rect x="968" y="300" width="6" height="22" fill="#6b7280"/>`;
+      s += `<g id="hcG"></g><g id="stockG"></g>`;
+      s += `<g class="hot" data-act="towel"><path d="M482 436 L612 436 L626 474 L468 474 Z" fill="#e0f2fe" stroke="#93c5fd"/><path d="M488 448 L620 448" stroke="#bfdbfe" stroke-width="2"/><path d="M478 462 L622 462" stroke="#bfdbfe" stroke-width="2"/></g>${lbl(546, 490, 'Handling towel', { c: '#cbd5e1', s: 9 })}`;
+      s += bottle(620, 336, { act: 'picric', title: 'PICRIC ACID', sub: 'sat. aqueous', cap: '#a16207', kind: 'glass', liq: '#facc15', level: 0.65, w: 46, h: 80, ts: 6, ss: 5 });
+      s += `<g class="hot" data-act="picric"><rect x="596" y="414" width="64" height="5" rx="2.5" fill="url(#wood)" transform="rotate(-12 628 416)"/><path d="M658 404 l10 -3 l2 6 l-10 3z" fill="#facc15"/></g>${lbl(642, 450, 'Picric acid', { c: '#cbd5e1', s: 9 })}`;
+      s += animalBalance(694, 336, 'balDisp');
+      s += `<g id="balM"></g>${lbl(778, 450, 'Animal balance', { c: '#cbd5e1', s: 9 })}`;
+      s += `<g class="hot" data-act="lots" filter="url(#sh)"><path d="M884 344 L966 344 L962 428 L888 428 Z" fill="url(#glass)" stroke="url(#glassEdge)" stroke-width="2"/><rect x="880" y="334" width="90" height="12" rx="3" fill="#475569"/>
+        <g id="lotChits"></g><rect x="896" y="358" width="58" height="26" rx="2" fill="#fff" opacity=".9"/>${lbl(925, 369, 'LOTS', { s: 9, w: 800, c: '#0f172a' })}${lbl(925, 379, '6 C • 6 T', { s: 6.5, c: '#334155' })}</g>${lbl(925, 450, 'Lot jar (randomise)', { c: '#cbd5e1', s: 9 })}`;
+      return s + `<g id="lotShow"></g>`;
+    }
+    const BEAKER_M = 25.0;
+    const balReading = m => m.wt + (S.balTared ? 0 : BEAKER_M);
+    function dyn1() {
+      if (S.station !== 1) return;
+      const hm = handM(), stock = S.mice.filter(m => m.loc === 'stock');
+      let h = cageSide(ST.x, ST.y, ST.w, ST.h, 'stock', 'STOCK CAGE', `${stock.length} mice`, stock.map(m => { const [x, y] = ST_SPOTS[m.uid]; return `<g transform="translate(${x} ${y}) scale(0.8)">${mouseSide({ flip: m.uid % 2, id: m.id })}</g>`; }).join(''), { food: true });
+      if (hm && S.handPos !== 'bal') h += `<g transform="translate(546 438) scale(1.6)">${mouseSide({ id: hm.id })}</g>`;
+      $('stockG').innerHTML = h;
+      $('hcG').innerHTML = ['C', 'T'].map(g => { const c = HC[g], ms = inGroup(g); return cageSide(c.x, c.y, c.w, c.h, 'cage' + g, GNAME[g], `${ms.length}/6 mice`, ms.map((m, i) => { const [x, y] = HC_SPOTS[i]; return `<g transform="translate(${x} ${y}) scale(0.78)">${mouseSide({ flip: i % 2, id: m.id })}</g>`; }).join('')); }).join('');
+      $('balM').innerHTML = hm && S.handPos === 'bal' ? `<g transform="translate(779 328) scale(1.1)">${mouseSide({ id: hm.id, flip: 1 })}</g>` : '';
+      $('balDisp').textContent = S.balOn ? (hm && S.handPos === 'bal' ? fx(balReading(hm), 1) : S.balTared ? '0.0' : fx(BEAKER_M, 1)) : '';
+      $('lotChits').innerHTML = S.lots.map((l, i) => `<rect x="${892 + (i % 6) * 11}" y="${416 - Math.floor(i / 6) * 8}" width="10" height="6" rx="1" fill="#fefce8" stroke="#ca8a04" stroke-width=".5" transform="rotate(${(i * 37) % 30 - 15} ${897 + (i % 6) * 11} ${419 - Math.floor(i / 6) * 8})"/>`).join('');
+      $('lotShow').innerHTML = hm && hm.lot ? `<g filter="url(#sh2)"><rect x="876" y="296" width="98" height="34" rx="3" fill="#fefce8" stroke="#ca8a04"/>${lbl(925, 310, 'LOT DRAWN', { s: 6.5, c: '#78350f' })}${lbl(925, 325, GNAME[hm.lot], { s: 7.4, w: 900, c: '#7c2d12' })}</g>` : '';
+    }
+    function act1(a) {
+      const hm = handM();
+      if (a === 'stock') {
+        if (hm) { if (hm.group) return; hm.loc = 'stock'; S.hand = null; say('Mouse returned to the stock cage.'); return; }
+        const left = S.mice.filter(m => m.loc === 'stock');
+        if (!left.length) { say('The stock cage is empty.'); return; }
+        const m = pick(left); m.loc = 'hand'; S.hand = m.uid; S.handPos = 'towel'; S.t += 15; beep('click');
+        say(`Mouse picked up by the base of the tail${m.id ? ` (M${m.id})` : ''}. Mark it with picric acid.`);
+      } else if (a === 'towel') { if (hm) S.handPos = 'towel'; }
+      else if (a === 'picric') {
+        if (!hm) { say('Pick a mouse first.', true); return; }
+        if (hm.id) { say(`Already marked M${hm.id} (${markText(hm.id)}).`); return; }
+        if (S.nextId > 12) { say('All 12 picric acid codes are used.', true); return; }
+        hm.id = S.nextId++; S.t += 30; beep('ok'); say(`Picric acid applied: <b>M${hm.id}</b> = ${markText(hm.id)}. Now weigh it.`);
+      } else if (a === 'balance') {
+        if (!S.balOn) { S.balOn = true; S.balTared = false; beep('tick'); say(`Balance ON; the empty container reads ${fx(BEAKER_M, 1)} g. Click it again with empty hands to TARE.`); }
+        else if (!hm) { S.balTared = true; beep('tick'); say('Tared: 0.0 g.'); }
+        else if (S.handPos === 'bal') { S.handPos = 'towel'; }
+        else { S.handPos = 'bal'; hm.weighed = true; hm.wtShown = +balReading(hm).toFixed(1); S.t += 30; beep('click'); if (!S.balTared) hm.flags.push('weighed without tare'); say(`${hm.id ? 'M' + hm.id : 'Mouse'}: balance reads <b>${fx(hm.wtShown, 1)} g</b>. Write it in the notebook.`, !S.balTared); }
+      } else if (a === 'lots') {
+        if (!hm) { say('Pick a mouse first.', true); return; }
+        if (hm.lot) { say(`Lot already drawn: ${GNAME[hm.lot]}.`); return; }
+        hm.lot = S.lots.pop(); S.t += 10; beep('tick'); say(`Lot drawn: <b>${GNAME[hm.lot]}</b>. Put the mouse in that holding cage.`);
+      } else if (/^cage[CT]$/.test(a)) {
+        const g = a.slice(4);
+        if (!hm) { say('Pick a mouse first.', true); return; }
+        if (!hm.id) { say('Mark the mouse with picric acid first.', true); return; }
+        if (inGroup(g).length >= 6) { say('That group already has 6 mice.', true); return; }
+        if (hm.lot !== g) { hm.flags.push('not randomised'); if (!hm.lot) { const li = S.lots.indexOf(g); if (li >= 0) S.lots.splice(li, 1); } }
+        if (!hm.weighed) hm.flags.push('not weighed');
+        say(`M${hm.id} placed in the ${GNAME[g].toLowerCase()} cage.${hm.lot !== g ? ' ⚠ Not the group on its lot: allocation is not random.' : ''}${hm.weighed ? '' : ' ⚠ Not weighed.'}`, hm.lot !== g || !hm.weighed);
+        hm.group = g; hm.loc = g; S.hand = null; S.t += 10; beep('ok');
+      }
+    }
+  </script>
+  <script>
+    // ================================================================ STATION 2: weigh powders, make up 10 mL of drug (and PTZ) solutions
+    const FLX = { drug: 440, ptz: 560 };
+    function sceneSolutions() {
+      let s = room(430) + wallClock(946, 62);
+      s += `<rect x="20" y="186" width="640" height="12" fill="url(#steelH)" filter="url(#sh2)"/><rect x="30" y="198" width="6" height="26" fill="#6b7280"/><rect x="644" y="198" width="6" height="26" fill="#6b7280"/>`;
+      CFG.jars.forEach((j, i) => { s += bottle(36 + i * 102, 88, { act: 'jar:' + j.key, title: j.title, sub: j.sub, cap: j.cap, kind: j.kind || 'amber', w: 66, ts: j.ts || 6.4, ss: 5 }); });
+      s += anaBalance(24, 286, 'abalDisp');
+      ['drug', 'ptz'].filter(k => k === 'drug' || CFG.ptz).forEach(k => {
+        const x = FLX[k], nm = k === 'drug' ? 'drug' : 'PTZ';
+        s += `<g class="hot" data-act="fl:${k}"><ellipse cx="${x}" cy="428" rx="40" ry="6" fill="#000" opacity=".35"/>
+          <clipPath id="flc${k}"><path d="M${x - 6} 250 L${x + 6} 250 L${x + 6} 354 Q${x + 38} 364 ${x + 38} 394 Q${x + 38} 428 ${x} 428 Q${x - 38} 428 ${x - 38} 394 Q${x - 38} 364 ${x - 6} 354 Z"/></clipPath>
+          <g clip-path="url(#flc${k})"><rect id="flLiq${k}" x="${x - 40}" y="428" width="80" height="0" fill="url(#liquid)"/></g>
+          <path d="M${x - 6} 250 L${x + 6} 250 L${x + 6} 354 Q${x + 38} 364 ${x + 38} 394 Q${x + 38} 428 ${x} 428 Q${x - 38} 428 ${x - 38} 394 Q${x - 38} 364 ${x - 6} 354 Z" fill="url(#glass)" stroke="url(#glassEdge)" stroke-width="2"/>
+          <path d="M${x - 30} 372 Q${x - 33} 400 ${x - 20} 420" stroke="#fff" stroke-width="3" fill="none" opacity=".4"/>
+          <rect x="${x - 8}" y="240" width="16" height="12" rx="2" fill="#e2e8f0" stroke="#94a3b8"/><line x1="${x - 6}" x2="${x + 6}" y1="290" y2="290" stroke="#fde68a" stroke-width="1.5"/>
+          ${lbl(x, 404, '10 mL', { s: 9, w: 800, c: '#0f172a' })}<g id="flTag${k}"></g></g>${lbl(x, 450, `10 mL flask: ${nm}`, { c: '#cbd5e1', s: 9 })}`;
+      });
+      s += bottle(790, 322, { act: 'saline', title: '0.9% NaCl', sub: 'sterile • 500 mL', cap: '#16a34a', kind: 'glass', liq: 'url(#liquid)', level: .8, w: 66, h: 104 }) + lbl(823, 450, 'Normal saline', { c: '#cbd5e1', s: 9 });
+      if (UNKNOWN) s += bottle(272, 326, { act: 'vial', title: 'DRUG X', sub: 'coded vial', cap: '#7c3aed', kind: 'glass', liq: 'url(#liquid)', level: .85, w: 50, h: 92, ts: 7.5, ss: 5 }) + lbl(297, 450, 'Coded vial (ready to use)', { c: '#fde68a', s: 9 });
+      const P = drugP(), pz = CFG.ptz;
+      s += `<g transform="translate(690 20)" filter="url(#sh)"><rect width="230" height="170" fill="#fffdf6"/>${lbl(115, 22, 'DOSE CALCULATION', { s: 11, w: 800, c: '#0a1f44' })}
+        ${lbl(12, 42, 'Dose volume (mice): 10 mL/kg', { s: 8.8, a: 'start', c: '#13294f', w: 700 })}
+        ${lbl(12, 58, UNKNOWN ? 'Test drug: coded vial DRUG X' : `${P.short}: ${P.dose} mg/kg ${P.route || 'i.p.'}`, { s: 8.8, a: 'start', c: '#13294f' })}
+        ${lbl(12, 74, UNKNOWN ? 'Ready solution: give 10 mL/kg i.p.' : 'Conc. (mg/mL) = dose ÷ 10 mL/kg', { s: 8.8, a: 'start', c: '#13294f' })}
+        ${lbl(12, 90, UNKNOWN ? '' : 'Mass for 10 mL = conc. × 10 mL', { s: 8.8, a: 'start', c: '#13294f' })}
+        ${lbl(12, 106, 'Vol./mouse = 10 mL/kg × wt (kg)', { s: 8.8, a: 'start', c: '#13294f' })}
+        ${pz ? lbl(12, 126, `PTZ ${PTZ_DOSE} mg/kg s.c. = ${PTZ_CONC} mg/mL`, { s: 8.8, a: 'start', c: '#b91c1c', w: 700 }) + lbl(12, 140, `PTZ for 10 mL = ${PTZ_DOSE} mg`, { s: 8.8, a: 'start', c: '#b91c1c', w: 700 }) + lbl(12, 156, 'Make fresh in saline; keep away from light', { s: 8.8, a: 'start', c: '#b91c1c', w: 700 })
+          : lbl(12, 126, 'Vehicle: 0.9% saline 10 mL/kg i.p.', { s: 8.8, a: 'start', c: '#b91c1c', w: 700 }) + lbl(12, 140, 'Dissolve fully; make up to the mark', { s: 8.8, a: 'start', c: '#b91c1c', w: 700 }) + lbl(12, 156, 'Label flask: drug and mg/mL', { s: 8.8, a: 'start', c: '#b91c1c', w: 700 })}</g>`;
+      return s;
+    }
+    function dyn2() {
+      if (S.station !== 2) return;
+      const A = S.abal;
+      $('abalDisp').textContent = !A.boat ? '0.0000' : (A.tared ? A.mg / 1000 : 0.3521 + A.mg / 1000).toFixed(4);
+      $('abalDispBoat').innerHTML = A.boat ? `<path d="M100 348 l48 0 l-6 9 l-36 0z" fill="#e2e8f0" stroke="#94a3b8"/>${A.mg ? `<ellipse cx="124" cy="348" rx="${Math.min(14, 3 + A.mg / 40)}" ry="2.8" fill="${A.what === 'ptz' ? '#f8fafc' : '#fefce8'}" stroke="#d6d3d1" stroke-width=".4"/>` : ''}` : '';
+      ['drug', 'ptz'].filter(k => k === 'drug' || CFG.ptz).forEach(k => {
+        const F = S.sol[k], x = FLX[k], y = F.vol && !F.ready ? (F.labelled ? 428 - 138 * F.left / F.vol : 290) : F.inFl ? 424 : 428;
+        const l = $('flLiq' + k); l.setAttribute('y', y); l.setAttribute('height', 428 - y);
+        const nm = k === 'ptz' ? 'PTZ' : (PROFILES[F.what] ? PROFILES[F.what].short.toUpperCase().slice(0, 9) : 'DRUG');
+        $('flTag' + k).innerHTML = F.labelled && !F.ready ? `<rect x="${x - 28}" y="368" width="56" height="24" fill="#fff" stroke="#ca8a04"/>${lbl(x, 378, nm, { s: 5.8, w: 800 })}${lbl(x, 388, fx(F.conc, 2) + ' mg/mL', { s: 6, c: '#b91c1c', w: 700 })}` : '';
+      });
+    }
+    function act2(a, arg) {
+      const A = S.abal;
+      if (a === 'abal') {
+        if (!A.boat) { A.boat = true; A.tared = false; A.mg = 0; A.what = null; beep('tick'); say('Weighing boat placed (0.3521 g). Click again to TARE.'); }
+        else if (!A.tared) { A.tared = true; beep('tick'); say('Tared: 0.0000 g. Click the jar you want to weigh from.'); }
+        else say(A.mg ? `Boat holds ${fx(A.mg, 1)} mg of ${A.what === 'ptz' ? 'PTZ' : PROFILES[A.what].short}. Tip it into its flask.` : 'Choose a jar.');
+      } else if (a === 'jar') {
+        if (UNKNOWN && arg !== 'ptz') { say('The test drug is the coded vial DRUG X: it is supplied ready-made, so no weighing is needed.', true); return; }
+        if (!A.boat || !A.tared) { say('Place a weighing boat on the analytical balance and TARE first.', true); return; }
+        if (A.mg && A.what !== arg) { say('The boat already holds another powder. Tip it out first.', true); return; }
+        S.sel = { kind: 'weigh', what: arg }; say(`Enter the mass of ${arg === 'ptz' ? 'PTZ' : PROFILES[arg].short} to weigh (mg).`);
+      } else if (a === 'fl') {
+        if (UNKNOWN && arg === 'drug') { say('DRUG X is already a ready solution; use it directly at the dosing bench.'); return; }
+        const F = S.sol[arg];
+        if (F.labelled) { S.sel = { kind: 'flDone', k: arg }; return; }
+        if (A.mg) {
+          if ((arg === 'ptz') !== (A.what === 'ptz')) { say(`That flask is for ${arg === 'ptz' ? 'PTZ' : 'the test drug'}. Use the correct flask.`, true); return; }
+          F.mg += A.mg; F.what = A.what; F.inFl = true; A.mg = 0; A.boat = false; S.t += 30; beep('ok'); say(`${fx(F.mg, 1)} mg tipped into the 10 mL flask and rinsed in with saline.`);
+        }
+        if (F.inFl) S.sel = { kind: 'fl', k: arg }; else say('The flask is empty.');
+      } else if (a === 'saline') say('Saline is added in the flask make-up step.');
+      else if (a === 'vial') say('DRUG X: coded vial, ready-to-use solution for 10 mL/kg i.p. Draw it up at the dosing bench.');
+    }
+    function weighPowder() {
+      const v = parseFloat($('inMg').value), w = S.sel.what;
+      if (!(v > 0) || v > 3000) { say('Enter a mass in mg (e.g. 25.0).', true); return; }
+      S.abal.mg = +(v * (1 + (Math.random() - 0.5) * 0.004) + (Math.random() - 0.5) * 0.2).toFixed(1); S.abal.what = w; S.t += 90; beep('click');
+      say(`Balance reads ${(S.abal.mg / 1000).toFixed(4)} g. Tip it into the ${w === 'ptz' ? 'PTZ' : 'drug'} flask.`);
+      S.sel = null; renderCtx(); drawDyn();
+    }
+    function makeUp(k) {
+      const F = S.sol[k];
+      F.vol = 10; F.conc = F.mg / 10; F.left = 10; F.labelled = true; S.t += 120; beep('done');
+      const want = k === 'ptz' ? PTZ_CONC : drugP().conc, off = Math.abs(F.conc / want - 1);
+      const wrong = k === 'drug' && F.what !== effDrug();
+      say(`Made up to the 10 mL mark with saline, inverted 10 times and labelled: <b>${fx(F.conc, 2)} mg/mL</b>${off > 0.1 ? ` ⚠ (${fx(want, 2)} mg/mL intended)` : ''}${wrong ? ` ⚠ This flask holds ${PROFILES[F.what].short}, not ${drugP().short}.` : ''}.`, off > 0.1 || wrong);
+      S.sel = null; renderCtx(); drawDyn(); refreshChecklist();
+    }
+    function newBatch(k) { S.sol[k] = blankSol(); S.sel = null; say('Flask emptied and washed. Prepare a fresh batch.'); renderCtx(); drawDyn(); refreshChecklist(); }
+  </script>
+  <script>
+    // ================================================================ STATION 3: dosing (i.p. pretreatment, PTZ s.c.), timing sheet
+    const HC3 = { C: 14, T: 280 }, HC3Y = 150, HCW = 250, HCH = 124;
+    function sceneDosing() {
+      let s = room(430) + wallClock(560, 62, 32);
+      s += `<g id="holdG"></g>`;
+      s += `<g transform="translate(640 16)" filter="url(#sh)"><rect width="350" height="270" rx="4" fill="#f8fafc" stroke="#94a3b8" stroke-width="3"/><g id="board"></g></g>`;
+      s += `<path d="M20 440 L160 440 L172 476 L8 476 Z" fill="#e0f2fe" stroke="#93c5fd"/><path d="M14 456 L166 456" stroke="#bfdbfe" stroke-width="2"/><g id="handG"></g>${lbl(90, 494, 'Handling towel', { c: '#cbd5e1', s: 9 })}`;
+      s += `<g id="btlG"></g>`;
+      s += `<path d="M 640 456 L 980 456 L 988 540 L 632 540 Z" fill="url(#steelH)" opacity=".85" filter="url(#sh)"/><g id="syrG"></g>${lbl(810, 553, 'Dosing tray', { c: '#cbd5e1', s: 9 })}`;
+      return s;
+    }
+    const tagCol = m => m.test && m.test.done ? '#d1d5db' : m.test ? '#fecaca' : m.ptz ? '#fecaca' : m.dose ? '#e0e7ff' : '#fff';
+    function dyn3() {
+      if (S.station !== 3) return;
+      $('holdG').innerHTML = ['C', 'T'].map(g => { const ms = inGroup(g).filter(m => m.loc === g); return cageSide(HC3[g], HC3Y, HCW, HCH, null, GNAME[g], `${ms.length} mice`,
+        ms.map((m, i) => `<g class="hot" data-act="m:${m.uid}" transform="translate(${34 + (i % 3) * 62 + Math.floor(i / 3) * 18} ${HCH - 30 - Math.floor(i / 3) * 22}) scale(0.86)">${mouseSide({ flip: i % 2, id: m.id, sel: S.hand === m.uid, tagc: tagCol(m) })}</g>`).join('')); }).join('');
+      const hm = handM();
+      $('handG').innerHTML = hm ? `<g transform="translate(92 448) scale(1.6)">${mouseSide({ id: hm.id, tagc: tagCol(hm) })}</g>` : '';
+      const sy = S.syr.tub, col = s => s === 'ptz' ? '#fde68a' : s ? '#dbeafe' : '';
+      $('syrG').innerHTML = `${syringeArt(680, 490, { act: 'tub', cap: 1, fill: sy.vol, needle: '26G', col: col(sy.src), len: 120 })}${lbl(770, 515, `1 mL syringe + 26 G needle${sy.vol ? ' • ' + fx(sy.vol, 2) + ' mL' : ' (empty)'}`, { s: 7.5, c: '#0f172a' })}
+        ${S.syrSel ? `<rect x="634" y="476" width="268" height="26" rx="5" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="5 3"/>` : ''}`;
+      let b = bottle(200, 340, { act: 'b:sal', title: '0.9% NaCl', sub: 'vehicle', cap: '#16a34a', kind: 'glass', liq: 'url(#liquid)', level: .7, w: 50, h: 84, ts: 6.2 });
+      const F = S.sol.drug;
+      if (F.labelled) b += bottle(264, 340, { act: 'b:drug', title: UNKNOWN ? 'DRUG X' : drugP().short.toUpperCase().slice(0, 9), sub: UNKNOWN ? '10 mL/kg' : fx(F.conc, 2) + ' mg/mL', cap: UNKNOWN ? '#7c3aed' : '#b91c1c', kind: 'glass', liq: 'url(#liquid)', level: clamp(F.left / 10, .05, 1), w: 50, h: 84, ts: 6.2 });
+      if (CFG.ptz && S.sol.ptz.labelled) b += bottle(328, 340, { act: 'b:ptz', title: 'PTZ', sub: fx(S.sol.ptz.conc, 2) + ' mg/mL', cap: '#a16207', kind: 'glass', liq: 'url(#oil)', level: clamp(S.sol.ptz.left / 10, .05, 1), w: 50, h: 84, ts: 8 });
+      $('btlG').innerHTML = b;
+      board();
+    }
+    function board() {
+      const X = CFG.boardX; let h = lbl(175, 15, CFG.boardTitle, { s: 8.2, w: 800, c: '#0a1f44' }) + CFG.boardHead.map((t, i) => lbl(X[i], 30, t, { s: 7.2, a: 'start', c: '#475569', w: 700 })).join('');
+      placed().sort((a, b) => a.id - b.id).forEach((m, i) => {
+        CFG.boardRow(m).forEach((c, j) => { h += lbl(X[j], 43 + i * 17.5, c.t, { s: 7.6, a: 'start', c: c.due ? '#dc2626' : c.dim ? '#64748b' : c.on ? '#1d4ed8' : '#1e293b', f: 'JetBrains Mono', w: c.due ? 800 : 600 }); });
+      });
+      $('board').innerHTML = h;
+    }
+    function act3(a, arg) {
+      if (a === 'm') { S.hand = S.hand === arg ? null : arg; S.sel = null; beep('tick'); if (S.hand !== null) say(`M${handM().id} (${GK(handM().group).short}, ${fx(handM().wtShown || 0, 1)} g) in hand.`); }
+      else if (a === 'tub') { S.syrSel = S.syrSel === 'tub' ? null : 'tub'; S.sel = null; beep('tick'); }
+      else if (a === 'b') {
+        if (!S.syrSel) { say('Pick up the syringe first (click it on the tray).', true); return; }
+        if (arg === 'drug' && !S.sol.drug.labelled) return;
+        S.sel = { kind: 'draw', src: arg }; say(`Draw ${solName(arg)}: enter the volume.`);
+      }
+    }
+    function drawUp() {
+      const sy = S.syr.tub, src = S.sel.src, v = parseFloat($('inDraw').value);
+      if (!(v > 0)) { say('Enter a volume in mL.', true); return; }
+      if (v > 1) { say('This syringe holds 1 mL.', true); return; }
+      if (sy.vol > 0 && sy.src !== src) { say('Expel the old contents first.', true); return; }
+      const F = src === 'sal' ? null : S.sol[src];
+      if (F && F.left < v) { say(`Only ${fx(F.left, 2)} mL left. Prepare a fresh batch.`, true); return; }
+      if (F) F.left = +(F.left - v).toFixed(3);
+      sy.vol = +(sy.vol + v).toFixed(3); sy.src = src;
+      say(`${fx(v, 2)} mL ${solName(src)} drawn up.${S.hand === null ? ' Select the mouse.' : ''}`);
+      S.sel = null; S.t += 15; beep('click'); renderCtx(); drawDyn();
+    }
+    function expel() { const sy = S.syr.tub; sy.vol = 0; sy.src = null; say('Syringe emptied into the waste.'); renderCtx(); drawDyn(); }
+    function administer() {
+      const m = handM(), sy = S.syr.tub, route = $('inRoute').value;
+      if (!m || !sy.vol) { say('Hold a mouse and a loaded syringe first.', true); return; }
+      if (!route) { say('Choose the route.', true); return; }
+      if (route === 'po') { say('Oral gavage needs a ball-tipped feeding needle; this syringe has a 26 G sharp needle.', true); return; }
+      const wkg = m.wt / 1000, fl = [];
+      if (sy.src === 'ptz') {
+        if (m.ptz) { say(`M${m.id} has already received PTZ.`, true); return; }
+        if (!m.dose) fl.push('PTZ without pretreatment');
+        else { const pre = Math.round((S.t - m.dose.t) / 60); if (pre < 25 || pre > 40) fl.push(`PTZ ${pre} min after pretreatment (30 intended)`); }
+        const mg = sy.vol * S.sol.ptz.conc, dose = mg / wkg;
+        if (dose < 80 || dose > 90) fl.push(`PTZ ${fx(dose, 0)} mg/kg (${PTZ_DOSE} intended)`);
+        if (route !== 'sc') fl.push(`PTZ route ${route === 'ip' ? 'i.p.' : route} (s.c. intended)`);
+        m.ptz = { t: S.t, vol: sy.vol, route, mgkg: dose, flags: fl };
+        say(`M${m.id}: ${fx(sy.vol, 2)} mL PTZ (${fx(dose, 0)} mg/kg) ${ROUTES[route]} at ${clockStr(S.t)}. Place it in an observation compartment at once and watch for 30 min.${fl.length ? ' ⚠ ' + fl.join(', ') + '.' : ''}`, fl.length > 0);
+        if (CFG.onPtz) CFG.onPtz(m);
+      } else {
+        if (m.dose) { say(`M${m.id} has already been pretreated.`, true); return; }
+        const isDrug = sy.src === 'drug', what = isDrug ? S.sol.drug.what : null, P = isDrug ? PROFILES[what] : null;
+        const mg = isDrug ? sy.vol * S.sol.drug.conc : 0;
+        m.dose = { t: S.t, src: sy.src, vol: sy.vol, route, mgkg: mg / wkg, what, flags: fl };
+        if (GK(m.group).src !== sy.src) fl.push(`${SRCN[sy.src].toLowerCase()} given to a ${GK(m.group).short.toLowerCase()} mouse`);
+        if (isDrug && UNKNOWN) { if (Math.abs(sy.vol / wkg / 10 - 1) > 0.2) fl.push(`Drug X ${fx(sy.vol / wkg, 1)} mL/kg (10 intended)`); }
+        else if (isDrug) { if (what !== effDrug()) fl.push(`wrong drug given (${P.short})`); if (Math.abs(mg / wkg / P.dose - 1) > 0.1) fl.push(`dose ${fx(mg / wkg, 1)} mg/kg (${P.dose} intended)`); }
+        else if (Math.abs(sy.vol / wkg / 10 - 1) > 0.2) fl.push(`saline ${fx(sy.vol / wkg, 1)} mL/kg (10 intended)`);
+        if (route !== 'ip') fl.push(`route ${route === 'sc' ? 's.c.' : route} (should be i.p.)`);
+        say(`M${m.id}: ${fx(sy.vol, 2)} mL ${solName(sy.src)} ${ROUTES[route]} at ${clockStr(S.t)}. ${CFG.dueMsg(m)}${fl.length ? ' ⚠ ' + fl.join(', ') + '.' : ''}`, fl.length > 0);
+        S.hand = null;
+      }
+      sy.vol = 0; sy.src = null; S.t += 45; beep('ok');
+      renderCtx(); drawDyn(); renderNotebook(); refreshChecklist();
+    }
+    function ctx123(t) {
+      const hm = handM(), sel = S.sel; let h = '';
+      if (S.station === 1) {
+        t = 'Animal house';
+        h = hm ? `<b>In hand:</b> ${hm.id ? `M${hm.id} <span class="mono">(${markText(hm.id)})</span>` : 'unmarked mouse'}<br>Weighed: ${hm.weighed ? fx(hm.wtShown, 1) + ' g' : '—'} • Lot: ${hm.lot ? GNAME[hm.lot] : '—'}<div class="row">${btn('Return to stock cage', "act('stock')", 'sec')}</div><p style="color:#64748b;margin-top:6px">Order: picric acid → weigh → draw a lot → holding cage of that group.</p>`
+          : `<p style="color:#64748b">Take mice from the stock cage. Switch the balance on and tare the empty container first.</p><p class="mono" style="font-size:11px">Vehicle ${inGroup('C').length}/6 • Test drug ${inGroup('T').length}/6</p>`;
+      } else if (S.station === 2) {
+        t = 'Preparation bench';
+        if (sel && sel.kind === 'weigh') h = `<b>Weigh ${sel.what === 'ptz' ? 'PTZ' : PROFILES[sel.what].short.toLowerCase()}</b><div class="row">Mass <input id="inMg" class="xb-in" placeholder="mg"> mg ${btn('Weigh out', 'weighPowder()')}</div>`;
+        else if (sel && sel.kind === 'fl') h = `<b>10 mL flask:</b> ${fx(S.sol[sel.k].mg, 1)} mg ${sel.k === 'ptz' ? 'PTZ' : PROFILES[S.sol[sel.k].what].short.toLowerCase()}<div class="row">${btn('Dissolve, make up to the mark with saline & label', `makeUp('${sel.k}')`)}</div>`;
+        else if (sel && sel.kind === 'flDone') h = `<b>${sel.k === 'ptz' ? 'PTZ' : PROFILES[S.sol.drug.what].short}</b> ${fx(S.sol[sel.k].conc, 2)} mg/mL • ${fx(S.sol[sel.k].left, 2)} mL left<div class="row">${btn('Discard & prepare again', `newBatch('${sel.k}')`, 'sec')}</div>`;
+        else h = UNKNOWN ? `<p style="color:#64748b">Drug X is a ready solution (coded vial): nothing to weigh.${CFG.ptz ? ' Prepare the PTZ solution: boat on the analytical balance → TARE → weigh → flask → saline to the mark.' : ' Go to the dosing bench.'}</p>`
+          : `<p style="color:#64748b">Boat on the analytical balance → TARE → weigh the mass you calculated for 10 mL → tip into the flask → saline to the mark.${CFG.ptz ? ' Make the drug and the PTZ solutions in separate flasks.' : ''}</p>`;
+      } else {
+        t = 'Dosing & timing';
+        const sy = S.syrSel ? S.syr.tub : null;
+        if (sel && sel.kind === 'draw') h = `<b>Draw ${solName(sel.src)}</b><div class="row">Volume <input id="inDraw" class="xb-in" style="width:70px" placeholder="mL"> mL ${btn('Draw up', 'drawUp()')}</div>`;
+        else if (hm) {
+          h = `<b>M${hm.id}</b> • ${GK(hm.group).short} • ${fx(hm.wtShown || hm.wt, 1)} g<br><span class="mono" style="font-size:11px">${hm.dose ? 'drug ' + clockStr(hm.dose.t) : 'no pretreatment yet'}${CFG.ptz ? ' • ' + (hm.ptz ? 'PTZ ' + clockStr(hm.ptz.t) : 'no PTZ') : ''}</span>
+            ${sy && sy.vol ? `<div class="row">Give ${fx(sy.vol, 2)} mL ${solName(sy.src)} by <select id="inRoute" class="xb-in" style="width:auto"><option value="">route…</option>${Object.entries(ROUTES).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select></div><div class="row">${btn('Administer', 'administer()')}</div>` : '<p style="color:#64748b;margin-top:6px">Click the syringe, then a bottle, and draw up the volume you calculated.</p>'}`;
+        } else h = `<p style="color:#64748b">Click a mouse in a holding cage to pick it up; the syringe is on the tray. Clock ${clockStr(S.t)}.</p>`;
+        if (sy && sy.vol) h += `<div class="row">${btn('Expel syringe contents', 'expel()', 'sec')}</div>`;
+      }
+      return [t, h];
+    }
+    function idealDoseMl(m) { const w = m.wtShown; if (!w || !m.group) return NaN; if (m.group === 'C') return 10 * w / 1000; const F = S.sol.drug; return F.labelled && !UNKNOWN ? drugP().dose * w / 1000 / F.conc : 10 * w / 1000; }
+    const idealPtzMl = m => { const w = m.wtShown; if (!w) return NaN; const F = S.sol.ptz; return F.labelled ? PTZ_DOSE * w / 1000 / F.conc : 10 * w / 1000; };
+  </script>
+  <script>
+    // =====================================================================
+    // EXP 03: Maximal electroshock seizure (MES) test in mice.
+    // Every step is done by the student; the model only reacts to technique.
+    // =====================================================================
+    // durations in s as [mean, sd]; ed50 in mg/kg i.p. (30 min); protection = abolition of hind-limb tonic extension (HTE)
+    const PROFILES = {
+      vehicle: { name: 'Vehicle (0.9% saline, 10 mL/kg i.p.)', short: 'Vehicle', dose: 0, conc: 0, ed50: 1e9, flex: [2.2, .3], ext: [12.4, 1.1], clon: [14.8, 1.5], rec: [78, 8] },
+      phenytoin: { name: 'Phenytoin sodium (25 mg/kg i.p.)', short: 'Phenytoin', dose: 25, conc: 2.5, ed50: 9.5, flex: [2.4, .4], ext: [12.4, 1.1], clon: [12, 1.8], rec: [35, 5],
+        desc: 'Use-dependent blocker of voltage-gated Na⁺ channels: stops the spread of seizure discharge, so hind-limb tonic extension is abolished while clonus is preserved. Recovery is quick (little sedation).' },
+      valproate: { name: 'Sodium valproate (300 mg/kg i.p.)', short: 'Valproate', dose: 300, conc: 30, ed50: 190, flex: [1.8, .3], ext: [12.4, 1.1], clon: [7.2, 1.2], rec: [42, 6],
+        desc: 'Broad-spectrum: Na⁺ channel block, T-type Ca²⁺ block and raised GABA. Abolishes HTE and also shortens the clonic phase.' },
+      diazepam: { name: 'Diazepam (4 mg/kg i.p.)', short: 'Diazepam', dose: 4, conc: 0.4, ed50: 2.5, flex: [1.5, .3], ext: [12.4, 1.1], clon: [4.5, 1.0], rec: [95, 12],
+        desc: 'Benzodiazepine: increases the frequency of GABA-A chloride-channel opening. Abolishes HTE, strongly suppresses clonus and gives a prolonged sedated (post-ictal) period.' }
+    };
+    const TEST_KEYS = ['phenytoin', 'valproate', 'diazepam'];
+    let DRUG = 'phenytoin', UNKNOWN = false;
+    const assignedMysteryDrugKey = TEST_KEYS[Math.floor(Math.random() * TEST_KEYS.length)];
+    const mysteryEff = () => assignedMysteryDrugKey;
+    const MES_I = 50, MES_T = 0.2;
+    const fmtT = s => (s === null || s === undefined || !isFinite(s)) ? '—' : s.toFixed(1);
+    const CFG = {
+      ptz: false, fasting: 'not fasted', testKeys: TEST_KEYS,
+      groups: [{ key: 'C', label: 'Group I: Vehicle control (saline 10 mL/kg i.p.)', short: 'Vehicle', src: 'sal', color: PALETTE.slate },
+        { key: 'T', label: 'Group II: Test drug i.p.', short: 'Test drug', src: 'drug', color: PALETTE.emerald }],
+      jars: [{ key: 'phenytoin', title: 'PHENYTOIN', sub: 'sodium IP • 5 g', cap: '#b91c1c' }, { key: 'valproate', title: 'VALPROATE', sub: 'sodium IP • 25 g', cap: '#0f766e' }, { key: 'diazepam', title: 'DIAZEPAM', sub: 'powder IP • 1 g', cap: '#1d4ed8' }],
+      nbInit: () => ({ wt: '', dose: '', flex: '', ext: '', clon: '', rec: '', hte: '' }),
+      notes: () => ({ prot: { C: '', T: '' }, ext: { C: '', T: '' } }),
+      boardTitle: 'TIMING SHEET  (drug i.p. → +30 min stimulus)', boardHead: ['Mouse', 'Grp', 'Drug i.p.', 'Test due', 'Tested'], boardX: [10, 58, 94, 174, 262],
+      boardRow: m => [{ t: `M${m.id}` }, { t: m.group }, { t: m.dose ? clockStr(m.dose.t) : '--:--', on: m.dose && !m.test }, { t: m.dose ? clockStr(m.dose.t + 1800) : '—', due: m.dose && !m.test && S.t >= m.dose.t + 1740 }, { t: m.test ? clockStr(m.test.t) : '--:--', dim: !!m.test }],
+      dueMsg: m => `The electroshock is due 30 min later, at ${clockStr(S.t + 1800)}.`
+    };
+    const nrm = ([m, s]) => m + gauss() * s;
+    // fraction of animals protected (HTE abolished) from the dose this mouse really received and the time since dosing
+    function protectP(m) {
+      const d = m.dose; if (!d || d.src === 'sal' || !d.what) return 0;
+      const P = PROFILES[d.what], dt = (S.t - d.t) / 60;
+      let ft = (1 - Math.exp(-dt / 8)) / (1 - Math.exp(-30 / 8)); if (dt > 60) ft *= Math.exp(-(dt - 60) / 90); ft = Math.min(ft, 1.1);
+      const eff = d.mgkg * ft * m.sens * ({ ip: 1, sc: 0.7, po: 0.6 }[d.route] || 1);
+      return 1 / (1 + Math.pow(P.ed50 / Math.max(eff, 0.01), 3));
+    }
+    // true time-line of the seizure (s after the stimulus); stim = {I, T, ok}
+    function mesSeizure(m, stim) {
+      const P = PROFILES[(m.dose && m.dose.src !== 'sal' && m.dose.what) ? m.dose.what : 'vehicle'], pp = protectP(m);
+      const pFull = clamp((stim.I - 20) / 25, 0, 1) * clamp(stim.T / 0.15, 0, 1);       // chance that a control would show full HTE
+      const sz = stim.ok && stim.I >= 15 && stim.T >= 0.05;
+      const abol = !sz || Math.random() > pFull || Math.random() < pp;
+      const flex = sz ? Math.max(.8, nrm(P.flex)) : 0, ext = sz && !abol ? Math.max(6, nrm(P.ext) * (1 - 0.3 * pp)) : 0;
+      const clon = sz ? Math.max(1.5, nrm(P.clon) * (pFull < 1 ? 0.7 + 0.3 * pFull : 1)) : 0, rec = sz ? Math.max(8, nrm(P.rec)) : 0;
+      const t0 = stim.T, tE = t0 + flex, tC = tE + ext, tS = tC + clon, tR = tS + rec;
+      return { sz, abol, flex, ext, clon, rec, t0, tE, tC, tS, tR };
+    }
+    function mesState(tl, t) { // t = s since stimulus
+      if (!tl.sz) return t < 1.5 ? 'twitch' : 'normal';
+      if (t < tl.t0) return 'normal';
+      if (t < tl.tE) return 'flex';
+      if (t < tl.tC) return 'ext';
+      if (t < tl.tS) return 'clon';
+      if (t < tl.tR) return 'stupor';
+      return 'rec';
+    }
+    const MES_OBS = {
+      normal: 'Mouse resting on the platform, alert and exploring.', twitch: 'Brief startle only; no seizure behaviour.', flex: 'Fore- and hind-limbs drawn in towards the trunk, body stiff and arched.',
+      ext: 'Hind-limbs rigidly extended backwards, parallel to the tail (angle to the body ≥ 180°).', clon: 'Rhythmic, jerky movements of all four limbs; head and trunk jerking.',
+      stupor: 'Lying on its flank, motionless, righting reflex absent.', rec: 'Righting reflex regained: the mouse turns over and gets up.'
+    };
+  </script>
+  <script>
+    // ================================================================ STATION 4 (scene): electroconvulsometer bench
+    CFG.extra = st => { st.app = { on: false, I: 20, T: 0.1, elec: 'ear', wetT: -1e9, clips: false, anaes: false, z: null, ledD: 0, led: '' }; st.plat = null; st.seiz = null; };
+    const MX = 722, MY = 200, MK = 4.5;
+    function instrument() {
+      const sock = (y, c) => `<circle cx="414" cy="${y}" r="9" fill="#111827" stroke="#9ca3af" stroke-width="2"/><circle cx="414" cy="${y}" r="5" fill="${c}"/><circle cx="414" cy="${y}" r="2" fill="#1f2937"/>`;
+      const arrow = (x, y, act, up) => `<g class="hot" data-act="${act}"><rect x="${x}" y="${y}" width="46" height="24" rx="5" fill="#3b4656" stroke="#111827"/><rect x="${x + 1}" y="${y + 1}" width="44" height="10" rx="4" fill="#fff" opacity=".12"/><path d="M${x + 15} ${y + (up ? 17 : 7)} L${x + 23} ${y + (up ? 7 : 17)} L${x + 31} ${y + (up ? 17 : 7)}Z" fill="#e5e7eb"/></g>`;
+      return `<g filter="url(#sh)">
+        <rect x="30" y="414" width="30" height="10" rx="2" fill="#111827"/><rect x="384" y="414" width="30" height="10" rx="2" fill="#111827"/>
+        <rect x="24" y="88" width="396" height="328" rx="12" fill="url(#cabFront)" stroke="#64748b" stroke-width="2"/>
+        <rect x="24" y="88" width="396" height="328" rx="12" filter="url(#grain)" opacity=".8"/>
+        <rect x="28" y="92" width="388" height="8" rx="4" fill="#fff" opacity=".6"/>
+        <rect x="40" y="108" width="364" height="38" rx="6" fill="#0f172a" stroke="#475569"/>
+        ${lbl(222, 126, 'ELECTROCONVULSOMETER', { s: 15, w: 800, c: '#f8fafc', extra: ' letter-spacing="2"' })}${lbl(222, 140, 'Constant-current stimulator • 50 Hz • mice / rats • ear-clip & corneal output', { s: 7.6, c: '#94a3b8', w: 600 })}
+        <rect x="40" y="156" width="364" height="124" rx="8" fill="#0b1220" stroke="#334155"/>
+        ${lbl(112, 172, 'CURRENT (mA)', { s: 8, c: '#cbd5e1', w: 700 })}${seg(52, 178, 120, 50, 'lcdI', '0', 30)}
+        ${lbl(236, 172, 'DURATION (s)', { s: 8, c: '#cbd5e1', w: 700 })}${seg(190, 178, 92, 50, 'lcdT', '0.00', 26)}
+        ${lbl(344, 172, 'LOAD Z (kΩ)', { s: 8, c: '#cbd5e1', w: 700 })}${seg(298, 178, 92, 50, 'lcdZ', '', 22)}
+        ${arrow(52, 238, 'cur+', true)}${arrow(106, 238, 'cur-', false)}${arrow(190, 238, 'dur+', true)}${arrow(244, 238, 'dur-', false)}
+        <text id="lcdS" x="344" y="252" font-size="9" text-anchor="middle" fill="#94a3b8" font-family="JetBrains Mono" font-weight="700">STANDBY</text>
+        ${[['ledP', 'POWER', '#22c55e'], ['ledR', 'READY', '#f59e0b'], ['ledD', 'DELIVERED', '#38bdf8'], ['ledZ', 'HIGH Z', '#ef4444']].map(([id, t, c], i) => `<circle id="${id}" cx="${70 + i * 90}" cy="304" r="6" fill="#3f3f46" stroke="#111" data-c="${c}"/>${lbl(70 + i * 90, 324, t, { s: 7.4, c: '#334155', w: 700 })}`).join('')}
+        <g class="hot" data-act="pwr"><rect x="48" y="342" width="62" height="42" rx="6" fill="#1f2937" stroke="#0f172a"/><rect id="pwrSw" x="52" y="346" width="54" height="34" rx="4" fill="#4b5563"/><rect x="52" y="346" width="54" height="12" rx="4" fill="#fff" opacity=".15"/>${lbl(79, 366, 'I / O', { s: 10, c: '#f3f4f6', w: 800 })}</g>${lbl(79, 398, 'POWER', { s: 7.4, c: '#334155', w: 700 })}
+        <circle cx="178" cy="362" r="24" fill="#1f2937"/><circle cx="178" cy="362" r="19" fill="url(#steel)" stroke="#111827"/><line x1="178" y1="362" x2="178" y2="346" stroke="#111827" stroke-width="3"/>${lbl(178, 398, 'RANGE: MOUSE', { s: 7.4, c: '#334155', w: 700 })}
+        <g class="hot" data-act="shock"><rect x="268" y="334" width="110" height="58" rx="8" fill="#e5e7eb" stroke="#6b7280"/><circle cx="323" cy="363" r="22" fill="#7f1d1d" stroke="#111827" stroke-width="2"/><circle cx="323" cy="363" r="17" fill="url(#btnYellow)" opacity="0"/><circle cx="323" cy="363" r="16" fill="#dc2626"/><ellipse cx="318" cy="356" rx="8" ry="5" fill="#fff" opacity=".35"/>${lbl(323, 402, 'SHOCK', { s: 8, c: '#7f1d1d', w: 800 })}</g>
+        ${lbl(396, 306, 'OUTPUT', { s: 6.4, c: '#334155', a: 'end', w: 700 })}${sock(318, '#dc2626')}${sock(342, '#111827')}
+        <circle cx="38" cy="102" r="2.6" fill="#94a3b8"/><circle cx="406" cy="102" r="2.6" fill="#94a3b8"/><circle cx="38" cy="404" r="2.6" fill="#94a3b8"/><circle cx="406" cy="404" r="2.6" fill="#94a3b8"/></g>`;
+    }
+    function sceneApparatus() {
+      let s = room(430);
+      s += instrument();
+      // arena: clear acrylic observation tray on a shelf
+      s += `<g filter="url(#sh)"><rect x="436" y="332" width="548" height="12" fill="url(#steelH)"/><polygon points="470,108 950,108 976,292 446,292" fill="#4b5a6b"/><polygon points="470,108 950,108 976,292 446,292" filter="url(#grain)" opacity=".9"/><polygon points="470,108 950,108 976,292 446,292" fill="url(#spot)" opacity=".7"/>
+        <polygon points="470,108 950,108 976,292 446,292" fill="none" stroke="#94a3b8" stroke-width="2"/></g>
+        <g class="hot" data-act="arena"><rect x="560" y="130" width="300" height="150" fill="#fff" opacity="0.001"/></g>
+        <g id="leadsG"></g><g id="arenaMouse"></g>
+        <polygon points="446,292 976,292 976,334 446,334" fill="url(#glass)" stroke="url(#glassEdge)" stroke-width="2"/><polygon points="446,292 976,292 976,300 446,300" fill="#fff" opacity=".25"/><line x1="470" y1="296" x2="460" y2="330" stroke="#fff" stroke-width="3" opacity=".4"/>
+        ${lbl(710, 322, 'Acrylic observation tray (dark mat for contrast)', { s: 8, c: '#475569', w: 600 })}`;
+      // chronometer + mark log
+      s += `<g filter="url(#sh)"><rect x="470" y="10" width="262" height="84" rx="8" fill="#1f2937" stroke="#4b5563" stroke-width="2"/>${lbl(601, 26, 'CHRONOMETER (starts with the stimulus)', { s: 7.6, c: '#94a3b8', w: 700 })}
+        <rect x="486" y="34" width="230" height="46" rx="4" fill="url(#lcd)"/><text id="chrono" x="708" y="72" font-size="30" text-anchor="end" fill="#1f2d14" font-family="DSEG7, JetBrains Mono, monospace">00:00.0</text></g>
+        <g filter="url(#sh)"><rect x="746" y="10" width="238" height="84" rx="4" fill="#fffdf6"/>${lbl(865, 24, 'PHASE MARKS (s after stimulus)', { s: 8, w: 800, c: '#0a1f44' })}<g id="markLog" transform="translate(746 10)"></g></g>`;
+      // bench items
+      s += bottle(484, 350, { act: 'wet', title: '0.9% NaCl', sub: 'electrode wetting', cap: '#16a34a', kind: 'glass', liq: 'url(#liquid)', level: .7, w: 50, h: 74, ts: 6 }) + lbl(509, 450, 'Saline for electrodes', { c: '#cbd5e1', s: 9 });
+      s += `<g class="hot" data-act="wet"><ellipse cx="590" cy="418" rx="38" ry="10" fill="#e5e7eb" stroke="#9ca3af"/><ellipse cx="590" cy="414" rx="30" ry="7" fill="#f8fafc"/><g id="gauze"></g></g>${lbl(590, 450, 'Saline gauze', { c: '#cbd5e1', s: 9 })}`;
+      s += `<g id="clipTray"></g><g id="clipsG"></g>`;
+      s += bottle(822, 356, { act: 'anaes', title: 'PROPARACAINE', sub: '0.5% eye drops', cap: '#7c3aed', kind: 'glass', liq: 'url(#liquid)', level: .6, w: 36, h: 66, ts: 4.8, ss: 4.6 }) + lbl(826, 450, 'Eye drops (corneal)', { c: '#cbd5e1', s: 8.5 });
+      s += cageSide(880, 440, 108, 70, 'ret', 'RECOVERY', 'return here', '', {}) + lbl(934, 534, 'Recovery cage', { c: '#cbd5e1', s: 9 });
+      return s;
+    }
+    const clipArt = (x, y, ang, k = 1) => `<g transform="translate(${x} ${y}) rotate(${ang}) scale(${k})"><rect x="-6" y="-2.6" width="12" height="5.2" rx="1.6" fill="url(#steel)" stroke="#374151" stroke-width=".6"/><path d="M-6 -2.6 L-9 -1.2 L-9 1.2 L-6 2.6" fill="#9ca3af" stroke="#374151" stroke-width=".5"/><rect x="2" y="-3.4" width="5" height="6.8" rx="1" fill="#dc2626" opacity=".85"/></g>`;
+    let _mesPose = '';
+    function dyn4() {
+      if (S.station !== 4) return;
+      const A = S.app, m = S.plat === null ? null : S.mice[S.plat], tt = m && m.test ? S.t - m.test.t : null;
+      const st = m && m.test ? mesState(m.test.tl, tt) : 'normal';
+      const key = (m ? m.uid : '-') + st + A.elec + A.clips;
+      if (key !== _mesPose) { _mesPose = key; $('arenaMouse').innerHTML = m ? `<g transform="translate(0 0)"><g transform="translate(${MX} ${MY}) scale(1 .9)">${pzMouse('mm', st, MK, 0)}</g></g>` : ''; }
+      const ear = [[MX + 10.4 * MK, MY - 4.6 * MK * .9], [MX + 10.4 * MK, MY + 4.6 * MK * .9]], eye = [[MX + 15.4 * MK, MY - 2.2 * MK * .9], [MX + 15.4 * MK, MY + 2.2 * MK * .9]];
+      const pts = A.elec === 'ear' ? ear : eye;
+      let lead = '', clips = '';
+      const tray = [[606, 472], [652, 486]];
+      [318, 342].forEach((sy, i) => {
+        const [x, y] = A.clips && m ? pts[i] : tray[i];
+        lead += `<path d="M414 ${sy} C ${470 + i * 14} ${sy + 40} ${(x + 440) / 2} ${y + 120 - i * 10} ${x} ${y}" fill="none" stroke="${i ? '#111827' : '#7f1d1d'}" stroke-width="3.4" stroke-linecap="round"/><path d="M414 ${sy} C ${470 + i * 14} ${sy + 40} ${(x + 440) / 2} ${y + 120 - i * 10} ${x} ${y}" fill="none" stroke="#fff" stroke-width=".8" opacity=".25" transform="translate(0 -1)"/>`;
+        clips += A.elec === 'ear' ? clipArt(x, y, A.clips && m ? 0 : 8, A.clips && m ? 1.5 : 2.2) : `<circle cx="${x}" cy="${y}" r="2.4" fill="url(#steel)" stroke="#111"/>`;
+      });
+      $('leadsG').innerHTML = lead; $('clipsG').innerHTML = clips;
+      const wet = S.t - A.wetT <= 120;
+      $('clipTray').innerHTML = `<g class="hot" data-act="clips"><path d="M570 456 L700 456 L714 498 L556 498 Z" fill="#cbd5e1" stroke="#64748b"/>${A.clips ? '' : ''}${lbl(634, 512, A.clips ? 'electrodes on the mouse' : 'Electrodes (click to attach)', { c: '#cbd5e1', s: 8.5 })}</g>`;
+      $('gauze').innerHTML = wet ? `<ellipse cx="590" cy="413" rx="22" ry="5" fill="#bae6fd" opacity=".8"/>` : '';
+      $('lcdI').textContent = A.on ? String(A.I) : ''; $('lcdT').textContent = A.on ? A.T.toFixed(2) : ''; $('lcdZ').textContent = A.on ? (A.z === null ? '' : A.z) : '';
+      $('lcdS').textContent = !A.on ? 'STANDBY' : A.led === 'hz' ? 'HIGH IMPEDANCE' : A.led === 'dl' ? 'DELIVERED' : 'READY';
+      const L = (id, on) => { const e = $(id); e.setAttribute('fill', on ? e.dataset.c : '#3f3f46'); };
+      L('ledP', A.on); L('ledR', A.on && !A.led); L('ledD', A.on && A.led === 'dl'); L('ledZ', A.on && A.led === 'hz');
+      $('pwrSw').setAttribute('fill', A.on ? '#16a34a' : '#4b5563');
+      $('chrono').textContent = m && m.test ? `${String(Math.floor(tt / 60)).padStart(2, '0')}:${(tt % 60).toFixed(1).padStart(4, '0')}` : '00:00.0';
+      const mk = m && m.test ? m.test.marks : {}, nm = { flex: 'Flexion onset', ext: 'Extension onset', clon: 'Clonus onset', stup: 'Clonus ends', rec: 'Righting regained' };
+      $('markLog').innerHTML = Object.keys(nm).map((k, i) => lbl(12, 38 + i * 10.5, `${nm[k]}:`, { s: 7.6, a: 'start', c: '#475569', w: 600 }) + lbl(150, 38 + i * 10.5, mk[k] !== undefined ? mk[k].toFixed(1) + ' s' : '—', { s: 8, a: 'start', c: mk[k] !== undefined ? '#1d4ed8' : '#94a3b8', f: 'JetBrains Mono', w: 700 })).join('');
+    }
+    function pzTick(ts) { if (S && S.station === 4 && S.plat !== null) { const m = S.mice[S.plat]; const st = m.test ? mesState(m.test.tl, S.t - m.test.t) : 'normal'; pzAnim('mm', st, ts / 1000); } }
+  </script>
+  <script>
+    // ================================================================ STATION 4 (logic): set the stimulator, apply the stimulus, score phases by time
+    function act4(a) {
+      const A = S.app, hm = handM(), m = S.plat === null ? null : S.mice[S.plat];
+      if (a === 'pwr') { A.on = !A.on; A.led = ''; A.z = null; beep('tick'); say(A.on ? 'Stimulator ON. Set the current and the duration.' : 'Stimulator OFF.'); }
+      else if (/^(cur|dur)[+-]$/.test(a)) {
+        if (!A.on) { say('Switch the stimulator on first.', true); return; }
+        if (a[0] === 'c') A.I = clamp(A.I + (a[3] === '+' ? 5 : -5), 0, 300); else A.T = clamp(+(A.T + (a[3] === '+' ? 0.05 : -0.05)).toFixed(2), 0.05, 1);
+        A.led = ''; beep('tick');
+      } else if (a === 'wet') { A.wetT = S.t; beep('click'); say('Electrode pads and ear-clips soaked in 0.9% saline: contact impedance falls. They dry out in about 2 min, re-wet for each mouse.'); }
+      else if (a === 'anaes') {
+        if (A.elec !== 'cornea') { say('Local anaesthetic is only needed for corneal electrodes (set the electrode type to corneal).'); return; }
+        if (!m) { say('Place the mouse on the platform first.', true); return; }
+        A.anaes = true; beep('click'); say('One drop of 0.5% proparacaine instilled in each eye; wait a few seconds before applying the electrodes.');
+      } else if (a === 'arena') {
+        if (m) return;
+        if (!hm) { say('Pick up a pretreated mouse from the holding cage (dosing bench) and bring it here.', true); return; }
+        if (hm.test) { say('This mouse has already been tested.', true); return; }
+        S.plat = hm.uid; hm.loc = 'plat'; S.hand = null; A.clips = false; A.anaes = false; A.led = ''; S.t += 10; beep('click'); say(`M${hm.id} placed on the tray. Wet the electrodes, attach them, set the stimulus.`);
+      } else if (a === 'clips') {
+        if (!m) { say('Place the mouse on the tray first.', true); return; }
+        if (m.test) return;
+        A.clips = !A.clips; A.led = ''; beep('click'); say(A.clips ? `${A.elec === 'ear' ? 'Ear-clip' : 'Corneal'} electrodes attached.` : 'Electrodes removed.');
+      } else if (a === 'shock') shock();
+      else if (a === 'ret') returnMouse();
+    }
+    function shock() {
+      const A = S.app, m = S.plat === null ? null : S.mice[S.plat];
+      if (!A.on) { say('The stimulator is off.', true); return; }
+      if (!m || !A.clips) { say('No mouse connected: place the mouse on the tray and attach the electrodes.', true); return; }
+      if (m.test) { say('A mouse receives one stimulus only. Return it to the recovery cage.', true); return; }
+      if (!(S.t - A.wetT <= 120)) { A.led = 'hz'; A.z = 140; beep('warn'); m.flags.push('dry electrodes (no current delivered)'); S.app.z = 140; say('HIGH IMPEDANCE (140 kΩ): the dry electrodes passed no current. Wet them with saline and try again.', true); return; }
+      const fl = [], dt = m.dose ? (S.t - m.dose.t) / 60 : null;
+      if (A.elec === 'cornea' && !A.anaes) fl.push('corneal electrodes without local anaesthetic');
+      if (Math.abs(A.I - MES_I) > 5) fl.push(`current ${A.I} mA (${MES_I} intended)`);
+      if (Math.abs(A.T - MES_T) > 0.03) fl.push(`duration ${A.T.toFixed(2)} s (${MES_T} intended)`);
+      if (dt === null) fl.push('no pretreatment given'); else if (dt < 25 || dt > 40) fl.push(`stimulus ${Math.round(dt)} min after drug (30 intended)`);
+      if (A.I < 40) fl.push('sub-maximal stimulus'); if (A.I > 80) fl.push('excessive current (rat setting)');
+      const z = +(rnd(1.6, 3.4)).toFixed(1); A.z = z; A.led = 'dl';
+      const tl = mesSeizure(m, { I: A.I, T: A.T, ok: true });
+      m.test = { t: S.t, I: A.I, T: A.T, elec: A.elec, flags: fl, tl, marks: {}, done: false };
+      S.seiz = { uid: m.uid }; m.loc = 'plat'; beep('done');
+      if (SPEED !== 1) { SPEED = 1; renderSpeed(); }
+      say(`Stimulus delivered: ${A.I} mA for ${A.T.toFixed(2)} s (load ${fx(z, 1)} kΩ). The chronometer is running: watch the posture and press the phase buttons as each phase begins.${fl.length ? ' ⚠ ' + fl.join(', ') + '.' : ''}`, fl.length > 0);
+    }
+    const MARKS = { flex: 'Tonic flexion onset', ext: 'Hind-limb extension onset', clon: 'Clonus onset', stup: 'Clonus ends (lies still)', rec: 'Righting reflex regained' };
+    function mark(k) {
+      const m = S.plat === null ? null : S.mice[S.plat];
+      if (!m || !m.test) { say('Apply the stimulus first.', true); return; }
+      if (m.test.marks[k] !== undefined) { say('That phase is already marked.', true); return; }
+      m.test.marks[k] = +(S.t - m.test.t).toFixed(1); beep('click'); say(`${MARKS[k]}: ${m.test.marks[k].toFixed(1)} s.`);
+      if (k === 'rec') say(`Righting reflex marked at ${m.test.marks.rec.toFixed(1)} s. Work out the durations, then return the mouse to the recovery cage.`);
+      renderCtx(); drawDyn(); renderNotebook(); refreshChecklist();
+    }
+    // durations the student can derive from their own marks
+    function durs(m) {
+      const k = m.test && m.test.marks; if (!k) return null;
+      const a = k.flex, e = k.ext, c = k.clon, s = k.stup, r = k.rec, N = NaN;
+      return { flex: a !== undefined && (e !== undefined || c !== undefined) ? (e !== undefined ? e : c) - a : N, ext: e !== undefined ? (c !== undefined ? c - e : N) : (c !== undefined ? 0 : N),
+        clon: c !== undefined && s !== undefined ? s - c : N, rec: s !== undefined && r !== undefined ? r - s : N };
+    }
+    function returnMouse() {
+      const m = S.plat === null ? null : S.mice[S.plat]; if (!m) { say('No mouse on the tray.'); return; }
+      if (!m.test) { S.plat = null; m.loc = 'hand'; S.hand = m.uid; S.app.clips = false; say('Mouse taken off the tray (not tested).'); return; }
+      const tl = m.test.tl, k = m.test.marks, fl = m.test.flags, T = S.t - m.test.t;
+      const need = ['flex', 'clon', 'stup', 'rec'].filter(x => k[x] === undefined);
+      if (T < tl.tR - 1) fl.push('removed before the righting reflex returned');
+      if (need.length) fl.push('phase(s) not timed: ' + need.join(', '));
+      const lag = (key, truth, tol, nm) => { if (k[key] !== undefined && Math.abs(k[key] - truth) > tol) fl.push(`${nm} timed ${k[key] - truth > 0 ? 'late' : 'early'} by ${fx(Math.abs(k[key] - truth), 1)} s`); };
+      lag('flex', tl.t0, 2, 'flexion'); lag('clon', tl.tC, 2.5, 'clonus onset'); lag('stup', tl.tS, 3, 'end of clonus'); lag('rec', tl.tR, 8, 'righting reflex');
+      if (tl.abol && k.ext !== undefined) fl.push('extension marked but HTE did not occur'); else if (!tl.abol) { if (k.ext === undefined) fl.push('hind-limb extension not timed'); else lag('ext', tl.tE, 2, 'extension'); }
+      m.test.done = true; m.loc = 'done'; S.plat = null; S.seiz = null; S.app.clips = false; S.app.anaes = false; S.app.led = ''; S.app.z = null; S.t += 10; beep('ok');
+      say(`M${m.id} returned to the recovery cage (humane end-point is carried out by trained staff per CCSEA, off-screen). Enter its phase durations in the notebook.`);
+      renderCtx(); drawDyn(); renderNotebook(); refreshChecklist();
+    }
+    function setStim(f, v) { const A = S.app; v = parseFloat(v); if (!isFinite(v)) return; if (f === 'I') A.I = clamp(Math.round(v), 0, 300); else A.T = clamp(+v.toFixed(2), 0.05, 1); A.led = ''; renderCtx(); drawDyn(); }
+    function setElec(v) { S.app.elec = v; S.app.clips = false; S.app.anaes = false; say(v === 'ear' ? 'Ear-clip (auricular) electrodes selected.' : 'Corneal electrodes selected: instil a drop of local anaesthetic first.'); renderCtx(); drawDyn(); }
+    function ctx4() {
+      const A = S.app, m = S.plat === null ? null : S.mice[S.plat], hm = handM(); let h = '';
+      h += `<div class="row">Current <input class="xb-in" style="width:62px" value="${A.I}" onchange="setStim('I',this.value)"> mA &nbsp;Duration <input class="xb-in" style="width:62px" value="${A.T.toFixed(2)}" onchange="setStim('T',this.value)"> s</div>
+        <div class="row">Electrodes <select class="xb-in" style="width:auto" onchange="setElec(this.value)"><option value="ear"${A.elec === 'ear' ? ' selected' : ''}>Ear-clip (auricular)</option><option value="cornea"${A.elec === 'cornea' ? ' selected' : ''}>Corneal</option></select></div>`;
+      if (!m) h += `<p style="color:#64748b;margin-top:6px">${hm ? `M${hm.id} is in hand: click the tray to place it.` : 'Pick up a pretreated mouse at the dosing bench (station 3), then return here and click the tray.'} Switch on the stimulator, wet the electrodes with saline, attach them, set 50 mA and 0.2 s, then press SHOCK.</p>`;
+      else if (!m.test) h += `<p style="margin-top:6px"><b>M${m.id}</b> (${GK(m.group).short}, ${fx(m.wtShown || m.wt, 1)} g) on the tray. Electrodes ${A.clips ? 'attached' : 'not attached'}; wet ${S.t - A.wetT <= 120 ? 'yes' : 'no'}.</p><div class="row">${btn('Take off the tray', 'returnMouse()', 'sec')}</div>`;
+      else {
+        const t = S.t - m.test.t, st = mesState(m.test.tl, t), k = m.test.marks;
+        h += `<div style="background:#0f172a;color:#e2e8f0;border-radius:8px;padding:8px;margin-top:8px;font-size:11.5px"><b style="color:#fde68a">M${m.id}</b> &nbsp;${fx(t, 1)} s after the stimulus<br><i style="color:#cbd5e1">${MES_OBS[st]}</i></div>
+          <div style="margin-top:6px;font-size:11px;color:#475569">Press each button the moment that phase begins:</div>
+          <div class="row">${Object.keys(MARKS).map(x => `<button class="xb-btn${k[x] !== undefined ? ' sec' : ''}" style="font-size:11px;padding:4px 7px" ${k[x] !== undefined ? 'disabled' : ''} onclick="mark('${x}')">${MARKS[x]}</button>`).join('')}</div>
+          <div class="row">${btn('Return to recovery cage', 'returnMouse()', 'sec')}</div><p style="color:#64748b;margin-top:4px;font-size:11px">If the hind limbs never extend (HTE abolished), go straight from flexion to clonus. Speed is fixed at 1× during the seizure.</p>`;
+      }
+      return ['Electroconvulsometer', h];
+    }
+  </script>
+  <script>
+    // ================================================================ routing, context panel, notebook, loop
+    function act(a, arg) {
+      if (S.station === 1) act1(a); else if (S.station === 2) act2(a, arg); else if (S.station === 3) act3(a, arg); else act4(a, arg);
+      renderCtx(); drawDyn(); refreshChecklist(); renderNotebook();
+    }
+    function buildScene() { $('scene').innerHTML = DEFS + (S.station === 1 ? sceneAnimals() : S.station === 2 ? sceneSolutions() : S.station === 3 ? sceneDosing() : sceneApparatus()); _mesPose = ''; drawDyn(); }
+    function drawDyn() { S._sceneV++; dyn1(); dyn2(); dyn3(); dyn4(); updClocks(); refreshHints(); }
+    const btn = (t, f, c = '') => `<button class="xb-btn ${c}" onclick="${f}">${t}</button>`;
+    function renderCtx() {
+      const [t, h] = S.station === 4 ? ctx4() : ctx123();
+      $('ctxTitle').textContent = t; $('ctx').innerHTML = h;
+    }
+    function nbSet(uid, f, v) { S.mice[uid].nb[f] = v.trim(); renderNotebook(); renderObservation(); refreshChecklist(); }
+    function calcSet(f, v) { S.calc[f] = v.trim(); renderNotebook(); refreshChecklist(); }
+    const nbv = (m, f) => { const v = parseFloat(m.nb[f]); return isFinite(v) ? v : NaN; };
+    const dOf = (m, f) => { const d = m.test && m.test.done ? durs(m) : null; return d ? d[f] : NaN; };
+    const hteTruth = m => m.test && m.test.done ? !m.test.tl.abol : null;
+    function allFlags(m) { return [...new Set([...m.flags, ...(m.dose ? m.dose.flags : []), ...(m.test ? m.test.flags : [])])]; }
+    const doseTol = m => Math.max(0.006, idealDoseMl(m) * 0.03);
+    function renderNotebook() {
+      const P = drugP();
+      $('nbCalc').innerHTML = UNKNOWN ? `Test drug: coded vial DRUG X (ready-made); give 10 mL/kg i.p. <span style="color:#64748b">(Dose volume per mouse = 10 mL/kg × body weight in kg.)</span>`
+        : `${P.short} for 10 mL: conc. <input class="obs-in ${chk(S.calc.conc, P.dose / 10, P.dose / 10 * 0.01)}" value="${S.calc.conc}" onchange="calcSet('conc',this.value)"> mg/mL → mass <input class="obs-in ${chk(S.calc.mass, P.conc * 10, P.conc * 10 * 0.01)}" value="${S.calc.mass}" onchange="calcSet('mass',this.value)"> mg <span style="color:#64748b">(${P.dose} mg/kg ÷ 10 mL/kg; dose volume per mouse = 10 mL/kg × weight in kg)</span>`;
+      const rows = S.mice.filter(m => m.id).sort((a, b) => a.id - b.id), inp = (m, f, cls) => `<td><input class="${cls}" value="${m.nb[f]}" onchange="nbSet(${m.uid},'${f}',this.value)"></td>`;
+      $('nbBody').innerHTML = rows.length ? rows.map(m => {
+        const fl = allFlags(m);
+        return `<tr${fl.length ? ' style="background:#fff7ed"' : ''}><td><b>M${m.id}</b></td><td>${m.group || '—'}</td>${inp(m, 'wt', chk(m.nb.wt, m.wtShown, 0.05))}${inp(m, 'dose', chk(m.nb.dose, idealDoseMl(m), doseTol(m)))}
+          ${['flex', 'ext', 'clon', 'rec'].map(f => inp(m, f, chk(m.nb[f], dOf(m, f), 0.15))).join('')}${inp(m, 'hte', chkYN(m.nb.hte, hteTruth(m)))}
+          <td style="text-align:left">${fl.map(f => `<span class="flag">${f}</span>`).join('')}</td></tr>`;
+      }).join('') : `<tr><td colspan="10" style="color:#94a3b8;font-family:Inter">Mark mice in the animal house to start your notebook.</td></tr>`;
+    }
+    function frame(dt) {
+      S.t += dt;
+      $('labClock').textContent = clockStr(S.t) + ' (' + fmtHMS(S.t) + ')';
+      const m = S.plat === null ? null : S.mice[S.plat];
+      if (m && m.test && !m.test.done && S.t - m.test.t < m.test.tl.tS + 1 && SPEED !== 1) { SPEED = 1; renderSpeed(); }
+      frame.n = (frame.n || 0) + 1;
+      if (S.station === 4) { dyn4(); pzTick(performance.now()); }
+      if (frame.n % 15 === 0) { updClocks(); refreshChecklist(); }
+      if (frame.n % 30 === 0) { if (S.station === 3) { dyn3(); refreshHints(); } if (S.station === 4 && m && m.test && !m.test.done && !$('ctx').contains(document.activeElement)) renderCtx(); }
+    }
+  </script>
+  <script>
+    // ================================================================ checklist
+    const syrTg = src => { if (!S.syrSel) return ['tub']; if (!S.syr.tub.vol) return ['b:' + src]; return []; };
+    const testing = () => S.plat !== null || (S.hand !== null && S.station === 4);
+    const STEPS = [
+      { g: 'Animal house', st: 1, t: 'Balance ON and tared', done: () => !!S.balTared, how: 'Click the balance to switch it on, then click it again (empty hands) to tare the container.', tg: () => ['balance'] },
+      { g: 'Animal house', st: 1, t: () => `Mark, weigh & randomise 12 mice (${placed().length}/12)`, done: () => ['C', 'T'].every(g => inGroup(g).length === 6),
+        how: 'Stock cage → picric acid → balance → lot jar → the holding cage named on the lot.',
+        tg: () => { const m = handM(); if (!m) return ['stock']; if (!m.id) return ['picric']; if (!m.weighed) return ['balance']; if (!m.lot) return ['lots']; return ['cage' + m.lot]; } },
+      { g: 'Animal house', st: 1, t: 'Body weights in the notebook', done: () => all12(m => chk(m.nb.wt, m.wtShown, 0.05) === 'ok-in'), how: 'Type each balance reading in the Wt column.', tg: () => [] },
+      { g: 'Solutions', st: 2, t: 'Concentration and mass for 10 mL calculated', done: () => UNKNOWN || (chk(S.calc.conc, drugP().dose / 10, drugP().dose / 100) === 'ok-in' && chk(S.calc.mass, drugP().conc * 10, drugP().conc * .1) === 'ok-in'),
+        how: () => `Notebook: conc. (mg/mL) = dose (mg/kg) ÷ 10 mL/kg; mass for 10 mL = conc. × 10 mL.`, tg: () => [] },
+      { g: 'Solutions', st: 2, t: () => UNKNOWN ? 'Coded vial DRUG X (ready-made)' : `${drugP().short} ${drugP().conc} mg/mL, 10 mL`, done: () => S.sol.drug.labelled,
+        how: () => `Boat on the analytical balance → TARE → weigh ${drugP().conc * 10} mg of ${drugP().short} → tip into the drug flask → saline to 10 mL and label.`,
+        tg: () => { const A = S.abal; if (S.sol.drug.inFl) return ['fl:drug']; if (A.mg && A.what !== 'ptz') return ['fl:drug']; if (!A.boat || !A.tared) return ['abal']; return ['jar:' + effDrug()]; } },
+      { g: 'Dosing', st: 3, t: 'Dose volume of each mouse in the notebook', done: () => all12(m => chk(m.nb.dose, idealDoseMl(m), doseTol(m)) === 'ok-in'), how: 'Volume (mL) = 10 mL/kg × body weight (kg); the drug flask is made so that 10 mL/kg gives the dose.', tg: () => [] },
+      { g: 'Dosing', st: 3, t: () => `Pretreatment i.p. (${nOk(m => m.dose)}/12)`, done: () => all12(m => m.dose),
+        how: 'Vehicle group: saline 10 mL/kg; test group: the drug flask 10 mL/kg; both i.p. with the 26 G syringe. Syringe → bottle → volume → mouse → route → Administer.',
+        tg: () => { const m = placed().find(x => !x.dose); if (!m) return []; const tg = syrTg(GK(m.group).src); return tg.length ? tg : S.hand === null ? ['m:' + m.uid] : []; } },
+      { g: 'Stimulator', st: 4, t: 'Electroconvulsometer ON, 50 mA, 0.2 s', done: () => (S.app.on && Math.abs(S.app.I - MES_I) <= 5 && Math.abs(S.app.T - MES_T) <= 0.03) || nOk(m => m.test) > 0, how: 'Switch on, then raise the current (▲) to 150 mA and the duration to 0.20 s (or type the values).',
+        tg: () => { const A = S.app; if (!A.on) return ['pwr']; return [A.I < 48 ? 'cur+' : A.I > 52 ? 'cur-' : A.T < 0.18 ? 'dur+' : A.T > 0.22 ? 'dur-' : '']; } },
+      { g: 'Stimulator', get st() { return testing() ? 4 : 3; }, t: () => `Shock each mouse 30 min after the drug and time its phases (${nOk(m => m.test && m.test.done)}/12)`, done: () => all12(m => m.test && m.test.done),
+        how: () => testing() ? 'Place the mouse on the tray → wet the electrodes with saline → attach them → press SHOCK → press each phase button when you see it begin → return the mouse to the recovery cage.' : 'When 30 min have passed since a mouse got its drug, pick it up from its holding cage, then go to station 4.',
+        tg: () => { const A = S.app, m = S.plat === null ? null : S.mice[S.plat];
+          if (!testing()) { const d = placed().filter(x => x.dose && !x.test).sort((a, b) => a.dose.t - b.dose.t)[0]; return d && S.station === 3 ? ['m:' + d.uid] : []; }
+          if (!A.on) return ['pwr']; if (!m) return ['arena']; if (!m.test) { if (!(S.t - A.wetT <= 120)) return ['wet']; if (!A.clips) return ['clips']; return ['shock']; } return m.test.marks.rec !== undefined ? ['ret'] : []; } },
+      { g: 'Records', st: 4, t: 'Phase durations and HTE (y/n) in the notebook', done: () => all12(m => m.test && m.test.done && ['flex', 'ext', 'clon', 'rec'].every(f => chk(m.nb[f], dOf(m, f), 0.15) === 'ok-in') && chkYN(m.nb.hte, hteTruth(m)) === 'ok-in'),
+        how: 'Durations are the differences between your phase marks: flexion = extension (or clonus) onset − flexion onset; extension = clonus onset − extension onset; clonus = end of clonus − clonus onset; recovery = righting − end of clonus. HTE present? y or n.', tg: () => [] },
+      { g: 'Analysis', st: 0, t: '% protection, mean extension, Fisher & t-test', done: () => analysisOk(), how: 'Open the Observation Sheet and enter % protection (HTE abolished) and mean extension duration for each group.', tg: () => [] }
+    ];
+
+    // ================================================================ observation sheet
+    const colOf = (g, f) => inGroup(g).map(m => nbv(m, f)).filter(isFinite);
+    function protOf(g) { const ms = inGroup(g).filter(m => /^(y|yes|n|no)$/i.test(m.nb.hte)); return { n: ms.length, a: ms.filter(m => /^(n|no)$/i.test(m.nb.hte)).length }; }
+    const pctProt = g => { const p = protOf(g); return p.n ? p.a / p.n * 100 : NaN; };
+    function analysis() { return groupStats(CFG.groups.map(g => ({ key: g.key, label: g.short, color: g.color, vals: colOf(g.key, 'ext') })), 'C'); }
+    function fisherP() { const c = protOf('C'), t = protOf('T'); return c.n && t.n ? fisher(c.a, c.n - c.a, t.a, t.n - t.a) : NaN; }
+    function analysisOk() { const A = analysis(); return A.every(x => x.n >= 5) && protOf('C').n >= 5 && protOf('T').n >= 5 && ['C', 'T'].every((g, k) => chk(S.notes.prot[g], pctProt(g), 0.6) === 'ok-in' && chk(S.notes.ext[g], A[k].m, 0.06) === 'ok-in'); }
+    function noteSet(f, g, v) { S.notes[f][g] = v.trim(); renderObservation(); refreshChecklist(); }
+    function renderObservation() {
+      const A = analysis(), F = { C: 0, T: 1 };
+      $('rawBox').innerHTML = tableHTML(['Mouse', 'Group', 'Wt (g)', 'Flexion (s)', 'Extension (s)', 'Clonus (s)', 'Recovery (s)', 'HTE present?', 'Technique flags'],
+        placed().sort((a, b) => a.id - b.id).map(m => [`M${m.id}`, GK(m.group).short, m.nb.wt || '—', m.nb.flex || '—', m.nb.ext || '—', m.nb.clon || '—', m.nb.rec || '—', m.nb.hte || '—', allFlags(m).map(f => `<span class="flag">${f}</span>`).join('') || '—']));
+      const fp = fisherP(), cell = (g, f) => { const v = colOf(g, f); return v.length ? fx(mean(v), 1) + ' ± ' + fx(sem(v), 1) : '—'; };
+      $('sumBox').innerHTML = `<table class="obs-table w-full text-[11px] text-center"><thead><tr><th>Group</th><th>n</th><th>Flexion (s)</th><th>Extension (s)</th><th>Clonus (s)</th><th>Recovery (s)</th><th>HTE abolished</th><th>% protection (your calc.)</th><th>Mean extension s (your calc.)</th><th>p</th></tr></thead><tbody class="font-mono">${CFG.groups.map((g, k) => {
+        const p = protOf(g.key), ext = A[k]; return `<tr><td class="font-sans text-left">${g.label}</td><td>${inGroup(g.key).length}</td><td>${cell(g.key, 'flex')}</td><td>${cell(g.key, 'ext')}</td><td>${cell(g.key, 'clon')}</td><td>${cell(g.key, 'rec')}</td><td>${p.a}/${p.n}</td>
+        <td><input id="prot${g.key}" class="obs-in ${p.n ? chk(S.notes.prot[g.key], pctProt(g.key), 0.6) : ''}" value="${S.notes.prot[g.key]}" onchange="noteSet('prot','${g.key}',this.value)"> %</td>
+        <td><input id="ext${g.key}" class="obs-in ${ext.n ? chk(S.notes.ext[g.key], ext.m, 0.06) : ''}" value="${S.notes.ext[g.key]}" onchange="noteSet('ext','${g.key}',this.value)"></td>
+        <td>${k ? `Fisher ${isFinite(fp) ? pLabel(fp) : '—'}<br>t-test (ext.) ${ext.t ? pLabel(ext.p) : '—'}` : '—'}</td></tr>`; }).join('')}</tbody></table>`;
+      barChart('chartT', { bars: A.map(g => ({ label: g.label, v: g.n ? g.m : NaN, e: g.se, color: g.color, note: g.key === 'C' ? '' : stars(g.p) })), yLabel: 'HTE duration (s)', yMax: 16, empty: 'Enter your phase durations in the notebook' });
+      const c = protOf('C'), t = protOf('T');
+      if (!(c.n >= 2 && t.n >= 2)) { $('lblInference').innerText = 'Pending'; $('lblInferenceDetail').innerText = 'Complete the electroshock testing of both groups.'; return; }
+      const pc = pctProt('C'), pt = pctProt('T');
+      const sig = pt > pc && fp < 0.05; $('lblInference').innerText = sig ? 'Anticonvulsant protection against MES' : 'No significant protection';
+      $('lblInferenceDetail').innerHTML = `HTE was abolished in ${fx(pc, 0)}% of vehicle mice and ${fx(pt, 0)}% of drug-treated mice (Fisher ${pLabel(fp)}). Mean extension: ${fx(A[0].m, 1)} s (vehicle) vs ${fx(A[1].m, 1)} s (drug)${A[1].t ? ', ' + pLabel(A[1].p) : ''}. Clonus: ${cell('C', 'clon')} s vs ${cell('T', 'clon')} s; recovery ${cell('C', 'rec')} s vs ${cell('T', 'rec')} s. ${sig ? 'Abolition of HTE is the end-point of the MES test and predicts efficacy against generalised tonic-clonic seizures.' : ''}`;
+    }
+    function verifyUnknownDeduction() {
+      const sel = $('unknownDeductionSelect').value, box = $('unknownVerdictBox');
+      if (!sel) { say('Choose a candidate drug first.', true); return; }
+      box.classList.remove('hidden');
+      const ok = sel === assignedMysteryDrugKey, P = PROFILES[assignedMysteryDrugKey];
+      box.className = `p-3 rounded-lg text-xs leading-relaxed ${ok ? 'bg-emerald-100 border border-emerald-300 text-emerald-950' : 'bg-rose-100 border border-rose-300 text-rose-950'}`;
+      box.innerHTML = `<strong>${ok ? 'CORRECT.' : 'INCORRECT.'}</strong> The unknown was <strong>${P.name}</strong>. ${P.desc}`; beep(ok ? 'done' : 'warn');
+    }
+    function buildResults() {
+      const A = analysis(), choice = $('unknownDeductionSelect') ? $('unknownDeductionSelect').value : '', p = protOf('C'), q = protOf('T'), fp = fisherP();
+      const cells = placed().flatMap(m => m.test && m.test.done ? [...['flex', 'ext', 'clon', 'rec'].map(f => chk(m.nb[f], dOf(m, f), 0.15)), chkYN(m.nb.hte, hteTruth(m))] : []).filter(Boolean);
+      return { rows: [['Test drug', UNKNOWN ? 'Unknown mystery drug' : drugP().name], ['HTE abolished: vehicle / drug', `${p.a}/${p.n} • ${q.a}/${q.n}`], ['% protection: vehicle / drug', `${fx(pctProt('C'), 0)}% • ${fx(pctProt('T'), 0)}%`],
+          ['Mean HTE duration (s): vehicle / drug', `${A[0].n ? fx(A[0].m, 1) : '—'} • ${A[1].n ? fx(A[1].m, 1) : '—'}`], ['Fisher exact (protection)', isFinite(fp) ? pLabel(fp) : '—'], ['t-test (HTE duration)', A[1].t ? pLabel(A[1].p) : '—'],
+          ['Notebook entries correct', `${cells.filter(x => x === 'ok-in').length} / ${cells.length}`], ['Mice with a technique fault', placed().filter(m => allFlags(m).length).length], ['Your deduction', choice ? (PROFILES[choice] || { short: 'Inactive vehicle' }).short : 'Not submitted']],
+        text: UNKNOWN && choice ? `${choice === assignedMysteryDrugKey ? 'CORRECT DIAGNOSIS.' : 'INCORRECT.'} The mystery drug was ${PROFILES[assignedMysteryDrugKey].name}. ${PROFILES[assignedMysteryDrugKey].desc}` : (UNKNOWN ? 'Compare HTE, clonus and the post-ictal period with the known profiles (phenytoin, valproate, diazepam) and submit your deduction.' : drugP().desc + ' In the MES test, abolition of the tonic hind-limb extensor phase predicts activity against generalised tonic-clonic and partial seizures.') };
+    }
+    const QUIZ = [
+      { q: 'What is the end-point that shows anticonvulsant protection in the MES test?', o: ['Longer clonus', 'Abolition (or marked reduction) of tonic hind-limb extension', 'Loss of corneal reflex', 'Shorter stupor'], a: 1 },
+      { q: 'Phenytoin protects in the MES test mainly by:', o: ['Opening GABA-A chloride channels', 'Use-dependent block of voltage-gated Na⁺ channels', 'Blocking T-type Ca²⁺ channels in the thalamus', 'Blocking NMDA receptors'], a: 1 },
+      { q: 'Why are the ear-clip electrodes soaked in saline before the stimulus?', o: ['To lower contact impedance so the set current really flows (and avoid skin burns)', 'To anaesthetise the ear', 'To stimulate hearing', 'To disinfect the clip'], a: 0 },
+      { q: 'A mouse receives the shock with dry electrodes and nothing happens. The correct reading is:', o: ['The drug protected it', 'A high-impedance fault: no current was delivered, re-wet and repeat', 'The mouse is resistant', 'The current was too high'], a: 1 },
+      { q: 'Typical MES stimulus for mice in this practical is:', o: ['5 mA for 2 s', '50 mA for 0.2 s', '1 A for 5 s', '150 mA for 5 s'], a: 1 },
+      { q: 'Why is each mouse stimulated 30 min after i.p. drug?', o: ['To reach the time of peak drug effect', 'To let the saline dry', 'Because the apparatus warms up', 'To lower body temperature'], a: 0 },
+      { q: 'Which phase is abolished by phenytoin but NOT by ethosuximide-type absence drugs?', o: ['Clonus', 'Tonic hind-limb extension', 'Flexion', 'Post-ictal depression'], a: 1 },
+      { q: 'Prolonged post-ictal depression with strong suppression of clonus in a protected mouse suggests:', o: ['Phenytoin', 'Diazepam (sedative GABAergic drug)', 'Vehicle', 'Dopamine agonist'], a: 1 },
+      { q: 'Protection (HTE abolished vs present) in two groups of 6 is best compared with:', o: ['Unpaired t-test', 'Fisher exact test', 'Paired t-test', 'Correlation'], a: 1 }
+    ];
+    // Reference data for automated platform tests only (no button; blocked in exam mode)
+    function loadReferenceDataset() {
+      S = freshState(); S.balOn = S.balTared = true; S.calc = { conc: String(drugP().dose / 10), mass: String(drugP().conc * 10), pmass: '' };
+      if (!UNKNOWN) S.sol.drug = { mg: drugP().conc * 10, what: effDrug(), inFl: false, vol: 10, labelled: true, conc: drugP().conc, left: 7, ready: false };
+      const abol = { C: [0, 0, 0, 0, 0, 0], T: effDrug() === 'phenytoin' ? [1, 1, 1, 1, 1, 1] : [1, 1, 1, 0, 1, 1] };
+      let id = 1;
+      ['C', 'T'].forEach(g => abol[g].forEach(ab => {
+        const m = S.mice[id - 1], P = PROFILES[g === 'C' ? 'vehicle' : effDrug()], fl = +(P.flex[0] + gauss() * .2).toFixed(1), ex = ab ? 0 : +(12.4 + gauss()).toFixed(1), cl = +(P.clon[0] + gauss()).toFixed(1), rc = +(P.rec[0] + gauss() * 4).toFixed(1);
+        Object.assign(m, { id, weighed: true, wtShown: m.wt, lot: g, group: g, loc: 'done' });
+        m.dose = { t: id * 60, src: g === 'C' ? 'sal' : 'drug', vol: m.wt / 100, route: 'ip', mgkg: g === 'C' ? 0 : drugP().dose, what: g === 'C' ? null : effDrug(), flags: [] };
+        const t0 = 0.2, tE = t0 + fl, tC = tE + ex, tS = tC + cl, tR = tS + rc;
+        m.test = { t: id * 60 + 1800, I: 50, T: 0.2, elec: 'ear', flags: [], tl: { sz: true, abol: !!ab, flex: fl, ext: ex, clon: cl, rec: rc, t0, tE, tC, tS, tR }, done: true,
+          marks: { flex: t0, ...(ex ? { ext: +tE.toFixed(1) } : {}), clon: +tC.toFixed(1), stup: +tS.toFixed(1), rec: +tR.toFixed(1) } };
+        const d = durs(m); m.nb = { wt: String(m.wt), dose: (m.wt / 100).toFixed(2), flex: d.flex.toFixed(1), ext: d.ext.toFixed(1), clon: d.clon.toFixed(1), rec: d.rec.toFixed(1), hte: ab ? 'n' : 'y' }; id++;
+      }));
+      S.t = 4200; S.nextId = 13;
+      const A = analysis(); ['C', 'T'].forEach((g, k) => { S.notes.prot[g] = pctProt(g).toFixed(0); S.notes.ext[g] = A[k].m.toFixed(1); });
+      goStation(4); renderNotebook(); renderObservation(); refreshChecklist(); say('Reference dataset loaded.');
+    }
+    function newExperiment() { S = freshState(); goStation(1); renderNotebook(); refreshChecklist(); say('New batch: 12 mice are in the stock cage.'); }
+    function init() {
+      S = freshState(); fillDrugSel();
+      $('unknownDeductionSelect').innerHTML += TEST_KEYS.map(k => `<option value="${k}">${PROFILES[k].name}</option>`).join('') + '<option value="vehicle">Inactive vehicle (no protection)</option>';
+      $('scene').addEventListener('pointerdown', e => { if (e.button === 0) onSceneClick(e); });
+      goStation(1); renderNotebook(); refreshChecklist();
+      say('12 mice are in the stock cage. Switch on the balance and tare it first.');
+      startLoop(dt => frame(dt));
+      const _sw = switchTab; window.switchTab = function (id) { _sw(id); if (id === 'experiment') { buildScene(); renderNotebook(); } };
+    }
+  </script>
+  <script src="../assets/js/viva.js"></script>
+</body>
+</html>

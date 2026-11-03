@@ -1,0 +1,221 @@
+{% extends 'base.html' %}{% load static %}
+{% block title %}{{ SITE_FULL_NAME }}{% endblock %}
+{% block main_class %}flex-1 w-full{% endblock %}
+{% block notices_class %}xh-wrap xh-notices space-y-2{% endblock %}
+{% block content %}
+<section class="xh-hero">
+  <div class="xh-wrap xh-hero-grid">
+    <div>
+      <p class="xh-eyebrow">The next generation of pharmacology education</p>
+      <h1>Experiment Virtually.<br>Learn Practically.<br><span>Advance Ethically.</span></h1>
+      <p class="xh-lead">Explore {{ n_total }} interactive experimental pharmacology simulations. Master experimental techniques, analyse drug responses and strengthen your practical knowledge while supporting the 3Rs.</p>
+      <div class="xh-actions">
+      {% if not user.is_authenticated %}
+        <a href="{% url 'trial_signup' %}" class="xh-btn xh-btn-teal">Start free trial</a>
+        <a href="{% url 'modules' %}" class="xh-btn xh-btn-ghost">Explore modules</a>
+      {% elif trial %}
+        <a href="{% url 'modules' %}" class="xh-btn xh-btn-teal">Open the lab</a>
+        <a href="{% url 'subscribe' %}" class="xh-btn xh-btn-ghost">Subscribe for full access</a>
+      {% elif user.role == Role.STUDENT %}
+        <a href="{% url 'student_dashboard' %}" class="xh-btn xh-btn-teal">Go to my assignments</a>
+        <a href="{% url 'modules' %}" class="xh-btn xh-btn-ghost">Practice lab</a>
+      {% else %}
+        <a href="{% url 'home' %}" class="xh-btn xh-btn-teal">Go to my dashboard</a>
+        <a href="{% url 'modules' %}" class="xh-btn xh-btn-ghost">Explore modules</a>
+      {% endif %}
+      </div>
+      <dl class="xh-stats">
+        <div><dt>Simulations</dt><dd>{{ n_total }}</dd></div>
+        <div><dt>Ethical learning</dt><dd>3Rs</dd></div>
+        <div><dt>Virtual practice</dt><dd>100%</dd></div>
+      </dl>
+    </div>
+    <figure class="xh-bench" id="bench">
+      <div class="xh-bench-bar" role="group" aria-label="Choose a simulation to preview">
+        <button type="button" data-shot="0" aria-pressed="true">Rota-Rod</button>
+        <button type="button" data-shot="1" aria-pressed="false">Plus Maze</button>
+        <button type="button" data-shot="2" aria-pressed="false">Dose–Response</button>
+      </div>
+      <div class="xh-bench-stage">
+        <img class="is-on" src="{% static 'img/modules/hero-rota-rod.jpg' %}" alt="The XPRISM Rota-Rod bench during a run: mice on the rotating rod with their fall-off times recorded" width="1360" height="850">
+        <img src="{% static 'img/modules/hero-plus-maze.jpg' %}" alt="The XPRISM Elevated Plus Maze bench, with open-arm entries and time being recorded" width="1360" height="850" loading="lazy">
+        <img src="{% static 'img/modules/hero-dose-response.jpg' %}" alt="The XPRISM frog rectus abdominis bench, with graded contractions recorded on a kymograph" width="1360" height="850" loading="lazy">
+      </div>
+      <figcaption>Screens from the XPRISM simulations</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="xh-sec xh-3rs" id="three-rs">
+  <div class="xh-wrap">
+    <div class="xh-head">
+      <p class="xh-kicker">The 3Rs</p>
+      <h2>Better Science. Fewer Animals. More Responsible Learning.</h2>
+    </div>
+    <div class="xh-rs">
+      <article>
+        <span class="xh-r" aria-hidden="true">R<sub>1</sub></span>
+        <h3>Replacement</h3>
+        <p>Use interactive computer simulations as alternatives to live-animal practicals in pharmacology education.</p>
+      </article>
+      <article>
+        <span class="xh-r" aria-hidden="true">R<sub>2</sub></span>
+        <h3>Reduction</h3>
+        <p>Allow repeated digital practice and better preparation, supporting efforts to reduce unnecessary animal use.</p>
+      </article>
+      <article>
+        <span class="xh-r" aria-hidden="true">R<sub>3</sub></span>
+        <h3>Refinement</h3>
+        <p>Teach humane procedures, animal welfare, careful experimental planning and responsible research practice.</p>
+      </article>
+    </div>
+    <div class="xh-rs-foot">
+      <a href="{% url 'ethics' %}" class="xh-link">Explore our 3Rs commitment →</a>
+      <p>XPRISM simulations are teaching aids for practical and preparatory training. They do not replace the approvals required for real research involving animals.</p>
+    </div>
+  </div>
+</section>
+
+<section class="xh-sec xh-tint" id="modules">
+  <div class="xh-wrap">
+    <div class="xh-head xh-head-row">
+      <div>
+        <p class="xh-kicker">The modules</p>
+        <h2>A bench for every practical.</h2>
+      </div>
+      <ul class="xh-counts">
+        {% for s in sections %}{% if s.items %}<li><b class="mono">{{ s.items|length }}</b> {{ s.name }}</li>{% endif %}{% endfor %}
+      </ul>
+    </div>
+    <div class="xh-featured">
+      {% for e in featured %}{% include 'lab/_exp_card.html' %}{% endfor %}
+    </div>
+    <div class="xh-center"><a href="{% url 'modules' %}" class="xh-btn xh-btn-purple">View all {{ n_total }} modules</a></div>
+  </div>
+</section>
+
+<section class="xh-sec" id="how-it-works">
+  <div class="xh-wrap">
+    <div class="xh-head">
+      <p class="xh-kicker">How it works</p>
+      <h2>From principle to viva.</h2>
+    </div>
+    {# a graded response: each step of the journey is one contraction on the kymograph, rising to a maximum #}
+    <svg class="xh-trace" viewBox="0 0 1200 90" preserveAspectRatio="none" aria-hidden="true">
+      <defs><linearGradient id="xhTraceInk" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#4e1c8f"/><stop offset=".35" stop-color="#7e13b5"/><stop offset=".7" stop-color="#066eaa"/><stop offset="1" stop-color="#2bbfb0"/></linearGradient></defs>
+      <path d="M0 82H95C120 82 125 64 150 64S180 82 205 82H395C420 82 425 46 450 46S480 82 505 82H695C720 82 725 26 750 26S780 82 805 82H995C1020 82 1025 8 1050 8S1080 82 1105 82H1200" fill="none" stroke="url(#xhTraceInk)" stroke-width="3" vector-effect="non-scaling-stroke"/>
+    </svg>
+    <ol class="xh-steps">
+      <li><span class="mono">01</span><h3>Understand the experiment</h3><p>Study the aim, principle, apparatus and experimental procedure.</p></li>
+      <li><span class="mono">02</span><h3>Perform the virtual practical</h3><p>Interact with equipment, administer simulated drugs and observe responses.</p></li>
+      <li><span class="mono">03</span><h3>Record and analyse</h3><p>Complete observation sheets, interpret graphs and calculate results.</p></li>
+      <li><span class="mono">04</span><h3>Assess understanding</h3><p>Answer viva questions, submit practicals and receive faculty feedback.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="xh-sec xh-tint" id="capabilities">
+  <div class="xh-wrap">
+    <div class="xh-head">
+      <p class="xh-kicker">The platform</p>
+      <h2>More than a set of simulations.</h2>
+    </div>
+    <div class="xh-caps">
+      <article>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6.5L4.8 18a2 2 0 0 0 1.7 3h11a2 2 0 0 0 1.7-3L14 9.5V3M7.5 15h9"/></svg>
+        <h3>Interactive virtual laboratory</h3>
+        <p>Experiment-specific digital benches and simulated pharmacological responses.</p>
+      </article>
+      <article>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4H7a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2M9 3h6v3H9zM9 13l2 2 4-4"/></svg>
+        <h3>Practical assessments</h3>
+        <p>Observation sheets, viva questions, submissions, grading and a timed exam mode.</p>
+      </article>
+      <article>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.600 3.200-5.500 6.500-5.500s5.900 1.900 6.500 5.500M16 4.800a3.500 3.500 0 0 1 0 6.400M18 14.900c1.900.8 3.100 2.500 3.500 5.100"/></svg>
+        <h3>Faculty &amp; class management</h3>
+        <p>Batch enrolment, assignments, attempts and student progress.</p>
+      </article>
+      <article>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4v16h16M8 16v-4M12.500 16V8M17 16v-6"/></svg>
+        <h3>Results &amp; reporting</h3>
+        <p>Marks, feedback and academic records you can export to Excel or CSV.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="xh-sec xh-navy" id="who-its-for">
+  <div class="xh-wrap">
+    <div class="xh-head">
+      <p class="xh-kicker">Who it's for</p>
+      <h2>One lab, three ways in.</h2>
+    </div>
+    <div class="xh-who">
+      <article>
+        <h3>Students</h3>
+        <p>Practise each technique as often as you need, then check your understanding before the practical counts.</p>
+      </article>
+      <article>
+        <h3>Faculty</h3>
+        <p>Create batches, assign experiments with due dates and attempts, review submissions and export marks.</p>
+      </article>
+      <article>
+        <h3>Colleges</h3>
+        <p>Adopt digital teaching alternatives, manage staff and choose which experiments your college uses.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="xh-sec" id="resources">
+  <div class="xh-wrap xh-duo">
+    <a href="{% url 'documentation' %}">
+      <p class="xh-kicker">Documentation</p>
+      <h2>Guides for every role and every module.</h2>
+      <p>Getting started, the experiment user guide, faculty and institutional guides, calculations, references and FAQs.</p>
+      <span class="xh-link">Read the documentation →</span>
+    </a>
+    <a href="{% url 'ethics' %}">
+      <p class="xh-kicker">Ethics</p>
+      <h2>Responsible science, built in.</h2>
+      <p>The 3Rs and the CCSEA and PCI framework behind XPRISM, and the ethical-use agreement every user accepts.</p>
+      <span class="xh-link">Read about ethical use →</span>
+    </a>
+  </div>
+</section>
+
+{% if not user.is_authenticated %}
+<section class="xh-cta">
+  <div class="xh-wrap">
+    <h2>Start Your Virtual Pharmacology Journey</h2>
+    <p>Learn experimental techniques through interactive simulations and responsible science.</p>
+    <div class="xh-cta-choices">
+      <a href="{% url 'trial_signup' %}"><b>Start free trial</b><span>One exploration per experiment</span></a>
+      <a href="{% url 'signup' %}"><b>Join with class code</b><span>Your faculty gave you a code</span></a>
+    </div>
+    <p class="xh-cta-signin">Already registered? <a href="{% url 'login' %}">Sign in to your account.</a></p>
+  </div>
+</section>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+<script>
+  (function () {
+    const bench = document.getElementById('bench');
+    const tabs = [...bench.querySelectorAll('[data-shot]')], shots = [...bench.querySelectorAll('.xh-bench-stage img')];
+    let i = 0, timer = null;
+    function show(n) {
+      i = n;
+      shots.forEach((s, k) => s.classList.toggle('is-on', k === n));
+      tabs.forEach((t, k) => t.setAttribute('aria-pressed', k === n ? 'true' : 'false'));
+    }
+    tabs.forEach((t, k) => t.addEventListener('click', () => { stop(); show(k); }));
+    function stop() { clearInterval(timer); timer = null; }
+    function play() { if (!timer && !matchMedia('(prefers-reduced-motion: reduce)').matches) timer = setInterval(() => show((i + 1) % shots.length), 5000); }
+    bench.addEventListener('mouseenter', stop); bench.addEventListener('focusin', stop);
+    bench.addEventListener('mouseleave', play);
+    play();
+  })();
+</script>
+{% endblock %}

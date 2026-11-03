@@ -1,0 +1,21 @@
+# /etc/systemd/system/xprism.service
+[Unit]
+Description=XPRISM (gunicorn)
+After=network.target postgresql.service
+
+[Service]
+User=xprism
+Group=www-data
+WorkingDirectory=/opt/xprism/app
+EnvironmentFile=/opt/xprism/app/.env
+ExecStart=/opt/xprism/venv/bin/gunicorn config.wsgi:application --bind 127.0.0.1:8001 --workers 3 --timeout 60 --access-logfile - --error-logfile -
+Restart=on-failure
+RestartSec=5
+# hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

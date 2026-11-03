@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exp 23: Anti-ulcer Activity: Pylorus Ligation • XPRISM</title>
+  <meta name="description" content="Gastric volume, acidity and ulcer index with ranitidine / omeprazole.">
+    <meta name="theme-color" content="#0a1f44">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
+  <link rel="stylesheet" href="../assets/css/tailwind.css">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <script src="../assets/js/tone.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #f1f5f9; color: #0a1f44; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .seg { font-family: 'DSEG7', 'JetBrains Mono', monospace; }
+    .svg-btn { cursor: pointer; }
+    .chip { padding: 2px 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff; font-size: 11px; font-weight: 600; color: #334155; transition: all .12s; }
+    .chip:hover { border-color: #9b33d9; }
+    .chip.on { background: #7e13b5; border-color: #7e13b5; color: #fff; }
+    .chip:disabled { opacity: .45; cursor: not-allowed; }
+    .btn { border-radius: 8px; font-size: 12px; font-weight: 600; transition: all .12s; }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+    .obs-table th, .obs-table td { padding: 4px 6px; border-bottom: 1px solid #e2e8f0; }
+    .obs-table thead th { background: #f8fafc; color: #475569; font-weight: 600; }
+    .scroll-thin::-webkit-scrollbar { height: 8px; width: 8px; }
+    .scroll-thin::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+    #viewExperiment svg text { user-select: none; }
+    
+    @media print {
+      header, #subHeader, #viewTask, #viewExperiment, .no-print { display: none !important; }
+      #viewObservation { display: flex !important; box-shadow: none; border: none; }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-100 overflow-x-hidden">
+
+  <!-- TOP BRANDING BAR (XPRISM Header) -->
+  <header class="site-header bg-white border-b border-slate-200 px-4 md:px-6 py-2 flex items-center justify-between gap-3 shadow-sm shrink-0">
+    <div class="flex items-center gap-3 min-w-0">
+    <a href="../index.html" title="Back to Lab Home" class="shrink-0"><img src="../assets/img/xprism-lockup.png" alt="XPRISM" class="h-11 w-auto" width="146" height="49"></a>
+      <div class="min-w-0 border-l border-slate-200 pl-3">
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="text-[10px] uppercase font-bold bg-teal-50 text-teal-700 px-2 py-0.5 rounded-full border border-teal-200 font-display tracking-wide">Virtual Lab</span>
+        <a href="../index.html" class="text-[11px] font-semibold text-teal-700 hover:underline">← All experiments</a>
+      </div>
+      <p class="text-xs text-slate-500">Aaron Innovations • Experimental Pharmacology Research &amp; Interactive Student Module</p>
+    </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="hidden md:block text-right">
+        <div class="text-xs font-semibold text-slate-800 flex items-center justify-end space-x-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Dr. Vara Prasad Saka</span>
+        </div>
+        <div class="text-[11px] text-slate-500 font-mono">ID: 8019152501 • Dept. of Pharmacology</div>
+      </div>
+      <div class="flex items-center gap-2 border-l pl-4 border-slate-200">
+        <a class="site-nav-btn" href="22-drugs-on-blood-pressure-and-heart-rate.html" title="Previous: Exp #22 Drugs on Blood Pressure &amp; Heart Rate">‹</a><a class="site-nav-btn" href="24-gastrointestinal-motility-charcoal-meal.html" title="Next: Exp #24 Gastrointestinal Motility: Charcoal Meal">›</a>
+        <button id="audioToggleBtn" class="p-2 rounded-lg bg-teal-100 hover:bg-teal-200 text-teal-800 transition" title="Toggle sound feedback" aria-label="Toggle sound feedback">
+          <svg id="soundIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+        </button>
+        <span class="hidden sm:inline bg-indigo-100 text-indigo-800 text-xs px-2.5 py-1 rounded-md font-medium border border-indigo-200 whitespace-nowrap">Exp #23</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- SUB-HEADER / VIEW TABS -->
+
+  <div id="subHeader" class="site-subheader bg-slate-800 text-white px-4 md:px-6 py-2 flex flex-wrap items-center justify-between gap-3 shadow shrink-0">
+    <div class="text-sm font-semibold tracking-wide flex items-center space-x-2 min-w-0">
+      <span class="text-teal-400 font-mono text-xs px-1.5 py-0.5 rounded bg-teal-950/80 border border-teal-500/40 shrink-0">MODULE 23</span>
+      <span>Examination 23: To Evaluate the Anti-ulcer and Antisecretory Activity of Ranitidine and Omeprazole by the Pylorus Ligation (Shay Rat) Model</span>
+    </div>
+    <div class="flex items-center space-x-1.5 bg-slate-900/80 p-1 rounded-lg border border-slate-700" role="tablist">
+      <button id="tabTask" onclick="switchTab('task')" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white transition">Task Description</button>
+      <button id="tabExperiment" onclick="switchTab('experiment')" class="px-3.5 py-1.5 rounded-md text-xs font-semibold bg-teal-500 text-white shadow transition">Experiment Bench</button>
+      <button id="tabObservation" onclick="switchTab('observation')" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white transition">Observation Sheet &amp; Graphs</button>
+    </div>
+  </div>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-5 flex flex-col min-h-0">
+
+    <!-- TAB 1: TASK DESCRIPTION -->
+    <div id="viewTask" class="hidden flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between overflow-y-auto">
+      <div class="max-w-5xl space-y-6">
+        <div class="border-b pb-4">
+          <div class="inline-block px-2.5 py-1 rounded bg-teal-50 text-teal-800 text-xs font-bold font-mono mb-2">EXPERIMENT OBJECTIVE</div>
+          <h2 class="text-xl font-bold text-slate-900">Anti-ulcer Activity by Pylorus Ligation (Shay Rat Model)</h2>
+          <p class="text-sm text-slate-600 mt-2 leading-relaxed">Ligation of the pylorus in fasted rats causes accumulation of acid–pepsin in the stomach and ulceration of the forestomach and glandular mucosa within hours. Pretreat groups with <strong>vehicle</strong>, <strong>ranitidine</strong> (H<sub>2</sub> blocker) or <strong>omeprazole</strong> (proton-pump inhibitor), ligate the pylorus, and after 4 h measure <strong>gastric volume, pH, free and total acidity</strong> and the <strong>ulcer index</strong>.</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-4">
+          <div class="p-4 rounded-xl bg-sky-50/70 border border-sky-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-sky-500 text-white flex items-center justify-center font-bold text-sm shadow">1</div>
+            <h3 class="text-sm font-bold text-sky-950">Acidity by titration</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">Titrate 1 mL of centrifuged gastric juice with 0.01 N NaOH: <b>Töpfer's reagent</b> (red → yellow) gives <b>free acidity</b>; then <b>phenolphthalein</b> (colourless → pink) gives <b>total acidity</b>.<br><span class="font-mono">Acidity (mEq/L) = V<sub>NaOH</sub> × N × 1000 ÷ V<sub>sample</sub></span></p>
+          </div>
+          <div class="p-4 rounded-xl bg-amber-50/70 border border-amber-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center font-bold text-sm shadow">2</div>
+            <h3 class="text-sm font-bold text-amber-950">Ulcer score</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">0 normal • 0.5 red colouration • 1 spot ulcers • 1.5 haemorrhagic streaks • 2 ulcers 3–5 mm • 3 ulcers &gt; 5 mm. <b>Ulcer index</b> = mean score of the group.<br><span class="font-mono">% protection = (UI<sub>c</sub> − UI<sub>t</sub>) / UI<sub>c</sub> × 100</span></p>
+          </div>
+          <div class="p-4 rounded-xl bg-emerald-50/70 border border-emerald-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center font-bold text-sm shadow">3</div>
+            <h3 class="text-sm font-bold text-emerald-950">Expected</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">Both drugs reduce volume and acidity, raise pH and protect against ulcers. Omeprazole (irreversible H⁺/K⁺-ATPase block) is usually more effective than ranitidine.</p>
+          </div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Requirements</h4>
+            <ul class="text-xs text-slate-600 space-y-1 list-disc pl-4"><li>Wistar rats 150–200 g, 6 per group, fasted 24 h (water ad lib) in wire-bottom cages</li><li>Ranitidine 50 mg/kg p.o., omeprazole 20 mg/kg p.o., vehicle (1% CMC)</li><li>Ether / ketamine anaesthesia, silk thread, surgical kit</li><li>Centrifuge, pH meter, burette, 0.01 N NaOH, Töpfer's reagent, phenolphthalein</li><li>Magnifying lens (10×) for ulcer scoring</li></ul>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Procedure</h4>
+            <ol class="text-xs text-slate-600 space-y-1 list-decimal pl-4"><li>Fast the rats for 24 h. Give vehicle / drug orally.</li><li>After 30 min, under light anaesthesia, open the abdomen and ligate the pylorus without damaging the blood supply. Close the wound.</li><li>After 4 h, sacrifice the rats, ligate the oesophagus, remove the stomach and collect its contents.</li><li>Measure volume and pH; centrifuge; titrate 1 mL of supernatant for free and total acidity.</li><li>Open the stomach along the greater curvature, rinse, and score ulcers under a lens.</li></ol>
+          </div>
+        </div>
+      </div>
+      <div class="pt-6 border-t flex justify-end mt-6">
+        <button onclick="switchTab('experiment')" class="px-6 py-2.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-semibold text-sm shadow flex items-center space-x-2 transition">
+          <span>Go to Experiment Stage</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 2: EXPERIMENT BENCH -->
+    <div id="viewExperiment" class="flex-1 flex flex-col lg:flex-row gap-4 min-h-[620px]">
+      <div class="flex-1 min-w-0 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col relative overflow-hidden">
+        <div class="p-3 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 z-10 shrink-0">
+          <div class="flex flex-wrap items-center gap-1.5" id="stageBtns"></div>
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-medium text-slate-500">Speed:</span>
+            <div class="flex rounded-lg border border-slate-300 bg-white p-0.5 shadow-sm" id="speedBtns"></div>
+            <button onclick="if(confirm('Discard all recorded data and start a new experiment?')) newExperiment()" class="px-3 py-1 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-medium shadow transition">New Experiment</button>
+          </div>
+        </div>
+        <div id="stepper" class="px-3 py-2 bg-white border-b border-slate-200 flex flex-wrap gap-1.5 text-[11px] font-semibold shrink-0"></div>
+        <div id="benchArea" class="flex-1 relative flex flex-col overflow-hidden" style="background:#e9eef2">
+          <div id="waitCard" class="hidden absolute top-3 right-3 z-20 bg-slate-900/90 text-white rounded-xl px-4 py-3 shadow-xl border border-slate-700 backdrop-blur w-60">
+            <div id="waitTitle" class="text-[10px] uppercase tracking-wider text-amber-300 font-bold font-mono">Waiting</div>
+            <div id="waitClock" class="seg text-3xl text-amber-400 mt-1" style="text-shadow:0 0 10px rgba(251,191,36,.6)">00:00</div>
+            <div class="h-1.5 bg-slate-700 rounded mt-2 overflow-hidden"><div id="waitBar" class="h-full bg-amber-400 w-0"></div></div>
+            <button onclick="skipWait()" class="mt-2 w-full py-1 text-[11px] rounded bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold">⏩ Skip waiting</button>
+          </div>
+          <svg id="scene" viewBox="0 0 1000 430" preserveAspectRatio="xMidYMid meet" class="w-full block flex-1 min-h-0"></svg>
+          <div id="actionFeedback" class="m-2 mt-0 bg-slate-900/90 text-white py-2 px-4 rounded-lg text-xs flex items-center justify-between shadow-lg border border-slate-700 shrink-0">
+            <div class="flex items-center space-x-2">
+              <span id="feedbackIcon" class="text-teal-400 font-bold text-sm">ℹ</span>
+              <span id="feedbackText">Ready.</span>
+            </div>
+            <span id="phaseIndicator" class="text-[11px] font-mono text-slate-400 hidden sm:inline"></span>
+          </div>
+        </div>
+      </div>
+      <div class="w-full lg:w-80 bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-col gap-3 shrink-0 overflow-y-auto">
+        <div>
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Rats (select to process)</h3>
+          <div id="ratGrid" class="mt-1.5 space-y-1"></div>
+        </div>
+        <div id="procPanel" class="space-y-2"></div>
+        <div class="pt-2 border-t border-slate-200 space-y-2 mt-auto">
+          <button onclick="processAll()" class="w-full py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-medium transition">Assistant processes remaining rats</button>
+          <button onclick="runAllInstant()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow transition">⚡ Run the complete experiment</button>
+          <button onclick="switchTab('observation')" class="w-full py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium transition">Open Observation Sheet →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: OBSERVATION SHEET -->
+    <div id="viewObservation" class="hidden flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between overflow-y-auto">
+      <div class="space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b pb-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Observation Table: Gastric Secretion and Ulcer Index after Pylorus Ligation</h2>
+            <p class="text-xs text-slate-500">Wistar rats • 24 h fast • drug p.o. 30 min before ligation • 4 h ligation • 1 mL juice titrated with 0.01 N NaOH</p>
+          </div>
+          <div class="flex items-center space-x-3 no-print">
+            <button onclick="if(confirm('Discard all recorded data?')) newExperiment()" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50 text-xs font-medium text-slate-700 transition">Reset Data</button>
+            <button onclick="loadReferenceDataset()" class="px-3.5 py-1.5 rounded-lg bg-teal-50 border border-teal-300 hover:bg-teal-100 text-teal-800 text-xs font-semibold transition">Load Textbook Reference Dataset</button>
+          </div>
+        </div>
+        <div class="border border-slate-200 rounded-xl overflow-x-auto shadow-sm" id="rawBox"></div>
+        <div class="border border-slate-200 rounded-xl overflow-x-auto shadow-sm" id="sumBox"></div>
+        <div class="grid lg:grid-cols-3 gap-4">
+          <div class="border border-slate-200 rounded-xl p-3 shadow-sm"><div class="text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">Total acidity (mEq/L)</div><svg id="chartAcid" viewBox="0 0 420 260" class="w-full"></svg></div>
+          <div class="border border-slate-200 rounded-xl p-3 shadow-sm"><div class="text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">Ulcer index</div><svg id="chartUI" viewBox="0 0 420 260" class="w-full"></svg></div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+            <div class="text-[10px] text-slate-500 uppercase font-semibold font-mono">Inference</div>
+            <div id="lblInference" class="text-sm font-bold text-slate-800">Pending</div>
+            <p id="lblInferenceDetail" class="text-[11px] text-slate-600 leading-relaxed">Process the rats to obtain the results.</p>
+          </div>
+        </div>
+      </div>
+      <div class="pt-6 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 mt-6 no-print">
+        <div class="text-xs text-slate-500 font-mono">XPRISM • Anti-ulcer (Pylorus Ligation) Practical Evaluation</div>
+        <div class="flex items-center space-x-3">
+          <button onclick="openModal('modalQuestions')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow transition">Answer Viva Questions</button>
+          <button onclick="openResultsModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow transition">Results & Summary</button>
+          <button onclick="window.print()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg shadow transition">Print Report</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer no-print border-t border-slate-200 bg-white shrink-0">
+    <div class="max-w-7xl mx-auto px-6 py-3 text-xs text-slate-500 font-mono flex justify-between flex-wrap gap-2">
+      <span>XPRISM • Exp #23 • © 2026 Aaron Innovations • Dr. Vara Prasad Saka</span>
+      <span>Simulations are teaching aids that reduce animal use, in line with CCSEA 3Rs guidance. • <a href="../index.html" class="text-teal-700 hover:underline">All experiments</a></span>
+    </div>
+  </footer>
+
+  <!-- MODAL: VIVA -->
+  <div id="modalQuestions" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-base font-bold text-slate-800">Pylorus Ligation: Viva-Voce</h3>
+        <button onclick="closeModal('modalQuestions')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+      <div id="quizScore" class="hidden p-2.5 rounded-lg text-xs font-semibold"></div>
+      <div id="quizBody" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2 text-xs text-slate-700"></div>
+      <div class="pt-3 border-t flex justify-end space-x-2">
+        <button onclick="renderQuiz()" class="px-4 py-2 border rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">Reset</button>
+        <button onclick="evaluateQuestions()" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-lg shadow">Submit Answers</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: RESULTS -->
+  <div id="modalResults" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-base font-bold text-slate-800">Laboratory Results Summary</h3>
+        <button onclick="closeModal('modalResults')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+      <div id="resBody" class="space-y-2 text-xs"></div>
+      <div id="resExplanation" class="p-3 rounded-lg bg-teal-50 border border-teal-200 text-teal-900 leading-relaxed text-[11px]"></div>
+      <div class="pt-3 border-t flex justify-end">
+        <button onclick="closeModal('modalResults')" class="px-6 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg shadow">Close</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+    // =====================================================================
+    // XPRISM shared simulation toolkit (tabs, sound, stats, charts, viva)
+    // =====================================================================
+    const $ = id => document.getElementById(id);
+    const svgNS = "http://www.w3.org/2000/svg";
+    function el(tag, attrs = {}, parent) {
+      const e = document.createElementNS(svgNS, tag);
+      for (const k in attrs) e.setAttribute(k, attrs[k]);
+      if (parent) parent.appendChild(e);
+      return e;
+    }
+    function svgPoint(svg, evt) {
+      const pt = svg.createSVGPoint();
+      const src = evt.touches ? evt.touches[0] : evt;
+      pt.x = src.clientX; pt.y = src.clientY;
+      return pt.matrixTransform(svg.getScreenCTM().inverse());
+    }
+    function gauss() {
+      let u = 0, v = 0;
+      while (u === 0) u = Math.random();
+      while (v === 0) v = Math.random();
+      return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    }
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+    const shuffle = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+    const mean = a => a.length ? a.reduce((s, x) => s + x, 0) / a.length : NaN;
+    const sd = a => { if (a.length < 2) return 0; const m = mean(a); return Math.sqrt(a.reduce((s, x) => s + (x - m) ** 2, 0) / (a.length - 1)); };
+    const sem = a => a.length < 2 ? 0 : sd(a) / Math.sqrt(a.length);
+    const fx = (v, d = 1) => (v === null || v === undefined || !isFinite(v)) ? '—' : (+v).toFixed(d);
+    const fmtMS = s => { s = Math.max(0, Math.round(s)); return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
+    const fmtHMS = s => { s = Math.max(0, Math.round(s)); const h = Math.floor(s / 3600); return `${h}:${String(Math.floor(s % 3600 / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
+    const log10 = Math.log10;
+
+    // ---- t-distribution (two-tailed p) via regularised incomplete beta ----
+    function betacf(a, b, x) {
+      let qab = a + b, qap = a + 1, qam = a - 1, c = 1, d = 1 - qab * x / qap;
+      if (Math.abs(d) < 1e-30) d = 1e-30; d = 1 / d; let h = d;
+      for (let m = 1; m <= 200; m++) {
+        const m2 = 2 * m; let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+        d = 1 + aa * d; if (Math.abs(d) < 1e-30) d = 1e-30; c = 1 + aa / c; if (Math.abs(c) < 1e-30) c = 1e-30; d = 1 / d; h *= d * c;
+        aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+        d = 1 + aa * d; if (Math.abs(d) < 1e-30) d = 1e-30; c = 1 + aa / c; if (Math.abs(c) < 1e-30) c = 1e-30; d = 1 / d;
+        const del = d * c; h *= del; if (Math.abs(del - 1) < 3e-7) break;
+      }
+      return h;
+    }
+    function gammaln(x) {
+      const c = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5];
+      let y = x, t = x + 5.5; t -= (x + 0.5) * Math.log(t); let s = 1.000000000190015;
+      for (let j = 0; j < 6; j++) s += c[j] / ++y;
+      return -t + Math.log(2.5066282746310005 * s / x);
+    }
+    function betai(a, b, x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      const bt = Math.exp(gammaln(a + b) - gammaln(a) - gammaln(b) + a * Math.log(x) + b * Math.log(1 - x));
+      return x < (a + 1) / (a + b + 2) ? bt * betacf(a, b, x) / a : 1 - bt * betacf(b, a, 1 - x) / b;
+    }
+    function tTest(a, b) { // unpaired Student's t (pooled variance)
+      if (a.length < 2 || b.length < 2) return { t: NaN, df: NaN, p: NaN };
+      const df = a.length + b.length - 2;
+      const sp2 = ((a.length - 1) * sd(a) ** 2 + (b.length - 1) * sd(b) ** 2) / df;
+      const se = Math.sqrt(sp2 * (1 / a.length + 1 / b.length));
+      const t = se === 0 ? (mean(a) === mean(b) ? 0 : 99) : (mean(a) - mean(b)) / se;
+      return { t, df, p: betai(df / 2, 0.5, df / (df + t * t)) };
+    }
+    const pLabel = p => !isFinite(p) ? '—' : p < 0.001 ? 'p < 0.001' : p < 0.01 ? 'p < 0.01' : p < 0.05 ? 'p < 0.05' : 'p > 0.05 (ns)';
+    const stars = p => !isFinite(p) ? '' : p < 0.001 ? '***' : p < 0.01 ? '**' : p < 0.05 ? '*' : 'ns';
+    function linreg(xs, ys) {
+      const n = xs.length; if (n < 2) return null;
+      const mx = mean(xs), my = mean(ys);
+      let sxy = 0, sxx = 0, syy = 0;
+      for (let i = 0; i < n; i++) { sxy += (xs[i] - mx) * (ys[i] - my); sxx += (xs[i] - mx) ** 2; syy += (ys[i] - my) ** 2; }
+      const slope = sxy / sxx, intercept = my - slope * mx;
+      return { slope, intercept, r2: syy === 0 ? 1 : (sxy * sxy) / (sxx * syy) };
+    }
+    // log-linear interpolation of the dose giving response `target` on an ascending curve [[dose, resp], ...]
+    function interpDose(pts, target) {
+      const s = pts.filter(p => p[0] > 0).slice().sort((a, b) => a[0] - b[0]);
+      for (let i = 0; i < s.length - 1; i++) {
+        const [d1, r1] = s[i], [d2, r2] = s[i + 1];
+        if ((r1 <= target && r2 >= target) && r2 !== r1) {
+          const f = (target - r1) / (r2 - r1);
+          return Math.pow(10, log10(d1) + f * (log10(d2) - log10(d1)));
+        }
+      }
+      return NaN;
+    }
+
+    // ---- Sound ----
+    let soundOn = true, synth = null;
+    function beep(type = 'click') {
+      if (!soundOn || typeof Tone === 'undefined') return;
+      try {
+        if (!synth) { Tone.start(); synth = new Tone.PolySynth(Tone.Synth).toDestination(); synth.volume.value = -16; }
+        const n = { click: 'C6', ok: 'E5', warn: 'A3', done: 'G5', tick: 'C7', low: 'E3' }[type] || 'C6';
+        synth.triggerAttackRelease(n, type === 'done' ? '8n' : '32n');
+      } catch (e) { /* audio optional */ }
+    }
+
+    // ---- Feedback / stepper ----
+    function showFeedback(msg, isAlert = false) {
+      $('feedbackText').innerHTML = msg;
+      const icon = $('feedbackIcon');
+      icon.innerText = isAlert ? "⚠️" : "ℹ";
+      icon.className = isAlert ? "text-amber-400 font-bold" : "text-teal-400 font-bold";
+      if (isAlert) beep('warn');
+    }
+    function setPhase(t) { $('phaseIndicator').innerText = t || ''; }
+    function renderSteps(steps) {
+      let active = steps.findIndex(s => !s.done);
+      $('stepper').innerHTML = steps.map((s, i) => {
+        const cls = s.done ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : i === active ? 'bg-amber-50 text-amber-800 border-amber-300 ring-1 ring-amber-200' : 'bg-slate-50 text-slate-400 border-slate-200';
+        return `<span class="px-2 py-1 rounded-md border ${cls}">${s.done ? '✓' : (i + 1)} ${s.t}</span>`;
+      }).join('');
+    }
+
+    // ---- Speed ----
+    let SPEED = 1, SPEEDS = [1, 5, 20, 60];
+    function renderSpeed() {
+      $('speedBtns').innerHTML = SPEEDS.map(s => `<button onclick="setSpeed(${s})" class="px-2 py-0.5 text-[11px] rounded font-mono font-semibold ${s === SPEED ? 'bg-teal-600 text-white' : 'text-slate-600 hover:bg-slate-100'}">${s}×</button>`).join('');
+    }
+    function setSpeed(s) { SPEED = s; renderSpeed(); beep('tick'); }
+
+    // ---- Generic wait timer (simulated seconds) ----
+    let WAIT = null;
+    function startWait(title, seconds, onDone) {
+      WAIT = { title, total: seconds, left: seconds, onDone };
+      $('waitTitle').innerText = title; $('waitCard').classList.remove('hidden');
+    }
+    function skipWait() { if (WAIT) WAIT.left = 0; }
+    function cancelWait() { WAIT = null; $('waitCard').classList.add('hidden'); }
+    function tickWait(dtSim) {
+      if (!WAIT) return;
+      WAIT.left -= dtSim;
+      $('waitClock').innerText = WAIT.total >= 3600 ? fmtHMS(WAIT.left) : fmtMS(WAIT.left);
+      $('waitBar').style.width = `${clamp(100 * (1 - WAIT.left / WAIT.total), 0, 100)}%`;
+      if (WAIT.left <= 0) { const w = WAIT; WAIT = null; $('waitCard').classList.add('hidden'); beep('done'); w.onDone && w.onDone(); }
+    }
+    let _lastTs = null;
+    function startLoop(cb) {
+      const f = ts => {
+        if (_lastTs === null) _lastTs = ts;
+        const dtR = Math.min(0.1, Math.max(0, (ts - _lastTs) / 1000)); _lastTs = ts;
+        tickWait(dtR * SPEED);
+        cb && cb(dtR * SPEED, dtR);
+        requestAnimationFrame(f);
+      };
+      requestAnimationFrame(f);
+    }
+
+    // ---- Tabs / modals ----
+    function openModal(id) { $(id).classList.remove('hidden'); }
+    function closeModal(id) { $(id).classList.add('hidden'); }
+    function switchTab(tabId) {
+      const map = { task: ['viewTask', 'tabTask'], experiment: ['viewExperiment', 'tabExperiment'], observation: ['viewObservation', 'tabObservation'] };
+      Object.values(map).forEach(([v, t]) => {
+        $(v).classList.add('hidden');
+        const b = $(t); b.classList.remove('bg-teal-500', 'text-white', 'shadow'); b.classList.add('text-slate-300');
+      });
+      $(map[tabId][0]).classList.remove('hidden');
+      $(map[tabId][1]).classList.add('bg-teal-500', 'text-white', 'shadow');
+      if (tabId === 'observation') renderObservation();
+    }
+
+    // ---- Viva ----
+    function renderQuiz() {
+      $('quizScore').classList.add('hidden');
+      $('quizBody').innerHTML = QUIZ.map((q, i) => `<div class="space-y-1.5" id="qwrap${i}">
+        <p class="font-semibold text-slate-800">${i + 1}. ${q.q}</p>
+        ${q.o.map((o, j) => `<label class="flex items-start gap-2 p-1.5 rounded hover:bg-slate-50 cursor-pointer"><input type="radio" name="q${i}" value="${j}" class="mt-0.5 accent-teal-600"><span>${o}</span></label>`).join('')}
+        <p id="qexp${i}" class="hidden text-[11px] p-2 rounded"></p></div>`).join('');
+    }
+    function evaluateQuestions() {
+      const ans = QUIZ.map((_, i) => document.querySelector(`input[name="q${i}"]:checked`)?.value);
+      if (ans.some(a => a === undefined)) { const s = $('quizScore'); s.className = 'p-2.5 rounded-lg text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200'; s.innerText = `Please answer all ${QUIZ.length} questions before submitting.`; return; }
+      let score = 0;
+      QUIZ.forEach((q, i) => {
+        const ok = +ans[i] === q.a; if (ok) score++;
+        const e = $('qexp' + i); e.classList.remove('hidden');
+        e.className = `text-[11px] p-2 rounded ${ok ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-rose-50 text-rose-800 border border-rose-200'}`;
+        e.innerHTML = `${ok ? '✓ Correct.' : `✗ Correct answer: <b>${q.o[q.a]}</b>.`} ${q.e || ''}`;
+      });
+      const s = $('quizScore'); s.className = `p-2.5 rounded-lg text-xs font-semibold ${score / QUIZ.length >= 0.6 ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-amber-50 text-amber-800 border border-amber-200'}`;
+      s.innerText = `Viva score: ${score}/${QUIZ.length} (${Math.round(score / QUIZ.length * 100)}%)`;
+      beep(score / QUIZ.length >= 0.6 ? 'done' : 'warn');
+      $('quizBody').scrollTop = 0;
+    }
+
+    // ---- Results modal ----
+    function openResultsModal() {
+      const r = buildResults();
+      $('resBody').innerHTML = r.rows.map(([k, v]) => `<div class="flex justify-between gap-3 border-b border-slate-100 pb-1"><span class="text-slate-500">${k}</span><span class="font-semibold text-slate-800 text-right">${v}</span></div>`).join('');
+      $('resExplanation').innerHTML = r.text;
+      openModal('modalResults');
+    }
+    // numeric answer verification (bioassays / unknowns)
+    function verifyNumber(inputId, outId, truth, tolPct, unit, explain) {
+      const v = parseFloat($(inputId).value), o = $(outId);
+      if (!isFinite(v)) { o.className = 'text-xs font-semibold text-amber-700'; o.innerText = 'Enter a number first.'; return; }
+      const err = Math.abs(v - truth) / truth * 100;
+      const ok = err <= tolPct;
+      o.className = `text-xs font-semibold ${ok ? 'text-emerald-700' : 'text-rose-700'}`;
+      o.innerHTML = ok ? `✓ Accepted (${fx(err, 1)}% from the true value of ${fx(truth, 3)} ${unit}). ${explain || ''}` : `✗ ${fx(err, 0)}% away from the true value. Re-check your matching/calculation (accepted within ±${tolPct}%).`;
+      beep(ok ? 'done' : 'warn');
+    }
+
+    // ---- SVG charts ----
+    const PALETTE = { teal: '#7e13b5', indigo: '#4f46e5', rose: '#e11d48', amber: '#d97706', slate: '#475569', emerald: '#059669', sky: '#0284c7', violet: '#7c3aed' };
+    function niceTicks(min, max, n = 5) {
+      if (!(max > min)) { max = min + 1; }
+      const span = max - min, step0 = span / n, mag = Math.pow(10, Math.floor(log10(step0)));
+      const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => span / s <= n) || mag * 10;
+      const out = []; for (let v = Math.ceil(min / step - 1e-9) * step; v <= max + 1e-9; v += step) out.push(+v.toFixed(10));
+      return out;
+    }
+    function chartFrame(svg, o) {
+      svg.innerHTML = '';
+      const W = +(svg.getAttribute('viewBox').split(' ')[2]), H = +(svg.getAttribute('viewBox').split(' ')[3]);
+      const m = { l: 46, r: 12, t: 12, b: 38 };
+      const X = v => m.l + (v - o.xMin) / (o.xMax - o.xMin) * (W - m.l - m.r);
+      const Y = v => H - m.b - (v - o.yMin) / (o.yMax - o.yMin) * (H - m.t - m.b);
+      const yt = o.yTicks || niceTicks(o.yMin, o.yMax, 5);
+      yt.forEach(v => { el('line', { x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), stroke: '#e2e8f0' }, svg); const t = el('text', { x: m.l - 5, y: Y(v) + 3, 'text-anchor': 'end', 'font-size': 9, fill: '#64748b' }, svg); t.textContent = o.yFmt ? o.yFmt(v) : +v.toFixed(3); });
+      const xt = o.xTicks || niceTicks(o.xMin, o.xMax, 6).map(v => [v, o.xFmt ? o.xFmt(v) : +v.toFixed(3)]);
+      xt.forEach(([v, lab]) => { el('line', { x1: X(v), x2: X(v), y1: H - m.b, y2: H - m.b + 4, stroke: '#94a3b8' }, svg); const t = el('text', { x: X(v), y: H - m.b + 14, 'text-anchor': 'middle', 'font-size': 9, fill: '#64748b' }, svg); t.textContent = lab; });
+      el('line', { x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b, stroke: '#475569' }, svg);
+      el('line', { x1: m.l, x2: m.l, y1: m.t, y2: H - m.b, stroke: '#475569' }, svg);
+      if (o.xLabel) { const t = el('text', { x: (m.l + W - m.r) / 2, y: H - 6, 'text-anchor': 'middle', 'font-size': 10, fill: '#334155', 'font-weight': 600 }, svg); t.textContent = o.xLabel; }
+      if (o.yLabel) { const t = el('text', { x: 11, y: (m.t + H - m.b) / 2, 'text-anchor': 'middle', 'font-size': 10, fill: '#334155', 'font-weight': 600, transform: `rotate(-90 11 ${(m.t + H - m.b) / 2})` }, svg); t.textContent = o.yLabel; }
+      return { X, Y, W, H, m };
+    }
+    function emptyChart(svg, msg) {
+      svg.innerHTML = '';
+      const vb = svg.getAttribute('viewBox').split(' ');
+      const t = el('text', { x: vb[2] / 2, y: vb[3] / 2, 'text-anchor': 'middle', 'font-size': 11, fill: '#94a3b8' }, svg); t.textContent = msg || 'No data yet';
+    }
+    // series: [{name, color, pts:[[x,y,err?]], dash, noLine, line:{slope,intercept,x1,x2}}]
+    function lineChart(id, o) {
+      const svg = $(id);
+      const all = o.series.flatMap(s => s.pts);
+      if (!all.length) { emptyChart(svg, o.empty); return; }
+      const xs = all.map(p => p[0]), ys = all.map(p => p[1] + (p[2] || 0));
+      const xMin = o.xMin ?? Math.min(...xs), xMax = o.xMax ?? Math.max(...xs);
+      const pad = (xMax - xMin) * 0.05 || 1;
+      const f = chartFrame(svg, { ...o, xMin: o.xMin ?? xMin - pad, xMax: o.xMax ?? xMax + pad, yMin: o.yMin ?? Math.min(0, ...all.map(p => p[1])), yMax: o.yMax ?? (Math.max(...ys) * 1.12 || 1) });
+      (o.hlines || []).forEach(h => { el('line', { x1: f.m.l, x2: f.W - f.m.r, y1: f.Y(h.y), y2: f.Y(h.y), stroke: h.color || '#94a3b8', 'stroke-dasharray': '4 3' }, svg); if (h.label) { const t = el('text', { x: f.W - f.m.r - 2, y: f.Y(h.y) - 3, 'text-anchor': 'end', 'font-size': 8.5, fill: h.color || '#64748b' }, svg); t.textContent = h.label; } });
+      (o.vlines || []).forEach(h => { el('line', { x1: f.X(h.x), x2: f.X(h.x), y1: f.m.t, y2: f.H - f.m.b, stroke: h.color || '#94a3b8', 'stroke-dasharray': '3 3' }, svg); if (h.label) { const t = el('text', { x: f.X(h.x) + 3, y: f.m.t + 9, 'font-size': 8.5, fill: h.color || '#64748b' }, svg); t.textContent = h.label; } });
+      o.series.forEach(s => {
+        const pts = s.pts.slice().sort((a, b) => a[0] - b[0]);
+        if (s.line) { el('line', { x1: f.X(s.line.x1), y1: f.Y(s.line.slope * s.line.x1 + s.line.intercept), x2: f.X(s.line.x2), y2: f.Y(s.line.slope * s.line.x2 + s.line.intercept), stroke: s.color, 'stroke-width': 1.5, 'stroke-dasharray': '5 3' }, svg); }
+        if (!s.noLine && pts.length > 1) el('polyline', { points: pts.map(p => `${f.X(p[0])},${f.Y(p[1])}`).join(' '), fill: 'none', stroke: s.color, 'stroke-width': 2, 'stroke-dasharray': s.dash || '' }, svg);
+        pts.forEach(p => {
+          if (p[2]) { el('line', { x1: f.X(p[0]), x2: f.X(p[0]), y1: f.Y(p[1] - p[2]), y2: f.Y(p[1] + p[2]), stroke: s.color }, svg); [-1, 1].forEach(k => el('line', { x1: f.X(p[0]) - 3, x2: f.X(p[0]) + 3, y1: f.Y(p[1] + k * p[2]), y2: f.Y(p[1] + k * p[2]), stroke: s.color }, svg)); }
+          el('circle', { cx: f.X(p[0]), cy: f.Y(p[1]), r: 3.2, fill: s.hollow ? '#fff' : s.color, stroke: s.color, 'stroke-width': 1.5 }, svg);
+        });
+      });
+      // legend
+      const named = o.series.filter(s => s.name);
+      named.forEach((s, i) => { const x = f.m.l + 8, y = f.m.t + 8 + i * 12; el('rect', { x, y: y - 6, width: 10, height: 4, fill: s.color }, svg); const t = el('text', { x: x + 14, y: y - 1, 'font-size': 9, fill: '#334155' }, svg); t.textContent = s.name; });
+    }
+    // bars: [{label, v, e, color, note}]
+    function barChart(id, o) {
+      const svg = $(id);
+      const bars = o.bars.filter(b => isFinite(b.v));
+      if (!bars.length) { emptyChart(svg, o.empty); return; }
+      const top = Math.max(...bars.map(b => b.v + (b.e || 0))) * 1.2 || 1;
+      const n = o.bars.length;
+      const f = chartFrame(svg, { ...o, xMin: 0, xMax: n, yMin: o.yMin ?? 0, yMax: o.yMax ?? top, xTicks: [] });
+      const bw = (f.X(1) - f.X(0)) * 0.56;
+      o.bars.forEach((b, i) => {
+        const cx = f.X(i + 0.5);
+        const t = el('text', { x: cx, y: f.H - f.m.b + 13, 'text-anchor': 'middle', 'font-size': 9, fill: '#334155' }, svg); t.textContent = b.label;
+        if (!isFinite(b.v)) return;
+        el('rect', { x: cx - bw / 2, y: f.Y(Math.max(b.v, 0)), width: bw, height: Math.abs(f.Y(0) - f.Y(b.v)), fill: b.color || PALETTE.teal, rx: 2, opacity: .9 }, svg);
+        if (b.e) { el('line', { x1: cx, x2: cx, y1: f.Y(b.v), y2: f.Y(b.v + b.e), stroke: '#0a1f44' }, svg); el('line', { x1: cx - 5, x2: cx + 5, y1: f.Y(b.v + b.e), y2: f.Y(b.v + b.e), stroke: '#0a1f44' }, svg); }
+        if (b.note) { const s = el('text', { x: cx, y: f.Y(b.v + (b.e || 0)) - 4, 'text-anchor': 'middle', 'font-size': 10, 'font-weight': 700, fill: '#0a1f44' }, svg); s.textContent = b.note; }
+      });
+    }
+    // ---- small HTML helpers ----
+    function tableHTML(head, rows, cls = '') {
+      return `<table class="obs-table w-full text-[11px] text-center ${cls}"><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody class="font-mono">${rows.length ? rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${head.length}" class="text-slate-400 py-3 font-sans">No readings yet</td></tr>`}</tbody></table>`;
+    }
+    $('audioToggleBtn') && $('audioToggleBtn').addEventListener('click', () => {
+      soundOn = !soundOn;
+      $('audioToggleBtn').className = `p-2 rounded-lg transition ${soundOn ? 'bg-teal-100 hover:bg-teal-200 text-teal-800' : 'bg-slate-200 text-slate-500'}`;
+      if (soundOn) beep('ok');
+    });
+    window.addEventListener('DOMContentLoaded', () => { renderSpeed(); renderQuiz(); init(); });
+
+  </script>
+  <script>
+    // =====================================================================
+    // In-vivo kit: animal artwork (mouse / rat), cage helpers, group statistics
+    // =====================================================================
+    const VIVO_DEFS = `
+      <radialGradient id="furGrad" cx="0.42" cy="0.32" r="0.78"><stop offset="0" stop-color="#ffffff"/><stop offset="0.6" stop-color="#f6f3f1"/><stop offset="1" stop-color="#d8d0cc"/></radialGradient>
+      <linearGradient id="bellyShade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.65" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#6b5a58" stop-opacity="0.25"/></linearGradient>
+      <radialGradient id="earGrad" cx="0.5" cy="0.55" r="0.6"><stop offset="0" stop-color="#f9d0d9"/><stop offset="0.7" stop-color="#f1adbf"/><stop offset="1" stop-color="#e293a8"/></radialGradient>
+      <radialGradient id="eyeGrad" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#ff5d77"/><stop offset="0.55" stop-color="#c0142f"/><stop offset="1" stop-color="#5c0614"/></radialGradient>
+      <linearGradient id="glass" x1="0" x2="1"><stop offset="0" stop-color="#cfe8f5" stop-opacity=".55"/><stop offset=".5" stop-color="#ffffff" stop-opacity=".25"/><stop offset="1" stop-color="#9cc9df" stop-opacity=".6"/></linearGradient>
+      <linearGradient id="metal" x1="0" x2="1"><stop offset="0" stop-color="#64748b"/><stop offset=".5" stop-color="#e2e8f0"/><stop offset="1" stop-color="#64748b"/></linearGradient>
+      <linearGradient id="benchTop" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d6dde4"/><stop offset="1" stop-color="#b9c3cd"/></linearGradient>`;
+
+    // Small resting mouse (side view, facing right). state: 'awake' | 'asleep' | 'ataxic'
+    function cageMouse(label, state = 'awake', s = 1) {
+      const shut = state === 'asleep' || state === 'drowsy';
+      const flip = state === 'asleep' ? 'rotate(180) translate(0 -2)' : '';
+      return `
+        <g transform="scale(${s})">
+          <g transform="${flip}">
+            <path d="M -14 2 C -24 6, -30 0, -38 5" fill="none" stroke="#efb3c3" stroke-width="1.5" stroke-linecap="round"/>
+            <ellipse cx="0" cy="0" rx="15" ry="8.5" fill="url(#furGrad)" stroke="#d6cfcb" stroke-width="0.5"/>
+            <ellipse cx="12" cy="-1" rx="7.5" ry="6" fill="url(#furGrad)"/>
+            <ellipse cx="9" cy="-6.5" rx="3.2" ry="3.8" fill="url(#earGrad)" stroke="#f7eef0" stroke-width="0.6"/>
+            ${shut ? '<path d="M 13.8 -1.8 L 16.4 -1.8" stroke="#b85a73" stroke-width="0.8"/>' : '<circle cx="15" cy="-2" r="1.2" fill="#c0142f"/>'}
+            <circle cx="19.5" cy="0.2" r="1" fill="#ef9db2"/>
+            ${state === 'asleep' ? '<g stroke="#f2a6b8" stroke-width="1.6" stroke-linecap="round"><line x1="6" y1="5" x2="10" y2="11"/><line x1="-7" y1="5" x2="-11" y2="11"/></g>' : '<ellipse cx="6" cy="7.5" rx="2.5" ry="1" fill="#f2a6b8"/><ellipse cx="-7" cy="7.5" rx="3" ry="1" fill="#f2a6b8"/>'}
+          </g>
+          ${label ? `<text y="${shut ? 22 : -13}" text-anchor="middle" font-family="JetBrains Mono" font-size="6" font-weight="700" fill="#334155">${label}</text>` : ''}
+        </g>`;
+    }
+
+    // Top-view rat (head to the right), length ~ 120 units at s = 1
+    function ratTop(s = 1, opts = {}) {
+      const fur = opts.fur || 'url(#furGrad)';
+      return `<g transform="scale(${s})">
+        <path d="M -48 0 C -70 4, -92 -6, -118 2" fill="none" stroke="#efb3c3" stroke-width="4" stroke-linecap="round"/>
+        <ellipse cx="0" cy="0" rx="50" ry="24" fill="${fur}" stroke="#d6cfcb"/>
+        <ellipse cx="46" cy="0" rx="22" ry="15" fill="${fur}" stroke="#d6cfcb"/>
+        <ellipse cx="40" cy="-15" rx="7" ry="6" fill="url(#earGrad)"/><ellipse cx="40" cy="15" rx="7" ry="6" fill="url(#earGrad)"/>
+        <circle cx="58" cy="-7" r="2" fill="${opts.eyes || '#c0142f'}"/><circle cx="58" cy="7" r="2" fill="${opts.eyes || '#c0142f'}"/>
+        <circle cx="68" cy="0" r="2.6" fill="#ef9db2"/>
+        <g stroke="#f2a6b8" stroke-width="5" stroke-linecap="round"><line x1="22" y1="-20" x2="30" y2="-34"/><line x1="22" y1="20" x2="30" y2="34"/><line x1="-30" y1="-20" x2="-40" y2="-34"/><line x1="-30" y1="20" x2="-40" y2="34"/></g>
+      </g>`;
+    }
+
+    // Group statistics vs a control group. groups: [{key,label,vals:[]}], returns rows
+    function groupStats(groups, ctrlKey) {
+      const ctrl = groups.find(g => g.key === ctrlKey);
+      return groups.map(g => {
+        const t = (ctrl && g.key !== ctrlKey) ? tTest(g.vals, ctrl.vals) : null;
+        return { ...g, n: g.vals.length, m: mean(g.vals), sd: sd(g.vals), se: sem(g.vals), t, p: t ? t.p : NaN };
+      });
+    }
+    const wtMouse = () => +clamp(25 + gauss() * 2.5, 19, 32).toFixed(1);
+    const wtRat = () => Math.round(clamp(180 + gauss() * 15, 150, 220));
+    // clock helper for experiment time in minutes
+    const fmtMin = m => `${Math.floor(m / 60)}:${String(Math.floor(m % 60)).padStart(2, '0')}`;
+
+    const GROUPS = [
+      { key: 'C', label: 'Control (vehicle 1% CMC)', short: 'Control', color: PALETTE.slate, vol: 3.6, free: 52, total: 92, ui: 2.2 },
+      { key: 'R', label: 'Ranitidine 50 mg/kg p.o.', short: 'Ranitidine', color: PALETTE.teal, vol: 2.1, free: 12, total: 46, ui: 0.9 },
+      { key: 'O', label: 'Omeprazole 20 mg/kg p.o.', short: 'Omeprazole', color: PALETTE.indigo, vol: 1.7, free: 3, total: 28, ui: 0.45 }
+    ];
+    const N = 6, NAOH = 0.01, SCORES = [0, 0.5, 1, 1.5, 2, 3];
+    const SCORE_LBL = { 0: 'Normal', 0.5: 'Red colouration', 1: 'Spot ulcers', 1.5: 'Haemorrhagic streaks', 2: 'Ulcers 3–5 mm', 3: 'Ulcers > 5 mm' };
+    let S;
+    function newRat(g, gi, i, ideal) {
+      const j = ideal ? 0 : 1;
+      const free = Math.max(0, g.free * (1 + j * gauss() * 0.22));
+      const total = Math.max(free + 8, g.total * (1 + j * gauss() * 0.16));
+      const pH = free > 6 ? -log10(free * 0.3 / 1000) + j * gauss() * 0.08 : 3.5 + (6 - free) / 6 * 1.2 + j * Math.random() * 0.4;
+      const sc = ideal ? SCORES.reduce((a, b) => Math.abs(b - g.ui) < Math.abs(a - g.ui) ? b : a) : (x => SCORES.reduce((a, b) => Math.abs(b - x) < Math.abs(a - x) ? b : a))(g.ui + gauss() * 0.55);
+      return { id: `${g.key}${i + 1}`, g: g.key, gi, i, wt: wtRat(), vol: +(Math.max(0.6, g.vol * (1 + j * gauss() * 0.2))).toFixed(1), pH: +pH.toFixed(2), free: +free.toFixed(1), total: +total.toFixed(1), score: sc,
+        lesions: makeLesions(sc), stage: 'fasted', measured: false, V: 0, phth: false, v1: null, v2: null, myScore: null };
+    }
+    function makeLesions(sc) {
+      const L = []; const R = (a, b) => a + Math.random() * (b - a);
+      const n = sc === 0 ? 0 : sc === 0.5 ? 0 : sc === 1 ? 6 + Math.floor(Math.random() * 5) : sc === 1.5 ? 4 : sc === 2 ? 3 : 2;
+      for (let k = 0; k < n; k++) L.push({ x: R(-0.75, 0.75), y: R(-0.5, 0.6), r: sc === 1 ? R(1.5, 2.6) : sc === 1.5 ? R(14, 26) : sc === 2 ? R(5, 7.5) : R(9, 13), a: R(-0.8, 0.8), kind: sc === 1.5 ? 'streak' : 'ulcer' });
+      if (sc >= 2) for (let k = 0; k < 4; k++) L.push({ x: R(-0.7, 0.7), y: R(-0.5, 0.6), r: R(1.5, 2.4), kind: 'ulcer' });
+      return L;
+    }
+    function fresh(ideal) {
+      const rats = []; GROUPS.forEach((g, gi) => { for (let i = 0; i < N; i++) rats.push(newRat(g, gi, i, ideal)); });
+      return { stage: 0, rats, sel: rats[0].id };
+    }
+    // stages: 0 fasting not started, 1 fasted, 2 dosed+30min, 3 ligated (4 h running), 4 sacrificed (processing)
+    const STAGES = ['Fast 24 h', 'Dose p.o. (−30 min)', 'Ligate pylorus', 'Sacrifice at 4 h', 'Process stomachs'];
+    const rat = () => S.rats.find(r => r.id === S.sel);
+    function stageAction(k) {
+      if (WAIT) { showFeedback('Wait for the current period to finish (or skip it).', true); return; }
+      if (k !== S.stage) { showFeedback(k < S.stage ? 'That step is already done.' : `Complete "${STAGES[S.stage]}" first.`, true); return; }
+      if (k === 0) { startWait('Fasting (water ad lib)', 86400, () => { S.stage = 1; showFeedback('24 h fast complete. Give vehicle / drugs orally.'); renderAll(); }); showFeedback('Rats placed in wire-bottom cages and fasted for 24 h (prevents coprophagy).'); }
+      if (k === 1) { S.rats.forEach(r => r.stage = 'dosed'); startWait('Drug absorption (30 min)', 1800, () => { S.stage = 2; showFeedback('30 min passed. Ligate the pylorus under light anaesthesia.'); renderAll(); }); showFeedback('Vehicle, ranitidine (50 mg/kg) and omeprazole (20 mg/kg) given by oral gavage.'); }
+      if (k === 2) { S.rats.forEach(r => r.stage = 'ligated'); S.ligAnim = 2.5; startWait('Pylorus ligated: secretion accumulating (4 h)', 14400, () => { S.stage = 3; showFeedback('4 h complete. Sacrifice the rats and remove the stomachs.'); renderAll(); }); showFeedback('Abdomen opened by a midline incision; pylorus ligated with silk without injuring vessels; wound sutured.'); }
+      if (k === 3) { S.rats.forEach(r => r.stage = 'removed'); S.stage = 4; showFeedback('Stomachs removed after ligating the oesophagus. Select each rat to measure, titrate and score.'); }
+      beep('click'); renderAll();
+    }
+
+    // ---------------- processing ----------------
+    function measure() { const r = rat(); if (S.stage < 4) { showFeedback('Sacrifice the rats first.', true); return; } r.measured = true; beep('tick'); showFeedback(`${r.id}: gastric content ${r.vol} mL, pH ${fx(r.pH, 2)}. Centrifuge and pipette 1 mL of supernatant into the flask with Töpfer's reagent.`); renderAll(); }
+    function colour(r) {
+      const fe = r.free / 1000 / NAOH, te = r.total / 1000 / NAOH;    // end-point volumes (mL)
+      if (!r.phth) return r.V < fe ? (fe - r.V < 0.1 ? '#f97316' : '#ef4444') : '#facc15';
+      return r.V < te ? (te - r.V < 0.1 ? '#fde2e4' : '#fef9c3') : '#ec4899';
+    }
+    function addNaOH(v) {
+      const r = rat(); if (!r.measured) { showFeedback('Measure the volume and pH first (and pipette 1 mL).', true); return; }
+      if (r.v2 !== null) { showFeedback('Titration already complete for this rat.'); return; }
+      r.V = +(r.V + v).toFixed(2); S.drip = 0.6; beep('tick'); renderAll();
+    }
+    function markEnd() {
+      const r = rat(); if (!r.measured) return;
+      const fe = r.free / 1000 / NAOH, te = r.total / 1000 / NAOH;
+      if (!r.phth) {
+        r.v1 = r.V; r.phth = true;
+        const err = r.V - fe;
+        showFeedback(`Free-acid end point recorded at ${fx(r.V, 2)} mL${Math.abs(err) > 0.3 ? ` (${err > 0 ? 'overshot' : 'too early'}: the true colour change was at ${fx(fe, 2)} mL)` : ''}. Add 2 drops of phenolphthalein and continue.`, Math.abs(err) > 0.3);
+      } else {
+        r.v2 = r.V; const err = r.V - te;
+        showFeedback(`Total-acid end point at ${fx(r.V, 2)} mL → free ${fx(r.v1 * NAOH * 1000, 1)}, total ${fx(r.v2 * NAOH * 1000, 1)} mEq/L.${Math.abs(err) > 0.3 ? ` (true end point ${fx(te, 2)} mL)` : ''} Now score the mucosa.`, Math.abs(err) > 0.3);
+      }
+      beep('ok'); renderAll();
+    }
+    function resetTitration() { const r = rat(); Object.assign(r, { V: 0, phth: false, v1: null, v2: null }); showFeedback('Flask emptied; titration restarted with a fresh 1 mL aliquot.'); renderAll(); }
+    function setScore(v) {
+      const r = rat(); if (S.stage < 4) return;
+      r.myScore = v; beep(v === r.score ? 'ok' : 'tick');
+      showFeedback(`${r.id} scored ${v} (${SCORE_LBL[v]}). ${v === r.score ? 'Agrees with the second observer.' : `Second (blinded) observer scored ${r.score}.`}`, v !== r.score && Math.abs(v - r.score) > 0.5);
+      renderAll();
+    }
+    function autoProcess(r) { r.measured = true; const fe = r.free / 1000 / NAOH, te = r.total / 1000 / NAOH; r.v1 = +(fe + gauss() * 0.04).toFixed(2); r.v2 = +(te + gauss() * 0.05).toFixed(2); r.V = r.v2; r.phth = true; r.myScore = r.score; }
+    function processAll() { if (S.stage < 4) { showFeedback('Complete the ligation and sacrifice first.', true); return; } S.rats.forEach(r => { if (r.v2 === null || r.myScore === null) autoProcess(r); }); renderAll(); showFeedback('Remaining rats processed by the assistant.'); }
+    function runAllInstant() { cancelWait(); S.stage = 4; S.rats.forEach(r => { r.stage = 'removed'; autoProcess(r); }); renderAll(); showFeedback('Experiment completed.'); }
+    function loadReferenceDataset() { cancelWait(); S = fresh(true); S.stage = 4; S.rats.forEach(r => { r.stage = 'removed'; autoProcess(r); r.v1 = +(r.free / 10).toFixed(2); r.v2 = +(r.total / 10).toFixed(2); }); renderAll(); renderObservation(); showFeedback('Reference dataset loaded.'); }
+
+    // ---------------- scene ----------------
+    function drawScene() {
+      const r = rat(), svg = $('scene');
+      const fe = r.free / 1000 / NAOH, te = r.total / 1000 / NAOH;
+      const burTop = 40, burH = 260, burMax = 15;
+      const lvl = burTop + 10 + (r.V / burMax) * (burH - 20);
+      const fl = colour(r);
+      const stom = (cx, cy, sc) => {
+        const show = S.stage >= 4;
+        const les = r.lesions.map(l => l.kind === 'streak' ? `<line x1="${cx + l.x * 110 - Math.cos(l.a) * l.r}" y1="${cy + l.y * 70 - Math.sin(l.a) * l.r}" x2="${cx + l.x * 110 + Math.cos(l.a) * l.r}" y2="${cy + l.y * 70 + Math.sin(l.a) * l.r}" stroke="#7f1d1d" stroke-width="3" stroke-linecap="round" opacity=".85"/>` : `<circle cx="${cx + l.x * 110}" cy="${cy + l.y * 70}" r="${l.r}" fill="#7f1d1d" opacity=".85"/><circle cx="${cx + l.x * 110}" cy="${cy + l.y * 70}" r="${l.r * 0.5}" fill="#3f0d0d"/>`).join('');
+        const red = r.score >= 0.5 ? `<ellipse cx="${cx + 10}" cy="${cy + 10}" rx="80" ry="40" fill="#ef4444" opacity="${r.score === 0.5 ? 0.35 : 0.18}"/>` : '';
+        return `<g><path d="M ${cx - 140} ${cy - 20} C ${cx - 130} ${cy - 95}, ${cx + 120} ${cy - 105}, ${cx + 145} ${cy - 10} C ${cx + 150} ${cy + 70}, ${cx - 120} ${cy + 100}, ${cx - 140} ${cy - 20} Z" fill="${show ? '#f9c6c0' : '#e2e8f0'}" stroke="#be7b72" stroke-width="2"/>
+          <path d="M ${cx - 140} ${cy - 20} C ${cx - 70} ${cy - 40}, ${cx - 70} ${cy + 20}, ${cx - 30} ${cy + 30}" stroke="#e8e0d0" stroke-width="22" fill="none" opacity=".7"/>
+          ${show ? Array.from({ length: 7 }, (_, k) => `<path d="M ${cx - 100 + k * 32} ${cy - 60} q 10 50 -4 110" stroke="#e99a90" stroke-width="2" fill="none" opacity=".7"/>`).join('') + red + les : `<text x="${cx}" y="${cy}" text-anchor="middle" font-size="11" fill="#64748b">stomach not yet removed</text>`}
+          <text x="${cx - 120}" y="${cy - 60}" font-size="9" fill="#64748b">forestomach</text><text x="${cx + 40}" y="${cy + 70}" font-size="9" fill="#64748b">glandular part</text></g>`;
+      };
+      svg.innerHTML = `<defs>${VIVO_DEFS}</defs>
+        <rect x="16" y="16" width="968" height="398" rx="14" fill="#f8fafc" stroke="#cbd5e1"/>
+        <text x="34" y="40" font-size="13" font-weight="800" fill="#0a1f44">${r.id} • ${GROUPS[r.gi].label} • ${r.wt} g</text>
+        <!-- measuring cylinder -->
+        <g transform="translate(70 80)">
+          <rect x="0" y="0" width="44" height="200" rx="5" fill="url(#glass)" stroke="#7aa7c0" stroke-width="2"/>
+          ${r.measured ? `<rect x="3" y="${197 - r.vol / 10 * 194}" width="38" height="${r.vol / 10 * 194}" fill="#e7d9a8" opacity=".85"/>` : ''}
+          ${Array.from({ length: 11 }, (_, k) => `<line x1="30" x2="44" y1="${197 - k * 19.4}" y2="${197 - k * 19.4}" stroke="#334155"/><text x="48" y="${200 - k * 19.4}" font-size="8" fill="#334155">${k}</text>`).join('')}
+          <text x="22" y="220" text-anchor="middle" font-size="10" fill="#475569">Vol (mL)</text>
+          <text x="22" y="236" text-anchor="middle" font-size="12" font-weight="700" fill="#0a1f44" font-family="JetBrains Mono">${r.measured ? r.vol : '—'}</text>
+        </g>
+        <!-- pH meter -->
+        <g transform="translate(150 90)">
+          <rect x="0" y="0" width="110" height="70" rx="8" fill="#13294f"/>
+          <rect x="10" y="10" width="90" height="34" rx="4" fill="#bbf7d0"/>
+          <text x="55" y="35" text-anchor="middle" font-size="20" fill="#14532d" font-family="DSEG7, JetBrains Mono">${r.measured ? fx(r.pH, 2) : '-.--'}</text>
+          <text x="55" y="60" text-anchor="middle" font-size="9" fill="#cbd5e1">pH meter</text>
+          <path d="M 55 70 Q 55 110 40 150" stroke="#334155" stroke-width="2" fill="none"/>
+        </g>
+        <!-- burette & flask -->
+        <g transform="translate(330 0)">
+          <rect x="90" y="20" width="8" height="340" fill="url(#metal)"/><rect x="50" y="360" width="90" height="10" rx="2" fill="#475569"/>
+          <rect x="98" y="120" width="40" height="8" fill="#94a3b8"/>
+          <rect x="135" y="${burTop}" width="18" height="${burH}" rx="3" fill="url(#glass)" stroke="#7aa7c0" stroke-width="1.5"/>
+          <rect x="137" y="${lvl}" width="14" height="${burTop + burH - 6 - lvl}" fill="#dbeafe"/>
+          ${Array.from({ length: 16 }, (_, k) => `<line x1="153" x2="${k % 5 ? 158 : 162}" y1="${burTop + 10 + k / burMax * (burH - 20)}" y2="${burTop + 10 + k / burMax * (burH - 20)}" stroke="#334155"/>${k % 5 ? '' : `<text x="165" y="${burTop + 13 + k / burMax * (burH - 20)}" font-size="8" fill="#334155">${k}</text>`}`).join('')}
+          <path d="M 140 ${burTop + burH} L 148 ${burTop + burH} L 145 ${burTop + burH + 22} L 143 ${burTop + burH + 22} Z" fill="#94a3b8"/>
+          ${S.drip > 0 ? `<circle cx="144" cy="${burTop + burH + 26 + (0.6 - S.drip) * 40}" r="2.5" fill="#93c5fd"/>` : ''}
+          <path d="M 120 340 L 132 ${burTop + burH + 34} L 156 ${burTop + burH + 34} L 168 340 Q 172 356 156 358 L 132 358 Q 116 356 120 340 Z" fill="${r.measured ? fl : '#f1f5f9'}" stroke="#7aa7c0" stroke-width="2" opacity=".9"/>
+          <text x="144" y="384" text-anchor="middle" font-size="10" fill="#475569">1 mL juice + ${r.phth ? 'phenolphthalein' : "Töpfer's"}</text>
+          <text x="205" y="70" font-size="10" fill="#334155">0.01 N NaOH</text>
+          <text x="205" y="88" font-size="12" font-weight="700" fill="#0a1f44" font-family="JetBrains Mono">${fx(r.V, 2)} mL</text>
+          <text x="205" y="110" font-size="9.5" fill="#64748b">${r.v1 !== null ? `free end pt: ${fx(r.v1, 2)} mL` : ''}</text>
+          <text x="205" y="124" font-size="9.5" fill="#64748b">${r.v2 !== null ? `total end pt: ${fx(r.v2, 2)} mL` : ''}</text>
+        </g>
+        <!-- stomach -->
+        ${stom(790, 230)}
+        <text x="790" y="72" text-anchor="middle" font-size="11" font-weight="700" fill="#334155">Stomach opened along greater curvature (10× lens)</text>
+        <text x="790" y="370" text-anchor="middle" font-size="11" fill="#475569">${r.myScore !== null ? `Your score: ${r.myScore} (${SCORE_LBL[r.myScore]})` : S.stage >= 4 ? 'Score the mucosa in the panel →' : ''}</text>
+        ${S.ligAnim > 0 ? `<g transform="translate(500 215)"><rect x="-160" y="-50" width="320" height="100" rx="12" fill="#0a1f44" opacity=".85"/><text x="0" y="-8" text-anchor="middle" font-size="14" fill="#fde68a" font-weight="700">Pylorus ligated in 18 rats</text><text x="0" y="16" text-anchor="middle" font-size="11" fill="#cbd5e1">silk ligature at pyloro-duodenal junction</text></g>` : ''}`;
+    }
+    function tick(dt, dtR) { let ch = false; if (S.drip > 0) { S.drip = Math.max(0, S.drip - dtR); ch = true; } if (S.ligAnim > 0) { S.ligAnim = Math.max(0, S.ligAnim - dtR); ch = true; } if (ch) drawScene(); }
+
+    // ---------------- panel ----------------
+    function renderAll() {
+      $('stageBtns').innerHTML = STAGES.map((t, k) => `<button onclick="stageAction(${k})" class="px-2 py-1 rounded text-[11px] font-semibold border ${k < S.stage ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : k === S.stage ? 'bg-teal-600 text-white border-teal-600' : 'bg-white text-slate-400 border-slate-200'}">${k < S.stage ? '✓' : k + 1} ${t}</button>`).join('');
+      $('ratGrid').innerHTML = GROUPS.map(g => `<div class="flex items-center gap-1"><span class="text-[10px] w-16 font-semibold" style="color:${g.color}">${g.short}</span>${S.rats.filter(r => r.g === g.key).map(r => `<button class="chip ${S.sel === r.id ? 'on' : ''}" onclick="S.sel='${r.id}';renderAll()">${r.id}${r.v2 !== null && r.myScore !== null ? ' ✓' : ''}</button>`).join('')}</div>`).join('');
+      const r = rat();
+      $('procPanel').innerHTML = S.stage < 4 ? `<div class="p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-[11px] text-amber-900">Follow the stage buttons above: fast → dose → ligate → wait 4 h → sacrifice. Then process each stomach here.</div>` : `
+        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-600">a • Volume & pH</div>
+        <button class="btn w-full py-1.5 bg-sky-50 border border-sky-200 text-sky-800" ${r.measured ? 'disabled' : ''} onclick="measure()">Collect contents, measure volume & pH</button>
+        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-600">b • Titration (0.01 N NaOH)</div>
+        <div class="grid grid-cols-4 gap-1">${[1, 0.5, 0.1, 0.02].map(v => `<button class="btn py-1 bg-indigo-50 border border-indigo-200 text-indigo-800 text-[11px]" onclick="addNaOH(${v})">+${v === 0.02 ? 'drop' : v}</button>`).join('')}</div>
+        <div class="grid grid-cols-2 gap-1"><button class="btn py-1.5 bg-indigo-600 text-white text-[11px]" onclick="markEnd()">${r.phth ? 'Mark pink end point' : 'Mark yellow end point'}</button><button class="btn py-1.5 bg-slate-100 text-slate-700 text-[11px]" onclick="resetTitration()">Restart titration</button></div>
+        <div class="text-[11px] font-mono text-slate-600">${r.v1 !== null ? `Free acidity = ${fx(r.v1, 2)} × 0.01 × 1000 = <b>${fx(r.v1 * 10, 1)}</b> mEq/L` : 'Watch the flask colour: red → yellow (free acid)'}${r.v2 !== null ? `<br>Total acidity = <b>${fx(r.v2 * 10, 1)}</b> mEq/L` : ''}</div>
+        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-600">c • Ulcer score</div>
+        <div class="grid grid-cols-3 gap-1">${SCORES.map(v => `<button class="chip ${r.myScore === v ? 'on' : ''}" title="${SCORE_LBL[v]}" onclick="setScore(${v})">${v}</button>`).join('')}</div>
+        <div class="text-[10px] text-slate-500">${SCORES.map(v => `${v} = ${SCORE_LBL[v]}`).join(' • ')}</div>`;
+      const done = S.rats.filter(r => r.v2 !== null && r.myScore !== null).length;
+      renderSteps([...STAGES.slice(0, 4).map((t, k) => ({ t, done: S.stage > k })), { t: `Processed ${done}/18`, done: done === 18 }, { t: 'Analyse', done: false }]);
+      drawScene();
+    }
+    function init() { S = fresh(); renderAll(); showFeedback('18 rats allotted to 3 groups. Begin the 24-h fast.'); startLoop(tick); }
+    function newExperiment() { cancelWait(); S = fresh(); renderAll(); showFeedback('New batch of rats.'); }
+
+    // ---------------- analysis ----------------
+    function analysis() {
+      const done = r => r.v2 !== null && r.myScore !== null;
+      const gs = key => GROUPS.map(g => ({ key: g.key, label: g.short, color: g.color, vals: S.rats.filter(r => r.g === g.key && done(r)).map(key) }));
+      return { vol: groupStats(gs(r => r.vol), 'C'), pH: groupStats(gs(r => r.pH), 'C'), free: groupStats(gs(r => r.v1 * 10), 'C'), total: groupStats(gs(r => r.v2 * 10), 'C'), ui: groupStats(gs(r => r.myScore), 'C') };
+    }
+    function renderObservation() {
+      const A = analysis();
+      $('rawBox').innerHTML = tableHTML(['Rat', 'Group', 'Vol (mL)', 'pH', 'V₁ NaOH (mL)', 'Free acidity', 'V₂ NaOH (mL)', 'Total acidity', 'Ulcer score'],
+        S.rats.filter(r => r.v2 !== null).map(r => [r.id, GROUPS[r.gi].short, r.vol, fx(r.pH, 2), fx(r.v1, 2), fx(r.v1 * 10, 1), fx(r.v2, 2), fx(r.v2 * 10, 1), r.myScore ?? '—']));
+      const c = A.ui[0];
+      $('sumBox').innerHTML = tableHTML(['Group', 'n', 'Volume (mL)', 'pH', 'Free acidity (mEq/L)', 'Total acidity (mEq/L)', 'Ulcer index', '% protection'],
+        GROUPS.map((g, k) => { const f = (x, d = 1) => x.n ? `${fx(x.m, d)} ± ${fx(x.se, d)}${k ? ' ' + stars(x.p) : ''}` : '—'; return [g.label, A.ui[k].n, f(A.vol[k]), f(A.pH[k], 2), f(A.free[k]), f(A.total[k]), f(A.ui[k], 2), k && c.n && A.ui[k].n ? fx((c.m - A.ui[k].m) / c.m * 100, 0) + '%' : '—']; }));
+      barChart('chartAcid', { bars: A.total.map(x => ({ label: x.label, v: x.n ? x.m : NaN, e: x.se, color: x.color, note: x.key === 'C' ? '' : stars(x.p) })), yLabel: 'mEq/L', empty: 'No titrations yet' });
+      barChart('chartUI', { bars: A.ui.map(x => ({ label: x.label, v: x.n ? x.m : NaN, e: x.se, color: x.color, note: x.key === 'C' ? '' : stars(x.p) })), yLabel: 'Ulcer index', empty: 'No scores yet' });
+      if (!(c.n >= 2 && A.ui.slice(1).some(x => x.n >= 2))) { $('lblInference').innerText = 'Pending'; return; }
+      const [ , r, o] = A.ui;
+      $('lblInference').innerText = `Protection: ranitidine ${r.n ? fx((c.m - r.m) / c.m * 100, 0) : '—'}% • omeprazole ${o.n ? fx((c.m - o.m) / c.m * 100, 0) : '—'}%`;
+      $('lblInferenceDetail').innerHTML = `Pylorus ligation produced ${fx(A.vol[0].m, 1)} mL of highly acidic juice (total acidity ${fx(A.total[0].m, 0)} mEq/L) and an ulcer index of ${fx(c.m, 2)} in controls. Ranitidine and omeprazole reduced volume, free and total acidity, raised pH and reduced the ulcer index, showing antisecretory anti-ulcer activity. ${o.n && r.n ? (o.m < r.m ? 'Omeprazole was more effective, as expected for irreversible inhibition of the final common pathway (H⁺/K⁺-ATPase).' : 'Both drugs were comparably effective in this batch.') : ''}`;
+    }
+    function buildResults() {
+      const A = analysis(), c = A.ui[0];
+      return { rows: GROUPS.flatMap((g, k) => [[`${g.short}: total acidity`, A.total[k].n ? `${fx(A.total[k].m, 1)} mEq/L` : '—'], [`${g.short}: ulcer index`, A.ui[k].n ? `${fx(A.ui[k].m, 2)}${k && c.n ? ` (${fx((c.m - A.ui[k].m) / c.m * 100, 0)}% protection)` : ''}` : '—']]),
+        text: 'Pylorus ligation causes accumulation of gastric acid and pepsin, autodigestion and ulceration (Shay ulcers). H₂-receptor blockade (ranitidine) and proton-pump inhibition (omeprazole) reduced the volume and acidity of the secretion and the ulcer index. The model mainly detects antisecretory drugs; cytoprotective agents are better tested in ethanol- or NSAID-induced ulcer models.' };
+    }
+    const QUIZ = [
+      { q: 'Ulcers in the Shay rat model are mainly due to:', o: ['NSAID-induced prostaglandin loss', 'Accumulation of acid and pepsin after pylorus ligation', 'H. pylori infection', 'Stress-induced ischaemia'], a: 1 },
+      { q: 'Rats are fasted in wire-bottom cages to:', o: ['Reduce stress', 'Prevent coprophagy and ensure an empty stomach', 'Increase acid', 'Keep them warm'], a: 1 },
+      { q: 'Töpfer\'s reagent is used to estimate:', o: ['Total acidity', 'Free acidity', 'Pepsin', 'Mucin'], a: 1 },
+      { q: '4.5 mL of 0.01 N NaOH neutralises 1 mL juice. Acidity =', o: ['4.5 mEq/L', '45 mEq/L', '450 mEq/L', '0.45 mEq/L'], a: 1, e: '4.5 × 0.01 × 1000 / 1 = 45 mEq/L.' },
+      { q: 'Omeprazole acts by inhibiting:', o: ['H₂ receptors', 'H⁺/K⁺-ATPase', 'Muscarinic M₁ receptors', 'Gastrin receptors'], a: 1 },
+      { q: 'The stomach is opened along the:', o: ['Lesser curvature', 'Greater curvature', 'Pylorus only', 'Fundus'], a: 1 },
+      { q: 'Which model is best for cytoprotective (non-antisecretory) drugs?', o: ['Pylorus ligation', 'Ethanol-induced ulcers', 'Hot plate', 'Castor oil'], a: 1 }
+    ];
+
+    window.addEventListener('DOMContentLoaded', () => { const d = $('lblInferenceDetail'); if (!d) return; const def = d.innerHTML, orig = renderObservation; renderObservation = function () { d.innerHTML = def; return orig.apply(this, arguments); }; });
+  </script>
+  <script src="../assets/js/viva.js"></script>
+</body>
+</html>

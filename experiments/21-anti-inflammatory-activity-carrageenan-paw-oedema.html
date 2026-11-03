@@ -1,0 +1,1865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exp 21: Anti-inflammatory Activity: Carrageenan Paw Oedema • XPRISM</title>
+  <meta name="description" content="Hands-on virtual practical: mark, weigh and randomise rats, prepare drug and 1% carrageenan, dose, inject and read paw volumes on a plethysmometer; oedema and % inhibition.">
+  <meta name="theme-color" content="#0a1f44">
+  <meta name="color-scheme" content="light">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
+  <link rel="stylesheet" href="../assets/css/tailwind.css">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <script src="../assets/js/tone.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    :root { color-scheme: light; }
+    input, select, textarea { background-color: #ffffff; color: #0f172a; -webkit-text-fill-color: #0f172a; caret-color: #0f172a; color-scheme: light; opacity: 1; }
+    input::placeholder { color: #94a3b8; -webkit-text-fill-color: #94a3b8; }
+    input:disabled, select:disabled { background-color: #f1f5f9; color: #64748b; -webkit-text-fill-color: #64748b; }
+    input:focus, select:focus { outline: 2px solid #7e13b5; outline-offset: 1px; }
+    body { font-family: 'Inter', sans-serif; background: #f1f5f9; color: #0a1f44; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .seg { font-family: 'DSEG7', 'JetBrains Mono', monospace; }
+    .obs-table th, .obs-table td { padding: 4px 6px; border-bottom: 1px solid #e2e8f0; }
+    .obs-table thead th { background: #f8fafc; color: #475569; font-weight: 600; }
+    .scroll-thin::-webkit-scrollbar { height: 8px; width: 8px; }
+    .scroll-thin::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+
+    /* ---------- bench layout (self-contained styles) ---------- */
+    .xb-wrap { display: flex; gap: 14px; flex: 1; align-items: flex-start; }
+    .xb-wrap.hidden { display: none; }
+    .xb-main { flex: 1; min-width: 0; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+    .xb-side { width: 340px; flex-shrink: 0; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; max-height: calc(100vh - 150px); }
+    @media (max-width: 1100px) { .xb-wrap { flex-direction: column; } .xb-side { width: 100%; max-height: none; } }
+    .xb-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
+    .xb-st { display: flex; gap: 4px; }
+    .xb-st button { font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; color: #334155; cursor: pointer; }
+    .xb-st button.on { background: #0a1f44; color: #fff; border-color: #0a1f44; }
+    .xb-st button .n { display: inline-block; width: 18px; height: 18px; line-height: 18px; text-align: center; border-radius: 50%; background: #e2e8f0; color: #334155; font-size: 10px; margin-right: 5px; }
+    .xb-st button.on .n { background: #f59e0b; color: #111; }
+    .xb-st button.done .n { background: #10b981; color: #fff; }
+    .xb-scene { position: relative; background: #2a3442; }
+    #scene { display: block; width: 100%; height: auto; touch-action: none; user-select: none; -webkit-user-select: none; }
+    #scene text { pointer-events: none; }
+    #scene .hot { cursor: pointer; }
+    #scene .hot:hover { filter: drop-shadow(0 0 5px rgba(253,224,71,.95)); }
+    #scene .pulse { animation: xpulse 1.4s ease-in-out infinite; }
+    @keyframes xpulse { 0%,100% { filter: drop-shadow(0 0 2px rgba(56,189,248,.3)); } 50% { filter: drop-shadow(0 0 9px rgba(56,189,248,1)); } }
+    .xb-fb { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #0f172a; color: #fff; padding: 8px 14px; font-size: 12px; min-height: 38px; }
+    .xb-fb b { color: #fde68a; }
+    .xb-card { border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; }
+    .xb-h { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #475569; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .xb-now { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 10px; padding: 10px; font-size: 12px; color: #78350f; line-height: 1.45; }
+    .xb-now .t { font-weight: 700; color: #92400e; font-size: 12.5px; margin-bottom: 3px; }
+    .xb-ctx { font-size: 12px; color: #1e293b; line-height: 1.45; }
+    .xb-ctx .row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
+    .xb-in { width: 92px; border: 1px solid #94a3b8; border-radius: 6px; padding: 4px 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+    .xb-btn { font-size: 12px; font-weight: 600; padding: 6px 10px; border-radius: 7px; border: 1px solid transparent; cursor: pointer; background: #0a1f44; color: #fff; }
+    .xb-btn:hover { filter: brightness(1.15); }
+    .xb-btn.sec { background: #fff; color: #0a1f44; border-color: #cbd5e1; }
+    .xb-btn.warn { background: #b91c1c; }
+    .xb-btn:disabled { opacity: .45; cursor: not-allowed; }
+    .xb-steps { list-style: none; margin: 0; padding: 0; font-size: 11.5px; }
+    .xb-steps li { display: flex; gap: 6px; padding: 3px 0; color: #94a3b8; }
+    .xb-steps li.done { color: #047857; }
+    .xb-steps li.cur { color: #92400e; font-weight: 700; }
+    .xb-steps li .k { width: 16px; flex-shrink: 0; text-align: center; }
+    .xb-steps .grp { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: #64748b; font-weight: 700; padding-top: 6px; }
+    .xb-tbl { width: 100%; border-collapse: collapse; font-size: 11px; }
+    .xb-tbl th { background: #f1f5f9; color: #475569; font-weight: 600; padding: 3px; text-align: center; }
+    .xb-tbl td { border-top: 1px solid #e2e8f0; padding: 3px; text-align: center; font-family: 'JetBrains Mono', monospace; }
+    .xb-tbl input { width: 58px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 3px; font-family: 'JetBrains Mono', monospace; font-size: 11px; text-align: center; }
+    .ok-in { border-color: #10b981 !important; background-color: #ecfdf5 !important; color: #065f46 !important; -webkit-text-fill-color: #065f46 !important; font-weight: 700; }
+    .bad-in { border-color: #e11d48 !important; background-color: #fff1f2 !important; color: #9f1239 !important; -webkit-text-fill-color: #9f1239 !important; font-weight: 700; }
+    .flag { display: inline-block; font-size: 9.5px; padding: 0 4px; border-radius: 4px; background: #fee2e2; color: #9f1239; margin: 1px; font-family: Inter, sans-serif; }
+    .xb-speed button { font-size: 11px; font-family: 'JetBrains Mono', monospace; font-weight: 700; padding: 2px 7px; border-radius: 5px; border: 0; background: transparent; color: #475569; cursor: pointer; }
+    .xb-speed { display: flex; border: 1px solid #cbd5e1; border-radius: 7px; background: #fff; padding: 2px; }
+    .xb-strip { background: #1b1b1b; border-top: 1px solid #000; position: relative; }
+    .xb-strip-h { display: flex; justify-content: space-between; color: #a3a3a3; font-size: 10.5px; padding: 5px 10px 0; text-transform: uppercase; letter-spacing: .06em; font-weight: 700; }
+    #kymoStrip { overflow-x: auto; }
+    .xb-man summary { cursor: pointer; font-size: 11px; font-weight: 700; color: #334155; text-transform: uppercase; letter-spacing: .06em; }
+    .xb-man table { width: 100%; font-size: 11px; border-collapse: collapse; margin-top: 6px; }
+    .xb-man td { border-top: 1px solid #e2e8f0; padding: 2px 4px; }
+    .xb-pl { width: 100%; }
+    .tgl { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #475569; }
+    .obs-in { width: 64px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; text-align: center; }
+    @media print {
+      header, #subHeader, #viewTask, #viewExperiment, .no-print { display: none !important; }
+      #viewObservation { display: flex !important; box-shadow: none; border: none; }
+    }
+    .xb-nbk { padding: 10px 12px; background: #fff; border-top: 1px solid #e2e8f0; }
+    .xb-calc { font-size: 12px; color: #1e293b; margin-bottom: 8px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .xb-tbl input { width: 60px; }
+    .xb-bar select.xb-in { font-family: Inter, sans-serif; font-size: 12px; padding: 3px 6px; }
+    .xb-ctx .mono { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-100 overflow-x-hidden">
+
+  <!-- TOP BRANDING BAR (XPRISM Header) -->
+  <header class="site-header bg-white border-b border-slate-200 px-4 md:px-6 py-2 flex items-center justify-between gap-3 shadow-sm shrink-0">
+    <div class="flex items-center gap-3 min-w-0">
+    <a href="../index.html" title="Back to Lab Home" class="shrink-0"><img src="../assets/img/xprism-lockup.png" alt="XPRISM" class="h-11 w-auto" width="146" height="49"></a>
+      <div class="min-w-0 border-l border-slate-200 pl-3">
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="text-[10px] uppercase font-bold bg-teal-50 text-teal-700 px-2 py-0.5 rounded-full border border-teal-200 font-display tracking-wide">Virtual Lab</span>
+        <a href="../index.html" class="text-[11px] font-semibold text-teal-700 hover:underline">← All experiments</a>
+      </div>
+      <p class="text-xs text-slate-500">Aaron Innovations • Experimental Pharmacology Research &amp; Interactive Student Module</p>
+    </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="hidden md:block text-right">
+        <div class="text-xs font-semibold text-slate-800 flex items-center justify-end space-x-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Dr. Vara Prasad Saka</span>
+        </div>
+        <div class="text-[11px] text-slate-500 font-mono">ID: 8019152501 • Dept. of Pharmacology</div>
+      </div>
+      <div class="flex items-center gap-2 border-l pl-4 border-slate-200">
+        <a class="site-nav-btn" href="20-analgesic-activity-tail-flick-analgesiometer.html" title="Previous: Exp #20 Analgesic Activity: Tail-Flick Analgesiometer">‹</a><a class="site-nav-btn" href="22-drugs-on-blood-pressure-and-heart-rate.html" title="Next: Exp #22 Drugs on Blood Pressure &amp; Heart Rate">›</a>
+        <button id="audioToggleBtn" class="p-2 rounded-lg bg-teal-100 hover:bg-teal-200 text-teal-800 transition" title="Toggle sound feedback" aria-label="Toggle sound feedback">
+          <svg id="soundIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+        </button>
+        <span class="hidden sm:inline bg-indigo-100 text-indigo-800 text-xs px-2.5 py-1 rounded-md font-medium border border-indigo-200 whitespace-nowrap">Exp #21</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- SUB-HEADER / VIEW TABS -->
+
+  <div id="subHeader" class="site-subheader bg-slate-800 text-white px-4 md:px-6 py-2 flex flex-wrap items-center justify-between gap-3 shadow shrink-0">
+    <div class="text-sm font-semibold tracking-wide flex items-center space-x-2 min-w-0">
+      <span class="text-teal-400 font-mono text-xs px-1.5 py-0.5 rounded bg-teal-950/80 border border-teal-500/40 shrink-0">MODULE 21</span>
+      <span>Examination 21: To Study the Anti-inflammatory Activity of a Given Drug by Carrageenan-Induced Paw Oedema in Rats</span>
+    </div>
+    <div class="flex items-center space-x-1.5 bg-slate-900/80 p-1 rounded-lg border border-slate-700" role="tablist">
+      <button id="tabTask" onclick="switchTab('task')" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white transition">Task Description</button>
+      <button id="tabExperiment" onclick="switchTab('experiment')" class="px-3.5 py-1.5 rounded-md text-xs font-semibold bg-teal-500 text-white shadow transition">Experiment Bench</button>
+      <button id="tabObservation" onclick="switchTab('observation')" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white transition">Observation Sheet &amp; Graphs</button>
+    </div>
+  </div>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-5 flex flex-col min-h-0">
+
+    <!-- TAB 1: TASK DESCRIPTION -->
+    <div id="viewTask" class="hidden flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between overflow-y-auto">
+      <div class="max-w-5xl space-y-6">
+        <div class="border-b pb-4">
+          <div class="inline-block px-2.5 py-1 rounded bg-teal-50 text-teal-800 text-xs font-bold font-mono mb-2">EXPERIMENT OBJECTIVE</div>
+          <h2 class="text-xl font-bold text-slate-900">Acute Anti-inflammatory Activity: Carrageenan-Induced Rat Paw Oedema (Winter et al., 1962)</h2>
+          <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+            Inject <strong>0.1 mL of 1% w/v carrageenan</strong> under the plantar skin of the right hind paw and measure the paw volume with a <strong>plethysmometer</strong>
+            before and 1, 2, 3 and 4 h afterwards. The test drug is given orally <strong>1 h before carrageenan</strong>. An anti-inflammatory drug reduces the oedema compared with the vehicle group.
+          </p>
+          <p class="text-sm text-slate-600 mt-2 leading-relaxed">You do the whole practical yourself: identify and weigh 12 rats, allocate them to two groups by drawing lots, calculate and prepare the drug suspension and the 1% carrageenan, set up and zero the plethysmometer, record the basal paw volumes, dose every rat, inject the carrageenan on time, take every reading by dipping the paw exactly to the ink mark, write the readings in your notebook and work out the mean oedema and % inhibition. Errors of technique (wrong dose, wrong site, wrong timing, a careless dip) appear in your data just as they would in the laboratory.</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-4">
+          <div class="p-4 rounded-xl bg-sky-50/70 border border-sky-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-sky-500 text-white flex items-center justify-center font-bold text-sm shadow">1</div>
+            <h3 class="text-sm font-bold text-sky-950">Principle: a biphasic oedema</h3>
+            <p class="text-xs text-slate-600 leading-relaxed"><strong>Early phase (0–1.5 h):</strong> histamine, 5-HT and bradykinin. <strong>Late phase (2.5–4 h):</strong> prostaglandins from inducible COX-2, with neutrophil infiltration. NSAIDs mainly inhibit the late phase; corticosteroids inhibit both; antihistamine/anti-5-HT drugs inhibit only the early phase.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-amber-50/70 border border-amber-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center font-bold text-sm shadow">2</div>
+            <h3 class="text-sm font-bold text-amber-950">Plethysmometer technique</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">The paw is marked with ink at the <strong>lateral malleolus</strong>. Each time, dip it into the measuring cell <strong>exactly up to the mark</strong>. The displaced fluid is read in mL; press the <strong>HOLD</strong> pedal to capture the reading. Fill the cell with water containing a <strong>wetting agent</strong> and zero the instrument before use.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-emerald-50/70 border border-emerald-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center font-bold text-sm shadow">3</div>
+            <h3 class="text-sm font-bold text-emerald-950">Calculation</h3>
+            <p class="text-xs text-slate-600 leading-relaxed"><strong>Oedema</strong> = V<sub>t</sub> − V<sub>0</sub> (mL).<br><strong>% Inhibition</strong> = (1 − E<sub>test</sub> ÷ E<sub>control</sub>) × 100, using the mean oedema at each time point. Compare the groups by unpaired t-test (n = 6).<br><strong>Dose volume</strong> (mL) = dose (mg/kg) × body wt (kg) ÷ concentration (mg/mL).</p>
+          </div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Requirements</h4>
+            <ul class="text-xs text-slate-600 space-y-1 list-disc pl-4">
+              <li>Digital plethysmometer (water cell with wetting agent), HOLD foot pedal</li>
+              <li>Albino rats, 150–200 g, fasted overnight with water ad libitum; picric acid and a marker pen for identification</li>
+              <li>Carrageenan 1% w/v in normal saline (0.1 mL per paw), 1 mL tuberculin syringe with 26 G needle</li>
+              <li>Indomethacin 10 mg/kg p.o., Diclofenac 10 mg/kg p.o., Aspirin 100 mg/kg p.o., Paracetamol 100 mg/kg p.o., Dexamethasone 1 mg/kg s.c., Cyproheptadine 10 mg/kg p.o. (oral drugs suspended in 0.5% CMC, 10 mL/kg; dexamethasone in saline, 1 mL/kg)</li>
+              <li>Analytical and animal balances, mortar and pestle, measuring cylinder, magnetic stirrer, 3 mL syringe with ball-tipped gavage needle</li>
+            </ul>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Procedure</h4>
+            <ol class="text-xs text-slate-600 space-y-1 list-decimal pl-4">
+              <li>Mark each rat (picric acid code), draw an ink line at the lateral malleolus of the right hind paw, weigh it and allocate it to Group I or II by drawing a lot (n = 6 each).</li>
+              <li>Prepare the drug suspension (triturate with 0.5% CMC) and 1% carrageenan in saline (stir until fully hydrated).</li>
+              <li>Fill the plethysmometer cell, switch it on and press ZERO with the cell empty of any paw.</li>
+              <li>Measure the basal volume (V<sub>0</sub>) of the right hind paw of each rat.</li>
+              <li>Give vehicle (Group I) or the test drug (Group II) orally.</li>
+              <li>After 1 h inject 0.1 mL of 1% carrageenan sub-plantar into the right hind paw.</li>
+              <li>Measure the paw volume at 1, 2, 3 and 4 h; calculate oedema and % inhibition.</li>
+            </ol>
+            <p class="text-[11px] text-slate-500 mt-2">At the end of the study the animals are humanely euthanised off-screen by trained staff, as approved by the IAEC and per CCSEA guidelines.</p>
+          </div>
+        </div>
+      </div>
+      <div class="pt-6 border-t flex justify-end mt-6">
+        <button onclick="switchTab('experiment')" class="px-6 py-2.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-semibold text-sm shadow flex items-center space-x-2 transition">
+          <span>Go to Experiment Bench</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 2: EXPERIMENT BENCH -->
+    <div id="viewExperiment" class="xb-wrap">
+      <div class="xb-main">
+        <div class="xb-bar">
+          <div class="xb-st" id="stationBtns">
+            <button data-s="1" onclick="goStation(1)"><span class="n">1</span>Animal house</button>
+            <button data-s="2" onclick="goStation(2)"><span class="n">2</span>Drug &amp; carrageenan</button>
+            <button data-s="3" onclick="goStation(3)"><span class="n">3</span>Dosing &amp; plethysmometer</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:11px;color:#64748b;font-weight:600">Lab time</span>
+            <span id="labClock" class="mono" style="font-size:12px;font-weight:700;color:#0a1f44">09:00</span>
+            <div class="xb-speed" id="speedBtns" title="Time runs faster; you still do every step"></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;width:100%">
+            <label style="font-size:11px;font-weight:700;color:#475569">Test drug:</label>
+            <select id="drugSelect" onchange="onDrugSelectChange()" class="xb-in" style="width:auto">
+              <option value="indomethacin">Indomethacin (10 mg/kg p.o. - Standard)</option>
+              <option value="diclofenac">Diclofenac sodium (10 mg/kg p.o.)</option>
+              <option value="aspirin">Aspirin (100 mg/kg p.o.)</option>
+              <option value="paracetamol">Paracetamol (100 mg/kg p.o.)</option>
+              <option value="dexamethasone">Dexamethasone (1 mg/kg s.c.)</option>
+              <option value="cyproheptadine">Cyproheptadine (10 mg/kg p.o.)</option>
+              <option value="unknown">Unknown Mystery Drug (Exam Diagnosis)</option>
+            </select>
+            <span id="drugStatusBadge" class="text-[11px] px-2.5 py-0.5 rounded font-mono font-semibold bg-indigo-100 text-indigo-800">Drug: Indomethacin</span>
+          </div>
+        </div>
+        <div class="xb-scene">
+          <svg id="scene" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet"></svg>
+        </div>
+        <div class="xb-fb" id="actionFeedback">
+          <div style="display:flex;align-items:center;gap:8px"><span id="feedbackIcon" style="color:#2dd4bf;font-weight:700">ℹ</span><span id="feedbackText">Ready.</span></div>
+          <span id="phaseIndicator" class="mono" style="font-size:11px;color:#94a3b8"></span>
+        </div>
+        <div class="xb-nbk">
+          <div class="xb-h"><span>Lab notebook: type every reading yourself (green = matches the instrument, red = check again)</span></div>
+          <div id="nbCalc" class="xb-calc"></div>
+          <div style="max-height:300px;overflow:auto" class="scroll-thin">
+            <table class="xb-tbl"><thead><tr><th>Rat</th><th>Grp</th><th>Wt (g)</th><th>Dose (mL)</th><th>V₀ (mL)</th><th>1 h</th><th>2 h</th><th>3 h</th><th>4 h</th><th style="text-align:left">Technique flags</th></tr></thead><tbody id="nbBody"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <aside class="xb-side">
+        <div class="xb-now" id="nowBox"></div>
+        <div class="xb-card"><div class="xb-h"><span id="ctxTitle">Bench</span></div><div class="xb-ctx" id="ctx"></div></div>
+        <div class="xb-card">
+          <div class="xb-h"><span>Protocol checklist</span><label class="tgl"><input type="checkbox" id="hintToggle" checked onchange="HINTS=this.checked;refreshHints()"> highlight next</label></div>
+          <ul class="xb-steps" id="checklist"></ul>
+        </div>
+        <details class="xb-card xb-man">
+          <summary>Lab manual: quick reference</summary>
+          <table>
+            <tr><td>Rats</td><td class="mono">150–200 g, n = 6 / group</td></tr>
+            <tr><td>Vehicle</td><td class="mono">0.5% CMC 10 mL/kg p.o.</td></tr>
+            <tr><td>Indomethacin / diclofenac</td><td class="mono">10 mg/kg p.o.</td></tr>
+            <tr><td>Aspirin / paracetamol</td><td class="mono">100 mg/kg p.o.</td></tr>
+            <tr><td>Dexamethasone</td><td class="mono">1 mg/kg s.c. (1 mL/kg)</td></tr>
+            <tr><td>Cyproheptadine</td><td class="mono">10 mg/kg p.o.</td></tr>
+            <tr><td>Pretreatment</td><td class="mono">60 min</td></tr>
+            <tr><td>Carrageenan</td><td class="mono">0.1 mL of 1% w/v, R hind paw</td></tr>
+            <tr><td>Readings</td><td class="mono">0, 1, 2, 3, 4 h (±10 min)</td></tr>
+            <tr><td>Max oral volume</td><td class="mono">20 mL/kg</td></tr>
+          </table>
+        </details>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="xb-btn sec" onclick="switchTab('observation')">Observation sheet →</button>
+          <button class="xb-btn sec" onclick="if(confirm('Discard everything and start the practical again from the beginning?')) newExperiment()">Restart practical</button>
+        </div>
+      </aside>
+    </div>
+
+    <!-- TAB 3: OBSERVATION SHEET -->
+    <div id="viewObservation" class="hidden flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between overflow-y-auto">
+      <div class="space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b pb-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Observation Table: Right Hind Paw Volume (mL) by Plethysmometer</h2>
+            <p class="text-xs text-slate-500">Carrageenan 1% w/v, 0.1 mL sub-plantar at 0 h • Drug p.o. 1 h before carrageenan • Oedema = V<sub>t</sub> − V<sub>0</sub> • n = 6 per group • values come from your notebook</p>
+          </div>
+          <div class="flex items-center space-x-3 no-print">
+            <button onclick="renderObservation()" class="px-3.5 py-1.5 rounded-lg bg-teal-50 border border-teal-300 hover:bg-teal-100 text-teal-800 text-xs font-semibold transition">Refresh from notebook</button>
+          </div>
+        </div>
+        <div class="grid xl:grid-cols-2 gap-4" id="obsTables"></div>
+        <div class="border border-slate-200 rounded-xl overflow-x-auto shadow-sm">
+          <table class="w-full text-xs text-center border-collapse">
+            <thead><tr class="bg-slate-50 text-slate-600 border-b border-slate-200">
+              <th class="p-2 border-r text-left">Comparison (Test vs Vehicle)</th><th class="p-2 border-r">1 h</th><th class="p-2 border-r">2 h</th><th class="p-2 border-r">3 h</th><th class="p-2">4 h</th>
+            </tr></thead>
+            <tbody id="cmpBody" class="divide-y divide-slate-200 font-mono text-[11px]"></tbody>
+          </table>
+        </div>
+        <div class="grid lg:grid-cols-3 gap-4">
+          <div class="border border-slate-200 rounded-xl p-3 shadow-sm">
+            <div class="text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">Paw Oedema vs Time (mL, Mean ± SEM)</div>
+            <svg id="chartTime" viewBox="0 0 420 250" class="w-full"></svg>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-3 shadow-sm">
+            <div class="text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">% Inhibition of Oedema</div>
+            <svg id="chartInh" viewBox="0 0 420 250" class="w-full"></svg>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+            <div class="text-[10px] text-slate-500 uppercase font-semibold font-mono">Inference</div>
+            <div id="lblInference" class="text-sm font-bold text-slate-800">Pending</div>
+            <p id="lblInferenceDetail" class="text-[11px] text-slate-600 leading-relaxed">Complete all readings for both groups.</p>
+          </div>
+        </div>
+        <div class="p-4 rounded-xl border border-teal-200 bg-teal-50/50 flex flex-wrap items-center justify-between gap-4 no-print">
+          <div class="space-y-1">
+            <h3 class="text-sm font-bold text-slate-800">Mystery Drug Diagnosis (Exam Deduction)</h3>
+            <p class="text-xs text-slate-600">Select "Unknown Mystery Drug", run both groups, then identify the compound from which phase of the oedema it inhibits.</p>
+          </div>
+          <div class="flex items-center space-x-3">
+            <select id="unknownDrugDeduction" class="bg-white border border-slate-300 text-slate-800 text-xs rounded-lg px-3 py-2 font-medium shadow-sm focus:ring-2 focus:ring-teal-500">
+              <option value="">-- Choose deduced compound --</option>
+            </select>
+            <button onclick="submitEvaluation()" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-lg shadow transition">Verify Deduction</button>
+          </div>
+        </div>
+      </div>
+      <div class="pt-6 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 mt-6 no-print">
+        <div class="text-xs text-slate-500 font-mono">XPRISM • Paw Oedema Practical Evaluation</div>
+        <div class="flex items-center space-x-3">
+          <button onclick="openModal('modalQuestions')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow transition">Answer Viva Questions</button>
+          <button onclick="openResultsModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow transition">Results &amp; Summary</button>
+          <button onclick="window.print()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg shadow transition">Print Report</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer no-print border-t border-slate-200 bg-white shrink-0">
+    <div class="max-w-7xl mx-auto px-6 py-3 text-xs text-slate-500 font-mono flex justify-between flex-wrap gap-2">
+      <span>XPRISM • Exp #21 • © 2026 Aaron Innovations • Dr. Vara Prasad Saka</span>
+      <span>Simulations are teaching aids that reduce animal use, in line with CCSEA 3Rs guidance. • <a href="../index.html" class="text-teal-700 hover:underline">All experiments</a></span>
+    </div>
+  </footer>
+
+  <!-- MODAL: VIVA -->
+  <div id="modalQuestions" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-base font-bold text-slate-800">Carrageenan Paw Oedema: Viva-Voce</h3>
+        <button onclick="closeModal('modalQuestions')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+      <div id="quizScore" class="hidden p-2.5 rounded-lg text-xs font-semibold"></div>
+      <div id="quizBody" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2 text-xs text-slate-700"></div>
+      <div class="pt-3 border-t flex justify-end space-x-2">
+        <button onclick="renderQuiz()" class="px-4 py-2 border rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">Reset</button>
+        <button onclick="evaluateQuestions()" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-lg shadow">Submit Answers</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: RESULTS -->
+  <div id="modalResults" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-base font-bold text-slate-800">Laboratory Results Summary</h3>
+        <button onclick="closeModal('modalResults')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+      <div id="resBody" class="space-y-2 text-xs"></div>
+      <div id="resExplanation" class="p-3 rounded-lg bg-teal-50 border border-teal-200 text-teal-900 leading-relaxed text-[11px]"></div>
+      <div class="pt-3 border-t flex justify-end">
+        <button onclick="closeModal('modalResults')" class="px-6 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg shadow">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =====================================================================
+    // XPRISM shared simulation toolkit (tabs, sound, stats, charts, viva)
+    // =====================================================================
+    const $ = id => document.getElementById(id);
+    const svgNS = "http://www.w3.org/2000/svg";
+    function el(tag, attrs = {}, parent) {
+      const e = document.createElementNS(svgNS, tag);
+      for (const k in attrs) e.setAttribute(k, attrs[k]);
+      if (parent) parent.appendChild(e);
+      return e;
+    }
+    function svgPoint(svg, evt) {
+      const pt = svg.createSVGPoint();
+      const src = evt.touches ? evt.touches[0] : evt;
+      pt.x = src.clientX; pt.y = src.clientY;
+      return pt.matrixTransform(svg.getScreenCTM().inverse());
+    }
+    function gauss() {
+      let u = 0, v = 0;
+      while (u === 0) u = Math.random();
+      while (v === 0) v = Math.random();
+      return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    }
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+    const shuffle = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+    const mean = a => a.length ? a.reduce((s, x) => s + x, 0) / a.length : NaN;
+    const sd = a => { if (a.length < 2) return 0; const m = mean(a); return Math.sqrt(a.reduce((s, x) => s + (x - m) ** 2, 0) / (a.length - 1)); };
+    const sem = a => a.length < 2 ? 0 : sd(a) / Math.sqrt(a.length);
+    const fx = (v, d = 1) => (v === null || v === undefined || !isFinite(v)) ? '—' : (+v).toFixed(d);
+    const fmtMS = s => { s = Math.max(0, Math.round(s)); return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
+    const fmtHMS = s => { s = Math.max(0, Math.round(s)); const h = Math.floor(s / 3600); return `${h}:${String(Math.floor(s % 3600 / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
+    const log10 = Math.log10;
+
+    // ---- t-distribution (two-tailed p) via regularised incomplete beta ----
+    function betacf(a, b, x) {
+      let qab = a + b, qap = a + 1, qam = a - 1, c = 1, d = 1 - qab * x / qap;
+      if (Math.abs(d) < 1e-30) d = 1e-30; d = 1 / d; let h = d;
+      for (let m = 1; m <= 200; m++) {
+        const m2 = 2 * m; let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+        d = 1 + aa * d; if (Math.abs(d) < 1e-30) d = 1e-30; c = 1 + aa / c; if (Math.abs(c) < 1e-30) c = 1e-30; d = 1 / d; h *= d * c;
+        aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+        d = 1 + aa * d; if (Math.abs(d) < 1e-30) d = 1e-30; c = 1 + aa / c; if (Math.abs(c) < 1e-30) c = 1e-30; d = 1 / d;
+        const del = d * c; h *= del; if (Math.abs(del - 1) < 3e-7) break;
+      }
+      return h;
+    }
+    function gammaln(x) {
+      const c = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5];
+      let y = x, t = x + 5.5; t -= (x + 0.5) * Math.log(t); let s = 1.000000000190015;
+      for (let j = 0; j < 6; j++) s += c[j] / ++y;
+      return -t + Math.log(2.5066282746310005 * s / x);
+    }
+    function betai(a, b, x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      const bt = Math.exp(gammaln(a + b) - gammaln(a) - gammaln(b) + a * Math.log(x) + b * Math.log(1 - x));
+      return x < (a + 1) / (a + b + 2) ? bt * betacf(a, b, x) / a : 1 - bt * betacf(b, a, 1 - x) / b;
+    }
+    function tTest(a, b) { // unpaired Student's t (pooled variance)
+      if (a.length < 2 || b.length < 2) return { t: NaN, df: NaN, p: NaN };
+      const df = a.length + b.length - 2;
+      const sp2 = ((a.length - 1) * sd(a) ** 2 + (b.length - 1) * sd(b) ** 2) / df;
+      const se = Math.sqrt(sp2 * (1 / a.length + 1 / b.length));
+      const t = se === 0 ? (mean(a) === mean(b) ? 0 : 99) : (mean(a) - mean(b)) / se;
+      return { t, df, p: betai(df / 2, 0.5, df / (df + t * t)) };
+    }
+    const pLabel = p => !isFinite(p) ? '—' : p < 0.001 ? 'p < 0.001' : p < 0.01 ? 'p < 0.01' : p < 0.05 ? 'p < 0.05' : 'p > 0.05 (ns)';
+    const stars = p => !isFinite(p) ? '' : p < 0.001 ? '***' : p < 0.01 ? '**' : p < 0.05 ? '*' : 'ns';
+    function linreg(xs, ys) {
+      const n = xs.length; if (n < 2) return null;
+      const mx = mean(xs), my = mean(ys);
+      let sxy = 0, sxx = 0, syy = 0;
+      for (let i = 0; i < n; i++) { sxy += (xs[i] - mx) * (ys[i] - my); sxx += (xs[i] - mx) ** 2; syy += (ys[i] - my) ** 2; }
+      const slope = sxy / sxx, intercept = my - slope * mx;
+      return { slope, intercept, r2: syy === 0 ? 1 : (sxy * sxy) / (sxx * syy) };
+    }
+    // log-linear interpolation of the dose giving response `target` on an ascending curve [[dose, resp], ...]
+    function interpDose(pts, target) {
+      const s = pts.filter(p => p[0] > 0).slice().sort((a, b) => a[0] - b[0]);
+      for (let i = 0; i < s.length - 1; i++) {
+        const [d1, r1] = s[i], [d2, r2] = s[i + 1];
+        if ((r1 <= target && r2 >= target) && r2 !== r1) {
+          const f = (target - r1) / (r2 - r1);
+          return Math.pow(10, log10(d1) + f * (log10(d2) - log10(d1)));
+        }
+      }
+      return NaN;
+    }
+
+    // ---- Sound ----
+    let soundOn = true, synth = null;
+    function beep(type = 'click') {
+      if (!soundOn || typeof Tone === 'undefined') return;
+      try {
+        if (!synth) { Tone.start(); synth = new Tone.PolySynth(Tone.Synth).toDestination(); synth.volume.value = -16; }
+        const n = { click: 'C6', ok: 'E5', warn: 'A3', done: 'G5', tick: 'C7', low: 'E3' }[type] || 'C6';
+        synth.triggerAttackRelease(n, type === 'done' ? '8n' : '32n');
+      } catch (e) { /* audio optional */ }
+    }
+
+    // ---- Feedback / stepper ----
+    function showFeedback(msg, isAlert = false) {
+      $('feedbackText').innerHTML = msg;
+      const icon = $('feedbackIcon');
+      icon.innerText = isAlert ? "⚠️" : "ℹ";
+      icon.className = isAlert ? "text-amber-400 font-bold" : "text-teal-400 font-bold";
+      if (isAlert) beep('warn');
+    }
+    function setPhase(t) { $('phaseIndicator').innerText = t || ''; }
+    function renderSteps(steps) {
+      let active = steps.findIndex(s => !s.done);
+      $('stepper').innerHTML = steps.map((s, i) => {
+        const cls = s.done ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : i === active ? 'bg-amber-50 text-amber-800 border-amber-300 ring-1 ring-amber-200' : 'bg-slate-50 text-slate-400 border-slate-200';
+        return `<span class="px-2 py-1 rounded-md border ${cls}">${s.done ? '✓' : (i + 1)} ${s.t}</span>`;
+      }).join('');
+    }
+
+    // ---- Speed ----
+    let SPEED = 1, SPEEDS = [1, 5, 20, 60];
+    function renderSpeed() {
+      $('speedBtns').innerHTML = SPEEDS.map(s => `<button onclick="setSpeed(${s})" class="px-2 py-0.5 text-[11px] rounded font-mono font-semibold ${s === SPEED ? 'bg-teal-600 text-white' : 'text-slate-600 hover:bg-slate-100'}">${s}×</button>`).join('');
+    }
+    function setSpeed(s) { SPEED = s; renderSpeed(); beep('tick'); }
+
+    // ---- Generic wait timer (simulated seconds) ----
+    let WAIT = null;
+    function startWait(title, seconds, onDone) {
+      WAIT = { title, total: seconds, left: seconds, onDone };
+      $('waitTitle').innerText = title; $('waitCard').classList.remove('hidden');
+    }
+    function skipWait() { if (WAIT) WAIT.left = 0; }
+    function cancelWait() { WAIT = null; $('waitCard').classList.add('hidden'); }
+    function tickWait(dtSim) {
+      if (!WAIT) return;
+      WAIT.left -= dtSim;
+      $('waitClock').innerText = WAIT.total >= 3600 ? fmtHMS(WAIT.left) : fmtMS(WAIT.left);
+      $('waitBar').style.width = `${clamp(100 * (1 - WAIT.left / WAIT.total), 0, 100)}%`;
+      if (WAIT.left <= 0) { const w = WAIT; WAIT = null; $('waitCard').classList.add('hidden'); beep('done'); w.onDone && w.onDone(); }
+    }
+    let _lastTs = null;
+    function startLoop(cb) {
+      const f = ts => {
+        if (_lastTs === null) _lastTs = ts;
+        const dtR = Math.min(0.1, Math.max(0, (ts - _lastTs) / 1000)); _lastTs = ts;
+        tickWait(dtR * SPEED);
+        cb && cb(dtR * SPEED, dtR);
+        requestAnimationFrame(f);
+      };
+      requestAnimationFrame(f);
+    }
+
+    // ---- Tabs / modals ----
+    function openModal(id) { $(id).classList.remove('hidden'); }
+    function closeModal(id) { $(id).classList.add('hidden'); }
+    function switchTab(tabId) {
+      const map = { task: ['viewTask', 'tabTask'], experiment: ['viewExperiment', 'tabExperiment'], observation: ['viewObservation', 'tabObservation'] };
+      Object.values(map).forEach(([v, t]) => {
+        $(v).classList.add('hidden');
+        const b = $(t); b.classList.remove('bg-teal-500', 'text-white', 'shadow'); b.classList.add('text-slate-300');
+      });
+      $(map[tabId][0]).classList.remove('hidden');
+      $(map[tabId][1]).classList.add('bg-teal-500', 'text-white', 'shadow');
+      if (tabId === 'observation') renderObservation();
+    }
+
+    // ---- Viva ----
+    function renderQuiz() {
+      $('quizScore').classList.add('hidden');
+      $('quizBody').innerHTML = QUIZ.map((q, i) => `<div class="space-y-1.5" id="qwrap${i}">
+        <p class="font-semibold text-slate-800">${i + 1}. ${q.q}</p>
+        ${q.o.map((o, j) => `<label class="flex items-start gap-2 p-1.5 rounded hover:bg-slate-50 cursor-pointer"><input type="radio" name="q${i}" value="${j}" class="mt-0.5 accent-teal-600"><span>${o}</span></label>`).join('')}
+        <p id="qexp${i}" class="hidden text-[11px] p-2 rounded"></p></div>`).join('');
+    }
+    function evaluateQuestions() {
+      const ans = QUIZ.map((_, i) => document.querySelector(`input[name="q${i}"]:checked`)?.value);
+      if (ans.some(a => a === undefined)) { const s = $('quizScore'); s.className = 'p-2.5 rounded-lg text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200'; s.innerText = `Please answer all ${QUIZ.length} questions before submitting.`; return; }
+      let score = 0;
+      QUIZ.forEach((q, i) => {
+        const ok = +ans[i] === q.a; if (ok) score++;
+        const e = $('qexp' + i); e.classList.remove('hidden');
+        e.className = `text-[11px] p-2 rounded ${ok ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-rose-50 text-rose-800 border border-rose-200'}`;
+        e.innerHTML = `${ok ? '✓ Correct.' : `✗ Correct answer: <b>${q.o[q.a]}</b>.`} ${q.e || ''}`;
+      });
+      const s = $('quizScore'); s.className = `p-2.5 rounded-lg text-xs font-semibold ${score / QUIZ.length >= 0.6 ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-amber-50 text-amber-800 border border-amber-200'}`;
+      s.innerText = `Viva score: ${score}/${QUIZ.length} (${Math.round(score / QUIZ.length * 100)}%)`;
+      beep(score / QUIZ.length >= 0.6 ? 'done' : 'warn');
+      $('quizBody').scrollTop = 0;
+    }
+
+    // ---- Results modal ----
+    function openResultsModal() {
+      const r = buildResults();
+      $('resBody').innerHTML = r.rows.map(([k, v]) => `<div class="flex justify-between gap-3 border-b border-slate-100 pb-1"><span class="text-slate-500">${k}</span><span class="font-semibold text-slate-800 text-right">${v}</span></div>`).join('');
+      $('resExplanation').innerHTML = r.text;
+      openModal('modalResults');
+    }
+    // numeric answer verification (bioassays / unknowns)
+    function verifyNumber(inputId, outId, truth, tolPct, unit, explain) {
+      const v = parseFloat($(inputId).value), o = $(outId);
+      if (!isFinite(v)) { o.className = 'text-xs font-semibold text-amber-700'; o.innerText = 'Enter a number first.'; return; }
+      const err = Math.abs(v - truth) / truth * 100;
+      const ok = err <= tolPct;
+      o.className = `text-xs font-semibold ${ok ? 'text-emerald-700' : 'text-rose-700'}`;
+      o.innerHTML = ok ? `✓ Accepted (${fx(err, 1)}% from the true value of ${fx(truth, 3)} ${unit}). ${explain || ''}` : `✗ ${fx(err, 0)}% away from the true value. Re-check your matching/calculation (accepted within ±${tolPct}%).`;
+      beep(ok ? 'done' : 'warn');
+    }
+
+    // ---- SVG charts ----
+    const PALETTE = { teal: '#7e13b5', indigo: '#4f46e5', rose: '#e11d48', amber: '#d97706', slate: '#475569', emerald: '#059669', sky: '#0284c7', violet: '#7c3aed' };
+    function niceTicks(min, max, n = 5) {
+      if (!(max > min)) { max = min + 1; }
+      const span = max - min, step0 = span / n, mag = Math.pow(10, Math.floor(log10(step0)));
+      const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => span / s <= n) || mag * 10;
+      const out = []; for (let v = Math.ceil(min / step - 1e-9) * step; v <= max + 1e-9; v += step) out.push(+v.toFixed(10));
+      return out;
+    }
+    function chartFrame(svg, o) {
+      svg.innerHTML = '';
+      const W = +(svg.getAttribute('viewBox').split(' ')[2]), H = +(svg.getAttribute('viewBox').split(' ')[3]);
+      const m = { l: 46, r: 12, t: 12, b: 38 };
+      const X = v => m.l + (v - o.xMin) / (o.xMax - o.xMin) * (W - m.l - m.r);
+      const Y = v => H - m.b - (v - o.yMin) / (o.yMax - o.yMin) * (H - m.t - m.b);
+      const yt = o.yTicks || niceTicks(o.yMin, o.yMax, 5);
+      yt.forEach(v => { el('line', { x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), stroke: '#e2e8f0' }, svg); const t = el('text', { x: m.l - 5, y: Y(v) + 3, 'text-anchor': 'end', 'font-size': 9, fill: '#64748b' }, svg); t.textContent = o.yFmt ? o.yFmt(v) : +v.toFixed(3); });
+      const xt = o.xTicks || niceTicks(o.xMin, o.xMax, 6).map(v => [v, o.xFmt ? o.xFmt(v) : +v.toFixed(3)]);
+      xt.forEach(([v, lab]) => { el('line', { x1: X(v), x2: X(v), y1: H - m.b, y2: H - m.b + 4, stroke: '#94a3b8' }, svg); const t = el('text', { x: X(v), y: H - m.b + 14, 'text-anchor': 'middle', 'font-size': 9, fill: '#64748b' }, svg); t.textContent = lab; });
+      el('line', { x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b, stroke: '#475569' }, svg);
+      el('line', { x1: m.l, x2: m.l, y1: m.t, y2: H - m.b, stroke: '#475569' }, svg);
+      if (o.xLabel) { const t = el('text', { x: (m.l + W - m.r) / 2, y: H - 6, 'text-anchor': 'middle', 'font-size': 10, fill: '#334155', 'font-weight': 600 }, svg); t.textContent = o.xLabel; }
+      if (o.yLabel) { const t = el('text', { x: 11, y: (m.t + H - m.b) / 2, 'text-anchor': 'middle', 'font-size': 10, fill: '#334155', 'font-weight': 600, transform: `rotate(-90 11 ${(m.t + H - m.b) / 2})` }, svg); t.textContent = o.yLabel; }
+      return { X, Y, W, H, m };
+    }
+    function emptyChart(svg, msg) {
+      svg.innerHTML = '';
+      const vb = svg.getAttribute('viewBox').split(' ');
+      const t = el('text', { x: vb[2] / 2, y: vb[3] / 2, 'text-anchor': 'middle', 'font-size': 11, fill: '#94a3b8' }, svg); t.textContent = msg || 'No data yet';
+    }
+    // series: [{name, color, pts:[[x,y,err?]], dash, noLine, line:{slope,intercept,x1,x2}}]
+    function lineChart(id, o) {
+      const svg = $(id);
+      const all = o.series.flatMap(s => s.pts);
+      if (!all.length) { emptyChart(svg, o.empty); return; }
+      const xs = all.map(p => p[0]), ys = all.map(p => p[1] + (p[2] || 0));
+      const xMin = o.xMin ?? Math.min(...xs), xMax = o.xMax ?? Math.max(...xs);
+      const pad = (xMax - xMin) * 0.05 || 1;
+      const f = chartFrame(svg, { ...o, xMin: o.xMin ?? xMin - pad, xMax: o.xMax ?? xMax + pad, yMin: o.yMin ?? Math.min(0, ...all.map(p => p[1])), yMax: o.yMax ?? (Math.max(...ys) * 1.12 || 1) });
+      (o.hlines || []).forEach(h => { el('line', { x1: f.m.l, x2: f.W - f.m.r, y1: f.Y(h.y), y2: f.Y(h.y), stroke: h.color || '#94a3b8', 'stroke-dasharray': '4 3' }, svg); if (h.label) { const t = el('text', { x: f.W - f.m.r - 2, y: f.Y(h.y) - 3, 'text-anchor': 'end', 'font-size': 8.5, fill: h.color || '#64748b' }, svg); t.textContent = h.label; } });
+      (o.vlines || []).forEach(h => { el('line', { x1: f.X(h.x), x2: f.X(h.x), y1: f.m.t, y2: f.H - f.m.b, stroke: h.color || '#94a3b8', 'stroke-dasharray': '3 3' }, svg); if (h.label) { const t = el('text', { x: f.X(h.x) + 3, y: f.m.t + 9, 'font-size': 8.5, fill: h.color || '#64748b' }, svg); t.textContent = h.label; } });
+      o.series.forEach(s => {
+        const pts = s.pts.slice().sort((a, b) => a[0] - b[0]);
+        if (s.line) { el('line', { x1: f.X(s.line.x1), y1: f.Y(s.line.slope * s.line.x1 + s.line.intercept), x2: f.X(s.line.x2), y2: f.Y(s.line.slope * s.line.x2 + s.line.intercept), stroke: s.color, 'stroke-width': 1.5, 'stroke-dasharray': '5 3' }, svg); }
+        if (!s.noLine && pts.length > 1) el('polyline', { points: pts.map(p => `${f.X(p[0])},${f.Y(p[1])}`).join(' '), fill: 'none', stroke: s.color, 'stroke-width': 2, 'stroke-dasharray': s.dash || '' }, svg);
+        pts.forEach(p => {
+          if (p[2]) { el('line', { x1: f.X(p[0]), x2: f.X(p[0]), y1: f.Y(p[1] - p[2]), y2: f.Y(p[1] + p[2]), stroke: s.color }, svg); [-1, 1].forEach(k => el('line', { x1: f.X(p[0]) - 3, x2: f.X(p[0]) + 3, y1: f.Y(p[1] + k * p[2]), y2: f.Y(p[1] + k * p[2]), stroke: s.color }, svg)); }
+          el('circle', { cx: f.X(p[0]), cy: f.Y(p[1]), r: 3.2, fill: s.hollow ? '#fff' : s.color, stroke: s.color, 'stroke-width': 1.5 }, svg);
+        });
+      });
+      // legend
+      const named = o.series.filter(s => s.name);
+      named.forEach((s, i) => { const x = f.m.l + 8, y = f.m.t + 8 + i * 12; el('rect', { x, y: y - 6, width: 10, height: 4, fill: s.color }, svg); const t = el('text', { x: x + 14, y: y - 1, 'font-size': 9, fill: '#334155' }, svg); t.textContent = s.name; });
+    }
+    // bars: [{label, v, e, color, note}]
+    function barChart(id, o) {
+      const svg = $(id);
+      const bars = o.bars.filter(b => isFinite(b.v));
+      if (!bars.length) { emptyChart(svg, o.empty); return; }
+      const top = Math.max(...bars.map(b => b.v + (b.e || 0))) * 1.2 || 1;
+      const n = o.bars.length;
+      const f = chartFrame(svg, { ...o, xMin: 0, xMax: n, yMin: o.yMin ?? 0, yMax: o.yMax ?? top, xTicks: [] });
+      const bw = (f.X(1) - f.X(0)) * 0.56;
+      o.bars.forEach((b, i) => {
+        const cx = f.X(i + 0.5);
+        const t = el('text', { x: cx, y: f.H - f.m.b + 13, 'text-anchor': 'middle', 'font-size': 9, fill: '#334155' }, svg); t.textContent = b.label;
+        if (!isFinite(b.v)) return;
+        el('rect', { x: cx - bw / 2, y: f.Y(Math.max(b.v, 0)), width: bw, height: Math.abs(f.Y(0) - f.Y(b.v)), fill: b.color || PALETTE.teal, rx: 2, opacity: .9 }, svg);
+        if (b.e) { el('line', { x1: cx, x2: cx, y1: f.Y(b.v), y2: f.Y(b.v + b.e), stroke: '#0a1f44' }, svg); el('line', { x1: cx - 5, x2: cx + 5, y1: f.Y(b.v + b.e), y2: f.Y(b.v + b.e), stroke: '#0a1f44' }, svg); }
+        if (b.note) { const s = el('text', { x: cx, y: f.Y(b.v + (b.e || 0)) - 4, 'text-anchor': 'middle', 'font-size': 10, 'font-weight': 700, fill: '#0a1f44' }, svg); s.textContent = b.note; }
+      });
+    }
+    // ---- small HTML helpers ----
+    function tableHTML(head, rows, cls = '') {
+      return `<table class="obs-table w-full text-[11px] text-center ${cls}"><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody class="font-mono">${rows.length ? rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${head.length}" class="text-slate-400 py-3 font-sans">No readings yet</td></tr>`}</tbody></table>`;
+    }
+    $('audioToggleBtn') && $('audioToggleBtn').addEventListener('click', () => {
+      soundOn = !soundOn;
+      $('audioToggleBtn').className = `p-2 rounded-lg transition ${soundOn ? 'bg-teal-100 hover:bg-teal-200 text-teal-800' : 'bg-slate-200 text-slate-500'}`;
+      if (soundOn) beep('ok');
+    });
+    window.addEventListener('DOMContentLoaded', () => { renderSpeed(); renderQuiz(); init(); });
+
+  </script>
+  <script>
+    // =====================================================================
+    // Shared realistic rodent art (albino Wistar rat / Swiss albino mouse).
+    // Anatomical silhouettes, strand-textured fur with fuzzy edge, rim light,
+    // veined ears, glossy ruby eyes, whiskers, ringed tail, toed paws.
+    // Side views face +x, top views have the head at +x.  Origin = body centre.
+    // =====================================================================
+    const ANI_DEFS = `
+      <filter id="furStrand" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".55 .08" numOctaves="3" seed="12" result="n"/><feColorMatrix in="n" values="0 0 0 0 .52  0 0 0 0 .46  0 0 0 0 .43  0 0 0 .75 -.2"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+      <filter id="furStrandT" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".12 .6" numOctaves="3" seed="21" result="n"/><feColorMatrix in="n" values="0 0 0 0 .52  0 0 0 0 .46  0 0 0 0 .43  0 0 0 .75 -.2"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+      <filter id="furFuzz" x="-6%" y="-8%" width="112%" height="116%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="3" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+      <filter id="aniBlur"><feGaussianBlur stdDeviation="1.6"/></filter>
+      <filter id="aniSoft"><feGaussianBlur stdDeviation=".5"/></filter>
+      <linearGradient id="aniBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".4" stop-color="#f7f3f0"/><stop offset=".78" stop-color="#e6ddd9"/><stop offset="1" stop-color="#c9bcb7"/></linearGradient>
+      <linearGradient id="aniBodyT" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#fbf8f6"/><stop offset=".5" stop-color="#f1ebe7"/><stop offset="1" stop-color="#ddd2cd"/></linearGradient>
+      <linearGradient id="aniShade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".6" stop-color="#9a8782" stop-opacity="0"/><stop offset="1" stop-color="#5f4c48" stop-opacity=".38"/></linearGradient>
+      <linearGradient id="aniTail" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#efbdc6"/><stop offset="1" stop-color="#dc98a8"/></linearGradient>
+      <radialGradient id="aniEye" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ff8097"/><stop offset=".5" stop-color="#b3122c"/><stop offset="1" stop-color="#430410"/></radialGradient>
+      <radialGradient id="aniEar" cx=".5" cy=".62" r=".65"><stop offset="0" stop-color="#fcd7df"/><stop offset=".7" stop-color="#f2adbf"/><stop offset="1" stop-color="#e48fa6"/></radialGradient>
+      <linearGradient id="aniPaw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6bcc8"/><stop offset="1" stop-color="#e395a8"/></linearGradient>`;
+
+    const _ANI_SIDE = 'M45 1.5 C42 -2 37 -7 29 -10 C22 -13 14 -16 3 -16.5 C-9 -17 -21 -14.5 -28 -8 C-33 -3 -33 6 -29 11 C-25 15 -17 15.5 -9 15.5 C0 15.5 9 14.5 17 12 C24 10 31 8.5 37 6 C41 4.5 44 3 45 1.5Z';
+    const _ANI_TOP = 'M27 0 C25 -2.4 22 -4.6 18 -5.8 C15 -7 12.5 -8.6 8 -9.4 C1 -10.6 -8 -10.2 -13.5 -7.8 C-18 -5.8 -20.5 -2.8 -20.5 0 C-20.5 2.8 -18 5.8 -13.5 7.8 C-8 10.2 1 10.6 8 9.4 C12.5 8.6 15 7 18 5.8 C22 4.6 25 2.4 27 0Z';
+    const _toes = (x, y, n, len, dx, dy, w = .5) => Array.from({ length: n }, (_, i) => { const a = (i - (n - 1) / 2) * .42; return `<line x1="${x}" y1="${y}" x2="${(x + (dx * Math.cos(a) - dy * Math.sin(a)) * len).toFixed(2)}" y2="${(y + (dx * Math.sin(a) + dy * Math.cos(a)) * len).toFixed(2)}" stroke="#c77a8f" stroke-width="${w}" stroke-linecap="round"/>`; }).join('');
+    const _whisk = (x, y, dir, sc) => [[-9, -14], [-3, -17], [4, -16], [9, -11], [12, -5]].map(([a, b], i) => `<path d="M${x} ${y + (i - 2) * .55 * sc} Q${x + dir * (8 + i) * sc} ${y + (a * .55) * sc} ${x + dir * (19 + i * 1.5) * sc} ${y + b * sc * .8}" fill="none" stroke="#fff" stroke-opacity=".62" stroke-width=".28"/>`).join('');
+
+    // ---- side view. o: {flip, sw (paw swelling 0..1), ink, kind:'rat'|'mouse'}  Returns art only (no marks).
+    function animalSideArt(o = {}) {
+        const mouse = o.kind === 'mouse', sc = mouse ? .47 : 1, sw = o.sw || 0;
+        const pawC = `rgb(${Math.round(240 - 16 * sw)},${Math.round(160 - 70 * sw)},${Math.round(176 - 70 * sw)})`;
+        const tail = mouse ? 'M-30 3 C-48 5 -58 -2 -70 5 C-80 10 -90 8 -96 14' : 'M-30 3 C-44 4 -52 12 -64 10 C-72 9 -76 14 -82 12';
+        const earRot = mouse ? -12 : -20, earS = mouse ? 1.5 : 1;
+        return `<g transform="scale(${sc})">
+        <ellipse cx="2" cy="16.5" rx="${mouse ? 40 : 36}" ry="3.6" fill="#000" opacity=".3" filter="url(#aniBlur)"/>
+        <path d="${tail}" fill="none" stroke="url(#aniTail)" stroke-width="${mouse ? 3.2 : 2.7}" stroke-linecap="round"/>
+        <path d="${tail}" fill="none" stroke="#b97585" stroke-width="${mouse ? 3.2 : 2.7}" stroke-linecap="round" stroke-dasharray=".55 1.5" opacity=".6"/>
+        <g opacity=".85"><path d="M22 10 Q26 14 25 16.6 L31 16.8 Q31 13 28 10Z" fill="#d9a2ae"/><path d="M-20 12 Q-18 16 -16 16.4 L-7 16.6 Q-7 14 -10 12Z" fill="#d9a2ae"/></g>
+        <path d="${_ANI_SIDE}" fill="url(#aniBody)" filter="url(#furFuzz)"/>
+        <path d="${_ANI_SIDE}" fill="#fff" filter="url(#furStrand)" opacity=".85"/>
+        <path d="${_ANI_SIDE}" fill="url(#aniShade)"/>
+        <path d="M-27 -8 C-20 -14.5 -8 -16.8 3 -16.3 C13 -15.8 21 -13.4 28 -10" fill="none" stroke="#fff" stroke-width="1.5" stroke-opacity=".85" filter="url(#aniSoft)"/>
+        <ellipse cx="-15" cy="3" rx="13.5" ry="11.5" fill="#fff" opacity=".28"/><path d="M-27 4 C-26 -4 -20 -9 -13 -9.5" fill="none" stroke="#d8cdc8" stroke-width=".6" opacity=".55"/>
+        <ellipse cx="19" cy="2.5" rx="9" ry="9.5" fill="#fff" opacity=".16"/>
+        <g transform="rotate(${earRot} 23 -12) translate(${(23 * (1 - earS)).toFixed(1)} ${(-13 * (1 - earS)).toFixed(1)}) scale(${earS})"><ellipse cx="23" cy="-14" rx="4.8" ry="6.2" fill="#f4eae6" stroke="#e6d9d4" stroke-width=".4"/><ellipse cx="23.2" cy="-13.6" rx="3.5" ry="4.8" fill="url(#aniEar)"/><path d="M23 -9.5 Q23.4 -13 22.2 -17 M23.8 -10 Q25 -13 25.4 -16" fill="none" stroke="#d2728d" stroke-width=".35" opacity=".65"/></g>
+        <ellipse cx="34" cy="-4.8" rx="2.5" ry="2.25" fill="#3a0a14"/><ellipse cx="34" cy="-4.8" rx="2" ry="1.8" fill="url(#aniEye)"/><circle cx="33.2" cy="-5.6" r=".68" fill="#fff"/><circle cx="35" cy="-4" r=".3" fill="#fff" opacity=".6"/><path d="M31.6 -6.4 Q34 -8 36.5 -6.2" fill="none" stroke="#e5d6d1" stroke-width=".55"/>
+        <ellipse cx="44.6" cy="1.6" rx="2" ry="1.55" fill="#e98aa1"/><circle cx="45.4" cy="1.2" r=".5" fill="#8a2d44"/><path d="M43 4.2 Q40 5.6 37.4 5.3" fill="none" stroke="#b49a98" stroke-width=".4"/>
+        ${_whisk(41, 2.6, 1, 1)}
+        <path d="M17 9 Q23 12 22 15.5 L29 16 Q29 12 26 8.5Z" fill="url(#aniPaw)" opacity=".95"/>${_toes(22.5, 15.7, 3, 4.2, 1, 0.25)}
+        <ellipse cx="-13" cy="14.2" rx="${(6.8 + sw * 3.2).toFixed(1)}" ry="${(2.5 + sw * 1.3).toFixed(1)}" fill="${pawC}"/><ellipse cx="-13" cy="13.6" rx="${(5.4 + sw * 3).toFixed(1)}" ry="${(1.3 + sw * .8).toFixed(1)}" fill="#fff" opacity=".22"/>${_toes(-7.5, 15, 4, 4.4, 1, .18)}
+        ${o.ink ? `<line x1="-18" y1="11" x2="-8" y2="11" stroke="#1e3a8a" stroke-width="1.2"/>` : ''}
+        </g>`;
+    }
+    // ---- top view (head to +x). o: {kind}
+    function animalTopArt(o = {}) {
+        const mouse = o.kind !== 'rat';
+        return `<g transform="scale(.72)">
+        <ellipse cx="0" cy="2.6" rx="24" ry="11" fill="#000" opacity=".26" filter="url(#aniBlur)"/>
+        <path d="M-20 0 C-30 3 -38 -3 -50 2 C-56 5 -60 2 -64 5" fill="none" stroke="url(#aniTail)" stroke-width="2.3" stroke-linecap="round"/>
+        <path d="M-20 0 C-30 3 -38 -3 -50 2 C-56 5 -60 2 -64 5" fill="none" stroke="#b97585" stroke-width="2.3" stroke-linecap="round" stroke-dasharray=".5 1.4" opacity=".6"/>
+        ${[-1, 1].map(s => `<g>
+          <ellipse cx="11" cy="${s * 8.6}" rx="3.3" ry="2" fill="#f1ebe7" stroke="#ddd2cd" stroke-width=".3" transform="rotate(${s * 28} 11 ${s * 8.6})"/>
+          <ellipse cx="13.6" cy="${s * 10.6}" rx="2.2" ry="1.25" fill="url(#aniPaw)" stroke="#d58a9c" stroke-width=".25" transform="rotate(${s * 40} 13.6 ${s * 10.6})"/>
+          <ellipse cx="-9.5" cy="${s * 9.2}" rx="5" ry="3" fill="#f1ebe7" stroke="#ddd2cd" stroke-width=".3" transform="rotate(${s * -18} -9.5 ${s * 9.2})"/>
+          <ellipse cx="-5.4" cy="${s * 11.6}" rx="3.8" ry="1.5" fill="url(#aniPaw)" stroke="#d58a9c" stroke-width=".25" transform="rotate(${s * -14} -5.4 ${s * 11.6})"/>
+          ${_toes(-2.6, s * 11.9, 4, 1.9, .8, s * .2, .3)}${_toes(15.3, s * 11.6, 3, 1.5, .6, s * .7, .3)}
+        </g>`).join('')}
+        <path d="${_ANI_TOP}" fill="url(#aniBodyT)" filter="url(#furFuzz)"/>
+        <path d="${_ANI_TOP}" fill="#fff" filter="url(#furStrandT)" opacity=".85"/>
+        <path d="M-16 0 L16 0" stroke="#d5c9c4" stroke-width=".9" opacity=".35" filter="url(#aniSoft)"/>
+        <ellipse cx="-9" cy="-5.6" rx="8" ry="5" fill="#fff" opacity=".3"/><ellipse cx="-9" cy="5.6" rx="8" ry="5" fill="#fff" opacity=".3"/>
+        <path d="M-18 -4 C-12 -9.4 2 -9.6 9 -8.4" fill="none" stroke="#fff" stroke-width="1.1" stroke-opacity=".7" filter="url(#aniSoft)"/>
+        ${[-1, 1].map(s => `<g><ellipse cx="14.5" cy="${s * 6.4}" rx="3.9" ry="3.3" fill="#f3e9e5" stroke="#e5d8d3" stroke-width=".35"/><ellipse cx="14.7" cy="${s * 6.4}" rx="2.7" ry="2.3" fill="url(#aniEar)"/><path d="M13 ${s * 6.4} Q15 ${s * 6.8} 17 ${s * 6.2}" fill="none" stroke="#d2728d" stroke-width=".3" opacity=".6"/>
+          <ellipse cx="21.4" cy="${s * 3}" rx="1.35" ry="1.2" fill="#3a0a14"/><ellipse cx="21.4" cy="${s * 3}" rx="1.05" ry=".95" fill="url(#aniEye)"/><circle cx="21" cy="${s * 3 - .45}" r=".38" fill="#fff"/></g>`).join('')}
+        <ellipse cx="27" cy="0" rx="1.5" ry="1.3" fill="#e98aa1"/>
+        ${[-1, 1].map(s => [[-12, 5], [-6, 7], [1, 8]].map(([a, b]) => `<path d="M25.5 ${s * 1} Q${31 + b * .3} ${s * (1 + b * .6)} ${34 + b} ${s * (3 + b * 1.5 + a * -.1)}" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width=".26"/>`).join('')).join('')}
+        </g>`;
+    }
+
+    // =====================================================================
+    // XPRISM in-vivo bench kit (shared by Exp 21 and Exp 25)
+    // realistic SVG art: room, cages, animals, balances, bottles, syringes;
+    // station switching, click routing, checklist + hint engine
+    // =====================================================================
+    let HINTS = true;
+    SPEEDS = [1, 5, 20, 60];
+    function say(msg, alert) { showFeedback(msg, alert); }
+    function once(key, msg, alert) { if (S.warned[key]) return; S.warned[key] = 1; say(msg, alert); }
+    const R2 = v => Math.round(v * 100) / 100;
+    const lbl = (x, y, t, o = {}) => `<text x="${x}" y="${y}" font-size="${o.s || 10}" fill="${o.c || '#1e293b'}" text-anchor="${o.a || 'middle'}" font-weight="${o.w || 600}" font-family="${o.f || 'Inter, sans-serif'}"${o.extra || ''}>${t}</text>`;
+    const tag = (x, y, t, c = '#0f172a') => `<g><rect x="${x - t.length * 3.1 - 6}" y="${y - 11}" width="${t.length * 6.2 + 12}" height="16" rx="4" fill="${c}" opacity=".82"/>${lbl(x, y + 1, t, { c: '#fff', s: 10 })}</g>`;
+    const clockStr = t => { const m = Math.floor(9 * 60 + t / 60); return `${String(Math.floor(m / 60) % 24).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`; };
+
+    const DEFS = `<defs>
+      <filter id="sh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="3" dy="5" stdDeviation="4" flood-color="#000" flood-opacity=".42"/></filter>
+      <filter id="sh2" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="1" dy="2" stdDeviation="1.5" flood-color="#000" flood-opacity=".5"/></filter>
+      <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+      <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="7" result="n"/><feColorMatrix in="n" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .07 0"/></filter>
+      <filter id="furF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 .55  0 0 0 0 .5  0 0 0 0 .48  0 0 0 .22 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+      <filter id="beddingF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".35" numOctaves="3" seed="12"/><feColorMatrix values="0 0 0 0 .45  0 0 0 0 .3  0 0 0 0 .1  0 0 0 .55 0"/></filter>
+      <filter id="paperF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".5" numOctaves="2" seed="21"/><feColorMatrix values="0 0 0 0 .7  0 0 0 0 .7  0 0 0 0 .65  0 0 0 .12 0"/></filter>
+      <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#26313d"/><stop offset="1" stop-color="#1c252f"/></linearGradient>
+      <radialGradient id="spot" cx=".5" cy=".35" r=".7"><stop offset="0" stop-color="#5b6b7c" stop-opacity=".45"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+      <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2d3946"/><stop offset="1" stop-color="#27323e"/></linearGradient>
+      <linearGradient id="bench" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a4048"/><stop offset=".06" stop-color="#23272d"/><stop offset="1" stop-color="#16191d"/></linearGradient>
+      <linearGradient id="steel" x1="0" x2="1"><stop offset="0" stop-color="#6b7280"/><stop offset=".35" stop-color="#f3f4f6"/><stop offset=".55" stop-color="#d1d5db"/><stop offset="1" stop-color="#4b5563"/></linearGradient>
+      <linearGradient id="steelH" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9ca3af"/><stop offset=".4" stop-color="#f9fafb"/><stop offset="1" stop-color="#6b7280"/></linearGradient>
+      <linearGradient id="glass" x1="0" x2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".7"/><stop offset=".12" stop-color="#ffffff" stop-opacity=".22"/><stop offset=".5" stop-color="#e0f2fe" stop-opacity=".14"/><stop offset=".85" stop-color="#ffffff" stop-opacity=".3"/><stop offset="1" stop-color="#bae6fd" stop-opacity=".65"/></linearGradient>
+      <linearGradient id="glassEdge" x1="0" x2="1"><stop offset="0" stop-color="#f8fafc"/><stop offset=".5" stop-color="#e2e8f0" stop-opacity=".75"/><stop offset="1" stop-color="#f8fafc"/></linearGradient>
+      <linearGradient id="liquid" x1="0" x2="1"><stop offset="0" stop-color="#60a5fa" stop-opacity=".8"/><stop offset=".5" stop-color="#bfdbfe" stop-opacity=".7"/><stop offset="1" stop-color="#3b82f6" stop-opacity=".85"/></linearGradient>
+      <linearGradient id="milk" x1="0" x2="1"><stop offset="0" stop-color="#e2e8f0"/><stop offset=".5" stop-color="#ffffff"/><stop offset="1" stop-color="#cbd5e1"/></linearGradient>
+      <linearGradient id="oil" x1="0" x2="1"><stop offset="0" stop-color="#ca8a04" stop-opacity=".85"/><stop offset=".5" stop-color="#fde68a" stop-opacity=".85"/><stop offset="1" stop-color="#a16207" stop-opacity=".9"/></linearGradient>
+      <linearGradient id="amber" x1="0" x2="1"><stop offset="0" stop-color="#3b1d06"/><stop offset=".3" stop-color="#9a5a17"/><stop offset=".5" stop-color="#b8752a"/><stop offset="1" stop-color="#3b1d06"/></linearGradient>
+      <linearGradient id="hdpe" x1="0" x2="1"><stop offset="0" stop-color="#cbd5e1"/><stop offset=".4" stop-color="#f8fafc"/><stop offset="1" stop-color="#94a3b8"/></linearGradient>
+      <linearGradient id="plasticW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f8fafc"/><stop offset="1" stop-color="#cbd5e1"/></linearGradient>
+      <linearGradient id="cabFront" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1f5f9"/><stop offset="1" stop-color="#a3b1c2"/></linearGradient>
+      <radialGradient id="lcd" cx=".5" cy=".5" r=".8"><stop offset="0" stop-color="#c7d9b4"/><stop offset="1" stop-color="#9fb58a"/></radialGradient>
+      <radialGradient id="contactShadow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#000" stop-opacity="0.6"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+      <linearGradient id="cageTub" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2e8f0" stop-opacity="0.32"/><stop offset="1" stop-color="#cbd5e1" stop-opacity="0.6"/></linearGradient>
+      <linearGradient id="bedding" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9d3a6"/><stop offset="1" stop-color="#c9a76b"/></linearGradient>
+      <radialGradient id="furGrad" cx="0.42" cy="0.32" r="0.78"><stop offset="0" stop-color="#ffffff"/><stop offset="0.6" stop-color="#f6f3f1"/><stop offset="1" stop-color="#d8d0cc"/></radialGradient>
+      <linearGradient id="bellyShade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.65" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#6b5a58" stop-opacity="0.25"/></linearGradient>
+      <radialGradient id="earGrad" cx="0.5" cy="0.55" r="0.6"><stop offset="0" stop-color="#f9d0d9"/><stop offset="0.7" stop-color="#f1adbf"/><stop offset="1" stop-color="#e293a8"/></radialGradient>
+      <radialGradient id="eyeGrad" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#ff5d77"/><stop offset="0.55" stop-color="#c0142f"/><stop offset="1" stop-color="#5c0614"/></radialGradient>
+      <linearGradient id="glove" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a5b4fc"/><stop offset="0.55" stop-color="#7c83e6"/><stop offset="1" stop-color="#5b5fc7"/></linearGradient>
+      <linearGradient id="sleeve" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f8fafc"/><stop offset="1" stop-color="#cbd5e1"/></linearGradient>
+      <radialGradient id="btnYellow" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#fde047"/><stop offset="1" stop-color="#ca8a04"/></radialGradient>
+      <linearGradient id="fluid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7dd3fc" stop-opacity="0.6"/><stop offset="1" stop-color="#0284c7" stop-opacity="0.75"/></linearGradient>
+      <linearGradient id="cellGlass" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#bae6fd" stop-opacity="0.55"/><stop offset="0.12" stop-color="#ffffff" stop-opacity="0.55"/><stop offset="0.25" stop-color="#e0f2fe" stop-opacity="0.08"/><stop offset="0.8" stop-color="#e0f2fe" stop-opacity="0.08"/><stop offset="0.9" stop-color="#ffffff" stop-opacity="0.35"/><stop offset="1" stop-color="#7dd3fc" stop-opacity="0.55"/></linearGradient>
+      <linearGradient id="wood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a16207"/><stop offset="1" stop-color="#713f12"/></linearGradient>
+    ${ANI_DEFS}</defs>`;
+
+    function room(benchY = 430) {
+      let tiles = '';
+      for (let y = 0; y < benchY; y += 38) for (let x = (y / 38) % 2 ? -26 : 0; x < 1000; x += 52) tiles += `<rect x="${x}" y="${y}" width="51" height="37" fill="url(#tile)" stroke="#1a222b" stroke-width="1"/>`;
+      return `<rect width="1000" height="560" fill="url(#wall)"/>${tiles}<rect width="1000" height="${benchY}" fill="url(#spot)"/>
+        <rect y="${benchY - 6}" width="1000" height="8" fill="#5b636d"/>
+        <rect y="${benchY}" width="1000" height="${560 - benchY}" fill="url(#bench)"/>
+        <rect y="${benchY}" width="1000" height="${560 - benchY}" filter="url(#grain)" opacity=".7"/>
+        <rect y="${benchY + 2}" width="1000" height="2" fill="#fff" opacity=".08"/>`;
+    }
+    // wall clock showing lab time (hands updated per frame)
+    function wallClock(x, y, r = 34) {
+      return `<g transform="translate(${x} ${y})" filter="url(#sh)"><circle r="${r}" fill="#f8fafc" stroke="#111827" stroke-width="4"/>
+        ${Array.from({ length: 12 }, (_, i) => `<line x1="0" y1="${-r + 5}" x2="0" y2="${i % 3 ? -r + 9 : -r + 12}" stroke="#1f2937" stroke-width="${i % 3 ? 1.2 : 2.4}" transform="rotate(${i * 30})"/>`).join('')}
+        <line class="ckH" x1="0" y1="3" x2="0" y2="${-r * 0.5}" stroke="#111827" stroke-width="3.2" stroke-linecap="round"/>
+        <line class="ckM" x1="0" y1="4" x2="0" y2="${-r * 0.78}" stroke="#111827" stroke-width="2.2" stroke-linecap="round"/>
+        <circle r="2.6" fill="#dc2626"/></g>`;
+    }
+    function updClocks() {
+      const m = 9 * 60 + S.t / 60;
+      document.querySelectorAll('#scene .ckM').forEach(e => e.setAttribute('transform', `rotate(${(m % 60) * 6})`));
+      document.querySelectorAll('#scene .ckH').forEach(e => e.setAttribute('transform', `rotate(${(m / 60 % 12) * 30})`));
+    }
+
+    // ------------------------------------------------ animals
+    // picric acid code → spots (rat side coordinates, facing right)
+    const MARK_POS = { head: [32, -9], neck: [18, -12], back: [0, -14], rump: [-20, -10], tail: [-34, -2] };
+    const MARK_CODE = [[], ['head'], ['neck'], ['back'], ['rump'], ['tail'], ['head', 'back'], ['head', 'rump'], ['head', 'tail'], ['neck', 'back'], ['neck', 'rump'], ['back', 'tail'], ['head', 'neck', 'back'],
+      ['neck', 'tail'], ['rump', 'tail'], ['head', 'neck'], ['back', 'rump'], ['head', 'neck', 'tail'], ['neck', 'back', 'rump']];
+    const markText = id => id ? MARK_CODE[id].join(' + ') : 'unmarked';
+    // side-view rat in a cage. o: {id, marks, ink, paw (0..1 swelling), flip, sel}
+    function ratSide(o = {}) {
+      const spots = o.id ? MARK_CODE[o.id].map(p => `<ellipse cx="${MARK_POS[p][0]}" cy="${MARK_POS[p][1] * .86}" rx="6.5" ry="4" fill="#facc15" opacity=".82"/>`).join('') : '';
+      return `<g transform="scale(${o.flip ? -1 : 1} 1)">${animalSideArt({ kind: 'rat', sw: o.paw || 0, ink: o.ink })}${spots}</g>
+        ${o.sel ? `<ellipse cx="0" cy="2" rx="44" ry="22" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="4 3"/>` : ''}
+        ${o.id ? `<rect x="-11" y="-30" width="22" height="11" rx="2" fill="${o.tagc || '#fff'}" stroke="#94a3b8" stroke-width="0.5"/><text x="0" y="-21.8" text-anchor="middle" font-family="JetBrains Mono" font-size="7" font-weight="800" fill="#0f172a">R${o.id}</text>` : ''}`;
+    }
+    // side-view mouse (facing right) with picric spots
+    function mouseSide(o = {}) {
+      const spots = o.id ? MARK_CODE[o.id].map(p => `<ellipse cx="${MARK_POS[p][0] * 0.5}" cy="${MARK_POS[p][1] * 0.5}" rx="3.4" ry="2.2" fill="#facc15" opacity=".85"/>`).join('') : '';
+      return `<g transform="scale(${o.flip ? -1 : 1} 1)">${animalSideArt({ kind: 'mouse' })}${spots}</g>
+        ${o.sel ? `<ellipse cx="0" cy="0" rx="26" ry="14" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-dasharray="3 2"/>` : ''}
+        ${o.id ? `<rect x="-9" y="-21" width="18" height="9" rx="2" fill="${o.tagc || '#fff'}" stroke="#94a3b8" stroke-width="0.5"/><text x="0" y="-14.3" text-anchor="middle" font-family="JetBrains Mono" font-size="6" font-weight="800" fill="#0f172a">${o.code || 'M' + o.id}</text>` : ''}`;
+    }
+    // top-view mouse (head to the right)
+    function mouseTop(o = {}) {
+      const spots = o.id ? MARK_CODE[o.id].map(p => { const X = { head: 16, neck: 9, back: 0, rump: -8, tail: -14 }[p]; return `<ellipse cx="${X}" cy="0" rx="3.4" ry="4.4" fill="#facc15" opacity=".82"/>`; }).join('') : '';
+      return `<g>${animalTopArt({ kind: 'mouse' })}${spots}</g>`;
+    }
+    // side-view cage (polycarbonate tub, steel lid). inner = SVG drawn inside (coordinates relative to cage)
+    function cageSide(x, y, w, h, act, title, sub, inner, o = {}) {
+      let bars = ''; for (let bx = 2; bx < w; bx += 7) bars += `<line x1="${bx}" y1="3" x2="${bx}" y2="13" stroke="#9ca3af" stroke-width="1.2"/>`;
+      return `<g transform="translate(${x} ${y})" ${act ? `class="hot" data-act="${act}"` : ''}>
+        <ellipse cx="${w / 2}" cy="${h + 4}" rx="${w / 2 + 10}" ry="8" fill="url(#contactShadow)"/>
+        <polygon points="0,12 ${w},12 ${w - 8},${h} 8,${h}" fill="#0b1220" opacity=".35"/>
+        <polygon points="12,${h - 22} ${w - 12},${h - 22} ${w - 8},${h} 8,${h}" fill="url(#bedding)"/>
+        <polygon points="12,${h - 22} ${w - 12},${h - 22} ${w - 8},${h} 8,${h}" filter="url(#beddingF)"/>
+        ${o.food ? `<path d="M12 14 L60 14 L52 52 L20 52 Z" fill="#6b7280" opacity=".8" stroke="#374151"/>${Array.from({ length: 12 }, (_, i) => `<ellipse cx="${22 + (i % 4) * 9}" cy="${22 + Math.floor(i / 4) * 9}" rx="5" ry="3.4" fill="#a16207" stroke="#713f12" stroke-width=".5"/>`).join('')}` : ''}
+        ${inner || ''}
+        <polygon points="0,12 ${w},12 ${w - 8},${h} 8,${h}" fill="url(#cageTub)" stroke="#cbd5e1" stroke-width="1.2"/>
+        <line x1="6" y1="16" x2="12" y2="${h - 4}" stroke="#fff" stroke-width="2.5" opacity=".35"/>
+        <rect x="-6" y="2" width="${w + 12}" height="12" rx="3" fill="url(#steelH)" stroke="#6b7280" stroke-width="0.8"/>${bars}
+        ${title ? `<rect x="${w - 96}" y="18" width="88" height="28" rx="2" fill="#fef3c7" stroke="#d97706" stroke-width="0.8"/>${lbl(w - 52, 29, title, { s: 7.5, w: 800, c: '#7c2d12' })}${lbl(w - 52, 40, sub || '', { s: 6.5, c: '#451a03', w: 600, f: 'JetBrains Mono' })}` : ''}
+      </g>`;
+    }
+    // top-loading animal balance with a plastic container. display text id = dispId
+    function animalBalance(x, y, dispId, act = 'balance') {
+      return `<g class="hot" data-act="${act}" filter="url(#sh)">
+        <rect x="${x}" y="${y + 40}" width="170" height="60" rx="8" fill="url(#plasticW)" stroke="#94a3b8"/>
+        <rect x="${x + 10}" y="${y + 70}" width="150" height="24" rx="4" fill="#1f2937"/>
+        <rect x="${x + 18}" y="${y + 74}" width="84" height="16" rx="2" fill="url(#lcd)"/>
+        <text id="${dispId}" x="${x + 96}" y="${y + 87}" font-size="12" text-anchor="end" fill="#1f2d14" font-family="DSEG7, JetBrains Mono, monospace">0.0</text>
+        <text x="${x + 106}" y="${y + 87}" font-size="7.5" fill="#cbd5e1" font-weight="700">g</text>
+        <circle cx="${x + 128}" cy="${y + 82}" r="6" fill="#dc2626"/><text x="${x + 128}" y="${y + 84.5}" font-size="4.6" fill="#fff" text-anchor="middle" font-weight="700">TARE</text>
+        <circle cx="${x + 146}" cy="${y + 82}" r="6" fill="#475569"/><text x="${x + 146}" y="${y + 84.5}" font-size="5" fill="#fff" text-anchor="middle" font-weight="700">ON</text>
+        <rect x="${x + 25}" y="${y + 34}" width="120" height="8" rx="2" fill="url(#steelH)"/>
+        <path d="M${x + 38} ${y - 26} L${x + 132} ${y - 26} L${x + 126} ${y + 34} L${x + 44} ${y + 34} Z" fill="url(#cageTub)" stroke="#e2e8f0" stroke-width="1.4"/>
+        <line x1="${x + 46}" y1="${y - 20}" x2="${x + 50}" y2="${y + 30}" stroke="#fff" stroke-width="2.5" opacity=".4"/>
+        ${lbl(x + 85, y + 62, 'Animal balance  max 600 g  d = 0.1 g', { s: 6.5, c: '#475569' })}
+      </g>`;
+    }
+    // analytical balance with draft shield
+    function anaBalance(x, y, dispId, act = 'abal') {
+      return `<g class="hot" data-act="${act}" filter="url(#sh)">
+        <rect x="${x}" y="${y + 70}" width="200" height="66" rx="8" fill="url(#plasticW)" stroke="#94a3b8"/>
+        <rect x="${x + 12}" y="${y + 104}" width="176" height="26" rx="4" fill="#1f2937"/>
+        <rect x="${x + 20}" y="${y + 108}" width="104" height="18" rx="2" fill="url(#lcd)"/>
+        <text id="${dispId}" x="${x + 118}" y="${y + 122.5}" font-size="13" text-anchor="end" fill="#1f2d14" font-family="DSEG7, JetBrains Mono, monospace">0.0000</text>
+        <text x="${x + 128}" y="${y + 122}" font-size="8" fill="#cbd5e1" font-weight="700">g</text>
+        <circle cx="${x + 152}" cy="${y + 117}" r="7" fill="#dc2626"/><text x="${x + 152}" y="${y + 119.5}" font-size="5" fill="#fff" text-anchor="middle" font-weight="700">TARE</text>
+        <circle cx="${x + 172}" cy="${y + 117}" r="7" fill="#475569"/><text x="${x + 172}" y="${y + 119.5}" font-size="5.5" fill="#fff" text-anchor="middle" font-weight="700">ON</text>
+        <rect x="${x + 22}" y="${y - 20}" width="156" height="92" fill="url(#glass)" stroke="url(#glassEdge)" stroke-width="2"/>
+        <rect x="${x + 18}" y="${y - 26}" width="164" height="8" rx="2" fill="url(#steelH)"/>
+        <ellipse cx="${x + 100}" cy="${y + 66}" rx="40" ry="4" fill="#d1d5db" stroke="#9ca3af"/>
+        <g id="${dispId}Boat"></g>
+        ${lbl(x + 100, y + 96, 'Analytical balance  d = 0.1 mg', { s: 7, c: '#475569' })}
+      </g>`;
+    }
+    // reagent bottle: o {act, title, sub, cap, kind:'hdpe'|'amber'|'glass', liq, level(0..1), w, h}
+    function bottle(x, y, o) {
+      const w = o.w || 56, h = o.h || 92, lv = clamp(o.level ?? 0.7, 0, 1);
+      const body = o.kind === 'amber' ? 'url(#amber)' : o.kind === 'glass' ? 'url(#glass)' : 'url(#hdpe)';
+      return `<g ${o.act ? `class="hot" data-act="${o.act}"` : ''} filter="url(#sh)">
+        <rect x="${x + w * 0.28}" y="${y - 16}" width="${w * 0.44}" height="14" rx="2" fill="${o.cap || '#1d4ed8'}"/>
+        <rect x="${x + w * 0.32}" y="${y - 4}" width="${w * 0.36}" height="8" fill="#e5e7eb"/>
+        ${o.liq ? `<rect x="${x + 3}" y="${y + 4 + (h - 8) * (1 - lv)}" width="${w - 6}" height="${(h - 8) * lv}" rx="4" fill="${o.liq}"/>` : ''}
+        <rect x="${x}" y="${y + 2}" width="${w}" height="${h}" rx="9" fill="${body}" stroke="${o.kind === 'amber' ? '#3b1d06' : '#cbd5e1'}" opacity="${o.kind === 'glass' ? 1 : 0.96}"/>
+        <rect x="${x + 4}" y="${y + h * 0.36}" width="${w - 8}" height="${h * 0.42}" rx="2" fill="#fff" stroke="#cbd5e1"/>
+        <rect x="${x + 4}" y="${y + h * 0.36}" width="${w - 8}" height="7" fill="${o.cap || '#1d4ed8'}"/>
+        ${lbl(x + w / 2, y + h * 0.36 + h * 0.2, o.title, { s: o.ts || 7.4, w: 800, c: '#0f172a' })}
+        ${lbl(x + w / 2, y + h * 0.36 + h * 0.31, o.sub || '', { s: o.ss || 5.6, c: '#334155', w: 600 })}
+        <rect x="${x + 5}" y="${y + 8}" width="5" height="${h - 14}" rx="2.5" fill="#fff" opacity=".35"/>
+      </g>`;
+    }
+    // syringe lying horizontally. o {act, cap mL, fill mL, needle:'gavage'|'26G'|'feed', col, len}
+    function syringeArt(x, y, o) {
+      const L = o.len || 120, f = clamp((o.fill || 0) / o.cap, 0, 1);
+      const needle = o.needle === 'gavage' || o.needle === 'feed'
+        ? `<path d="M${x + L + 8} ${y} q ${o.needle === 'gavage' ? 34 : 24} 0 ${o.needle === 'gavage' ? 52 : 36} ${o.needle === 'gavage' ? 14 : 9}" stroke="url(#steel)" stroke-width="${o.needle === 'gavage' ? 3 : 2.2}" fill="none"/><circle cx="${x + L + 8 + (o.needle === 'gavage' ? 52 : 36)}" cy="${y + (o.needle === 'gavage' ? 14 : 9)}" r="${o.needle === 'gavage' ? 3.6 : 2.6}" fill="#e5e7eb" stroke="#6b7280"/>`
+        : `<line x1="${x + L + 8}" y1="${y}" x2="${x + L + 46}" y2="${y}" stroke="#d1d5db" stroke-width="1.1"/><rect x="${x + L + 2}" y="${y - 3}" width="8" height="6" fill="#f97316"/>`;
+      let ticks = ''; for (let i = 0; i <= 10; i++) ticks += `<line x1="${x + 8 + i * (L - 12) / 10}" y1="${y - 7}" x2="${x + 8 + i * (L - 12) / 10}" y2="${y - (i % 5 ? 4 : 2)}" stroke="#334155" stroke-width=".6"/>`;
+      return `<g ${o.act ? `class="hot" data-act="${o.act}"` : ''} filter="url(#sh2)">
+        <rect x="${x + 4 + (L - 12) * (1 - f) - L}" y="${y - 1.8}" width="${L}" height="3.6" fill="#e2e8f0" stroke="#94a3b8" stroke-width=".5"/>
+        <rect x="${x + 4 + (L - 12) * (1 - f) - L - 6}" y="${y - 9}" width="6" height="18" rx="1.5" fill="#e2e8f0" stroke="#94a3b8"/>
+        <rect x="${x}" y="${y - 8}" width="${L}" height="16" rx="3" fill="url(#glass)" stroke="#cbd5e1" stroke-width="1.2"/>
+        ${f > 0 ? `<rect x="${x + L - 4 - (L - 12) * f}" y="${y - 6}" width="${(L - 12) * f}" height="12" fill="${o.col || '#bfdbfe'}" opacity=".9"/>` : ''}
+        <rect x="${x + 4 + (L - 12) * (1 - f)}" y="${y - 7}" width="5" height="14" fill="#1f2937"/>
+        ${ticks}<rect x="${x + L}" y="${y - 3}" width="8" height="6" fill="#cbd5e1"/>${needle}
+        <rect x="${x - 6}" y="${y - 11}" width="6" height="22" rx="2" fill="#f1f5f9" stroke="#94a3b8"/>
+      </g>`;
+    }
+    // gloved hand (for held-animal views)
+    function handMarkup() {
+      const f = (y, len) => `<path d="M 26 ${y} C 14 ${y - 2}, -6 ${y - 1}, ${-len} ${y + 3}" stroke="url(#glove)" stroke-width="9.5" stroke-linecap="round" fill="none"/>`;
+      return `<path d="M 34 -60 L 200 -214 L 244 -168 L 66 -20 Z" fill="url(#sleeve)" stroke="#94a3b8"/>
+        <path d="M 34 -60 L 66 -20 L 76 -30 L 44 -70 Z" fill="#a5b4fc" stroke="#6366f1" stroke-width="0.6"/>
+        <path d="M 10 -44 C 22 -60, 52 -58, 62 -38 C 70 -20, 58 4, 38 12 C 22 18, 8 10, 6 -6 Z" fill="url(#glove)" stroke="#4c51b8" stroke-width="0.8"/>
+        ${f(-34, 24)}${f(-22, 27)}${f(-10, 26)}${f(2, 22)}
+        <path d="M 30 -44 C 22 -56, 10 -60, 0 -58" stroke="url(#glove)" stroke-width="10" stroke-linecap="round" fill="none"/>`;
+    }
+
+    // ------------------------------------------------ stations, click routing, checklist + hints
+    function goStation(n) {
+      S.station = n;
+      document.querySelectorAll('#stationBtns button').forEach(b => b.classList.toggle('on', +b.dataset.s === n));
+      buildScene(); renderCtx(); refreshChecklist(true);
+    }
+    function onSceneClick(e) {
+      const t = e.target.closest('[data-act]'); if (!t) return;
+      const [a, arg0] = t.dataset.act.split(':');
+      const arg = arg0 !== undefined && /^-?\d+$/.test(arg0) ? +arg0 : arg0;
+      act(a, arg);
+    }
+    function currentStep() { return STEPS.find(s => !s.opt && !s.done()); }
+    function refreshChecklist() {
+      const ul = $('checklist'); if (!ul) return;
+      const cur = currentStep(); let g = '', h = '';
+      STEPS.forEach(s => { if (s.g !== g) { g = s.g; h += `<li class="grp">${g}</li>`; } const d = s.done(); h += `<li class="${d ? 'done' : s === cur ? 'cur' : ''}"><span class="k">${d ? '✓' : s === cur ? '▸' : s.opt ? '○' : '·'}</span><span>${typeof s.t === 'function' ? s.t() : s.t}</span></li>`; });
+      if (ul._h !== h) { ul.innerHTML = h; ul._h = h; }
+      const nb = $('nowBox');
+      const nh = cur ? `<div class="t">Next: ${typeof cur.t === 'function' ? cur.t() : cur.t}${cur.st && cur.st !== S.station ? ` <span style="font-weight:600;color:#b45309">(station ${cur.st})</span>` : ''}</div>${typeof cur.how === 'function' ? cur.how() : cur.how}` : `<div class="t">Practical complete</div>Open the observation sheet, finish the calculations, answer the viva and submit.`;
+      if (nb._h !== nh) { nb.innerHTML = nh; nb._h = nh; }
+      document.querySelectorAll('#stationBtns button').forEach(b => { const st = +b.dataset.s; b.classList.toggle('done', STEPS.filter(x => x.st === st && !x.opt).every(x => x.done())); });
+      refreshHints();
+    }
+    let _hintKey = '';
+    function refreshHints() {
+      const cur = currentStep();
+      const want = HINTS && cur && cur.st === S.station ? (cur.tg() || []) : [];
+      const key = S.station + '|' + want.join(',') + '|' + document.querySelectorAll('#scene [data-act]').length + '|' + (S._sceneV || 0);
+      if (key === _hintKey && document.querySelector('#scene .pulse')) return;
+      _hintKey = key;
+      document.querySelectorAll('#scene .pulse').forEach(e => e.classList.remove('pulse'));
+      want.forEach(a => document.querySelectorAll(`#scene [data-act="${a}"]`).forEach(e => e.classList.add('pulse')));
+    }
+    // group statistics vs a control group. groups: [{key,label,vals:[]}]
+    function groupStats(groups, ctrlKey) {
+      const ctrl = groups.find(g => g.key === ctrlKey);
+      return groups.map(g => { const t = (ctrl && g.key !== ctrlKey && g.vals.length > 1 && ctrl.vals.length > 1) ? tTest(g.vals, ctrl.vals) : null; return { ...g, n: g.vals.length, m: mean(g.vals), sd: sd(g.vals), se: sem(g.vals), t, p: t ? t.p : NaN }; });
+    }
+    // a number typed by the student, checked against the truth: returns class
+    function chk(v, truth, tol) { if (v === '' || v === undefined || v === null || !isFinite(+v) || truth === null || truth === undefined || !isFinite(truth)) return ''; return Math.abs(+v - truth) <= tol ? 'ok-in' : 'bad-in'; }
+  </script>
+  <script>
+    // =====================================================================
+    // EXP 21: carrageenan paw oedema. State + pharmacological model.
+    // Every step is performed by the student; the model only reacts.
+    // =====================================================================
+    // inh: fractional inhibition of oedema at 1, 2, 3, 4 h (group mean, correct technique)
+    const PROFILES = {
+      vehicle:        { name: "Vehicle (0.5% CMC 10 mL/kg p.o.)", short: "Vehicle", inh: [0, 0, 0, 0], route: 'po', mgkg: 0, mlkg: 10 },
+      indomethacin:   { name: "Indomethacin (10 mg/kg p.o.)", short: "Indomethacin", inh: [0.18, 0.42, 0.58, 0.60], route: 'po', mgkg: 10, mlkg: 10, tau: 30, salt: 'Indomethacin IP',
+                        desc: "Potent non-selective COX inhibitor. It blocks the prostaglandin-mediated late phase (2.5–4 h) strongly but has little effect on the early histamine/5-HT phase: the classic NSAID pattern." },
+      diclofenac:     { name: "Diclofenac sodium (10 mg/kg p.o.)", short: "Diclofenac", inh: [0.15, 0.38, 0.52, 0.55], route: 'po', mgkg: 10, mlkg: 10, tau: 25, salt: 'Diclofenac sodium IP',
+                        desc: "COX inhibitor (preferential COX-2). Like indomethacin, it mainly suppresses the late, prostaglandin phase." },
+      aspirin:        { name: "Aspirin (100 mg/kg p.o.)", short: "Aspirin", inh: [0.10, 0.24, 0.36, 0.38], route: 'po', mgkg: 100, mlkg: 10, tau: 20, salt: 'Acetylsalicylic acid IP',
+                        desc: "Irreversible COX inhibitor. Moderate late-phase inhibition at this dose; anti-inflammatory doses of aspirin are high." },
+      paracetamol:    { name: "Paracetamol (100 mg/kg p.o.)", short: "Paracetamol", inh: [0.04, 0.10, 0.14, 0.14], route: 'po', mgkg: 100, mlkg: 10, tau: 20, salt: 'Paracetamol IP',
+                        desc: "Weak peripheral COX inhibitor: in inflamed tissue the high peroxide tone prevents its action. Analgesic and antipyretic but practically no anti-inflammatory effect." },
+      dexamethasone:  { name: "Dexamethasone (1 mg/kg s.c.)", short: "Dexamethasone", inh: [0.42, 0.60, 0.70, 0.72], route: 'sc', mgkg: 1, mlkg: 1, tau: 40, salt: 'Dexamethasone sodium phosphate', soluble: true,
+                        desc: "Glucocorticoid: induces lipocortin (annexin-1), inhibits phospholipase A2 and suppresses COX-2 and cytokine genes. It reduces both the early and late phases of the oedema." },
+      cyproheptadine: { name: "Cyproheptadine (10 mg/kg p.o.)", short: "Cyproheptadine", inh: [0.46, 0.24, 0.08, 0.05], route: 'po', mgkg: 10, mlkg: 10, tau: 25, salt: 'Cyproheptadine HCl IP',
+                        desc: "H1-antihistamine and 5-HT2 antagonist. It inhibits only the early phase (histamine and 5-HT); the prostaglandin-driven late phase is unaffected." }
+    };
+    const MYSTERY_KEYS = ["indomethacin", "paracetamol", "dexamethasone", "cyproheptadine"];
+    const mysteryKey = MYSTERY_KEYS[Math.floor(Math.random() * MYSTERY_KEYS.length)];
+    const TP = ["Basal (V₀)", "1 h", "2 h", "3 h", "4 h"];
+    const CTRL_E = [0, 0.27, 0.44, 0.62, 0.66, 0.62, 0.56];   // mean vehicle oedema (mL) at 0–6 h after carrageenan
+    const ROUTES = { po: 'Oral gavage (p.o.)', sc: 'Subcutaneous, nape (s.c.)', ip: 'Intraperitoneal (i.p.)', spR: 'Sub-plantar, RIGHT hind paw', spL: 'Sub-plantar, LEFT hind paw', dor: 'Dorsum of right hind paw (s.c.)' };
+    const NRAT = 12;
+    let DRUG = 'indomethacin', UNKNOWN = false;
+    const drugP = () => PROFILES[UNKNOWN ? mysteryKey : DRUG];
+    const intRoute = () => UNKNOWN ? 'po' : drugP().route;
+    const intMlkg = () => UNKNOWN ? 10 : drugP().mlkg;
+    const drugName = () => UNKNOWN ? 'Drug X (coded)' : drugP().short;
+
+    let S;
+    function freshRat(i) {
+      return { uid: i, wt: Math.round(clamp(175 + gauss() * 12, 152, 199) * 10) / 10, V0: +clamp(1.18 * Math.exp(gauss() * 0.06), 0.98, 1.42).toFixed(3),
+        resp: Math.exp(gauss() * 0.14), sens: Math.exp(gauss() * 0.15),
+        id: null, ink: false, weighed: false, lot: null, group: null, loc: 'stock', flags: [],
+        dose: null, carr: null, reads: [null, null, null, null, null], nb: { wt: '', dose: '', v: ['', '', '', '', ''] } };
+    }
+    function freshState() {
+      const lots = shuffle(['C', 'C', 'C', 'C', 'C', 'C', 'T', 'T', 'T', 'T', 'T', 'T']);
+      return {
+        t: 0, station: 1, rats: Array.from({ length: NRAT }, (_, i) => freshRat(i)), hand: null, lots, nextId: 1, lotOut: null,
+        abal: { boat: false, tared: false, mg: 0, what: null },
+        drug: { mg: 0, trit: false, inCyl: false, vol: 0, veh: null, labelled: false, conc: 0, left: 0 },
+        carr: { mg: 0, inBk: false, vol: 0, stir: false, stirT: 0, labelled: false, conc: 0, left: 0 },
+        calc: { conc: '', dvol: '', carrMg: '' },
+        pl: { power: false, zeroed: false, filled: false, wet: false },
+        syr: { gav: { vol: 0, src: null }, tub: { vol: 0, src: null } }, held: null,
+        meas: null, disp: null, sel: null,
+        notes: { mean: { C: ['', '', '', ''], T: ['', '', '', ''] }, inh: ['', '', '', ''] },
+        warned: {}, _sceneV: 0
+      };
+    }
+    const stirSec = () => S.carr.stirT + (S.carr.stir ? S.t - S.carr.st0 : 0);
+    const ratById = id => S.rats.find(r => r.id === id);
+    const handRat = () => S.hand === null ? null : S.rats[S.hand];
+    const inGroup = g => S.rats.filter(r => r.group === g);
+    const srcName = s => ({ veh: '0.5% CMC (vehicle)', drug: UNKNOWN ? 'Drug X (coded suspension)' : `${drugP().short} ${S.drug.labelled ? fx(S.drug.conc, 2) + ' mg/mL' : ''}`, carr: `Carrageenan ${S.carr.labelled ? fx(S.carr.conc / 10, 2) + '% w/v' : ''}`, sal: 'Normal saline' })[s] || '—';
+
+    // ---------------------------------------------------------------- model
+    function interp(xs, ys, x) {
+      if (x <= xs[0]) return ys[0];
+      for (let i = 0; i < xs.length - 1; i++) if (x <= xs[i + 1]) return ys[i] + (ys[i + 1] - ys[i]) * (x - xs[i]) / (xs[i + 1] - xs[i]);
+      return ys[ys.length - 1];
+    }
+    const ctrlE = h => h <= 0 ? 0 : interp([0, 1, 2, 3, 4, 5, 6], CTRL_E, h);
+    function inhAtH(p, h) { return h <= 1 ? p.inh[0] * Math.max(0, h) ** 0.5 : interp([1, 2, 3, 4], p.inh, h); }
+    function carrFactor(r) {
+      const c = r.carr; if (!c) return 0;
+      let f = clamp(Math.pow(Math.max(0, c.mg) / 1, 0.7), 0, 1.8);
+      if (c.site === 'po') f = 0; else if (c.site === 'spL') f *= 0.03; else if (c.site === 'dor') f *= 0.55; else if (c.site !== 'spR') f *= 0.25;
+      return f * (c.noise || 1);
+    }
+    // fraction of the full drug effect achieved (dose, route, pretreatment interval, uniformity)
+    function drugFactor(r, h) {
+      const d = r.dose; if (!d || d.src !== 'drug') return 0;
+      const p = drugP();
+      const ratio = d.mgkg / p.mgkg;
+      let f = clamp(1.5 * ratio / (1 + 0.5 * ratio), 0, 1.45);
+      const tau = (d.route === 'ip' ? 0.45 : d.route === 'sc' ? 0.7 : 1) * p.tau;
+      const pre = (r.carr.t - d.t) / 60;                  // min between drug and carrageenan
+      const A = (Δ, hh) => 0.6 * (1 - Math.exp(-Math.max(0, Δ) / tau)) + 0.4 * (1 - Math.exp(-Math.max(0, Δ + hh * 60) / tau));
+      f *= A(pre, h) / A(60, h);
+      if (intRoute() === 'po' && d.route === 'sc') f *= 0.8;
+      if (intRoute() === 'sc' && d.route === 'po') f *= 0.9;
+      return f;
+    }
+    // true right-hind-paw volume (mL) of rat r at lab time t (s)
+    function trueVol(r, t) {
+      if (!r.carr || t <= r.carr.t) return r.V0;
+      const h = (t - r.carr.t) / 3600;
+      let E = ctrlE(h) * r.resp * carrFactor(r);
+      const p = drugP();
+      if (r.dose && r.dose.src === 'drug') E *= 1 - Math.min(0.95, inhAtH(p, h) * r.sens * drugFactor(r, h));
+      return r.V0 + Math.max(0.005, E);
+    }
+    // which reading slot a dip at time t fills, and why it may be refused
+    function slotFor(r, t) {
+      if (r.reads[0] === null) return { k: 0 };
+      if (!r.carr) return { err: `R${r.id}: basal volume already recorded. Give the treatment and the carrageenan first.` };
+      const k = r.reads.findIndex((v, i) => i > 0 && v === null);
+      if (k < 0) return { err: `R${r.id}: all five readings are already recorded.` };
+      const h = (t - r.carr.t) / 3600;
+      if (h < k - 0.5) return { err: `R${r.id}: the ${TP[k]} reading is due at ${clockStr(r.carr.t + k * 3600)} (now ${clockStr(t)}). Wait.` };
+      return { k, h };
+    }
+    function dueList() {     // readings due for each rat, for the schedule
+      return S.rats.filter(r => r.id && r.carr).map(r => { const k = r.reads.findIndex((v, i) => i > 0 && v === null); return k < 0 ? null : { r, k, at: r.carr.t + k * 3600 }; }).filter(Boolean).sort((a, b) => a.at - b.at);
+    }
+  </script>
+  <script>
+    // ================================================================ STATION 1: animal house (mark, weigh, randomise)
+    const STOCK = { x: 24, y: 300, w: 336, h: 128 };
+    const GC = { C: { x: 420, y: 168, w: 262, h: 122 }, T: { x: 712, y: 168, w: 262, h: 122 } };
+    const STOCK_SPOTS = [[50, 80], [128, 84], [206, 80], [284, 84], [84, 106], [164, 108], [244, 106], [300, 104], [48, 56], [120, 58], [196, 56], [262, 58]];
+    const GC_SPOTS = [[46, 78], [118, 84], [190, 78], [80, 102], [152, 104], [222, 100]];
+    function sceneAnimals() {
+      let s = room(430) + wallClock(940, 70);
+      // wall poster: picric acid code chart
+      s += `<g transform="translate(24 22)" filter="url(#sh)"><rect width="330" height="200" fill="#fffdf6"/><circle cx="165" cy="8" r="4" fill="#dc2626"/>
+        ${lbl(165, 30, 'ANIMAL IDENTIFICATION & RANDOMISATION', { s: 11, w: 800, c: '#0a1f44' })}
+        ${lbl(14, 50, 'Picric acid code (saturated, aqueous):', { s: 9, a: 'start', c: '#13294f', w: 700 })}
+        ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(i => lbl(i <= 6 ? 18 : 170, 66 + ((i - 1) % 6) * 14, `R${i}: ${markText(i)}`, { s: 8.4, a: 'start', c: '#1e293b', w: 500, f: 'JetBrains Mono' })).join('')}
+        ${lbl(14, 160, '• Ink line at the lateral malleolus (right hind paw)', { s: 8.6, a: 'start', c: '#13294f' })}
+        ${lbl(14, 175, '• Weigh every rat; draw a lot for its group', { s: 8.6, a: 'start', c: '#13294f' })}
+        ${lbl(14, 190, '• 6 rats per group; 150–200 g; fasted overnight', { s: 8.6, a: 'start', c: '#b91c1c', w: 700 })}</g>`;
+      // wall shelf with the two group cages
+      s += `<rect x="404" y="290" width="584" height="10" fill="url(#steelH)" filter="url(#sh2)"/><rect x="420" y="300" width="6" height="22" fill="#6b7280"/><rect x="964" y="300" width="6" height="22" fill="#6b7280"/>`;
+      s += `<g id="gcC"></g><g id="gcT"></g><g id="stockG"></g>`;
+      // handling towel
+      s += `<g class="hot" data-act="towel"><path d="M384 436 L566 436 L584 476 L368 476 Z" fill="#e0f2fe" stroke="#93c5fd"/><path d="M392 448 L574 448" stroke="#bfdbfe" stroke-width="2"/><path d="M380 462 L580 462" stroke="#bfdbfe" stroke-width="2"/></g>${lbl(476, 492, 'Handling towel', { c: '#cbd5e1', s: 9 })}`;
+      // picric acid dropper bottle + brush
+      s += bottle(590, 336, { act: 'picric', title: 'PICRIC ACID', sub: 'sat. aqueous', cap: '#a16207', kind: 'glass', liq: '#facc15', level: 0.65, w: 46, h: 80, ts: 6, ss: 5 });
+      s += `<g class="hot" data-act="picric"><rect x="566" y="414" width="64" height="5" rx="2.5" fill="url(#wood)" transform="rotate(-12 598 416)"/><path d="M628 404 l10 -3 l2 6 l-10 3z" fill="#facc15"/></g>${lbl(612, 450, 'Picric acid', { c: '#cbd5e1', s: 9 })}`;
+      // marker pen
+      s += `<g class="hot" data-act="ink" filter="url(#sh2)" transform="translate(652 404) rotate(-8)"><rect x="0" y="-5" width="62" height="10" rx="3" fill="#111827"/><rect x="44" y="-5.5" width="18" height="11" rx="3" fill="#1d4ed8"/><path d="M 0 -3 L -8 0 L 0 3 Z" fill="#1e3a8a"/>${lbl(24, 3, 'PERMANENT', { s: 5, c: '#e5e7eb' })}</g>${lbl(684, 450, 'Marker pen', { c: '#cbd5e1', s: 9 })}`;
+      s += animalBalance(730, 336, 'balDisp');
+      s += `<g id="balRat"></g>${lbl(808, 450, 'Animal balance', { c: '#cbd5e1', s: 9 })}`;
+      // lot jar
+      s += `<g class="hot" data-act="lots" filter="url(#sh)"><path d="M884 344 L966 344 L962 428 L888 428 Z" fill="url(#glass)" stroke="url(#glassEdge)" stroke-width="2"/><rect x="880" y="334" width="90" height="12" rx="3" fill="#475569"/>
+        <g id="lotChits"></g><rect x="896" y="362" width="58" height="26" rx="2" fill="#fff" opacity=".9"/>${lbl(925, 373, 'LOTS', { s: 9, w: 800, c: '#0f172a' })}${lbl(925, 383, '6 × I • 6 × II', { s: 6.5, c: '#334155' })}</g>${lbl(925, 450, 'Lot jar (randomise)', { c: '#cbd5e1', s: 9 })}`;
+      s += `<g id="lotShow"></g>`;
+      return s;
+    }
+    function dyn1() {
+      if (S.station !== 1) return;
+      const hr = handRat();
+      // stock cage
+      const stock = S.rats.filter(r => r.loc === 'stock');
+      $('stockG').innerHTML = cageSide(STOCK.x, STOCK.y, STOCK.w, STOCK.h, 'stock', 'STOCK CAGE', `${stock.length} rats`,
+        stock.map((r, i) => { const [x, y] = STOCK_SPOTS[r.uid]; return `<g transform="translate(${x} ${y}) scale(0.78)">${ratSide({ flip: r.uid % 2, id: r.id, ink: r.ink })}</g>`; }).join(''));
+      ['C', 'T'].forEach(g => {
+        const c = GC[g], rs = inGroup(g);
+        $('gc' + g).innerHTML = cageSide(c.x, c.y, c.w, c.h, 'cage' + g, g === 'C' ? 'GROUP I • VEHICLE' : 'GROUP II • TEST', `${rs.length}/6 rats`,
+          rs.map((r, i) => { const [x, y] = GC_SPOTS[i]; return `<g transform="translate(${x} ${y}) scale(0.7)">${ratSide({ flip: i % 2, id: r.id, ink: r.ink })}</g>`; }).join(''));
+      });
+      // rat in hand: on towel or in the balance beaker
+      const onBal = hr && S.handPos === 'bal';
+      $('balRat').innerHTML = onBal ? `<g transform="translate(815 322) scale(0.86)">${ratSide({ id: hr.id, ink: hr.ink, flip: 1 })}</g>` : '';
+      let hand = '';
+      if (hr && !onBal) hand = `<g transform="translate(470 432) scale(1.25)">${ratSide({ id: hr.id, ink: hr.ink })}</g>`;
+      $('stockG').insertAdjacentHTML('beforeend', hand);
+      $('balDisp').textContent = S.balOn ? (onBal ? fx(balReading(hr), 1) : S.balTared ? '0.0' : fx(BEAKER_G, 1)) : '';
+      $('lotChits').innerHTML = S.lots.map((l, i) => `<rect x="${892 + (i % 6) * 11}" y="${414 - Math.floor(i / 6) * 9}" width="10" height="7" rx="1" fill="#fefce8" stroke="#ca8a04" stroke-width=".5" transform="rotate(${(i * 37) % 30 - 15} ${897 + (i % 6) * 11} ${417 - Math.floor(i / 6) * 9})"/>`).join('');
+      $('lotShow').innerHTML = hr && hr.lot ? `<g filter="url(#sh2)"><rect x="880" y="292" width="90" height="34" rx="3" fill="#fefce8" stroke="#ca8a04"/>${lbl(925, 306, 'LOT DRAWN', { s: 6.5, c: '#78350f' })}${lbl(925, 321, hr.lot === 'C' ? 'GROUP I' : 'GROUP II', { s: 11, w: 900, c: '#7c2d12' })}</g>` : '';
+    }
+    const BEAKER_G = 62.4;
+    function balReading(r) { return r.wt + (S.balTared ? 0 : BEAKER_G); }
+    function act1(a) {
+      const hr = handRat();
+      if (a === 'stock') {
+        if (hr) { if (hr.group) { say('This rat already belongs to a group cage.', true); return; } hr.loc = 'stock'; S.hand = null; say('Rat returned to the stock cage.'); }
+        else {
+          const left = S.rats.filter(r => r.loc === 'stock');
+          if (!left.length) { say('The stock cage is empty: all 12 rats are allocated.'); return; }
+          const r = pick(left); r.loc = 'hand'; S.hand = r.uid; S.handPos = 'towel'; S.t += 20; beep('click');
+          say(`Rat picked up by the base of the tail and placed on the towel${r.id ? ` (already marked R${r.id})` : ''}. ${r.id ? '' : 'Mark it with picric acid.'}`);
+        }
+      } else if (a === 'towel') { if (hr) { S.handPos = 'towel'; say('Rat on the handling towel.'); } }
+      else if (a === 'picric') {
+        if (!hr) { say('Pick a rat from the stock cage first.', true); return; }
+        if (hr.id) { say(`R${hr.id} is already marked (${markText(hr.id)}).`); return; }
+        if (S.handPos === 'bal') { say('Take the rat off the balance before marking it.', true); return; }
+        hr.id = S.nextId++; S.t += 40; beep('ok');
+        say(`Picric acid applied with the brush: <b>R${hr.id}</b> = ${markText(hr.id)}. Now draw the ink line at the lateral malleolus of the right hind paw.`);
+      } else if (a === 'ink') {
+        if (!hr) { say('Pick a rat first.', true); return; }
+        if (hr.ink) { say('The ink line is already there.'); return; }
+        hr.ink = true; S.t += 20; beep('ok');
+        say(`Ink line drawn around the right hind paw at the lateral malleolus${hr.id ? ` of R${hr.id}` : ''}. You will dip the paw exactly to this line every time.`);
+      } else if (a === 'balance') {
+        if (!S.balOn) { S.balOn = true; S.balTared = false; beep('tick'); say(`Balance ON. The empty container reads ${fx(BEAKER_G, 1)} g: press TARE (click the empty balance) before weighing.`); }
+        else if (!hr) { S.balTared = true; beep('tick'); say('Balance tared with the empty container: 0.0 g. Now pick a rat and weigh it.'); }
+        else if (S.handPos === 'bal') { S.handPos = 'towel'; say('Rat lifted off the balance.'); }
+        else {
+          S.handPos = 'bal'; hr.weighed = true; hr.wtShown = +balReading(hr).toFixed(1); S.t += 40; beep('click');
+          say(`${hr.id ? 'R' + hr.id : 'Rat'} in the container: balance reads <b>${fx(hr.wtShown, 1)} g</b>. Write it in the notebook.${S.balTared ? '' : ' (Balance was not tared.)'}`, !S.balTared);
+          if (!S.balTared) hr.flags.push('weighed without tare');
+        }
+      } else if (a === 'lots') {
+        if (!hr) { say('Pick a rat first, then draw its lot.', true); return; }
+        if (hr.lot) { say(`R${hr.id || '?'} has already drawn ${hr.lot === 'C' ? 'Group I' : 'Group II'}.`); return; }
+        if (!S.lots.length) { say('No lots left.', true); return; }
+        hr.lot = S.lots.pop(); S.t += 10; beep('tick');
+        say(`Lot drawn: <b>${hr.lot === 'C' ? 'GROUP I (vehicle)' : 'GROUP II (test drug)'}</b>. Put the rat in that cage.`);
+      } else if (a === 'cageC' || a === 'cageT') {
+        const g = a.slice(4);
+        if (!hr) { say('Pick a rat from the stock cage first.', true); return; }
+        if (!hr.id) { say('Mark the rat with picric acid first: an unmarked rat cannot be identified later.', true); return; }
+        if (inGroup(g).length >= 6) { say(`Group ${g === 'C' ? 'I' : 'II'} already has 6 rats.`, true); return; }
+        if (!hr.lot) { hr.flags.push('not randomised'); say(`R${hr.id} put in Group ${g === 'C' ? 'I' : 'II'} without drawing a lot: allocation is not random (selection bias).`, true); const li = S.lots.indexOf(g); if (li >= 0) S.lots.splice(li, 1); }
+        else if (hr.lot !== g) { hr.flags.push('not randomised'); say(`R${hr.id} drew ${hr.lot === 'C' ? 'Group I' : 'Group II'} but was put in Group ${g === 'C' ? 'I' : 'II'}: allocation no longer random.`, true); }
+        else say(`R${hr.id} placed in Group ${g === 'C' ? 'I (vehicle)' : 'II (test)'}.${hr.weighed ? '' : ' It was not weighed!'}${hr.ink ? '' : ' No ink mark on the paw!'}`, !hr.weighed || !hr.ink);
+        if (!hr.weighed) hr.flags.push('not weighed');
+        if (!hr.ink) hr.flags.push('no ink mark');
+        hr.group = g; hr.loc = g; S.hand = null; S.t += 10; beep('ok');
+        renderNotebook();
+      }
+      renderNotebook();
+    }
+  </script>
+  <script>
+    // ================================================================ STATION 2: drug suspension & 1% carrageenan
+    function sceneSolutions() {
+      let s = room(430) + wallClock(940, 64);
+      s += `<rect x="20" y="186" width="560" height="12" fill="url(#steelH)" filter="url(#sh2)"/><rect x="30" y="198" width="6" height="26" fill="#6b7280"/><rect x="564" y="198" width="6" height="26" fill="#6b7280"/>`;
+      if (UNKNOWN) s += bottle(40, 88, { title: 'DRUG X', sub: 'coded • ready', cap: '#7c3aed', kind: 'hdpe', liq: 'url(#milk)', level: .8, w: 62 }) + lbl(71, 214, 'Supplied ready (exam)', { c: '#fde68a', s: 8 });
+      else s += bottle(40, 88, { act: 'drugJar', title: drugP().short.toUpperCase(), sub: drugP().salt, cap: '#b91c1c', kind: 'amber', w: 70, ts: 6.6, ss: 4.6 });
+      s += bottle(160, 88, { act: 'carrJar', title: 'λ-CARRAGEENAN', sub: 'Type IV • 25 g', cap: '#0f766e', kind: 'hdpe', w: 70, ts: 6.4, ss: 5 });
+      s += bottle(280, 76, { act: 'cmc', title: '0.5% CMC', sub: 'vehicle • 500 mL', cap: '#2563eb', kind: 'glass', liq: 'url(#liquid)', level: .75, w: 70, h: 104 });
+      s += bottle(400, 76, { act: 'saline', title: '0.9% NaCl', sub: 'sterile • 500 mL', cap: '#16a34a', kind: 'glass', liq: 'url(#liquid)', level: .8, w: 70, h: 104 });
+      s += anaBalance(24, 286, 'abalDisp');
+      // mortar & pestle
+      s += `<g class="hot" data-act="mortar" filter="url(#sh)"><ellipse cx="320" cy="424" rx="50" ry="8" fill="#000" opacity=".3"/><path d="M272 388 Q272 430 320 430 Q368 430 368 388 Z" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/><ellipse cx="320" cy="388" rx="48" ry="9" fill="#e2e8f0" stroke="#94a3b8"/><ellipse id="mortarFill" cx="320" cy="390" rx="0" ry="5" fill="#fef3c7"/><rect x="330" y="330" width="12" height="62" rx="6" fill="#e5e7eb" stroke="#94a3b8" transform="rotate(24 336 390)"/></g>${lbl(320, 450, 'Mortar & pestle', { c: '#cbd5e1', s: 9 })}`;
+      // measuring cylinder 25 mL
+      let tk = ''; for (let v = 5; v <= 25; v += 5) { const y = 424 - v * 8; tk += `<line x1="426" x2="${v % 10 ? 434 : 440}" y1="${y}" y2="${y}" stroke="#fde68a" stroke-width="1"/>${lbl(444, y + 3, v, { s: 7, c: '#fde68a', a: 'start' })}`; }
+      s += `<g class="hot" data-act="cyl"><ellipse cx="440" cy="428" rx="34" ry="6" fill="#000" opacity=".35"/><rect x="412" y="424" width="56" height="6" rx="2" fill="url(#glass)" stroke="#cbd5e1"/>
+        <rect id="cylLiq" x="424" y="424" width="32" height="0" fill="url(#milk)" opacity=".85"/><rect x="422" y="214" width="36" height="212" rx="3" fill="url(#glass)" stroke="url(#glassEdge)" stroke-width="2"/>${tk}${lbl(440, 208, '25 mL', { s: 7.5, c: '#e2e8f0' })}</g>${lbl(440, 450, 'Measuring cylinder', { c: '#cbd5e1', s: 9 })}`;
+      // magnetic stirrer with beaker
+      s += `<g class="hot" data-act="stirrer" filter="url(#sh)"><rect x="500" y="394" width="140" height="36" rx="6" fill="url(#plasticW)" stroke="#94a3b8"/><rect x="510" y="402" width="120" height="6" rx="2" fill="#cbd5e1"/><circle cx="530" cy="420" r="6" fill="#334155"/><circle id="stirLed" cx="620" cy="420" r="4" fill="#1e293b"/>${lbl(572, 424, 'STIR', { s: 7, w: 800, c: '#334155' })}</g>
+        <g class="hot" data-act="beaker"><path d="M532 330 L608 330 L604 394 L536 394 Z" fill="url(#glass)" stroke="url(#glassEdge)" stroke-width="2"/><rect id="bkLiq" x="538" y="394" width="64" height="0" fill="#f8fafc" opacity=".85"/><rect id="stirBar" x="560" y="388" width="20" height="4" rx="2" fill="#f8fafc" stroke="#94a3b8"/>${lbl(570, 344, '50 mL', { s: 7, c: '#e2e8f0' })}</g>${lbl(570, 450, 'Beaker on magnetic stirrer', { c: '#cbd5e1', s: 9 })}`;
+      // prepared, labelled containers
+      s += `<g id="prepG"></g>`;
+      // calculation card
+      s += `<g transform="translate(660 24)" filter="url(#sh)"><rect width="250" height="150" fill="#fffdf6"/>${lbl(125, 22, 'DOSE CALCULATION', { s: 11, w: 800, c: '#0a1f44' })}
+        ${lbl(12, 44, UNKNOWN ? 'Drug X: coded suspension, give 10 mL/kg p.o.' : `${drugP().short}: ${drugP().mgkg} mg/kg ${drugP().route === 'po' ? 'p.o.' : 's.c.'}`, { s: 9, a: 'start', c: '#13294f', w: 700 })}
+        ${lbl(12, 62, `Dose volume: ${intMlkg()} mL/kg`, { s: 9, a: 'start', c: '#13294f' })}
+        ${lbl(12, 80, 'Concentration = dose ÷ dose volume', { s: 9, a: 'start', c: '#13294f' })}
+        ${lbl(12, 98, 'Vol. per rat (mL) = mL/kg × body wt (kg)', { s: 9, a: 'start', c: '#13294f' })}
+        ${lbl(12, 120, 'Carrageenan 1% w/v = 10 mg/mL in saline', { s: 9, a: 'start', c: '#b91c1c', w: 700 })}
+        ${lbl(12, 138, '0.1 mL per paw • stir until fully hydrated', { s: 9, a: 'start', c: '#b91c1c', w: 700 })}</g>`;
+      return s;
+    }
+    function dyn2() {
+      if (S.station !== 2) return;
+      const A = S.abal, D = S.drug, C = S.carr;
+      $('abalDisp').textContent = !A.boat ? '0.0000' : (A.tared ? A.mg / 1000 : 0.3521 + A.mg / 1000).toFixed(4);
+      $('abalDispBoat').innerHTML = A.boat ? `<path d="M96 350 l48 0 l-6 9 l-36 0z" transform="translate(-4 0)" fill="#e2e8f0" stroke="#94a3b8"/>${A.mg ? `<ellipse cx="116" cy="350" rx="${Math.min(14, 4 + A.mg / 20)}" ry="3" fill="${A.what === 'carr' ? '#f5f5f4' : '#fef9c3'}"/>` : ''}` : '';
+      $('mortarFill').setAttribute('rx', D.inMortar ? 26 : 0);
+      const cv = D.inCyl ? (D.vol || 3) : 0; const cl = $('cylLiq'); cl.setAttribute('y', 424 - cv * 8); cl.setAttribute('height', cv * 8);
+      const bv = C.inBk ? C.vol : 0; const bl = $('bkLiq'); bl.setAttribute('y', 394 - Math.min(60, bv * 2.4)); bl.setAttribute('height', Math.min(60, bv * 2.4));
+      $('stirLed').setAttribute('fill', C.stir ? '#22c55e' : '#1e293b');
+      let p = '';
+      if (D.labelled) p += bottle(690, 330, { act: 'drugBtl', title: UNKNOWN ? 'DRUG X' : drugP().short.toUpperCase(), sub: UNKNOWN ? 'coded' : `${fx(D.conc, 2)} mg/mL`, cap: '#b91c1c', kind: 'glass', liq: 'url(#milk)', level: D.left / Math.max(D.vol, 1), w: 60, h: 96, ts: 6.4 });
+      if (C.labelled) p += bottle(780, 350, { act: 'carrBtl', title: 'CARRAGEENAN', sub: `${fx(C.conc / 10, 2)}% w/v`, cap: '#0f766e', kind: 'glass', liq: '#f8fafc', level: C.left / Math.max(C.vol, 1), w: 52, h: 76, ts: 5.6 });
+      $('prepG').innerHTML = p + (D.labelled || C.labelled ? lbl(780, 450, 'Prepared & labelled', { c: '#cbd5e1', s: 9 }) : '');
+    }
+    function act2(a) {
+      const A = S.abal, D = S.drug, C = S.carr;
+      if (a === 'abal') {
+        if (!A.boat) { A.boat = true; A.tared = false; A.mg = 0; A.what = null; beep('tick'); say('Weighing boat placed on the pan (0.3521 g). Click the balance again to TARE.'); }
+        else if (!A.tared) { A.tared = true; beep('tick'); say('Tared: 0.0000 g. Now click the powder you want to weigh.'); }
+        else if (A.mg) say(`Boat holds ${fx(A.mg, 1)} mg of ${A.what === 'carr' ? 'carrageenan' : drugP().short}. Transfer it ${A.what === 'carr' ? 'into the beaker' : 'to the mortar'}.`);
+        else say('Balance tared. Choose a powder from the shelf.');
+      } else if (a === 'drugJar' || a === 'carrJar') {
+        if (!A.boat || !A.tared) { say('Put a clean weighing boat on the analytical balance and tare it first.', true); return; }
+        if (A.mg && A.what !== (a === 'drugJar' ? 'drug' : 'carr')) { say('The boat already holds another powder. Transfer it first.', true); return; }
+        S.sel = { kind: 'weigh', what: a === 'drugJar' ? 'drug' : 'carr' };
+        say(`Spatula ready. Enter the mass of ${a === 'drugJar' ? drugP().short : 'carrageenan'} to weigh (mg).`);
+      } else if (a === 'mortar') {
+        if (A.mg && A.what === 'drug') { D.mg += A.mg; D.inMortar = true; D.trit = false; A.mg = 0; A.boat = false; A.what = null; S.t += 30; beep('ok'); say(`${fx(D.mg, 1)} mg ${drugP().short} tipped into the mortar. Triturate it with a little vehicle.`); S.sel = { kind: 'mortar' }; }
+        else if (A.mg && A.what === 'carr') say('Carrageenan is dispersed in saline in the beaker, not ground in a mortar.', true);
+        else if (D.inMortar) S.sel = { kind: 'mortar' };
+        else say('The mortar is empty.');
+      } else if (a === 'cyl') {
+        if (D.labelled) { say('The suspension is already made up and bottled.'); return; }
+        if (A.mg && A.what === 'drug') { D.mg += A.mg; A.mg = 0; A.boat = false; D.inCyl = true; D.trit = false; D.direct = true; beep('click'); say('Powder tipped straight into the cylinder without trituration.', true); }
+        else if (D.inMortar) { D.inCyl = true; D.inMortar = false; S.t += 60; beep('ok'); say(`Mortar contents rinsed into the cylinder with vehicle${D.trit ? ' (smooth paste)' : ' (powder not triturated)'}.`, !D.trit); }
+        if (D.inCyl) S.sel = { kind: 'cyl' }; else say('Nothing to put in the cylinder yet.', true);
+      } else if (a === 'beaker') {
+        if (C.labelled) { say('The carrageenan is already bottled.'); return; }
+        if (A.mg && A.what === 'carr') { C.mg += A.mg; A.mg = 0; A.boat = false; C.inBk = true; S.t += 20; beep('ok'); say(`${fx(C.mg, 1)} mg carrageenan in the beaker. Add the saline.`); }
+        else if (A.mg) { say('Put the drug in the mortar, not the carrageenan beaker.', true); return; }
+        if (C.inBk) S.sel = { kind: 'beaker' }; else say('The beaker is empty.');
+      } else if (a === 'stirrer') {
+        if (!C.inBk || !C.vol) { say('Put the carrageenan and saline in the beaker first.', true); return; }
+        if (C.stir) C.stirT += S.t - C.st0; else C.st0 = S.t; C.stir = !C.stir; beep('tick'); say(C.stir ? 'Magnetic stirrer ON: carrageenan is hydrating (it swells slowly; stir at least 20 min).' : `Stirrer OFF after ${fx(C.stirT / 60, 0)} min of stirring.`);
+      } else if (a === 'cmc' || a === 'saline') say(`${a === 'cmc' ? '0.5% CMC' : 'Normal saline'}: choose it in the make-up step of the cylinder or beaker.`);
+      else if (a === 'drugBtl' || a === 'carrBtl') S.sel = { kind: a };
+    }
+    function weighPowder() {
+      const v = parseFloat($('inMg').value), w = S.sel.what;
+      if (!(v > 0) || v > 5000) { say('Enter a mass in mg (e.g. 25).', true); return; }
+      S.abal.mg = +(v + (Math.random() - 0.5) * 0.2).toFixed(1); S.abal.what = w; S.t += 90; beep('click');
+      say(`Balance reads ${(S.abal.mg / 1000).toFixed(4)} g. ${w === 'drug' ? 'Transfer it to the mortar.' : 'Transfer it to the beaker.'}`);
+      S.sel = null; renderCtx(); drawDyn();
+    }
+    function triturate() {
+      const D = S.drug; if (!D.inMortar) return;
+      D.trit = true; S.t += 180; beep('ok'); say('Triturated with a few mL of 0.5% CMC to a smooth, lump-free paste.'); renderCtx(); drawDyn();
+    }
+    function makeUp() {
+      const D = S.drug, v = parseFloat($('inVol').value), veh = $('inVeh').value;
+      if (!(v > 0) || v > 25) { say('Enter the final volume (mL, up to 25).', true); return; }
+      D.vol = v; D.veh = veh; D.conc = D.mg / v; D.left = v; D.labelled = true; S.t += 120; beep('done');
+      D.uniform = !!(D.trit || drugP().soluble);
+      const msgs = [];
+      if (!D.uniform) msgs.push('not triturated: the suspension has lumps, so doses will be uneven');
+      if (drugP().route === 'sc' && veh === 'cmc') msgs.push('CMC suspension is unsuitable for s.c. injection; saline expected');
+      say(`Made up to ${v} mL with ${veh === 'cmc' ? '0.5% CMC' : 'saline'}, shaken and labelled: <b>${fx(D.conc, 2)} mg/mL</b>.${msgs.length ? ' ⚠ ' + msgs.join('; ') + '.' : ''}`, msgs.length > 0);
+      S.sel = null; renderCtx(); drawDyn(); refreshChecklist();
+    }
+    function carrAdd() {
+      const C = S.carr, v = parseFloat($('inCV').value), liq = $('inCL').value;
+      if (!(v > 0) || v > 40) { say('Enter the volume of saline (mL).', true); return; }
+      C.vol = v; C.liq = liq; C.conc = C.mg / v; S.t += 30; beep('ok');
+      say(`${v} mL ${liq === 'saline' ? 'normal saline' : '0.5% CMC'} added: ${fx(C.conc / 10, 2)}% w/v. Switch on the stirrer.`, liq !== 'saline');
+      renderCtx(); drawDyn();
+    }
+    function carrBottle() {
+      const C = S.carr; if (!C.vol) { say('Add saline first.', true); return; }
+      if (C.stir) C.stirT += S.t - C.st0; C.stir = false; C.labelled = true; C.left = C.vol; C.hydr = C.stirT >= 1200; beep('done');
+      say(`Carrageenan transferred to a labelled vial: ${fx(C.conc / 10, 2)}% w/v.${C.hydr ? '' : ` ⚠ Only ${fx(C.stirT / 60, 0)} min of stirring: not fully hydrated, lumps will give erratic oedema.`}`, !C.hydr);
+      S.sel = null; renderCtx(); drawDyn(); refreshChecklist();
+    }
+    function newBatch(w) {
+      if (w === 'drug') { if (UNKNOWN) return; S.drug = { mg: 0, trit: false, inCyl: false, vol: 0, veh: null, labelled: false, conc: 0, left: 0 }; say('Old suspension discarded. Prepare a fresh batch.'); }
+      else { S.carr = { mg: 0, inBk: false, vol: 0, stir: false, stirT: 0, labelled: false, conc: 0, left: 0 }; say('Old carrageenan discarded.'); }
+      S.sel = null; renderCtx(); drawDyn(); refreshChecklist();
+    }
+  </script>
+  <script>
+    // ================================================================ STATION 3: dosing & plethysmometer
+    const CELL_X = 600, CELL_RX = 30, CELL_TOP = 244, CELL_BOT = 352, WY = 282;
+    const LEG = 92, LM = 30, PAW_L = 28, TOL = 2.5, MM_PER_PX = 0.8;
+    const TIP_START = 252, TIP_MIN = 214, TIP_MAX = 340, RS = 1.05, ROT = -80;
+    const MAG = { x: 468, y: 158, r: 54, k: 3 };
+    const REF = { x: 712, top: 296, bot: 352, rx: 15 };
+    const G3 = { C: { x: 12, y: 300 }, T: { x: 226, y: 300 } }, GW = 206, GH = 128;
+    const G3_SPOTS = [[38, 72], [100, 78], [162, 72], [62, 100], [124, 104], [178, 100]];
+    function sceneBench() {
+      let s = room(430) + wallClock(946, 62);
+      // whiteboard schedule
+      s += `<g transform="translate(16 18)" filter="url(#sh)"><rect width="392" height="214" rx="4" fill="#f8fafc" stroke="#94a3b8" stroke-width="3"/><g id="board"></g></g>`;
+      s += `<g id="cagesG"></g>`;
+      // plethysmometer base unit
+      s += `<ellipse cx="650" cy="430" rx="170" ry="9" fill="url(#contactShadow)"/>
+        <rect x="496" y="352" width="306" height="76" rx="6" fill="url(#cabFront)" stroke="#64748b"/>
+        <g class="hot" data-act="power"><rect x="508" y="364" width="34" height="46" rx="5" fill="#0b0f16" stroke="#475569"/><rect id="rocker" x="513" y="369" width="24" height="36" rx="3" fill="#7f1d1d"/>${lbl(525, 384, 'I', { s: 9, c: '#fff', f: 'JetBrains Mono' })}${lbl(525, 401, 'O', { s: 9, c: '#fff', f: 'JetBrains Mono' })}</g>${lbl(525, 422, 'POWER', { s: 6.5, c: '#334155', f: 'JetBrains Mono' })}
+        <g class="hot" data-act="zero"><circle cx="572" cy="388" r="17" fill="#713f12"/><circle cx="572" cy="386" r="14.5" fill="url(#btnYellow)" stroke="#713f12"/>${lbl(572, 389.5, 'ZERO', { s: 7.5, w: 900, c: '#422006' })}</g>
+        <circle id="holdLed" cx="612" cy="380" r="5" fill="#1e3a8a" stroke="#0a1f44"/>${lbl(612, 397, 'HOLD', { s: 6.5, c: '#334155', f: 'JetBrains Mono' })}
+        <rect x="636" y="360" width="156" height="60" rx="5" fill="#1f2937" stroke="#0a1f44"/>${lbl(714, 372, 'PAW VOLUME (mL)', { s: 7, c: '#cbd5e1', f: 'JetBrains Mono' })}
+        <rect x="646" y="376" width="136" height="38" rx="3" fill="#050505"/>
+        <text x="774" y="406" text-anchor="end" font-family="DSEG7, JetBrains Mono, monospace" font-size="26" fill="#38bdf8" opacity="0.1">8.88</text>
+        <text id="volDisp" x="774" y="406" text-anchor="end" font-family="DSEG7, JetBrains Mono, monospace" font-size="26" fill="#38bdf8" filter="url(#glow)"></text>`;
+      // reference / transducer cell
+      s += `<rect x="${CELL_X + CELL_RX - 4}" y="344" width="${REF.x - REF.rx - CELL_X - CELL_RX + 8}" height="6" rx="3" fill="#7dd3fc"/>
+        <rect id="refFluid" x="${REF.x - REF.rx + 2}" y="320" width="${REF.rx * 2 - 4}" height="32" fill="url(#fluid)"/>
+        <rect x="${REF.x - REF.rx}" y="${REF.top}" width="${REF.rx * 2}" height="${REF.bot - REF.top}" fill="url(#cellGlass)" stroke="#e0f2fe" stroke-width="1.4"/>
+        <line x1="${REF.x - 4}" y1="${REF.top - 14}" x2="${REF.x - 4}" y2="${REF.bot - 6}" stroke="#d4d4d8" stroke-width="1.6"/><line x1="${REF.x + 4}" y1="${REF.top - 14}" x2="${REF.x + 4}" y2="${REF.bot - 6}" stroke="#d4d4d8" stroke-width="1.6"/>
+        <path d="M ${REF.x - 4} ${REF.top - 14} C ${REF.x - 4} ${REF.top - 34}, ${REF.x + 50} ${REF.top - 26}, ${REF.x + 60} 352" stroke="#111827" stroke-width="2.4" fill="none"/>
+        <path d="M ${REF.x + 4} ${REF.top - 14} C ${REF.x + 4} ${REF.top - 30}, ${REF.x + 56} ${REF.top - 22}, ${REF.x + 68} 352" stroke="#b91c1c" stroke-width="2.4" fill="none"/>`;
+      // measuring cell (back wall), held rat, fluid + front wall
+      s += `<rect x="${CELL_X - CELL_RX}" y="${CELL_TOP}" width="${CELL_RX * 2}" height="${CELL_BOT - CELL_TOP}" fill="#e0f2fe" fill-opacity="0.12"/>
+        <g id="heldRat" style="display:none"><path id="hrTail" stroke="#e7b0b8" stroke-width="4" fill="none" stroke-linecap="round"/><g id="hrBody"><g class="rm"></g></g><g id="hrLeg"></g><g id="hrHand"></g></g>
+        <clipPath id="cellClip"><rect x="${CELL_X - CELL_RX}" y="${CELL_TOP}" width="${CELL_RX * 2}" height="${CELL_BOT - CELL_TOP}"/></clipPath>
+        <g clip-path="url(#cellClip)" id="cellFluid"></g>
+        <g class="hot" data-act="cell"><rect x="${CELL_X - CELL_RX}" y="${CELL_TOP}" width="${CELL_RX * 2}" height="${CELL_BOT - CELL_TOP}" fill="url(#cellGlass)" stroke="#e0f2fe" stroke-width="1.6"/></g>
+        ${Array.from({ length: 9 }, (_, i) => `<line x1="${CELL_X + CELL_RX - 8}" y1="${CELL_TOP + 14 + i * 10}" x2="${CELL_X + CELL_RX - (i % 2 ? 3 : 0)}" y2="${CELL_TOP + 14 + i * 10}" stroke="#e0f2fe" stroke-width="0.8"/>`).join('')}
+        <line x1="${CELL_X - CELL_RX}" x2="${CELL_X - CELL_RX + 10}" y1="${WY}" y2="${WY}" stroke="#fde68a" stroke-width="1.4"/>${lbl(CELL_X - CELL_RX - 4, WY + 3, 'fill', { s: 7, c: '#fde68a', a: 'end' })}
+        <ellipse cx="${CELL_X}" cy="${CELL_TOP}" rx="${CELL_RX}" ry="6" fill="none" stroke="#e0f2fe" stroke-width="1.6"/>
+        <path d="M ${CELL_X - CELL_RX + 6} ${CELL_TOP + 8} L ${CELL_X - CELL_RX + 6} ${CELL_BOT - 8}" stroke="#fff" stroke-width="3" opacity="0.5"/>`;
+      // magnifier
+      s += `<g id="magnifier" style="display:none"><line x1="${MAG.x + MAG.r * 0.7}" y1="${MAG.y + MAG.r * 0.7}" x2="${CELL_X - CELL_RX}" y2="${WY}" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+        <clipPath id="magClip"><circle cx="${MAG.x}" cy="${MAG.y}" r="${MAG.r}"/></clipPath>
+        <g clip-path="url(#magClip)"><rect x="${MAG.x - MAG.r}" y="${MAG.y - MAG.r}" width="${MAG.r * 2}" height="${MAG.r * 2}" fill="#f0f9ff"/><rect x="${MAG.x - MAG.r}" y="${MAG.y}" width="${MAG.r * 2}" height="${MAG.r}" fill="#7dd3fc" opacity="0.55"/><g id="magLeg"></g>
+        <rect x="${MAG.x - MAG.r}" y="${MAG.y}" width="${MAG.r * 2}" height="${MAG.r}" fill="#38bdf8" opacity="0.22"/><path d="M ${MAG.x - MAG.r} ${MAG.y - 3} Q ${MAG.x} ${MAG.y + 3} ${MAG.x + MAG.r} ${MAG.y - 3}" stroke="#0284c7" stroke-width="2" fill="none"/></g>
+        <circle cx="${MAG.x}" cy="${MAG.y}" r="${MAG.r}" fill="none" stroke="#1f2937" stroke-width="5"/>
+        <rect x="${MAG.x - 66}" y="${MAG.y + MAG.r + 6}" width="132" height="18" rx="4" fill="#0a1f44" opacity="0.92"/><text id="magText" x="${MAG.x}" y="${MAG.y + MAG.r + 18.5}" text-anchor="middle" font-family="JetBrains Mono" font-size="8.5" font-weight="700" fill="#fff"></text>
+        ${lbl(MAG.x, MAG.y - MAG.r - 6, 'INK MARK vs MENISCUS (×3)', { s: 7.5, c: '#e2e8f0', f: 'JetBrains Mono' })}</g>`;
+      // foot pedal
+      s += `<path d="M 798 420 C 830 440, 840 480, 862 492" stroke="#0b0f16" stroke-width="3" fill="none"/>
+        <g class="hot" data-act="pedal"><ellipse cx="890" cy="506" rx="46" ry="7" fill="url(#contactShadow)"/><path d="M 848 502 L 934 502 L 926 486 L 858 480 Z" fill="#1f2937" stroke="#000"/><path id="pedalTop" d="M 856 484 L 926 488 L 922 476 L 864 468 Z" fill="#374151" stroke="#000"/>${lbl(892, 482, 'HOLD', { s: 8, w: 900, c: '#e5e7eb' })}</g>${lbl(890, 524, 'Foot pedal', { c: '#cbd5e1', s: 9 })}`;
+      // dosing tray with syringes, bottles
+      s += `<path d="M 430 452 L 780 452 L 790 540 L 420 540 Z" fill="url(#steelH)" opacity=".85" filter="url(#sh)"/>${lbl(605, 552, 'Dosing tray', { c: '#cbd5e1', s: 9 })}`;
+      s += `<g id="syrG"></g><g id="btlG"></g>`;
+      return s;
+    }
+    function dyn3() {
+      if (S.station !== 3) return;
+      // cages with rats (selected rat outlined; the measured one is absent)
+      let c = '';
+      ['C', 'T'].forEach(g => {
+        const rs = inGroup(g);
+        c += cageSide(G3[g].x, G3[g].y, GW, GH, 'cage3' + g, g === 'C' ? 'GROUP I • VEHICLE' : 'GROUP II • TEST', g === 'C' ? `CMC • ${rs.length} rats` : `${(UNKNOWN ? 'Drug X' : drugP().short).slice(0, 9)} • ${rs.length} rats`,
+          rs.map((r, i) => { if (S.meas && S.meas.r === r) return ''; const [x, y] = G3_SPOTS[i]; const sw = r.carr ? clamp((trueVol(r, S.t) - r.V0) / 0.7, 0, 1) : 0;
+            return `<g class="hot" data-act="rat:${r.uid}" transform="translate(${x} ${y}) scale(0.6)">${ratSide({ flip: i % 2, id: r.id, ink: r.ink, paw: sw, sel: S.hand === r.uid, tagc: r.carr ? '#fecdd3' : r.dose ? '#e0e7ff' : '#fff' })}</g>`; }).join(''));
+      });
+      $('cagesG').innerHTML = c;
+      // syringes
+      const sy = S.syr, col = s => s === 'drug' ? '#fef9c3' : s === 'carr' ? '#f8fafc' : '#dbeafe';
+      $('syrG').innerHTML = `<g transform="translate(0 0)">${syringeArt(486, 474, { act: 'gav', cap: 3, fill: sy.gav.vol, needle: 'gavage', col: col(sy.gav.src), len: 120 })}${lbl(552, 498, `3 mL syringe + 16 G ball-tipped gavage needle${sy.gav.vol ? ' • ' + fx(sy.gav.vol, 2) + ' mL' : ''}`, { s: 7.5, c: '#0f172a' })}
+        ${syringeArt(500, 518, { act: 'tub', cap: 1, fill: sy.tub.vol, needle: '26G', col: col(sy.tub.src), len: 100 })}${lbl(560, 535, `1 mL tuberculin + 26 G needle${sy.tub.vol ? ' • ' + fx(sy.tub.vol, 2) + ' mL' : ''}`, { s: 7.5, c: '#0f172a' })}
+        ${S.syrSel ? `<rect x="${S.syrSel === 'gav' ? 440 : 454}" y="${S.syrSel === 'gav' ? 460 : 506}" width="${S.syrSel === 'gav' ? 248 : 206}" height="26" rx="5" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="5 3"/>` : ''}</g>`;
+      // bottles
+      let b = bottle(824, 336, { act: 'b:veh', title: '0.5% CMC', sub: 'vehicle', cap: '#2563eb', kind: 'glass', liq: 'url(#liquid)', level: .7, w: 50, h: 84, ts: 6.4 });
+      if (S.drug.labelled) b += bottle(880, 336, { act: 'b:drug', title: UNKNOWN ? 'DRUG X' : drugP().short.toUpperCase().slice(0, 12), sub: UNKNOWN ? 'coded' : fx(S.drug.conc, 2) + ' mg/mL', cap: '#b91c1c', kind: 'glass', liq: 'url(#milk)', level: S.drug.left / Math.max(1, S.drug.vol), w: 50, h: 84, ts: 5.4 });
+      if (S.carr.labelled) b += bottle(936, 352, { act: 'b:carr', title: 'CARRAG.', sub: fx(S.carr.conc / 10, 2) + '% w/v', cap: '#0f766e', kind: 'glass', liq: '#f8fafc', level: S.carr.left / Math.max(1, S.carr.vol), w: 46, h: 68, ts: 6 });
+      $('btlG').innerHTML = b;
+      // cell fluid
+      $('cellFluid').innerHTML = S.pl.filled ? `<rect x="${CELL_X - CELL_RX}" y="${WY}" width="${CELL_RX * 2}" height="${CELL_BOT - WY}" fill="url(#fluid)"/><ellipse cx="${CELL_X}" cy="${WY}" rx="${CELL_RX - 1}" ry="4" fill="#bae6fd" fill-opacity="0.7" stroke="#0ea5e9"/>` : '';
+      $('rocker').setAttribute('fill', S.pl.power ? '#dc2626' : '#7f1d1d');
+      board();
+    }
+    function board() {
+      const rows = S.rats.filter(r => r.group).sort((a, b) => a.id - b.id);
+      const X = [12, 62, 108, 186, 262];
+      let h = lbl(196, 18, 'SCHEDULE (written as you go)', { s: 10.5, w: 800, c: '#0a1f44' }) + ['Rat', 'Grp', 'Treated', 'Carrag.', 'Next reading due'].map((t, i) => lbl(X[i], 34, t, { s: 8, a: 'start', c: '#475569', w: 700 })).join('');
+      rows.forEach((r, i) => {
+        const k = r.reads.findIndex(v => v === null), due = k < 0 ? 'all done' : k === 0 ? 'basal V₀' : r.carr ? `${TP[k]} @ ${clockStr(r.carr.t + k * 3600)}` : '—';
+        const late = k > 0 && r.carr && S.t > r.carr.t + k * 3600 + 600;
+        [`R${r.id}`, r.group === 'C' ? 'I' : 'II', r.dose ? clockStr(r.dose.t) : '--:--', r.carr ? clockStr(r.carr.t) : '--:--', due].forEach((t, j) => h += lbl(X[j], 49 + i * 13.5, t, { s: 8.4, a: 'start', c: j === 4 && late ? '#dc2626' : r.carr ? '#1d4ed8' : '#1e293b', f: 'JetBrains Mono', w: 600 }));
+      });
+      $('board').innerHTML = h;
+    }
+    // ---------------------------------------------------------------- measuring
+    function heldGeom(tipY) {
+      const hip = { x: CELL_X, y: tipY - LEG }, a = ROT * Math.PI / 180, ca = Math.cos(a), sa = Math.sin(a);
+      const hx = -31 * ca - 4 * sa, hy = -31 * sa + 4 * ca, C = { x: hip.x - hx * RS, y: hip.y - hy * RS };
+      return { hip, C, rump: { x: C.x + (-50 * ca - 4 * sa) * RS, y: C.y + (-50 * sa + 4 * ca) * RS } };
+    }
+    function pawReading() {
+      const m = S.meas; if (!m) return 0;
+      const x = (m.tipY - WY) / LM; if (x <= 0) return 0;
+      return m.V * (x <= 1 ? Math.pow(x, 1.3) : 1 + (x - 1) * 0.45);
+    }
+    const markDelta = m => (m.tipY - LM) - WY;
+    function startMeasure(r) {
+      if (S.meas) { say('A rat is already on the cell.', true); return; }
+      if (!S.pl.filled) { say('The measuring cell is empty: fill it to the mark first (click the cell).', true); return; }
+      if (!S.pl.power) { say('Switch the plethysmometer ON first.', true); return; }
+      const sl = slotFor(r, S.t); if (sl.err) { say(sl.err, true); return; }
+      const V = trueVol(r, S.t) * (1 + gauss() * 0.012);
+      S.meas = { r, k: sl.k, h: sl.h, V, tipY: TIP_START, removing: 0, ph: Math.random() * 6, men: S.pl.wet ? 0 : gauss() * 0.035 };
+      S.hand = null; $('heldRat').style.display = ''; $('heldRat').style.opacity = 1; $('magnifier').style.display = '';
+      const rm = document.querySelector('#hrBody .rm'); rm.innerHTML = heldRatMarkup(r);
+      $('hrHand').innerHTML = handMarkup(); beep('click'); drawDyn(); renderCtx();
+      say(`R${r.id} held over the cell for the <b>${TP[sl.k]}</b> reading. Lower the paw until ${r.ink ? 'the ink mark meets the meniscus' : 'the malleolus is at the surface (no ink mark!)'}, then press the HOLD pedal.`, !r.ink);
+    }
+    // side-view rat for the held (hanging) position: legs drawn separately (from the original page)
+    function heldRatMarkup(r) {
+      const leg = (cls, near) => `<path class="${cls}" stroke="${near ? '#f0a3b4' : '#d98fa2'}" stroke-width="${near ? 3.6 : 3}" stroke-linecap="round" fill="none"/><ellipse class="${cls}p" rx="3.6" ry="1.8" fill="${near ? '#f0a3b4' : '#d98fa2'}"/>`;
+      const spots = r.id ? MARK_CODE[r.id].map(p => `<ellipse cx="${MARK_POS[p][0] * 1.3}" cy="${MARK_POS[p][1] * 1.5}" rx="8" ry="5" fill="#facc15" opacity=".85"/>`).join('') : '';
+      const html = `<g class="far">${leg('lf1')}${leg('lf2')}</g>
+        <g><path d="M -50 4 C -54 -18, -28 -31, 0 -29 C 22 -28, 36 -19, 42 -9 C 46 2, 36 15, 12 16 C -14 18, -48 18, -50 4 Z" fill="url(#furGrad)" stroke="#d6cec9" stroke-width="0.6"/>
+          <path d="M -50 4 C -54 -18, -28 -31, 0 -29 C 22 -28, 36 -19, 42 -9 C 46 2, 36 15, 12 16 C -14 18, -48 18, -50 4 Z" fill="url(#bellyShade)"/>
+          <ellipse cx="-31" cy="4" rx="17" ry="13" fill="url(#furGrad)" stroke="#e0d8d4" stroke-width="0.5"/>${spots}</g>
+        <g class="near">${leg('ln1', true)}</g>
+        <g><path d="M 30 -15 C 40 -27, 58 -23, 72 -9 C 76 -5, 76 -1, 71 1 C 60 5, 44 7, 33 4 C 27 -1, 26 -9, 30 -15 Z" fill="url(#furGrad)" stroke="#e0d8d4" stroke-width="0.5"/>
+          <g transform="rotate(-14 38 -22)"><ellipse cx="38" cy="-22" rx="6.5" ry="8" fill="#f7eef0"/><ellipse cx="38.4" cy="-21.6" rx="5" ry="6.6" fill="url(#earGrad)"/></g>
+          <ellipse cx="54" cy="-11" rx="2.6" ry="2.4" fill="url(#eyeGrad)"/><circle cx="53.3" cy="-11.8" r="0.75" fill="#fff"/><ellipse cx="74.4" cy="-3.2" rx="2.3" ry="1.8" fill="#ef9db2"/>
+          <g stroke="#94a3b8" stroke-opacity="0.6" stroke-width="0.4" fill="none"><path d="M 70 -2 Q 80 -8 92 -10"/><path d="M 70 -1 Q 81 -2 94 -2"/><path d="M 70 0 Q 80 4 91 8"/></g></g>`;
+      const g = document.createElementNS(svgNS, 'g'); g.innerHTML = html;
+      const setLeg = (cls, jx, jy, px, py, bend) => { g.querySelector('.' + cls).setAttribute('d', `M ${jx} ${jy} Q ${(jx + px) / 2 + bend} ${(jy + py) / 2} ${px} ${py}`); const pw = g.querySelector('.' + cls + 'p'); pw.setAttribute('cx', px); pw.setAttribute('cy', py); };
+      setLeg('ln1', 22, 6, 30, 14, 2); setLeg('lf1', 18, 6, 26, 15, 2); setLeg('lf2', -32, 10, -28, 20, -2);
+      return g.innerHTML;
+    }
+    function nudgeDip(d) { if (!S.meas || S.meas.removing) { say('Place a rat on the cell first.', true); return; } S.meas.tipY = clamp(S.meas.tipY + d, TIP_MIN, TIP_MAX); }
+    function holdReading() {
+      const m = S.meas;
+      if (!m || m.removing) { say('Dip a rat paw into the cell first, then press HOLD.', true); beep('warn'); return; }
+      const r = m.r, k = m.k, flags = [];
+      let v = pawReading() + (S.pl.zeroed ? 0 : 0.07) + m.men;
+      const d = markDelta(m);
+      if (Math.abs(d) > TOL) flags.push(d < 0 ? 'dipped short of mark' : 'dipped past mark');
+      if (!S.pl.zeroed) flags.push('not zeroed');
+      if (!S.pl.wet) flags.push('no wetting agent');
+      if (!r.ink) flags.push('no ink mark');
+      if (k > 0) { const off = Math.round((m.h - k) * 60); if (Math.abs(off) > 10) flags.push(`${off > 0 ? 'late' : 'early'} ${Math.abs(off)} min`); }
+      else if (r.carr) flags.push('V₀ after carrageenan');
+      v = Math.max(0, Math.round(v * 100) / 100);
+      r.reads[k] = { t: S.t, v, flags };
+      S.disp = { v, left: 1.6 }; S.t += 30; beep('ok');
+      $('pedalTop').setAttribute('transform', 'translate(0 4)'); setTimeout(() => $('pedalTop') && $('pedalTop').removeAttribute('transform'), 200);
+      say(`R${r.id} ${TP[k]}: display held at <b>${v.toFixed(2)} mL</b>. Write it in the notebook.${flags.length ? ' ⚠ ' + flags.join(', ') + '.' : ''}`, flags.length > 0);
+      m.removing = 0.001;
+      setTimeout(() => { if (S.meas === m) { S.meas = null; $('heldRat').style.display = 'none'; $('magnifier').style.display = 'none'; drawDyn(); renderCtx(); refreshChecklist(); } }, 700);
+      renderNotebook(); renderCtx();
+    }
+    function drawHeld(dtR) {
+      const m = S.meas; if (!m) return;
+      const T = performance.now() / 1000 + m.ph;
+      if (m.removing) { m.removing += dtR; m.tipY -= dtR * 240; $('heldRat').style.opacity = Math.max(0, 1 - m.removing * 1.5); }
+      const tip = m.tipY, G = heldGeom(tip);
+      $('hrBody').setAttribute('transform', `translate(${G.C.x} ${G.C.y}) rotate(${ROT + Math.sin(T * 1.3) * 1.5}) scale(${RS})`);
+      $('hrHand').setAttribute('transform', `translate(${G.C.x} ${G.C.y}) scale(0.7)`);
+      const R = G.rump, sw = Math.sin(T * 1.4) * 6;
+      $('hrTail').setAttribute('d', `M ${R.x} ${R.y} C ${R.x - 8} ${R.y + 22}, ${R.x - 40 + sw} ${R.y + 26}, ${R.x - 46 + sw} ${R.y + 60} S ${R.x - 36} ${R.y + 92}, ${R.x - 50 + sw} ${R.y + 108}`);
+      const e = Math.max(0, (m.V - m.r.V0) / m.r.V0), k = 1 + e * 1.1, red = Math.min(1, e / 0.5);
+      const col = `rgb(${Math.round(242 - 18 * red)},${Math.round(167 - 75 * red)},${Math.round(182 - 76 * red)})`;
+      const x = CELL_X, hy = G.hip.y, ank = tip - PAW_L, mark = tip - LM;
+      const pawPath = (X, A, Tp, s, w) => `M ${X - 3.5 * s * w} ${A} C ${X - 6 * s * w} ${A + 8 * s}, ${X - 6.5 * s * w} ${Tp - 10 * s}, ${X - 5 * s * w} ${Tp - 3 * s} Q ${X} ${Tp + 1.5 * s} ${X + 5 * s * w} ${Tp - 3 * s} C ${X + 6.5 * s * w} ${Tp - 10 * s}, ${X + 6 * s * w} ${A + 8 * s}, ${X + 3.5 * s * w} ${A} Z`;
+      $('hrLeg').innerHTML = `<path d="M ${x} ${hy + 14} L ${x} ${ank + 2}" stroke="#ede7e3" stroke-width="${7 + e * 3}" stroke-linecap="round"/>
+        <ellipse cx="${x + 1}" cy="${hy + 8}" rx="10" ry="18" fill="url(#furGrad)" stroke="#e0d8d4" stroke-width="0.5"/>
+        <path d="${pawPath(x, ank, tip, 1, k)}" fill="${col}" stroke="#c97f8f" stroke-width="0.6"/>
+        ${m.r.ink ? `<path d="M ${x - 5.5 - e * 2} ${mark} Q ${x} ${mark + 1.4} ${x + 5.5 + e * 2} ${mark}" stroke="#1e3a8a" stroke-width="1.6" fill="none"/>` : ''}`;
+      const kx = MAG.k, my = y => MAG.y + (y - WY) * kx;
+      $('magLeg').innerHTML = `<rect x="${MAG.x - (3.5 + e * 1.5) * kx}" y="${MAG.y - MAG.r - 4}" width="${(7 + e * 3) * kx}" height="${Math.max(0, my(ank + 2) - MAG.y + MAG.r + 4)}" fill="#ede7e3" stroke="#d6cec9"/>
+        <path d="${pawPath(MAG.x, my(ank), my(tip), kx, k)}" fill="${col}" stroke="#c97f8f"/>
+        ${m.r.ink ? `<path d="M ${MAG.x - (5.5 + e * 2) * kx} ${my(mark)} Q ${MAG.x} ${my(mark) + 4} ${MAG.x + (5.5 + e * 2) * kx} ${my(mark)}" stroke="#1e3a8a" stroke-width="3.5" fill="none"/><text x="${MAG.x - MAG.r + 6}" y="${my(mark) - 4}" font-family="JetBrains Mono" font-size="7" font-weight="700" fill="#1e3a8a">ink mark</text>` : ''}`;
+      const d = markDelta(m), t = $('magText');
+      if (m.removing) t.textContent = '';
+      else if (!m.r.ink) { t.textContent = 'no ink mark: guess depth'; t.setAttribute('fill', '#fbbf24'); }
+      else if (Math.abs(d) <= TOL) { t.textContent = '✓ MARK AT MENISCUS'; t.setAttribute('fill', '#4ade80'); }
+      else if (d < 0) { t.textContent = `↓ lower ${(-d * MM_PER_PX).toFixed(1)} mm`; t.setAttribute('fill', '#fbbf24'); }
+      else { t.textContent = `↑ raise ${(d * MM_PER_PX).toFixed(1)} mm`; t.setAttribute('fill', '#f87171'); }
+    }
+    // drag the held rat up/down
+    let dip = null;
+    function dipDown(e) { if (!S.meas || S.meas.removing) return; const t = e.target.closest('#heldRat'); if (!t) return; e.preventDefault(); dip = { y0: svgPoint($('scene'), e).y, t0: S.meas.tipY }; }
+    function dipMove(e) { if (!dip || !S.meas) return; S.meas.tipY = clamp(dip.t0 + svgPoint($('scene'), e).y - dip.y0, TIP_MIN, TIP_MAX); }
+    function dipUp() { dip = null; }
+    window.addEventListener('keydown', e => {
+      if (!S || !S.meas || /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) return;
+      if (e.code === 'ArrowDown') { e.preventDefault(); nudgeDip(0.5); }
+      if (e.code === 'ArrowUp') { e.preventDefault(); nudgeDip(-0.5); }
+      if (e.code === 'Enter') { e.preventDefault(); holdReading(); }
+    });
+  </script>
+  <script>
+    // ================================================================ station 3 actions: dosing, carrageenan, plethysmometer
+    function act3(a, arg) {
+      const P = S.pl;
+      if (a === 'power') {
+        if (S.meas) { say('Take the paw out of the cell before switching off.', true); return; }
+        P.power = !P.power; P.zeroed = false; beep('click');
+        say(P.power ? 'Plethysmometer ON. With no paw in the cell press ZERO to tare the display.' : 'Plethysmometer OFF.');
+      } else if (a === 'zero') {
+        if (!P.power) { say('Switch the plethysmometer ON first.', true); return; }
+        if (!P.filled) { say('Fill the measuring cell first, then zero it.', true); return; }
+        if (S.meas && pawReading() > 0.005) { say('Lift the paw out of the fluid before zeroing.', true); return; }
+        P.zeroed = true; beep('done'); say('Display zeroed: 0.00 mL.');
+      } else if (a === 'cell') {
+        if (!P.filled) { S.sel = { kind: 'cell' }; say('Choose the fluid for the measuring cell.'); }
+        else if (S.hand !== null) startMeasure(handRat());
+        else say('Select a rat in its cage, then click the cell (or the “Place on cell” button).');
+      } else if (a === 'pedal') holdReading();
+      else if (a === 'rat') {
+        if (S.meas) { say('Finish the measurement in progress first.', true); return; }
+        S.hand = S.hand === arg ? null : arg; S.sel = null; beep('tick');
+        if (S.hand !== null) { const r = handRat(); say(`R${r.id} (${r.group === 'C' ? 'Group I' : 'Group II'}, ${fx(r.wtShown || 0, 1)} g) selected.`); }
+      } else if (a === 'cage3C' || a === 'cage3T') { S.hand = null; }
+      else if (a === 'gav' || a === 'tub') { S.syrSel = S.syrSel === a ? null : a; S.sel = null; beep('tick'); say(S.syrSel ? `${a === 'gav' ? 'Gavage syringe' : 'Tuberculin syringe'} in hand. Click a bottle to draw up, or a rat to dose it.` : 'Syringe put down.'); }
+      else if (a === 'b') {
+        if (!S.syrSel) { say('Pick up a syringe first (gavage for oral dosing, tuberculin for injections).', true); return; }
+        S.sel = { kind: 'draw', src: arg }; say(`Draw ${srcName(arg)} into the ${S.syrSel === 'gav' ? '3 mL gavage syringe' : '1 mL tuberculin syringe'}: enter the volume.`);
+      }
+    }
+    function drawUp() {
+      const sy = S.syr[S.syrSel], src = S.sel.src, v = parseFloat($('inDraw').value), cap = S.syrSel === 'gav' ? 3 : 1;
+      if (!(v > 0)) { say('Enter a volume in mL.', true); return; }
+      if (v > cap) { say(`This syringe holds only ${cap} mL.`, true); return; }
+      if (sy.vol > 0 && sy.src !== src) { say('The syringe still contains another solution. Expel it first.', true); return; }
+      const pool = src === 'drug' ? S.drug : src === 'carr' ? S.carr : null;
+      if (pool && pool.left < v) { say(`Only ${fx(pool.left, 2)} mL left in the bottle. Prepare a fresh batch at station 2.`, true); return; }
+      if (pool) pool.left = +(pool.left - v).toFixed(3);
+      sy.vol = +v.toFixed(3); sy.src = src; S.sel = null; S.t += 20; beep('click');
+      say(`${fx(v, 2)} mL ${srcName(src)} drawn up, air bubbles expelled. Now select the rat.`);
+    }
+    function expel() { const sy = S.syr[S.syrSel]; if (!sy) return; sy.vol = 0; sy.src = null; say('Syringe emptied into the waste beaker.'); renderCtx(); drawDyn(); }
+    function administer() {
+      const r = handRat(), sy = S.syr[S.syrSel], route = $('inRoute').value;
+      if (!r || !sy || !sy.vol) { say('Select a rat and load a syringe first.', true); return; }
+      if (!route) { say('Choose the route / site.', true); return; }
+      if (S.syrSel === 'gav' && route !== 'po') { say('A ball-tipped gavage needle is only for oral dosing.', true); return; }
+      if (S.syrSel === 'tub' && route === 'po') { say('Never dose orally with a sharp hypodermic needle: use the gavage needle.', true); return; }
+      const wkg = r.wt / 1000, fl = [];
+      if (sy.src === 'carr') {
+        if (r.carr) { say(`R${r.id} has already received carrageenan.`, true); return; }
+        const C = S.carr, noise = (C.hydr ? 1 : Math.exp(gauss() * 0.35)) * (C.liq === 'saline' ? 1 : Math.exp(gauss() * 0.2));
+        r.carr = { t: S.t, vol: sy.vol, mg: sy.vol * C.conc, site: route, noise, flags: fl };
+        if (!r.dose) fl.push('carrageenan before treatment');
+        else { const pre = Math.round((S.t - r.dose.t) / 60); if (pre < 50 || pre > 75) fl.push(`carrageenan ${pre} min after dosing`); }
+        if (r.reads[0] === null) fl.push('no basal V₀ before carrageenan');
+        if (Math.abs(sy.vol - 0.1) > 0.02) fl.push(`${fx(sy.vol, 2)} mL carrageenan`);
+        if (Math.abs(C.conc / 10 - 1) > 0.1) fl.push(`carrageenan ${fx(C.conc / 10, 2)}%`);
+        if (!C.hydr) fl.push('carrageenan not hydrated');
+        if (route !== 'spR') fl.push(route === 'spL' ? 'injected LEFT paw' : 'wrong injection site');
+        say(`${fx(sy.vol, 2)} mL carrageenan injected (${ROUTES[route]}) into R${r.id} at ${clockStr(S.t)}. Readings due at 1, 2, 3 and 4 h.${fl.length ? ' ⚠ ' + fl.join(', ') + '.' : ''}`, fl.length > 0);
+      } else {
+        if (r.dose) { say(`R${r.id} has already been treated.`, true); return; }
+        const D = S.drug, uni = sy.src !== 'drug' || D.uniform !== false;
+        const mg = sy.src === 'drug' ? sy.vol * D.conc * (uni ? 1 : Math.exp(gauss() * 0.3)) : 0;
+        r.dose = { t: S.t, src: sy.src, vol: sy.vol, route, mgkg: mg / wkg, flags: fl };
+        if (sy.src === 'drug' && r.group === 'C') fl.push('drug given to vehicle rat');
+        if (sy.src === 'veh' && r.group === 'T') fl.push('vehicle given to test rat');
+        if (sy.src === 'drug') {
+          const want = drugP().mgkg, got = sy.vol * D.conc / wkg;
+          if (Math.abs(got / want - 1) > 0.1) fl.push(`dose ${fx(got, 1)} mg/kg (${want} intended)`);
+          if (route !== intRoute()) fl.push(`route ${route} (should be ${intRoute()})`);
+          if (!uni) fl.push('suspension not uniform');
+        } else { if (Math.abs(sy.vol / wkg / 10 - 1) > 0.2) fl.push(`vehicle ${fx(sy.vol / wkg, 1)} mL/kg`); if (route !== 'po') fl.push('vehicle route'); }
+        if (route === 'po' && sy.vol / wkg > 20) fl.push('> 20 mL/kg orally');
+        if (r.reads[0] === null) fl.push('treated before basal V₀');
+        say(`R${r.id}: ${fx(sy.vol, 2)} mL ${srcName(sy.src)} given ${ROUTES[route]} at ${clockStr(S.t)}. Carrageenan is due after 1 h (${clockStr(S.t + 3600)}).${fl.length ? ' ⚠ ' + fl.join(', ') + '.' : ''}`, fl.length > 0);
+      }
+      sy.vol = 0; sy.src = null; S.t += 60; S.hand = null; beep('ok');
+      renderCtx(); drawDyn(); renderNotebook(); refreshChecklist();
+    }
+    function fillCell() {
+      S.pl.filled = true; S.pl.wet = $('inFluid').value === 'wet'; S.pl.zeroed = false; S.sel = null; beep('ok');
+      say(S.pl.wet ? 'Cell filled to the mark with distilled water containing a wetting agent: flat, clean meniscus. Now ZERO.' : 'Cell filled with plain water: the meniscus clings to the fur and wobbles (readings will scatter). Now ZERO.', !S.pl.wet);
+      renderCtx(); drawDyn(); refreshChecklist();
+    }
+
+    // ================================================================ routing, context panel, notebook, loop
+    function act(a, arg) {
+      if (S.station === 1) act1(a); else if (S.station === 2) act2(a); else act3(a, arg);
+      renderCtx(); drawDyn(); refreshChecklist();
+    }
+    function buildScene() {
+      $('scene').innerHTML = DEFS + (S.station === 1 ? sceneAnimals() : S.station === 2 ? sceneSolutions() : sceneBench());
+      if (S.station === 3 && S.meas) { $('heldRat').style.display = ''; $('magnifier').style.display = ''; document.querySelector('#hrBody .rm').innerHTML = heldRatMarkup(S.meas.r); $('hrHand').innerHTML = handMarkup(); }
+      drawDyn();
+    }
+    function drawDyn() { S._sceneV++; dyn1(); dyn2(); dyn3(); updClocks(); refreshHints(); }
+    const btn = (t, f, c = '') => `<button class="xb-btn ${c}" onclick="${f}">${t}</button>`;
+    function renderCtx() {
+      const c = $('ctx'); let t = 'Bench', h = '';
+      const hr = handRat(), sel = S.sel;
+      if (S.station === 1) {
+        t = 'Animal house';
+        h = hr ? `<b>In hand:</b> ${hr.id ? `R${hr.id} <span class="mono">(${markText(hr.id)})</span>` : 'unmarked rat'}<br>Ink mark: ${hr.ink ? '✓' : '—'} • Weighed: ${hr.weighed ? fx(hr.wtShown, 1) + ' g' : '—'} • Lot: ${hr.lot ? (hr.lot === 'C' ? 'Group I' : 'Group II') : '—'}
+          <div class="row">${btn('Return to stock cage', "act('stock')", 'sec')}</div><p style="color:#64748b;margin-top:6px">Order: picric acid → ink line → weigh → draw a lot → put it in that group cage.</p>`
+          : `<p style="color:#64748b">Click the stock cage to pick up a rat. Switch the balance on and tare it with the empty container first.</p><p class="mono" style="font-size:11px">Allocated: Group I ${inGroup('C').length}/6 • Group II ${inGroup('T').length}/6</p>`;
+      } else if (S.station === 2) {
+        t = 'Preparation bench';
+        if (sel && sel.kind === 'weigh') h = `<b>Weigh ${sel.what === 'drug' ? drugP().short : 'carrageenan'}</b><div class="row">Mass <input id="inMg" class="xb-in" placeholder="mg"> mg ${btn('Weigh out', 'weighPowder()')}</div>`;
+        else if (sel && sel.kind === 'mortar') h = `<b>Mortar:</b> ${fx(S.drug.mg, 1)} mg ${drugP().short}${S.drug.trit ? ' (smooth paste ✓)' : ''}<div class="row">${btn('Triturate with a little 0.5% CMC', 'triturate()')}</div><p style="color:#64748b">Then click the cylinder to rinse the paste in.</p>`;
+        else if (sel && sel.kind === 'cyl') h = `<b>Cylinder:</b> ${fx(S.drug.mg, 1)} mg ${drugP().short}<div class="row">Make up to <input id="inVol" class="xb-in" style="width:60px" placeholder="mL"> mL with <select id="inVeh" class="xb-in" style="width:auto"><option value="cmc">0.5% CMC</option><option value="saline">0.9% saline</option></select></div><div class="row">${btn('Make up, shake & label', 'makeUp()')}</div>`;
+        else if (sel && sel.kind === 'beaker') h = `<b>Beaker:</b> ${fx(S.carr.mg, 1)} mg carrageenan${S.carr.vol ? ` in ${S.carr.vol} mL • stirred ${fx(stirSec() / 60, 0)} min` : ''}
+          ${S.carr.vol ? '' : `<div class="row">Add <input id="inCV" class="xb-in" style="width:60px" placeholder="mL"> mL of <select id="inCL" class="xb-in" style="width:auto"><option value="saline">0.9% saline</option><option value="cmc">0.5% CMC</option></select> ${btn('Add', 'carrAdd()')}</div>`}
+          <div class="row">${btn('Transfer to labelled vial', 'carrBottle()')}</div>`;
+        else if (sel && (sel.kind === 'drugBtl' || sel.kind === 'carrBtl')) h = `<b>${sel.kind === 'drugBtl' ? 'Drug suspension' : 'Carrageenan'}</b>: ${fx((sel.kind === 'drugBtl' ? S.drug : S.carr).left, 2)} mL left<div class="row">${btn('Discard & prepare a new batch', `newBatch('${sel.kind === 'drugBtl' ? 'drug' : 'carr'}')`, 'sec')}</div>`;
+        else h = `<p style="color:#64748b">${UNKNOWN ? 'Drug X is supplied ready as a coded suspension. ' : `Weigh ${drugP().short}, triturate it in the mortar and make up the suspension in the cylinder. `}Weigh carrageenan into the beaker, add saline and stir until hydrated. Put your calculations in the notebook first.</p>`;
+      } else {
+        t = 'Dosing & plethysmometer';
+        if (S.meas) h = `<b>R${S.meas.r.id} on the cell</b> (${TP[S.meas.k]})<div class="row">${btn('▲ Raise', 'nudgeDip(-1)', 'sec')}${btn('▼ Lower', 'nudgeDip(1)', 'sec')}${btn('▲', 'nudgeDip(-0.25)', 'sec')}${btn('▼', 'nudgeDip(0.25)', 'sec')}${btn('HOLD pedal', 'holdReading()')}</div><p style="color:#64748b;margin-top:6px">Drag the rat or use ▲▼ (keys ↑↓). Enter = HOLD.</p>`;
+        else if (sel && sel.kind === 'cell') h = `<b>Fill the measuring cell</b><div class="row"><select id="inFluid" class="xb-in" style="width:auto"><option value="wet">Distilled water + wetting agent</option><option value="plain">Plain tap water</option></select>${btn('Fill to mark', 'fillCell()')}</div>`;
+        else if (sel && sel.kind === 'draw') h = `<b>Draw up ${srcName(sel.src)}</b><div class="row">Volume <input id="inDraw" class="xb-in" style="width:70px" placeholder="mL"> mL ${btn('Draw up', 'drawUp()')}</div>`;
+        else if (hr) {
+          const sy = S.syrSel ? S.syr[S.syrSel] : null;
+          h = `<b>R${hr.id}</b> • ${hr.group === 'C' ? 'Group I (vehicle)' : 'Group II (test)'} • ${fx(hr.wtShown || hr.wt, 1)} g<br><span class="mono" style="font-size:11px">${hr.dose ? `treated ${clockStr(hr.dose.t)}` : 'not treated'} • ${hr.carr ? `carrageenan ${clockStr(hr.carr.t)}` : 'no carrageenan'}</span>
+            <div class="row">${btn('Place on plethysmometer cell', `startMeasure(handRat())`)}</div>
+            ${sy && sy.vol ? `<div class="row">Give ${fx(sy.vol, 2)} mL ${srcName(sy.src)} by <select id="inRoute" class="xb-in" style="width:auto"><option value="">route / site…</option>${Object.entries(ROUTES).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select></div><div class="row">${btn('Administer', 'administer()')}</div>` : `<p style="color:#64748b;margin-top:6px">To dose: pick up a syringe, draw from a bottle, then select the rat.</p>`}`;
+        } else h = `<p style="color:#64748b">Plethysmometer: ${S.pl.power ? 'ON' : 'OFF'} • ${S.pl.filled ? 'cell filled' : 'cell empty'} • ${S.pl.zeroed ? 'zeroed' : 'not zeroed'}</p><p style="color:#64748b">Click a rat in its cage to select it; a syringe to pick it up.</p>`;
+        if (S.syrSel && S.syr[S.syrSel].vol && !S.meas) h += `<div class="row">${btn('Expel syringe contents', 'expel()', 'sec')}</div>`;
+      }
+      $('ctxTitle').textContent = t; c.innerHTML = h;
+    }
+    function nbSet(uid, f, k, v) { const r = S.rats[uid]; v = v.trim(); if (f === 'v') r.nb.v[k] = v; else r.nb[f] = v; renderNotebook(); renderObservation(); refreshChecklist(); }
+    function calcSet(f, v) { S.calc[f] = v.trim(); renderNotebook(); refreshChecklist(); }
+    function idealDoseMl(r) { const w = r.wtShown; if (!w) return NaN; if (r.group === 'C') return 10 * w / 1000; if (UNKNOWN) return 10 * w / 1000; return S.drug.labelled ? drugP().mgkg * w / 1000 / S.drug.conc : intMlkg() * w / 1000; }
+    function allFlags(r) { return [...new Set([...r.flags, ...(r.dose ? r.dose.flags : []), ...(r.carr ? r.carr.flags : []), ...r.reads.flatMap(x => x ? x.flags : [])])]; }
+    function renderNotebook() {
+      const P = drugP(), cc = UNKNOWN ? '' : chk(S.calc.conc, P.mgkg / P.mlkg, 0.005 * P.mgkg / P.mlkg + 1e-9);
+      $('nbCalc').innerHTML = `Conc. of ${UNKNOWN ? 'Drug X (coded)' : P.short} needed <input class="obs-in ${cc}" value="${S.calc.conc}" ${UNKNOWN ? 'disabled' : ''} onchange="calcSet('conc',this.value)"> mg/mL &nbsp; • &nbsp; Carrageenan for 10 mL of 1% w/v <input class="obs-in ${chk(S.calc.carrMg, 100, 0.5)}" value="${S.calc.carrMg}" onchange="calcSet('carrMg',this.value)"> mg`;
+      const rows = S.rats.filter(r => r.id).sort((a, b) => a.id - b.id);
+      $('nbBody').innerHTML = rows.length ? rows.map(r => {
+        const fl = allFlags(r);
+        return `<tr${fl.length ? ' style="background:#fff7ed"' : ''}><td><b>R${r.id}</b></td><td>${r.group ? (r.group === 'C' ? 'I' : 'II') : '—'}</td>
+          <td><input class="${chk(r.nb.wt, r.wtShown, 0.05)}" value="${r.nb.wt}" onchange="nbSet(${r.uid},'wt',0,this.value)"></td>
+          <td><input class="${chk(r.nb.dose, idealDoseMl(r), Math.max(0.01, idealDoseMl(r) * 0.03))}" value="${r.nb.dose}" onchange="nbSet(${r.uid},'dose',0,this.value)"></td>
+          ${[0, 1, 2, 3, 4].map(k => `<td><input class="${r.reads[k] ? chk(r.nb.v[k], r.reads[k].v, 0.005) : ''}" value="${r.nb.v[k]}" onchange="nbSet(${r.uid},'v',${k},this.value)"></td>`).join('')}
+          <td style="text-align:left">${fl.map(f => `<span class="flag">${f}</span>`).join('')}</td></tr>`;
+      }).join('') : `<tr><td colspan="10" style="color:#94a3b8;font-family:Inter">Mark rats in the animal house to start your notebook.</td></tr>`;
+    }
+    function frame(dt, dtR) {
+      S.t += dt;
+      $('labClock').textContent = clockStr(S.t) + ' (' + fmtHMS(S.t) + ')';
+      if (S.station === 3) {
+        if (S.disp) { S.disp.left -= dtR; if (S.disp.left <= 0) S.disp = null; }
+        const P = S.pl, d = $('volDisp');
+        if (d) {
+          d.textContent = !P.power ? '' : S.disp ? S.disp.v.toFixed(2) : Math.max(0, pawReading() + (P.zeroed ? 0 : 0.07) + (S.meas ? (S.meas.men || 0) + Math.sin(performance.now() / 170) * 0.004 : 0)).toFixed(2);
+          $('holdLed').setAttribute('fill', S.disp ? '#38bdf8' : '#1e3a8a');
+          const rise = Math.min(26, pawReading() * 16); $('refFluid').setAttribute('y', 320 - rise); $('refFluid').setAttribute('height', 32 + rise);
+        }
+        drawHeld(dtR);
+      }
+      frame.n = (frame.n || 0) + 1;
+      if (frame.n % 15 === 0) { updClocks(); refreshChecklist(); }
+      if (frame.n % 40 === 0 && S.station === 3 && !dip) { S._sceneV++; dyn3(); refreshHints(); }
+      if (frame.n % 40 === 0 && S.station === 2 && S.carr.stir) dyn2();
+    }
+  </script>
+  <script>
+    // ================================================================ protocol checklist
+    const allRats = () => S.rats;
+    const nOk = (f) => S.rats.filter(f).length;
+    function ratTarget(pred) { const r = S.rats.find(x => x.group && pred(x)); return r ? ['rat:' + r.uid] : []; }
+    function doseTargets(src, route) {
+      if (S.hand !== null) return [];
+      const want = src === 'carr' ? 'tub' : (route === 'po' ? 'gav' : 'tub'), sy = S.syr[want];
+      if (S.syrSel !== want) return [want];
+      if (!sy.vol) return ['b:' + src];
+      return [];
+    }
+    const STEPS = [
+      { g: 'Animal house', st: 1, t: 'Balance ON and tared (empty container)', done: () => !!S.balTared, how: 'Click the balance once to switch it on and again (with no rat in hand) to tare the empty container.', tg: () => ['balance'] },
+      { g: 'Animal house', st: 1, t: () => `Mark, ink, weigh & randomise rats (${inGroup('C').length + inGroup('T').length}/12)`, done: () => inGroup('C').length === 6 && inGroup('T').length === 6,
+        how: 'Pick a rat from the stock cage → picric acid (identity code) → marker pen (ink line at the lateral malleolus) → balance → lot jar → the group cage named on the lot. Write each weight in the notebook.',
+        tg: () => { const hr = handRat(); if (!hr) return ['stock']; if (!hr.id) return ['picric']; if (!hr.ink) return ['ink']; if (!hr.weighed) return ['balance']; if (!hr.lot) return ['lots']; return ['cage' + hr.lot]; } },
+      { g: 'Animal house', st: 1, t: 'Body weights written in the notebook', done: () => S.rats.every(r => r.id && chk(r.nb.wt, r.wtShown, 0.05) === 'ok-in'), how: 'Type the balance reading of every rat in the Wt column of your notebook (below the bench).', tg: () => [] },
+      { g: 'Preparation', st: 2, t: 'Dose calculations in the notebook', done: () => (UNKNOWN || chk(S.calc.conc, drugP().mgkg / drugP().mlkg, 0.005 * drugP().mgkg / drugP().mlkg + 1e-9) === 'ok-in') && chk(S.calc.carrMg, 100, 0.5) === 'ok-in', how: 'In the notebook enter the concentration you need (mg/mL = dose ÷ dose volume) and the carrageenan needed for 10 mL of 1% w/v.', tg: () => [] },
+      { g: 'Preparation', st: 2, t: () => UNKNOWN ? 'Drug X: coded suspension supplied' : `Prepare the ${drugP().short} ${drugP().soluble ? 'solution' : 'suspension'}`, done: () => S.drug.labelled,
+        how: () => `Analytical balance: place a boat and TARE. Weigh enough ${drugP().short} for ≥ 15 mL at your concentration, triturate in the mortar with a little vehicle, rinse into the cylinder, make up to volume, shake and label.`,
+        tg: () => { const A = S.abal, D = S.drug; if (D.inCyl) return ['cyl']; if (D.inMortar) return ['mortar']; if (A.mg && A.what === 'drug') return ['mortar']; if (!A.boat || !A.tared) return ['abal']; return ['drugJar']; } },
+      { g: 'Preparation', st: 2, t: 'Prepare 10 mL of 1% carrageenan (stir ≥ 20 min)', done: () => S.carr.labelled,
+        how: 'Weigh the carrageenan into a tared boat, tip it into the beaker, add normal saline, switch the stirrer on and leave it to hydrate (use the time-speed buttons), then transfer to a labelled vial.',
+        tg: () => { const A = S.abal, C = S.carr; if (C.inBk) { if (!C.vol) return ['beaker']; if (stirSec() < 1200) return C.stir ? [] : ['stirrer']; return ['beaker']; } if (A.mg && A.what === 'carr') return ['beaker']; if (!A.boat || !A.tared) return ['abal']; return ['carrJar']; } },
+      { g: 'Plethysmometer', st: 3, t: 'Fill cell (wetting agent), power ON, ZERO', done: () => S.pl.filled && S.pl.power && S.pl.zeroed, how: 'Click the measuring cell and fill it to the mark, switch the instrument ON and press ZERO with no paw in the cell.', tg: () => !S.pl.filled ? ['cell'] : !S.pl.power ? ['power'] : ['zero'] },
+      { g: 'Plethysmometer', st: 3, t: () => `Basal paw volume V₀ of every rat (${nOk(r => r.reads[0])}/12)`, done: () => S.rats.every(r => r.reads[0]),
+        how: 'Select a rat → Place on cell → lower the right hind paw until the ink line meets the meniscus (magnifier) → HOLD pedal. Write the held reading in the notebook.', tg: () => S.hand !== null ? ['cell'] : ratTarget(r => !r.reads[0]) },
+      { g: 'Dosing', st: 3, t: 'Dose volume of each rat in the notebook', done: () => S.rats.every(r => r.id && chk(r.nb.dose, idealDoseMl(r), Math.max(0.01, idealDoseMl(r) * 0.03)) === 'ok-in'),
+        how: () => `Vehicle: 10 mL/kg. ${UNKNOWN ? 'Drug X: 10 mL/kg' : `${drugP().short}: ${drugP().mgkg} mg/kg ÷ your concentration`} × body weight (kg). Type it in the Dose column.`, tg: () => [] },
+      { g: 'Dosing', st: 3, t: () => `Vehicle / drug given (${nOk(r => r.dose)}/12)`, done: () => S.rats.every(r => r.dose),
+        how: () => `Group I: 0.5% CMC 10 mL/kg by gavage. Group II: ${UNKNOWN ? 'Drug X 10 mL/kg p.o.' : `${drugP().short} ${drugP().mgkg} mg/kg ${drugP().route === 'po' ? 'by gavage' : 's.c. (tuberculin)'}`}. Pick up the syringe → draw from the bottle → select the rat → choose route → Administer.`,
+        tg: () => { const r = S.rats.find(x => x.group && !x.dose); if (!r) return []; const src = r.group === 'C' ? 'veh' : 'drug'; const tg = doseTargets(src, r.group === 'C' ? 'po' : intRoute()); return tg.length ? tg : S.hand === null ? ['rat:' + r.uid] : []; } },
+      { g: 'Dosing', st: 3, t: () => `Carrageenan 0.1 mL sub-plantar at +1 h (${nOk(r => r.carr)}/12)`, done: () => S.rats.every(r => r.carr),
+        how: 'One hour after each rat was dosed, inject 0.1 mL of 1% carrageenan under the plantar skin of the RIGHT hind paw (tuberculin, 26 G). Keep the same order and pace as the dosing.',
+        tg: () => { const r = S.rats.find(x => x.dose && !x.carr); if (!r) return []; const tg = doseTargets('carr'); return tg.length ? tg : S.hand === null ? ['rat:' + r.uid] : []; } },
+      ...[1, 2, 3, 4].map(k => ({ g: 'Readings', st: 3, t: () => `${k} h readings (${nOk(r => r.reads[k])}/12)`, done: () => S.rats.every(r => r.reads[k]),
+        how: `Measure each rat ${k} h after its own carrageenan injection (see the schedule board). Same dip to the ink line, HOLD, write it down.`, tg: () => S.hand !== null ? ['cell'] : ratTarget(r => r.reads[k] === null && r.reads.slice(1, k).every(Boolean) && r.carr && S.t >= r.carr.t + (k - 0.17) * 3600) })),
+      { g: 'Readings', st: 3, t: 'Every reading written in the notebook', done: () => S.rats.every(r => r.reads.every((x, k) => x && chk(r.nb.v[k], x.v, 0.005) === 'ok-in')), how: 'Check that every held reading is in your notebook (green = matches the display).', tg: () => [] },
+      { g: 'Analysis', st: 0, t: 'Mean oedema & % inhibition (observation sheet)', done: () => analysisOk(), how: 'Open the Observation Sheet: enter the mean oedema of each group at each hour and the % inhibition.', tg: () => [] },
+      { g: 'Analysis', st: 0, t: 'Identify Drug X', opt: true, done: () => !!$('unknownDrugDeduction').value, how: 'Decide from which phase is inhibited.', tg: () => [] }
+    ];
+
+    // ================================================================ observation sheet (from the student's notebook)
+    const nbv = (r, k) => { const v = parseFloat(r.nb.v[k]); return isFinite(v) ? v : NaN; };
+    function oedCol(g, k) { const a = inGroup(g).map(r => nbv(r, k) - nbv(r, 0)).filter(isFinite); return a.length >= 2 ? a : null; }
+    function inhAt(k) { const c = oedCol('C', k), t = oedCol('T', k); return c && t && mean(c) > 0 ? (1 - mean(t) / mean(c)) * 100 : null; }
+    const ms = (a, d = 2) => a ? `${mean(a).toFixed(d)} ± ${sem(a).toFixed(d)}` : '--';
+    function analysisOk() { return [1, 2, 3, 4].every(k => ['C', 'T'].every(g => oedCol(g, k) && chk(S.notes.mean[g][k - 1], mean(oedCol(g, k)), 0.011) === 'ok-in') && chk(S.notes.inh[k - 1], inhAt(k), 1.6) === 'ok-in'); }
+    function noteSet(f, g, i, v) { if (f === 'mean') S.notes.mean[g][i] = v.trim(); else S.notes.inh[i] = v.trim(); renderObservation(); refreshChecklist(); }
+    function tableFor(g) {
+      const title = g === 'C' ? 'Group I: Vehicle (0.5% CMC 10 mL/kg p.o.)' : `Group II: ${UNKNOWN ? 'Unknown Mystery Drug (Drug X)' : drugP().name}`;
+      const rs = inGroup(g).sort((a, b) => a.id - b.id);
+      return `<div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+        <div class="${g === 'C' ? 'bg-slate-100 text-slate-800' : 'bg-indigo-50 text-indigo-900'} px-4 py-2 border-b border-slate-200 text-xs font-bold uppercase tracking-wide">${title}</div>
+        <table class="obs-table w-full text-[11px] text-center"><thead><tr><th>Rat</th><th>Wt (g)</th><th>V₀ (mL)</th><th>1 h</th><th>2 h</th><th>3 h</th><th>4 h</th></tr></thead>
+        <tbody class="font-mono">${rs.length ? rs.map(r => `<tr${allFlags(r).length ? ' style="background:#fff7ed"' : ''}><td class="font-bold">R${r.id}</td><td>${r.nb.wt || '--'}</td>${[0, 1, 2, 3, 4].map(k => { const v = nbv(r, k); return `<td>${isFinite(v) ? v.toFixed(2) : '--'}${k && isFinite(v) && isFinite(nbv(r, 0)) ? `<div class="text-[9.5px] text-rose-600">+${(v - nbv(r, 0)).toFixed(2)}</div>` : ''}</td>`; }).join('')}</tr>`).join('') : '<tr><td colspan="7" class="text-slate-400 py-3 font-sans">No rats allocated yet</td></tr>'}</tbody>
+        <tfoot><tr class="bg-slate-50 text-[10.5px] font-mono"><td colspan="3" class="font-sans font-semibold text-left px-2">Mean oedema (your calc.)</td>${[1, 2, 3, 4].map(k => `<td><input id="mean${g}${k}" class="obs-in ${oedCol(g, k) ? chk(S.notes.mean[g][k - 1], mean(oedCol(g, k)), 0.011) : ''}" value="${S.notes.mean[g][k - 1]}" onchange="noteSet('mean','${g}',${k - 1},this.value)"></td>`).join('')}</tr>
+        <tr class="bg-slate-100 text-[10.5px] font-mono"><td colspan="3" class="font-sans font-semibold text-left px-2">SEM (n = ${rs.length})</td>${[1, 2, 3, 4].map(k => `<td>${oedCol(g, k) ? sem(oedCol(g, k)).toFixed(3) : '--'}</td>`).join('')}</tr></tfoot></table>
+        <div class="px-3 py-1.5 text-[10px] text-slate-500">Cells: paw volume V<sub>t</sub> from your notebook, oedema (V<sub>t</sub> − V₀) below. Rows shaded orange had a technique fault.</div></div>`;
+    }
+    function renderObservation() {
+      $('obsTables').innerHTML = tableFor('C') + tableFor('T');
+      const pf = p => p < 0.001 ? '< 0.001' : p.toFixed(3);
+      const rows = [
+        ['Vehicle oedema (mL, mean ± SEM)', k => ms(oedCol('C', k))],
+        ['Test oedema (mL, mean ± SEM)', k => ms(oedCol('T', k))],
+        ['% Inhibition (your calc.)', k => `<input id="inh${k}" class="obs-in ${chk(S.notes.inh[k - 1], inhAt(k), 1.6)}" value="${S.notes.inh[k - 1]}" onchange="noteSet('inh','',${k - 1},this.value)"> %`],
+        ['Unpaired t-test p (vs vehicle)', k => { const a = oedCol('C', k), b = oedCol('T', k); if (!a || !b) return '--'; const r = tTest(a, b); return `${pf(r.p)} ${stars(r.p)}`; }]
+      ];
+      $('cmpBody').innerHTML = rows.map(([l, f]) => `<tr><td class="p-2 border-r text-left font-sans font-semibold text-slate-700">${l}</td>${[1, 2, 3, 4].map(k => `<td class="p-2 border-r">${f(k)}</td>`).join('')}</tr>`).join('');
+      lineChart('chartTime', { series: [['C', 'Vehicle', PALETTE.slate], ['T', UNKNOWN ? 'Drug X' : drugP().short, PALETTE.rose]].map(([g, n, c]) => ({ name: n, color: c, pts: [0, 1, 2, 3, 4].map(k => k === 0 ? (oedCol(g, 1) ? [0, 0, 0] : null) : oedCol(g, k) ? [k, mean(oedCol(g, k)), sem(oedCol(g, k))] : null).filter(Boolean) })).filter(s => s.pts.length), xMin: -0.2, xMax: 4.2, yMin: 0, xTicks: [0, 1, 2, 3, 4].map(v => [v, v + ' h']), xLabel: 'Time after carrageenan', yLabel: 'Oedema (mL)', empty: 'Enter readings in the notebook' });
+      barChart('chartInh', { bars: [1, 2, 3, 4].map(k => ({ label: k + ' h', v: inhAt(k) ?? NaN, color: k === 1 ? PALETTE.amber : PALETTE.rose, note: inhAt(k) === null ? '' : (Math.round(inhAt(k)) || 0) + '%' })), yLabel: '% inhibition', yMin: Math.min(0, ...[1, 2, 3, 4].map(k => inhAt(k) ?? 0)), yMax: 100, empty: 'Needs both groups' });
+      const ready = [1, 2, 3, 4].every(k => oedCol('C', k) && oedCol('T', k) && oedCol('C', k).length >= 5 && oedCol('T', k).length >= 5);
+      const inf = $('lblInference'), det = $('lblInferenceDetail');
+      if (!ready) { inf.innerText = 'Pending'; det.innerText = 'Complete all readings for both groups and write them in your notebook.'; return; }
+      const inh = [1, 2, 3, 4].map(inhAt), ps = [1, 2, 3, 4].map(k => tTest(oedCol('C', k), oedCol('T', k)));
+      const sig = ps.some(r => r.p < 0.05 && r.t > 0), maxI = Math.max(...inh), early = inh[0], late = inh[2];
+      const txt = `% inhibition at 1/2/3/4 h: ${inh.map(v => Math.round(v) || 0).join(' / ')}%.`;
+      if (!sig || maxI < 20) { inf.innerText = 'No significant anti-inflammatory activity'; det.innerText = `${txt} Oedema developed as in the vehicle group. Analgesic-antipyretics such as paracetamol behave this way.`; }
+      else if (early >= 30 && late < 20) { inf.innerText = 'Early-phase inhibition only'; det.innerText = `${txt} Only the first (histamine / 5-HT) phase is reduced; the prostaglandin phase is untouched. Suggests an H1/5-HT antagonist.`; }
+      else if (early >= 30 && late >= 45) { inf.innerText = 'Potent inhibition of both phases'; det.innerText = `${txt} Both the early (amine) and late (prostaglandin) phases are suppressed: typical of a corticosteroid.`; }
+      else if (late >= 40) { inf.innerText = 'Significant anti-inflammatory activity (late phase)'; det.innerText = `${txt} Little effect in the first hour but strong inhibition at 2–4 h, when prostaglandins dominate: typical of an NSAID (COX inhibitor).`; }
+      else { inf.innerText = 'Moderate anti-inflammatory activity'; det.innerText = `${txt} Partial inhibition, mostly of the late phase: a weak NSAID or a low dose.`; }
+    }
+    function buildResults() {
+      const choice = $('unknownDrugDeduction').value;
+      const faults = S.rats.filter(r => allFlags(r).length).length;
+      const reads = S.rats.flatMap(r => r.reads.map((x, k) => x ? chk(r.nb.v[k], x.v, 0.005) : null)).filter(x => x !== null);
+      return {
+        rows: [['Test drug', UNKNOWN ? 'Unknown Mystery Drug' : drugP().name], ['Rats (vehicle / test)', `${inGroup('C').length} / ${inGroup('T').length}`],
+          ...[1, 2, 3, 4].map(k => [`% inhibition at ${k} h`, inhAt(k) === null ? '--' : inhAt(k).toFixed(1) + '%']),
+          ['Mean oedema at 3 h (vehicle / test)', `${oedCol('C', 3) ? mean(oedCol('C', 3)).toFixed(2) : '--'} / ${oedCol('T', 3) ? mean(oedCol('T', 3)).toFixed(2) : '--'} mL`],
+          ['Readings written correctly', `${reads.filter(x => x === 'ok-in').length} / ${reads.length}`], ['Rats with a technique fault', faults],
+          ['Your deduction', choice ? PROFILES[choice].short : 'Not submitted']],
+        text: !UNKNOWN ? drugP().desc : choice ? `${choice === mysteryKey ? 'CORRECT DIAGNOSIS.' : 'INCORRECT.'} The mystery drug was ${PROFILES[mysteryKey].name}. ${PROFILES[mysteryKey].desc}` : 'Carrageenan oedema is biphasic: histamine, 5-HT and bradykinin early, COX-2 prostaglandins late. Decide which phase Drug X inhibits and submit your deduction.'
+      };
+    }
+    function submitEvaluation() { if (!$('unknownDrugDeduction').value) { say('Select your deduced compound first.', true); return; } refreshChecklist(); openResultsModal(); }
+  </script>
+  <script>
+    // ================================================================ drug choice, reference data, viva, init
+    function presetDrug() {
+      if (UNKNOWN) { const p = drugP(); S.drug = { mg: p.mgkg * 3, trit: true, inCyl: false, vol: 30, veh: 'cmc', labelled: true, conc: p.mgkg / 10, left: 30, uniform: true, coded: true }; }
+      else S.drug = { mg: 0, trit: false, inCyl: false, vol: 0, veh: null, labelled: false, conc: 0, left: 0 };
+    }
+    function onDrugSelectChange() {
+      const v = $('drugSelect').value;
+      if (S.rats.some(r => r.dose)) { say('Rats have already been treated. Restart the practical to change the test drug.', true); $('drugSelect').value = UNKNOWN ? 'unknown' : DRUG; return; }
+      UNKNOWN = v === 'unknown'; if (!UNKNOWN) DRUG = v;
+      presetDrug(); S.calc.conc = '';
+      const b = $('drugStatusBadge'); b.innerText = UNKNOWN ? 'Mystery Exam Drug' : 'Drug: ' + drugP().short;
+      b.className = `text-[11px] px-2.5 py-0.5 rounded font-mono font-semibold ${UNKNOWN ? 'bg-amber-100 text-amber-800' : 'bg-indigo-100 text-indigo-800'}`;
+      buildScene(); renderCtx(); renderNotebook(); refreshChecklist();
+      say(`Test drug set to ${UNKNOWN ? 'the coded Drug X (supplied ready; give 10 mL/kg p.o.)' : drugP().name}.`);
+    }
+    // Reference data for automated platform tests only (no button; blocked in exam mode)
+    function loadReferenceDataset() {
+      UNKNOWN = false; DRUG = 'indomethacin'; $('drugSelect').value = 'indomethacin';
+      S = freshState(); S.balTared = true; S.balOn = true;
+      S.drug = { mg: 20, trit: true, inCyl: false, vol: 20, veh: 'cmc', labelled: true, conc: 1, left: 8, uniform: true };
+      S.carr = { mg: 100, inBk: false, vol: 10, stir: false, stirT: 1800, labelled: true, conc: 10, left: 8.8, hydr: true, liq: 'saline' };
+      S.calc = { conc: '1', carrMg: '100' }; S.pl = { power: true, zeroed: true, filled: true, wet: true };
+      const ctrl = [[1.16, 1.42, 1.60, 1.79, 1.83], [1.22, 1.50, 1.68, 1.86, 1.90], [1.10, 1.36, 1.52, 1.70, 1.74], [1.25, 1.54, 1.71, 1.90, 1.93], [1.18, 1.44, 1.62, 1.80, 1.85], [1.13, 1.40, 1.57, 1.74, 1.78]];
+      const indo = [[1.19, 1.41, 1.45, 1.46, 1.47], [1.14, 1.36, 1.41, 1.40, 1.40], [1.23, 1.46, 1.50, 1.51, 1.52], [1.17, 1.39, 1.43, 1.44, 1.43], [1.21, 1.44, 1.48, 1.49, 1.50], [1.15, 1.37, 1.41, 1.42, 1.41]];
+      const wts = [172, 186, 158, 194, 168, 177, 181, 163, 190, 175, 199, 166];
+      S.rats.forEach((r, i) => {
+        const g = i < 6 ? 'C' : 'T', data = (g === 'C' ? ctrl : indo)[i % 6];
+        Object.assign(r, { id: i + 1, ink: true, weighed: true, wt: wts[i], wtShown: wts[i], lot: g, group: g, loc: g, V0: data[0] });
+        r.dose = { t: i * 120, src: g === 'C' ? 'veh' : 'drug', vol: wts[i] / 100, route: 'po', mgkg: g === 'C' ? 0 : 10, flags: [] };
+        r.carr = { t: 3600 + i * 120, vol: 0.1, mg: 1, site: 'spR', noise: 1, flags: [] };
+        r.reads = data.map((v, k) => ({ t: 3600 + i * 120 + k * 3600, v, flags: [] }));
+        r.nb = { wt: String(wts[i]), dose: (wts[i] / 100).toFixed(2), v: data.map(v => v.toFixed(2)) };
+      });
+      S.t = 5 * 3600 + 1500;
+      [1, 2, 3, 4].forEach(k => { ['C', 'T'].forEach(g => S.notes.mean[g][k - 1] = mean(oedCol(g, k)).toFixed(3)); S.notes.inh[k - 1] = inhAt(k).toFixed(1); });
+      goStation(3); renderNotebook(); renderObservation(); refreshChecklist();
+      say('Reference dataset loaded (Vehicle vs Indomethacin 10 mg/kg p.o.).');
+    }
+    const QUIZ = [
+      { q: 'Carrageenan-induced paw oedema is a model of:', o: ['Acute inflammation', 'Chronic (proliferative) inflammation', 'Immune arthritis'], a: 0 },
+      { q: 'The early phase (0–1.5 h) of carrageenan oedema is mediated by:', o: ['Prostaglandins only', 'Histamine, 5-HT and bradykinin', 'Leukotrienes only'], a: 1 },
+      { q: 'The late phase (2.5–4 h) is mainly due to:', o: ['Histamine', 'Prostaglandins produced by COX-2', 'Acetylcholine'], a: 1 },
+      { q: 'Paw volume is measured with a:', o: ['Plethysmometer (fluid displacement)', 'Vernier calliper only', 'Analgesiometer'], a: 0 },
+      { q: 'Why is the paw dipped exactly to the ink mark each time?', o: ['To keep the immersed volume comparable between readings', 'To avoid wetting the fur', 'To calibrate the display'], a: 0, e: 'Dipping deeper adds leg volume, dipping short leaves part of the swollen paw out: either way V<sub>t</sub> − V₀ is wrong.' },
+      { q: '% inhibition of oedema is calculated as:', o: ['(1 − Oedema test ÷ Oedema control) × 100', '(V₀ ÷ Vt) × 100', '(Vt − V₀) × 100'], a: 0 },
+      { q: 'Which drug inhibits both phases of the oedema?', o: ['Cyproheptadine', 'Dexamethasone', 'Paracetamol'], a: 1 },
+      { q: 'Indomethacin 10 mg/kg is given at 10 mL/kg. The suspension must contain:', o: ['10 mg/mL', '1 mg/mL', '0.1 mg/mL'], a: 1, e: 'Concentration = dose ÷ dose volume = 10 mg/kg ÷ 10 mL/kg = 1 mg/mL. A 180 g rat receives 1.8 mL.' },
+      { q: 'Why is the oral drug given 1 h before the carrageenan?', o: ['So that it is absorbed and present at the site before the mediators are released', 'To let the rat calm down', 'Because carrageenan inactivates the drug'], a: 0 },
+      { q: 'Why are rats allocated to groups by drawing lots?', o: ['To save time', 'To avoid selection bias (e.g. catching the calmest rats first)', 'Because the CCSEA forbids weighing'], a: 1 }
+    ];
+    function newExperiment() { S = freshState(); presetDrug(); goStation(1); renderNotebook(); refreshChecklist(); say('New practical: 12 fasted rats are in the stock cage. Switch the balance on and tare it first.'); }
+    function init() {
+      S = freshState(); presetDrug();
+      $('unknownDrugDeduction').innerHTML += MYSTERY_KEYS.map(k => `<option value="${k}">${PROFILES[k].name}</option>`).join('');
+      $('unknownDrugDeduction').addEventListener('change', refreshChecklist);
+      const svg = $('scene');
+      svg.addEventListener('click', onSceneClick);
+      svg.addEventListener('pointerdown', dipDown);
+      window.addEventListener('pointermove', dipMove);
+      window.addEventListener('pointerup', dipUp);
+      goStation(1); renderNotebook(); refreshChecklist();
+      say('12 fasted rats (150–200 g) are in the stock cage. Start by switching on the balance and taring the empty container.');
+      startLoop((dt, dtR) => frame(dt, dtR));
+      const _sw = switchTab; window.switchTab = function (id) { _sw(id); if (id === 'experiment') { buildScene(); renderNotebook(); } };
+    }
+  </script>
+  <script src="../assets/js/viva.js"></script>
+</body>
+</html>

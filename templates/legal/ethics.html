@@ -1,0 +1,55 @@
+{% extends 'legal/_base.html' %}
+{% block title %}Ethical use of animals & free-trial rules{% endblock %}
+{% block doc %}
+<div class="mono text-[11px] text-teal-700 font-bold">ETHICS & TRIAL AGREEMENT • v{{ ETHICS_VERSION }}</div>
+<h1>Ethical use of animals & free-trial rules</h1>
+<p class="text-xs text-slate-500">Shown to every user after sign-in and accepted once (again whenever this version changes).</p>
+<div class="rounded-xl border border-teal-200 bg-teal-50 p-4">
+  <div class="text-[10px] uppercase tracking-wider text-teal-700 font-mono font-bold">Our aim</div>
+  <p class="mt-1 text-slate-800">{{ SITE_AIM }}</p>
+</div>
+<p>This page sets out the principles and rules every XPRISM user agrees to.</p>
+
+<h2>1. The 3Rs</h2>
+<p>The 3Rs were formulated by W.M.S. Russell and R.L. Burch in <i>The Principles of Humane Experimental Technique</i> (1959) and are now the basis of animal-welfare law and ethics worldwide:</p>
+<ul>
+  <li><b>Replacement</b>: methods that avoid or replace the use of animals, such as computer simulations, in-vitro and tissue-culture methods, mathematical models, manikins and videos. In teaching, replacement is usually fully achievable, and this Lab is a replacement tool.</li>
+  <li><b>Reduction</b>: methods that minimise the number of animals used while still obtaining valid information, for example sound experimental design, statistics, sharing of data and avoiding repetition.</li>
+  <li><b>Refinement</b>: methods that minimise pain, suffering, distress or lasting harm and improve welfare, for example appropriate anaesthesia and analgesia, humane end-points, enriched housing and skilled handling.</li>
+</ul>
+
+<h2>2. Law and regulation in India</h2>
+<h3>Prevention of Cruelty to Animals Act, 1960 and Rules</h3>
+<p>Experiments on animals in India are governed by the Prevention of Cruelty to Animals Act, 1960 and the Breeding of and Experiments on Animals (Control and Supervision) Rules, 1998 (amended in 2001 and 2006). The Act's purpose is to prevent the infliction of unnecessary pain or suffering on animals.</p>
+<h3>CCSEA (formerly CPCSEA)</h3>
+<p>The <b>Committee for Control and Supervision of Experiments on Animals (CCSEA)</b> is the statutory committee constituted under section 15 of the Act, under the Department of Animal Husbandry and Dairying, Ministry of Fisheries, Animal Husbandry and Dairying. It was called the Committee for the Purpose of Control and Supervision of Experiments on Animals (CPCSEA) until it was renamed by an order dated 6 January 2023. Under its rules:</p>
+<ul>
+  <li>establishments that conduct experiments on animals, or breed or trade animals for experiments, must be <b>registered</b> with CCSEA;</li>
+  <li>each establishment must constitute an <b>Institutional Animal Ethics Committee (IAEC)</b>, which includes a CCSEA nominee, and obtain approval before any experiment begins;</li>
+  <li>animal house facilities are inspected, and records of animals and procedures must be kept;</li>
+  <li>CCSEA is duty-bound to ensure that animals are not subjected to unnecessary pain or suffering before, during or after experiments, and can act against violations.</li>
+</ul>
+<h3>Pharmacy Council of India (PCI)</h3>
+<p>The PCI regulates pharmacy education in India. It has amended its Education Regulations (and the Pharm.D Regulations) so that, <b>wherever animal experimentation is prescribed in the curriculum, the required knowledge and skill should be imparted by using computer-assisted modules</b>. This followed guidelines issued by the Ministry of Environment & Forests in January 2012, which noted that effective alternatives, including CDs, computer simulations, manikins and in-vitro methods, are available and are superior teaching tools. The PCI circulated those guidelines to pharmacy institutions. Other education regulators took similar steps: the University Grants Commission (2014) for zoology and life sciences, and the Medical Council of India, now the National Medical Commission, for medical education.</p>
+<h3>PETA India</h3>
+<p><b>People for the Ethical Treatment of Animals (PETA) India</b> is a non-governmental animal-protection organisation. It is <b>not</b> a regulator and does not issue binding mandates. Together with other groups, it campaigned for the regulatory changes above, and it continues to encourage colleges to adopt non-animal teaching methods, including simulation software. We list it here so users understand the public-interest background to the move away from animal use in teaching.</p>
+
+<h2>3. Your undertaking</h2>
+<ol>
+  <li>I will use the simulations as teaching aids that replace live-animal use in routine practical training.</li>
+  <li>I understand that simulated results are produced by models with built-in variability for learning. They are not real experimental data and must not be used to treat humans or animals, or for research or regulatory decisions.</li>
+  <li>If I take part in real animal work, I will do so only in a CCSEA-registered establishment, under an IAEC-approved protocol, with the required training and supervision, applying the 3Rs.</li>
+  <li>I will not use material from the Lab to promote, demonstrate or excuse cruelty to animals.</li>
+</ol>
+
+<h2>4. Free-trial rules</h2>
+<ul>
+  <li>A free-trial account may open and explore <b>each experiment module once</b>.</li>
+  <li>A visit starts when the module is opened and continues while you stay on it (reloading is fine). It ends when you return to the lab index or a dashboard, open a different module (including with the ‹ › arrows), sign out, or after {{ TRIAL_HOURS }} hours.</li>
+  <li>After a visit ends, the module shows <b>"Subscription only"</b>. Unlimited access is available through a college or individual subscription.</li>
+  <li>Trial work is not saved, assessed or shared with faculty.</li>
+  <li>One trial per person: creating multiple accounts to repeat the trial breaches the <a href="{% url 'conditions' %}">Conditions of Use</a> and may lead to the accounts being closed.</li>
+  <li>Users enrolled through a subscribed college have unlimited access and are not subject to trial limits. If a college's subscription lapses, its users fall back to the trial rules until it is renewed.</li>
+</ul>
+<p class="text-xs text-slate-500">This page summarises public regulatory information for awareness. It is not legal advice; refer to the Act, the Rules, and current CCSEA and PCI notifications for authoritative requirements.</p>
+{% endblock %}

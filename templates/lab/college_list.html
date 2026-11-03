@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Colleges{% endblock %}
+{% block content %}
+<div class="flex flex-wrap items-end justify-between gap-3"><h1 class="text-xl font-bold text-slate-900">Colleges</h1><a href="{% url 'college_new' %}" class="px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow">+ New college</a></div>
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+<table class="obs-table w-full text-xs text-left"><thead><tr><th>College</th><th>Code</th><th>Location line</th><th>Grievance officer</th><th>Users</th><th>Subscription</th><th>Status</th><th></th></tr></thead><tbody>
+{% for c in colleges %}<tr><td class="font-semibold">{{ c.name }}</td><td class="mono">{{ c.code }}</td><td>{{ c.location_text }}</td><td>{{ c.grievance_officer|default:"—" }}</td><td class="mono">{{ c.n_users }}</td><td>{% if c.is_subscribed %}<span class="text-emerald-700">active{% if c.subscription_until %} to {{ c.subscription_until|date:"d M Y" }}{% endif %}</span>{% else %}<span class="text-rose-700">lapsed</span>{% endif %}</td><td>{% if c.is_active %}<span class="text-emerald-700">active</span>{% else %}<span class="text-slate-400">inactive</span>{% endif %}</td><td><a href="{% url 'college_edit' c.pk %}" class="text-teal-700 hover:underline">Edit</a></td></tr>
+{% empty %}<tr><td colspan="8" class="text-slate-400 py-3">No colleges.</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

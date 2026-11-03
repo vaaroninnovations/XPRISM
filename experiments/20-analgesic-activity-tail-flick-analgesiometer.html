@@ -1,0 +1,1953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exp 20: Analgesic Activity: Tail-Flick Analgesiometer • XPRISM</title>
+  <meta name="description" content="Radiant heat tail withdrawal latency and % maximum possible effect.">
+    <meta name="theme-color" content="#0a1f44">
+  <meta name="color-scheme" content="light">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
+  <link rel="stylesheet" href="../assets/css/tailwind.css">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <script src="../assets/js/tone.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    :root { color-scheme: light; }
+    input, select, textarea { background-color: #ffffff; color: #0f172a; -webkit-text-fill-color: #0f172a; caret-color: #0f172a; color-scheme: light; opacity: 1; }
+    input::placeholder { color: #94a3b8; -webkit-text-fill-color: #94a3b8; }
+    input:disabled, select:disabled { background-color: #f1f5f9; color: #64748b; -webkit-text-fill-color: #64748b; }
+    input:focus, select:focus { outline: 2px solid #7e13b5; outline-offset: 1px; }
+    body { font-family: 'Inter', sans-serif; background: #f1f5f9; color: #0a1f44; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .seg { font-family: 'DSEG7', 'JetBrains Mono', monospace; }
+    .obs-table th, .obs-table td { padding: 4px 6px; border-bottom: 1px solid #e2e8f0; }
+    .obs-table thead th { background: #f8fafc; color: #475569; font-weight: 600; }
+    .scroll-thin::-webkit-scrollbar { height: 8px; width: 8px; }
+    .scroll-thin::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+
+    /* ---------- bench layout (self-contained styles) ---------- */
+    .xb-wrap { display: flex; gap: 14px; flex: 1; align-items: flex-start; }
+    .xb-wrap.hidden { display: none; }
+    .xb-main { flex: 1; min-width: 0; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+    .xb-side { width: 340px; flex-shrink: 0; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; max-height: calc(100vh - 150px); }
+    @media (max-width: 1100px) { .xb-wrap { flex-direction: column; } .xb-side { width: 100%; max-height: none; } }
+    .xb-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
+    .xb-st { display: flex; gap: 4px; }
+    .xb-st button { font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; color: #334155; cursor: pointer; }
+    .xb-st button.on { background: #0a1f44; color: #fff; border-color: #0a1f44; }
+    .xb-st button .n { display: inline-block; width: 18px; height: 18px; line-height: 18px; text-align: center; border-radius: 50%; background: #e2e8f0; color: #334155; font-size: 10px; margin-right: 5px; }
+    .xb-st button.on .n { background: #f59e0b; color: #111; }
+    .xb-st button.done .n { background: #10b981; color: #fff; }
+    .xb-scene { position: relative; background: #2a3442; }
+    #scene { display: block; width: 100%; height: auto; touch-action: none; user-select: none; -webkit-user-select: none; }
+    #scene text { pointer-events: none; }
+    #scene .hot { cursor: pointer; }
+    #scene .hot:hover { filter: drop-shadow(0 0 5px rgba(253,224,71,.95)); }
+    #scene .pulse { animation: xpulse 1.4s ease-in-out infinite; }
+    @keyframes xpulse { 0%,100% { filter: drop-shadow(0 0 2px rgba(56,189,248,.3)); } 50% { filter: drop-shadow(0 0 9px rgba(56,189,248,1)); } }
+    .xb-fb { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #0f172a; color: #fff; padding: 8px 14px; font-size: 12px; min-height: 38px; }
+    .xb-fb b { color: #fde68a; }
+    .xb-card { border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; }
+    .xb-h { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #475569; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .xb-now { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 10px; padding: 10px; font-size: 12px; color: #78350f; line-height: 1.45; }
+    .xb-now .t { font-weight: 700; color: #92400e; font-size: 12.5px; margin-bottom: 3px; }
+    .xb-ctx { font-size: 12px; color: #1e293b; line-height: 1.45; }
+    .xb-ctx .row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
+    .xb-in { width: 92px; border: 1px solid #94a3b8; border-radius: 6px; padding: 4px 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+    .xb-btn { font-size: 12px; font-weight: 600; padding: 6px 10px; border-radius: 7px; border: 1px solid transparent; cursor: pointer; background: #0a1f44; color: #fff; }
+    .xb-btn:hover { filter: brightness(1.15); }
+    .xb-btn.sec { background: #fff; color: #0a1f44; border-color: #cbd5e1; }
+    .xb-btn.warn { background: #b91c1c; }
+    .xb-btn:disabled { opacity: .45; cursor: not-allowed; }
+    .xb-steps { list-style: none; margin: 0; padding: 0; font-size: 11.5px; }
+    .xb-steps li { display: flex; gap: 6px; padding: 3px 0; color: #94a3b8; }
+    .xb-steps li.done { color: #047857; }
+    .xb-steps li.cur { color: #92400e; font-weight: 700; }
+    .xb-steps li .k { width: 16px; flex-shrink: 0; text-align: center; }
+    .xb-steps .grp { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: #64748b; font-weight: 700; padding-top: 6px; }
+    .xb-tbl { width: 100%; border-collapse: collapse; font-size: 11px; }
+    .xb-tbl th { background: #f1f5f9; color: #475569; font-weight: 600; padding: 3px; text-align: center; }
+    .xb-tbl td { border-top: 1px solid #e2e8f0; padding: 3px; text-align: center; font-family: 'JetBrains Mono', monospace; }
+    .xb-tbl input { width: 58px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 3px; font-family: 'JetBrains Mono', monospace; font-size: 11px; text-align: center; }
+    .ok-in { border-color: #10b981 !important; background-color: #ecfdf5 !important; color: #065f46 !important; -webkit-text-fill-color: #065f46 !important; font-weight: 700; }
+    .bad-in { border-color: #e11d48 !important; background-color: #fff1f2 !important; color: #9f1239 !important; -webkit-text-fill-color: #9f1239 !important; font-weight: 700; }
+    .flag { display: inline-block; font-size: 9.5px; padding: 0 4px; border-radius: 4px; background: #fee2e2; color: #9f1239; margin: 1px; font-family: Inter, sans-serif; }
+    .xb-speed button { font-size: 11px; font-family: 'JetBrains Mono', monospace; font-weight: 700; padding: 2px 7px; border-radius: 5px; border: 0; background: transparent; color: #475569; cursor: pointer; }
+    .xb-speed { display: flex; border: 1px solid #cbd5e1; border-radius: 7px; background: #fff; padding: 2px; }
+    .xb-strip { background: #1b1b1b; border-top: 1px solid #000; position: relative; }
+    .xb-strip-h { display: flex; justify-content: space-between; color: #a3a3a3; font-size: 10.5px; padding: 5px 10px 0; text-transform: uppercase; letter-spacing: .06em; font-weight: 700; }
+    #kymoStrip { overflow-x: auto; }
+    .xb-man summary { cursor: pointer; font-size: 11px; font-weight: 700; color: #334155; text-transform: uppercase; letter-spacing: .06em; }
+    .xb-man table { width: 100%; font-size: 11px; border-collapse: collapse; margin-top: 6px; }
+    .xb-man td { border-top: 1px solid #e2e8f0; padding: 2px 4px; }
+    .xb-pl { width: 100%; }
+    .tgl { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #475569; }
+    .obs-in { width: 64px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; text-align: center; }
+    @media print {
+      header, #subHeader, #viewTask, #viewExperiment, .no-print { display: none !important; }
+      #viewObservation { display: flex !important; box-shadow: none; border: none; }
+    }
+    /* ---------- in-vivo analgesia bench additions ---------- */
+    .xb-nb { background: #fff; border-top: 1px solid #e2e8f0; padding: 8px 10px 10px; }
+    .xb-nb-h { display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #475569; margin-bottom: 6px; gap: 8px; flex-wrap: wrap; }
+    .xb-nb-h .sub { font-weight: 500; text-transform: none; letter-spacing: 0; color: #64748b; }
+    .nb-wrap { max-height: 300px; overflow: auto; }
+    .nb-tbl { width: 100%; border-collapse: collapse; font-size: 11px; }
+    .nb-tbl th { background: #f1f5f9; color: #334155; font-weight: 700; padding: 3px 4px; text-align: center; position: sticky; top: 0; z-index: 1; }
+    .nb-tbl td { border-top: 1px solid #e2e8f0; padding: 2px 3px; text-align: center; font-family: 'JetBrains Mono', monospace; color: #0f172a; vertical-align: top; }
+    .nb-tbl td.l { text-align: left; font-family: Inter, sans-serif; }
+    .nb-tbl tr.sel td { background: #fef9c3; }
+    .nb-tbl tr.gT td:first-child { box-shadow: inset 3px 0 0 #7c3aed; }
+    .nb-tbl tr.gC td:first-child { box-shadow: inset 3px 0 0 #64748b; }
+    .nb-in { width: 52px; border: 1px solid #94a3b8; border-radius: 4px; padding: 1px 3px; font-family: 'JetBrains Mono', monospace; font-size: 11px; text-align: center; }
+    .nb-sub { display: block; font-size: 9px; color: #64748b; font-family: Inter, sans-serif; line-height: 1.15; }
+    .nb-due { color: #b45309; font-weight: 700; }
+    .nb-late { color: #be123c; font-weight: 700; }
+    .xb-ctx .grid2 { display: grid; grid-template-columns: auto 1fr; gap: 4px 8px; align-items: center; margin-top: 6px; }
+    .xb-ctx .k { color: #64748b; font-size: 11px; }
+    .xb-ctx .v { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #0f172a; font-size: 12px; }
+    .xb-ctx .note { font-size: 11px; color: #475569; margin-top: 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 5px 7px; }
+    .xb-ctx .warnbox { font-size: 11px; color: #9f1239; margin-top: 6px; background: #fff1f2; border: 1px solid #fecdd3; border-radius: 6px; padding: 5px 7px; }
+    .chip { display: inline-block; font-size: 10.5px; font-weight: 700; padding: 1px 6px; border-radius: 999px; border: 1px solid #cbd5e1; background: #f8fafc; color: #334155; }
+    .chip.C { background: #f1f5f9; color: #334155; border-color: #94a3b8; }
+    .chip.T { background: #f5f3ff; color: #5b21b6; border-color: #c4b5fd; }
+    .xb-btn.on { background: #b45309; }
+    .waitc { position: absolute; top: 10px; right: 10px; z-index: 5; background: rgba(15,23,42,.92); color: #fff; border: 1px solid #334155; border-radius: 10px; padding: 8px 12px; min-width: 210px; pointer-events: none; }
+    .waitc .t { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: #fcd34d; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .waitc .c { font-size: 24px; color: #fbbf24; font-family: 'DSEG7', 'JetBrains Mono', monospace; text-shadow: 0 0 8px rgba(251,191,36,.5); }
+    .waitc .s { font-size: 10.5px; color: #cbd5e1; }
+    .cutoff-banner { position: absolute; left: 50%; top: 12px; transform: translateX(-50%); z-index: 6; background: #b91c1c; color: #fff; font-weight: 800; font-size: 14px; padding: 8px 16px; border-radius: 8px; border: 2px solid #fecaca; box-shadow: 0 0 24px rgba(239,68,68,.8); animation: cutblink .5s steps(2) infinite; pointer-events: none; }
+    @keyframes cutblink { 50% { background: #7f1d1d; } }
+    .stat-in { width: 70px; border: 1px solid #94a3b8; border-radius: 4px; padding: 2px 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; text-align: center; }
+    .obs-h { font-size: 12px; font-weight: 700; color: #334155; text-transform: uppercase; letter-spacing: .05em; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-100 overflow-x-hidden">
+
+  <!-- TOP BRANDING BAR (XPRISM Header) -->
+  <header class="site-header bg-white border-b border-slate-200 px-4 md:px-6 py-2 flex items-center justify-between gap-3 shadow-sm shrink-0">
+    <div class="flex items-center gap-3 min-w-0">
+    <a href="../index.html" title="Back to Lab Home" class="shrink-0"><img src="../assets/img/xprism-lockup.png" alt="XPRISM" class="h-11 w-auto" width="146" height="49"></a>
+      <div class="min-w-0 border-l border-slate-200 pl-3">
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="text-[10px] uppercase font-bold bg-teal-50 text-teal-700 px-2 py-0.5 rounded-full border border-teal-200 font-display tracking-wide">Virtual Lab</span>
+        <a href="../index.html" class="text-[11px] font-semibold text-teal-700 hover:underline">← All experiments</a>
+      </div>
+      <p class="text-xs text-slate-500">Aaron Innovations • Experimental Pharmacology Research &amp; Interactive Student Module</p>
+    </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="hidden md:block text-right">
+        <div class="text-xs font-semibold text-slate-800 flex items-center justify-end space-x-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Dr. Vara Prasad Saka</span>
+        </div>
+        <div class="text-[11px] text-slate-500 font-mono">ID: 8019152501 • Dept. of Pharmacology</div>
+      </div>
+      <div class="flex items-center gap-2 border-l pl-4 border-slate-200">
+        <a class="site-nav-btn" href="19-analgesic-activity-eddys-hot-plate.html" title="Previous: Exp #19 Analgesic Activity: Eddy&#x27;s Hot Plate">‹</a><a class="site-nav-btn" href="21-anti-inflammatory-activity-carrageenan-paw-oedema.html" title="Next: Exp #21 Anti-inflammatory Activity: Carrageenan Paw Oedema">›</a>
+        <button id="audioToggleBtn" class="p-2 rounded-lg bg-teal-100 hover:bg-teal-200 text-teal-800 transition" title="Toggle sound feedback" aria-label="Toggle sound feedback">
+          <svg id="soundIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+        </button>
+        <span class="hidden sm:inline bg-indigo-100 text-indigo-800 text-xs px-2.5 py-1 rounded-md font-medium border border-indigo-200 whitespace-nowrap">Exp #20</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- SUB-HEADER / VIEW TABS -->
+
+  <div id="subHeader" class="site-subheader bg-slate-800 text-white px-4 md:px-6 py-2 flex flex-wrap items-center justify-between gap-3 shadow shrink-0">
+    <div class="text-sm font-semibold tracking-wide flex items-center space-x-2 min-w-0">
+      <span class="text-teal-400 font-mono text-xs px-1.5 py-0.5 rounded bg-teal-950/80 border border-teal-500/40 shrink-0">MODULE 20</span>
+      <span>Examination 20: To Study the Analgesic Activity of a Given Drug by the Tail-Flick Method (Analgesiometer) in Rats</span>
+    </div>
+    <div class="flex items-center space-x-1.5 bg-slate-900/80 p-1 rounded-lg border border-slate-700" role="tablist">
+      <button id="tabTask" onclick="switchTab('task')" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white transition">Task Description</button>
+      <button id="tabExperiment" onclick="switchTab('experiment')" class="px-3.5 py-1.5 rounded-md text-xs font-semibold bg-teal-500 text-white shadow transition">Experiment Bench</button>
+      <button id="tabObservation" onclick="switchTab('observation')" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white transition">Observation Sheet &amp; Graphs</button>
+    </div>
+  </div>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-5 flex flex-col min-h-0">
+
+    <!-- TAB 1: TASK DESCRIPTION -->
+    <div id="viewTask" class="hidden flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between overflow-y-auto">
+      <div class="max-w-5xl space-y-6">
+        <div class="border-b pb-4">
+          <div class="inline-block px-2.5 py-1 rounded bg-teal-50 text-teal-800 text-xs font-bold font-mono mb-2">EXPERIMENT OBJECTIVE</div>
+          <h2 class="text-xl font-bold text-slate-900">Analgesic Activity by the Tail-Flick Method (D'Amour &amp; Smith)</h2>
+          <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+            Measure the <strong>tail-flick latency</strong> of rats when radiant heat from a nichrome wire (heated by a current of <strong>5–6 A</strong>) is applied about <strong>2 cm from the tip of the tail</strong>,
+            before and 30, 60 and 90 min after the test drug. Opioid analgesics such as <strong>morphine</strong> prolong the latency. A <strong>10-second cut-off</strong> prevents tissue damage: if the tail has not flicked by 10 s the heat is switched off at once and 10 s is recorded.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-4">
+          <div class="p-4 rounded-xl bg-sky-50/70 border border-sky-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-sky-500 text-white flex items-center justify-center font-bold text-sm shadow">1</div>
+            <h3 class="text-sm font-bold text-sky-950">Principle</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">The tail flick is a <strong>spinal reflex</strong> to a noxious thermal stimulus, modulated by descending pathways from the brainstem. Opioids act at spinal and supraspinal μ (and κ) receptors and raise the latency. Peripherally acting NSAIDs have little effect on this acute heat pain. The latency depends on the heat intensity (current) and on where the heat falls on the tail, so both must be kept constant.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-amber-50/70 border border-amber-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center font-bold text-sm shadow">2</div>
+            <h3 class="text-sm font-bold text-amber-950">Response &amp; Cut-off</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">Place the rat in the restrainer with its tail over the wire. Switch on the heat (the timer starts) and press <strong>STOP</strong> at the <strong>sudden flick</strong> of the tail away from the wire. Small twitches are not the end-point. Switch off the heat at <strong>10 s</strong> if there is no flick and record 10 s. Heating beyond the cut-off burns the tail skin, and later readings from that rat become invalid.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-emerald-50/70 border border-emerald-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center font-bold text-sm shadow">3</div>
+            <h3 class="text-sm font-bold text-emerald-950">Calculation</h3>
+            <p class="text-xs text-slate-600 leading-relaxed"><strong>% Maximum possible effect (%MPE)</strong> = (Test latency − Basal latency) ÷ (Cut-off − Basal latency) × 100. Express each group as mean ± SEM and compare the test group with the vehicle group at each time point (unpaired t-test, n = 6, df = 10).</p>
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Requirements</h4>
+            <ul class="text-xs text-slate-600 space-y-1 list-disc pl-4">
+              <li>Analgesiometer (nichrome wire, ammeter 0–10 A, intensity control, reaction timer) and a perspex rat restrainer</li>
+              <li>12 albino rats, 150–200 g (screened: basal tail-flick latency 2–5 s), permanent marker for tail numbers</li>
+              <li>Top-pan balance (1 g) with a plastic container; analytical balance (0.1 mg), volumetric flasks 5/10/25 mL</li>
+              <li>Morphine sulphate 5 mg/kg s.c., Pentazocine 10 mg/kg i.p., Tramadol 20 mg/kg i.p., Aspirin 100 mg/kg p.o. (suspended in 1% CMC), Naloxone 1 mg/kg s.c. (given with morphine)</li>
+              <li>Normal saline, 1% CMC; dose volume <strong>1 mL/kg</strong> for injections and <strong>10 mL/kg</strong> by mouth</li>
+              <li>1 mL syringes, 26 G needles, oral feeding (gavage) needle</li>
+            </ul>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Procedure</h4>
+            <ol class="text-xs text-slate-600 space-y-1 list-decimal pl-4">
+              <li>Weigh each rat in the tared container, record its weight and number its tail with a marker.</li>
+              <li>Allocate the 12 rats to Group I (vehicle) and Group II (test) at random by drawing lots.</li>
+              <li>Prepare the drug solution: concentration (mg/mL) = dose (mg/kg) ÷ dose volume (mL/kg); weigh, make up to volume in a volumetric flask and mix.</li>
+              <li>Switch on the analgesiometer and set the current to 5–6 A.</li>
+              <li>Put the rat in the restrainer and slide it so the wire lies about 2 cm from the tail tip.</li>
+              <li>Switch on the heat and stop the timer at the tail flick. Record the basal latency of each rat.</li>
+              <li>Calculate each rat's dose volume and give vehicle (Group I) or test drug (Group II) by the correct route; note the time of dosing.</li>
+              <li>Repeat the readings 30, 60 and 90 min after each rat's own dosing time, then calculate %MPE, mean ± SEM and the t-test.</li>
+            </ol>
+          </div>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 leading-relaxed">
+          <b>Ethics &amp; 3Rs:</b> the protocol must be approved by the IAEC under CCSEA guidelines. Use the minimum number of animals (n = 6 per group), screen out rats with a basal latency outside 2–5 s, never exceed the cut-off, keep restraint as short as possible and return each rat to its home cage after testing.
+        </div>
+      </div>
+      <div class="pt-6 border-t flex justify-end mt-6">
+        <button onclick="switchTab('experiment')" class="px-6 py-2.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-semibold text-sm shadow flex items-center space-x-2 transition">
+          <span>Go to Experiment Stage</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 2: EXPERIMENT BENCH -->
+    <div id="viewExperiment" class="xb-wrap">
+      <div class="xb-main">
+        <div class="xb-bar">
+          <div class="xb-st" id="stationBtns">
+            <button data-s="1" onclick="goStation(1)"><span class="n">1</span>Animals &amp; groups</button>
+            <button data-s="2" onclick="goStation(2)"><span class="n">2</span>Drug solution</button>
+            <button data-s="3" onclick="goStation(3)"><span class="n">3</span>Analgesiometer</button>
+            <button data-s="4" onclick="goStation(4)"><span class="n">4</span>Dosing</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:11px;color:#64748b;font-weight:600">Lab time</span>
+            <span id="labClock" class="mono" style="font-size:12px;font-weight:700;color:#0a1f44">0:00:00</span>
+            <div class="xb-speed" id="speedBtns" title="Lab time runs faster while you wait; reaction timing on the apparatus is always real time"></div>
+          </div>
+        </div>
+        <div class="xb-scene">
+          <svg id="scene" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet"></svg>
+          <div id="dueCard" class="waitc" style="display:none"><div class="t" id="dueTitle">Next reading due</div><div class="c" id="dueClock">--:--</div><div class="s" id="dueSub"></div></div>
+          <div id="cutBanner" class="cutoff-banner" style="display:none"></div>
+          <div id="waitCard" class="hidden"><span id="waitTitle"></span><span id="waitClock"></span><div id="waitBar"></div></div>
+        </div>
+        <div class="xb-fb" id="actionFeedback">
+          <div style="display:flex;align-items:center;gap:8px"><span id="feedbackIcon" style="color:#2dd4bf;font-weight:700">ℹ</span><span id="feedbackText">Ready.</span></div>
+          <span id="phaseIndicator" class="mono" style="font-size:11px;color:#94a3b8"></span>
+        </div>
+        <div class="xb-nb">
+          <div class="xb-nb-h"><span>Lab notebook: rats &amp; tail-flick latencies (type each value you read)</span><span class="sub" id="nbInfo"></span></div>
+          <div class="nb-wrap scroll-thin"><table class="nb-tbl"><thead><tr><th>Mark</th><th>Group</th><th>Body wt (g)</th><th>Dose vol (mL)</th><th>Dosed at</th><th>Basal (s)</th><th>30 min (s)</th><th>60 min (s)</th><th>90 min (s)</th><th class="l">Flags</th></tr></thead><tbody id="nbBody"></tbody></table></div>
+          <p style="font-size:10.5px;color:#64748b;margin:6px 0 0">Weight: read the balance display after taring. Dose volume = body weight × dose volume per kg (rats: 1 mL/kg by injection, 10 mL/kg by mouth). Latencies: read the reaction timer after you stop it. Each post-drug reading is due 30, 60 and 90 min after <b>that</b> rat's own dosing time (±5 min).</p>
+        </div>
+      </div>
+
+      <aside class="xb-side">
+        <div class="xb-card" style="padding:8px 10px">
+          <div class="xb-h" style="margin-bottom:4px"><span>Test drug for Group II</span><span id="drugStatusBadge" class="chip T">Morphine</span></div>
+          <select id="drugSelect" onchange="onDrugSelectChange()" style="width:100%;border:1px solid #94a3b8;border-radius:6px;padding:4px 6px;font-size:12px"><option value="morphine">Morphine sulphate (5 mg/kg s.c., standard)</option><option value="pentazocine">Pentazocine (10 mg/kg i.p.)</option><option value="tramadol">Tramadol (20 mg/kg i.p.)</option><option value="aspirin">Aspirin (100 mg/kg p.o., NSAID)</option><option value="naloxone">Morphine 5 mg/kg + Naloxone 1 mg/kg s.c.</option><option value="unknown">Unknown Mystery Drug (coded vial, exam)</option></select>
+        </div>
+        <div class="xb-now" id="nowBox"></div>
+        <div class="xb-card"><div class="xb-h"><span id="ctxTitle">Bench</span></div><div class="xb-ctx" id="ctx"></div></div>
+        <div class="xb-card">
+          <div class="xb-h"><span>Protocol checklist</span><label class="tgl"><input type="checkbox" id="hintToggle" checked onchange="HINTS=this.checked;refreshHints(true)"> highlight next</label></div>
+          <ul class="xb-steps" id="checklist"></ul>
+        </div>
+        <details class="xb-card xb-man">
+          <summary>Lab manual: quick reference</summary>
+          <table id="manualTbl"></table>
+        </details>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="xb-btn sec" onclick="switchTab('observation')">Observation sheet →</button>
+          <button class="xb-btn sec" onclick="if(confirm('Discard everything and start the practical again from the beginning?')) newExperiment()">Restart practical</button>
+        </div>
+      </aside>
+    </div>
+
+
+    <!-- TAB 3: OBSERVATION SHEET -->
+    <div id="viewObservation" class="hidden flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between overflow-y-auto">
+      <div class="space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b pb-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Observation Table: Tail-Flick Latency (Analgesiometer, 5–6 A)</h2>
+            <p class="text-xs text-slate-500">Response = sudden tail flick • Cut-off 10 s • n = 6 per group</p>
+          </div>
+          <div class="flex items-center space-x-3 no-print">
+            <button onclick="if(confirm('Discard all data and restart the practical?')) newExperiment()" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50 text-xs font-medium text-slate-700 transition">Reset Data</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="obs-h mb-2">1. Individual readings (copied from your lab notebook)</div>
+          <div class="grid xl:grid-cols-2 gap-4" id="obsTables"></div>
+          <p class="text-[11px] text-slate-500 mt-2">%MPE = (Test latency − Basal latency) ÷ (Cut-off − Basal latency) × 100 (cut-off 10 s). Values in red are entries that do not match what the reaction timer showed; ⚑ = protocol flag (see the notebook).</p>
+        </div>
+
+        <div class="border border-slate-200 rounded-xl overflow-x-auto shadow-sm p-3">
+          <div class="obs-h mb-1">2. Your statistics (calculate from your own readings and type them in)</div>
+          <p class="text-[11px] text-slate-500 mb-2">Mean and SEM (= SD ÷ √n, SD with n − 1) of the latency in each group; mean %MPE of the test group; unpaired Student's t between the groups (pooled variance, df = 10), entered as |t|. Each box turns green when it agrees (±2%) with your own data.</p>
+          <table class="w-full text-xs text-center border-collapse" id="statTbl">
+            <thead><tr class="bg-slate-50 text-slate-600 border-b border-slate-200">
+              <th class="p-2 border-r text-left">Quantity</th><th class="p-2 border-r">Basal</th><th class="p-2 border-r">30 min</th><th class="p-2 border-r">60 min</th><th class="p-2">90 min</th>
+            </tr></thead>
+            <tbody id="statBody" class="divide-y divide-slate-200 font-mono text-[11px]"></tbody>
+          </table>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-4">
+          <div class="border border-slate-200 rounded-xl p-3 shadow-sm">
+            <div class="text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">Tail-Flick Latency vs Time (s, Mean ± SEM)</div>
+            <svg id="chartTime" viewBox="0 0 420 250" class="w-full"></svg>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-3 shadow-sm">
+            <div class="text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">% Maximum Possible Effect (Mean ± SEM)</div>
+            <svg id="chartMPE" viewBox="0 0 420 250" class="w-full"></svg>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+            <div class="text-[10px] text-slate-500 uppercase font-semibold font-mono">Inference</div>
+            <div id="lblInference" class="text-sm font-bold text-slate-800">Pending</div>
+            <p id="lblInferenceDetail" class="text-[11px] text-slate-600 leading-relaxed">Complete all readings for both groups.</p>
+            <div id="flagSummary" class="text-[11px] text-rose-800"></div>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl border border-teal-200 bg-teal-50/50 flex flex-wrap items-center justify-between gap-4 no-print">
+          <div class="space-y-1">
+            <h3 class="text-sm font-bold text-slate-800">Mystery Drug Diagnosis (Exam Deduction)</h3>
+            <p class="text-xs text-slate-600">Choose "Unknown Mystery Drug (coded vial)" as the test drug, run both groups, then identify the compound from its time-course.</p>
+          </div>
+          <div class="flex items-center space-x-3">
+            <select id="unknownDrugDeduction" class="bg-white border border-slate-300 text-slate-800 text-xs rounded-lg px-3 py-2 font-medium shadow-sm focus:ring-2 focus:ring-teal-500">
+              <option value="">-- Choose deduced compound --</option>
+            </select>
+            <button onclick="submitEvaluation()" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-lg shadow transition">Verify Deduction</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-6 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 mt-6 no-print">
+        <div class="text-xs text-slate-500 font-mono">XPRISM • Tail-Flick Analgesia Practical Evaluation</div>
+        <div class="flex items-center space-x-3">
+          <button onclick="openModal('modalQuestions')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow transition">Answer Viva Questions</button>
+          <button onclick="openResultsModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow transition">Results & Summary</button>
+          <button onclick="window.print()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg shadow transition">Print Report</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer no-print border-t border-slate-200 bg-white shrink-0">
+    <div class="max-w-7xl mx-auto px-6 py-3 text-xs text-slate-500 font-mono flex justify-between flex-wrap gap-2">
+      <span>XPRISM • Exp #20 • © 2026 Aaron Innovations • Dr. Vara Prasad Saka</span>
+      <span>Simulations are teaching aids that reduce animal use, in line with CCSEA 3Rs guidance. • <a href="../index.html" class="text-teal-700 hover:underline">All experiments</a></span>
+    </div>
+  </footer>
+
+  <!-- MODAL: VIVA -->
+  <div id="modalQuestions" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-base font-bold text-slate-800">Tail-Flick Method: Viva-Voce</h3>
+        <button onclick="closeModal('modalQuestions')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+      <div id="quizScore" class="hidden p-2.5 rounded-lg text-xs font-semibold"></div>
+      <div id="quizBody" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2 text-xs text-slate-700"></div>
+      <div class="pt-3 border-t flex justify-end space-x-2">
+        <button onclick="closeModal('modalQuestions')" class="px-4 py-2 border rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">Cancel</button>
+        <button onclick="evaluateQuestions()" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-lg shadow">Submit Answers</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: RESULTS -->
+  <div id="modalResults" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-base font-bold text-slate-800">Laboratory Results Summary</h3>
+        <button onclick="closeModal('modalResults')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+      <div id="resBody" class="space-y-2 text-xs"></div>
+      <div id="resExplanation" class="p-3 rounded-lg bg-teal-50 border border-teal-200 text-teal-900 leading-relaxed text-[11px]"></div>
+      <div class="pt-3 border-t flex justify-end">
+        <button onclick="closeModal('modalResults')" class="px-6 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg shadow">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =====================================================================
+    // XPRISM shared simulation toolkit (tabs, sound, stats, charts, viva)
+    // =====================================================================
+    const $ = id => document.getElementById(id);
+    const svgNS = "http://www.w3.org/2000/svg";
+    function el(tag, attrs = {}, parent) {
+      const e = document.createElementNS(svgNS, tag);
+      for (const k in attrs) e.setAttribute(k, attrs[k]);
+      if (parent) parent.appendChild(e);
+      return e;
+    }
+    function svgPoint(svg, evt) {
+      const pt = svg.createSVGPoint();
+      const src = evt.touches ? evt.touches[0] : evt;
+      pt.x = src.clientX; pt.y = src.clientY;
+      return pt.matrixTransform(svg.getScreenCTM().inverse());
+    }
+    function gauss() {
+      let u = 0, v = 0;
+      while (u === 0) u = Math.random();
+      while (v === 0) v = Math.random();
+      return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    }
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+    const shuffle = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+    const mean = a => a.length ? a.reduce((s, x) => s + x, 0) / a.length : NaN;
+    const sd = a => { if (a.length < 2) return 0; const m = mean(a); return Math.sqrt(a.reduce((s, x) => s + (x - m) ** 2, 0) / (a.length - 1)); };
+    const sem = a => a.length < 2 ? 0 : sd(a) / Math.sqrt(a.length);
+    const fx = (v, d = 1) => (v === null || v === undefined || !isFinite(v)) ? '—' : (+v).toFixed(d);
+    const fmtMS = s => { s = Math.max(0, Math.round(s)); return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
+    const fmtHMS = s => { s = Math.max(0, Math.round(s)); const h = Math.floor(s / 3600); return `${h}:${String(Math.floor(s % 3600 / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
+    const log10 = Math.log10;
+
+    // ---- t-distribution (two-tailed p) via regularised incomplete beta ----
+    function betacf(a, b, x) {
+      let qab = a + b, qap = a + 1, qam = a - 1, c = 1, d = 1 - qab * x / qap;
+      if (Math.abs(d) < 1e-30) d = 1e-30; d = 1 / d; let h = d;
+      for (let m = 1; m <= 200; m++) {
+        const m2 = 2 * m; let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+        d = 1 + aa * d; if (Math.abs(d) < 1e-30) d = 1e-30; c = 1 + aa / c; if (Math.abs(c) < 1e-30) c = 1e-30; d = 1 / d; h *= d * c;
+        aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+        d = 1 + aa * d; if (Math.abs(d) < 1e-30) d = 1e-30; c = 1 + aa / c; if (Math.abs(c) < 1e-30) c = 1e-30; d = 1 / d;
+        const del = d * c; h *= del; if (Math.abs(del - 1) < 3e-7) break;
+      }
+      return h;
+    }
+    function gammaln(x) {
+      const c = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5];
+      let y = x, t = x + 5.5; t -= (x + 0.5) * Math.log(t); let s = 1.000000000190015;
+      for (let j = 0; j < 6; j++) s += c[j] / ++y;
+      return -t + Math.log(2.5066282746310005 * s / x);
+    }
+    function betai(a, b, x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      const bt = Math.exp(gammaln(a + b) - gammaln(a) - gammaln(b) + a * Math.log(x) + b * Math.log(1 - x));
+      return x < (a + 1) / (a + b + 2) ? bt * betacf(a, b, x) / a : 1 - bt * betacf(b, a, 1 - x) / b;
+    }
+    function tTest(a, b) { // unpaired Student's t (pooled variance)
+      if (a.length < 2 || b.length < 2) return { t: NaN, df: NaN, p: NaN };
+      const df = a.length + b.length - 2;
+      const sp2 = ((a.length - 1) * sd(a) ** 2 + (b.length - 1) * sd(b) ** 2) / df;
+      const se = Math.sqrt(sp2 * (1 / a.length + 1 / b.length));
+      const t = se === 0 ? (mean(a) === mean(b) ? 0 : 99) : (mean(a) - mean(b)) / se;
+      return { t, df, p: betai(df / 2, 0.5, df / (df + t * t)) };
+    }
+    const pLabel = p => !isFinite(p) ? '—' : p < 0.001 ? 'p < 0.001' : p < 0.01 ? 'p < 0.01' : p < 0.05 ? 'p < 0.05' : 'p > 0.05 (ns)';
+    const stars = p => !isFinite(p) ? '' : p < 0.001 ? '***' : p < 0.01 ? '**' : p < 0.05 ? '*' : 'ns';
+    function linreg(xs, ys) {
+      const n = xs.length; if (n < 2) return null;
+      const mx = mean(xs), my = mean(ys);
+      let sxy = 0, sxx = 0, syy = 0;
+      for (let i = 0; i < n; i++) { sxy += (xs[i] - mx) * (ys[i] - my); sxx += (xs[i] - mx) ** 2; syy += (ys[i] - my) ** 2; }
+      const slope = sxy / sxx, intercept = my - slope * mx;
+      return { slope, intercept, r2: syy === 0 ? 1 : (sxy * sxy) / (sxx * syy) };
+    }
+    // log-linear interpolation of the dose giving response `target` on an ascending curve [[dose, resp], ...]
+    function interpDose(pts, target) {
+      const s = pts.filter(p => p[0] > 0).slice().sort((a, b) => a[0] - b[0]);
+      for (let i = 0; i < s.length - 1; i++) {
+        const [d1, r1] = s[i], [d2, r2] = s[i + 1];
+        if ((r1 <= target && r2 >= target) && r2 !== r1) {
+          const f = (target - r1) / (r2 - r1);
+          return Math.pow(10, log10(d1) + f * (log10(d2) - log10(d1)));
+        }
+      }
+      return NaN;
+    }
+
+    // ---- Sound ----
+    let soundOn = true, synth = null;
+    function beep(type = 'click') {
+      if (!soundOn || typeof Tone === 'undefined') return;
+      try {
+        if (!synth) { Tone.start(); synth = new Tone.PolySynth(Tone.Synth).toDestination(); synth.volume.value = -16; }
+        const n = { click: 'C6', ok: 'E5', warn: 'A3', done: 'G5', tick: 'C7', low: 'E3' }[type] || 'C6';
+        synth.triggerAttackRelease(n, type === 'done' ? '8n' : '32n');
+      } catch (e) { /* audio optional */ }
+    }
+
+    // ---- Feedback / stepper ----
+    function showFeedback(msg, isAlert = false) {
+      $('feedbackText').innerHTML = msg;
+      const icon = $('feedbackIcon');
+      icon.innerText = isAlert ? "⚠️" : "ℹ";
+      icon.className = isAlert ? "text-amber-400 font-bold" : "text-teal-400 font-bold";
+      if (isAlert) beep('warn');
+    }
+    function setPhase(t) { $('phaseIndicator').innerText = t || ''; }
+    function renderSteps(steps) {
+      let active = steps.findIndex(s => !s.done);
+      $('stepper').innerHTML = steps.map((s, i) => {
+        const cls = s.done ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : i === active ? 'bg-amber-50 text-amber-800 border-amber-300 ring-1 ring-amber-200' : 'bg-slate-50 text-slate-400 border-slate-200';
+        return `<span class="px-2 py-1 rounded-md border ${cls}">${s.done ? '✓' : (i + 1)} ${s.t}</span>`;
+      }).join('');
+    }
+
+    // ---- Speed ----
+    let SPEED = 1, SPEEDS = [1, 5, 20, 60];
+    function renderSpeed() {
+      $('speedBtns').innerHTML = SPEEDS.map(s => `<button onclick="setSpeed(${s})" class="px-2 py-0.5 text-[11px] rounded font-mono font-semibold ${s === SPEED ? 'bg-teal-600 text-white' : 'text-slate-600 hover:bg-slate-100'}">${s}×</button>`).join('');
+    }
+    function setSpeed(s) { SPEED = s; renderSpeed(); beep('tick'); }
+
+    // ---- Generic wait timer (simulated seconds) ----
+    let WAIT = null;
+    function startWait(title, seconds, onDone) {
+      WAIT = { title, total: seconds, left: seconds, onDone };
+      $('waitTitle').innerText = title; $('waitCard').classList.remove('hidden');
+    }
+    function skipWait() { if (WAIT) WAIT.left = 0; }
+    function cancelWait() { WAIT = null; $('waitCard').classList.add('hidden'); }
+    function tickWait(dtSim) {
+      if (!WAIT) return;
+      WAIT.left -= dtSim;
+      $('waitClock').innerText = WAIT.total >= 3600 ? fmtHMS(WAIT.left) : fmtMS(WAIT.left);
+      $('waitBar').style.width = `${clamp(100 * (1 - WAIT.left / WAIT.total), 0, 100)}%`;
+      if (WAIT.left <= 0) { const w = WAIT; WAIT = null; $('waitCard').classList.add('hidden'); beep('done'); w.onDone && w.onDone(); }
+    }
+    let _lastTs = null;
+    function startLoop(cb) {
+      const f = ts => {
+        if (_lastTs === null) _lastTs = ts;
+        const dtR = Math.min(0.1, Math.max(0, (ts - _lastTs) / 1000)); _lastTs = ts;
+        tickWait(dtR * SPEED);
+        cb && cb(dtR * SPEED, dtR);
+        requestAnimationFrame(f);
+      };
+      requestAnimationFrame(f);
+    }
+
+    // ---- Tabs / modals ----
+    function openModal(id) { $(id).classList.remove('hidden'); }
+    function closeModal(id) { $(id).classList.add('hidden'); }
+    function switchTab(tabId) {
+      const map = { task: ['viewTask', 'tabTask'], experiment: ['viewExperiment', 'tabExperiment'], observation: ['viewObservation', 'tabObservation'] };
+      Object.values(map).forEach(([v, t]) => {
+        $(v).classList.add('hidden');
+        const b = $(t); b.classList.remove('bg-teal-500', 'text-white', 'shadow'); b.classList.add('text-slate-300');
+      });
+      $(map[tabId][0]).classList.remove('hidden');
+      $(map[tabId][1]).classList.add('bg-teal-500', 'text-white', 'shadow');
+      if (tabId === 'observation') renderObservation();
+    }
+
+    // ---- Viva ----
+    function renderQuiz() {
+      $('quizScore').classList.add('hidden');
+      $('quizBody').innerHTML = QUIZ.map((q, i) => `<div class="space-y-1.5" id="qwrap${i}">
+        <p class="font-semibold text-slate-800">${i + 1}. ${q.q}</p>
+        ${q.o.map((o, j) => `<label class="flex items-start gap-2 p-1.5 rounded hover:bg-slate-50 cursor-pointer"><input type="radio" name="q${i}" value="${j}" class="mt-0.5 accent-teal-600"><span>${o}</span></label>`).join('')}
+        <p id="qexp${i}" class="hidden text-[11px] p-2 rounded"></p></div>`).join('');
+    }
+    function evaluateQuestions() {
+      const ans = QUIZ.map((_, i) => document.querySelector(`input[name="q${i}"]:checked`)?.value);
+      if (ans.some(a => a === undefined)) { const s = $('quizScore'); s.className = 'p-2.5 rounded-lg text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200'; s.innerText = `Please answer all ${QUIZ.length} questions before submitting.`; return; }
+      let score = 0;
+      QUIZ.forEach((q, i) => {
+        const ok = +ans[i] === q.a; if (ok) score++;
+        const e = $('qexp' + i); e.classList.remove('hidden');
+        e.className = `text-[11px] p-2 rounded ${ok ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-rose-50 text-rose-800 border border-rose-200'}`;
+        e.innerHTML = `${ok ? '✓ Correct.' : `✗ Correct answer: <b>${q.o[q.a]}</b>.`} ${q.e || ''}`;
+      });
+      const s = $('quizScore'); s.className = `p-2.5 rounded-lg text-xs font-semibold ${score / QUIZ.length >= 0.6 ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-amber-50 text-amber-800 border border-amber-200'}`;
+      s.innerText = `Viva score: ${score}/${QUIZ.length} (${Math.round(score / QUIZ.length * 100)}%)`;
+      beep(score / QUIZ.length >= 0.6 ? 'done' : 'warn');
+      $('quizBody').scrollTop = 0;
+    }
+
+    // ---- Results modal ----
+    function openResultsModal() {
+      const r = buildResults();
+      $('resBody').innerHTML = r.rows.map(([k, v]) => `<div class="flex justify-between gap-3 border-b border-slate-100 pb-1"><span class="text-slate-500">${k}</span><span class="font-semibold text-slate-800 text-right">${v}</span></div>`).join('');
+      $('resExplanation').innerHTML = r.text;
+      openModal('modalResults');
+    }
+    // numeric answer verification (bioassays / unknowns)
+    function verifyNumber(inputId, outId, truth, tolPct, unit, explain) {
+      const v = parseFloat($(inputId).value), o = $(outId);
+      if (!isFinite(v)) { o.className = 'text-xs font-semibold text-amber-700'; o.innerText = 'Enter a number first.'; return; }
+      const err = Math.abs(v - truth) / truth * 100;
+      const ok = err <= tolPct;
+      o.className = `text-xs font-semibold ${ok ? 'text-emerald-700' : 'text-rose-700'}`;
+      o.innerHTML = ok ? `✓ Accepted (${fx(err, 1)}% from the true value of ${fx(truth, 3)} ${unit}). ${explain || ''}` : `✗ ${fx(err, 0)}% away from the true value. Re-check your matching/calculation (accepted within ±${tolPct}%).`;
+      beep(ok ? 'done' : 'warn');
+    }
+
+    // ---- SVG charts ----
+    const PALETTE = { teal: '#7e13b5', indigo: '#4f46e5', rose: '#e11d48', amber: '#d97706', slate: '#475569', emerald: '#059669', sky: '#0284c7', violet: '#7c3aed' };
+    function niceTicks(min, max, n = 5) {
+      if (!(max > min)) { max = min + 1; }
+      const span = max - min, step0 = span / n, mag = Math.pow(10, Math.floor(log10(step0)));
+      const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => span / s <= n) || mag * 10;
+      const out = []; for (let v = Math.ceil(min / step - 1e-9) * step; v <= max + 1e-9; v += step) out.push(+v.toFixed(10));
+      return out;
+    }
+    function chartFrame(svg, o) {
+      svg.innerHTML = '';
+      const W = +(svg.getAttribute('viewBox').split(' ')[2]), H = +(svg.getAttribute('viewBox').split(' ')[3]);
+      const m = { l: 46, r: 12, t: 12, b: 38 };
+      const X = v => m.l + (v - o.xMin) / (o.xMax - o.xMin) * (W - m.l - m.r);
+      const Y = v => H - m.b - (v - o.yMin) / (o.yMax - o.yMin) * (H - m.t - m.b);
+      const yt = o.yTicks || niceTicks(o.yMin, o.yMax, 5);
+      yt.forEach(v => { el('line', { x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), stroke: '#e2e8f0' }, svg); const t = el('text', { x: m.l - 5, y: Y(v) + 3, 'text-anchor': 'end', 'font-size': 9, fill: '#64748b' }, svg); t.textContent = o.yFmt ? o.yFmt(v) : +v.toFixed(3); });
+      const xt = o.xTicks || niceTicks(o.xMin, o.xMax, 6).map(v => [v, o.xFmt ? o.xFmt(v) : +v.toFixed(3)]);
+      xt.forEach(([v, lab]) => { el('line', { x1: X(v), x2: X(v), y1: H - m.b, y2: H - m.b + 4, stroke: '#94a3b8' }, svg); const t = el('text', { x: X(v), y: H - m.b + 14, 'text-anchor': 'middle', 'font-size': 9, fill: '#64748b' }, svg); t.textContent = lab; });
+      el('line', { x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b, stroke: '#475569' }, svg);
+      el('line', { x1: m.l, x2: m.l, y1: m.t, y2: H - m.b, stroke: '#475569' }, svg);
+      if (o.xLabel) { const t = el('text', { x: (m.l + W - m.r) / 2, y: H - 6, 'text-anchor': 'middle', 'font-size': 10, fill: '#334155', 'font-weight': 600 }, svg); t.textContent = o.xLabel; }
+      if (o.yLabel) { const t = el('text', { x: 11, y: (m.t + H - m.b) / 2, 'text-anchor': 'middle', 'font-size': 10, fill: '#334155', 'font-weight': 600, transform: `rotate(-90 11 ${(m.t + H - m.b) / 2})` }, svg); t.textContent = o.yLabel; }
+      return { X, Y, W, H, m };
+    }
+    function emptyChart(svg, msg) {
+      svg.innerHTML = '';
+      const vb = svg.getAttribute('viewBox').split(' ');
+      const t = el('text', { x: vb[2] / 2, y: vb[3] / 2, 'text-anchor': 'middle', 'font-size': 11, fill: '#94a3b8' }, svg); t.textContent = msg || 'No data yet';
+    }
+    // series: [{name, color, pts:[[x,y,err?]], dash, noLine, line:{slope,intercept,x1,x2}}]
+    function lineChart(id, o) {
+      const svg = $(id);
+      const all = o.series.flatMap(s => s.pts);
+      if (!all.length) { emptyChart(svg, o.empty); return; }
+      const xs = all.map(p => p[0]), ys = all.map(p => p[1] + (p[2] || 0));
+      const xMin = o.xMin ?? Math.min(...xs), xMax = o.xMax ?? Math.max(...xs);
+      const pad = (xMax - xMin) * 0.05 || 1;
+      const f = chartFrame(svg, { ...o, xMin: o.xMin ?? xMin - pad, xMax: o.xMax ?? xMax + pad, yMin: o.yMin ?? Math.min(0, ...all.map(p => p[1])), yMax: o.yMax ?? (Math.max(...ys) * 1.12 || 1) });
+      (o.hlines || []).forEach(h => { el('line', { x1: f.m.l, x2: f.W - f.m.r, y1: f.Y(h.y), y2: f.Y(h.y), stroke: h.color || '#94a3b8', 'stroke-dasharray': '4 3' }, svg); if (h.label) { const t = el('text', { x: f.W - f.m.r - 2, y: f.Y(h.y) - 3, 'text-anchor': 'end', 'font-size': 8.5, fill: h.color || '#64748b' }, svg); t.textContent = h.label; } });
+      (o.vlines || []).forEach(h => { el('line', { x1: f.X(h.x), x2: f.X(h.x), y1: f.m.t, y2: f.H - f.m.b, stroke: h.color || '#94a3b8', 'stroke-dasharray': '3 3' }, svg); if (h.label) { const t = el('text', { x: f.X(h.x) + 3, y: f.m.t + 9, 'font-size': 8.5, fill: h.color || '#64748b' }, svg); t.textContent = h.label; } });
+      o.series.forEach(s => {
+        const pts = s.pts.slice().sort((a, b) => a[0] - b[0]);
+        if (s.line) { el('line', { x1: f.X(s.line.x1), y1: f.Y(s.line.slope * s.line.x1 + s.line.intercept), x2: f.X(s.line.x2), y2: f.Y(s.line.slope * s.line.x2 + s.line.intercept), stroke: s.color, 'stroke-width': 1.5, 'stroke-dasharray': '5 3' }, svg); }
+        if (!s.noLine && pts.length > 1) el('polyline', { points: pts.map(p => `${f.X(p[0])},${f.Y(p[1])}`).join(' '), fill: 'none', stroke: s.color, 'stroke-width': 2, 'stroke-dasharray': s.dash || '' }, svg);
+        pts.forEach(p => {
+          if (p[2]) { el('line', { x1: f.X(p[0]), x2: f.X(p[0]), y1: f.Y(p[1] - p[2]), y2: f.Y(p[1] + p[2]), stroke: s.color }, svg); [-1, 1].forEach(k => el('line', { x1: f.X(p[0]) - 3, x2: f.X(p[0]) + 3, y1: f.Y(p[1] + k * p[2]), y2: f.Y(p[1] + k * p[2]), stroke: s.color }, svg)); }
+          el('circle', { cx: f.X(p[0]), cy: f.Y(p[1]), r: 3.2, fill: s.hollow ? '#fff' : s.color, stroke: s.color, 'stroke-width': 1.5 }, svg);
+        });
+      });
+      // legend
+      const named = o.series.filter(s => s.name);
+      named.forEach((s, i) => { const x = f.m.l + 8, y = f.m.t + 8 + i * 12; el('rect', { x, y: y - 6, width: 10, height: 4, fill: s.color }, svg); const t = el('text', { x: x + 14, y: y - 1, 'font-size': 9, fill: '#334155' }, svg); t.textContent = s.name; });
+    }
+    // bars: [{label, v, e, color, note}]
+    function barChart(id, o) {
+      const svg = $(id);
+      const bars = o.bars.filter(b => isFinite(b.v));
+      if (!bars.length) { emptyChart(svg, o.empty); return; }
+      const top = Math.max(...bars.map(b => b.v + (b.e || 0))) * 1.2 || 1;
+      const n = o.bars.length;
+      const f = chartFrame(svg, { ...o, xMin: 0, xMax: n, yMin: o.yMin ?? 0, yMax: o.yMax ?? top, xTicks: [] });
+      const bw = (f.X(1) - f.X(0)) * 0.56;
+      o.bars.forEach((b, i) => {
+        const cx = f.X(i + 0.5);
+        const t = el('text', { x: cx, y: f.H - f.m.b + 13, 'text-anchor': 'middle', 'font-size': 9, fill: '#334155' }, svg); t.textContent = b.label;
+        if (!isFinite(b.v)) return;
+        el('rect', { x: cx - bw / 2, y: f.Y(Math.max(b.v, 0)), width: bw, height: Math.abs(f.Y(0) - f.Y(b.v)), fill: b.color || PALETTE.teal, rx: 2, opacity: .9 }, svg);
+        if (b.e) { el('line', { x1: cx, x2: cx, y1: f.Y(b.v), y2: f.Y(b.v + b.e), stroke: '#0a1f44' }, svg); el('line', { x1: cx - 5, x2: cx + 5, y1: f.Y(b.v + b.e), y2: f.Y(b.v + b.e), stroke: '#0a1f44' }, svg); }
+        if (b.note) { const s = el('text', { x: cx, y: f.Y(b.v + (b.e || 0)) - 4, 'text-anchor': 'middle', 'font-size': 10, 'font-weight': 700, fill: '#0a1f44' }, svg); s.textContent = b.note; }
+      });
+    }
+    // ---- small HTML helpers ----
+    function tableHTML(head, rows, cls = '') {
+      return `<table class="obs-table w-full text-[11px] text-center ${cls}"><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody class="font-mono">${rows.length ? rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${head.length}" class="text-slate-400 py-3 font-sans">No readings yet</td></tr>`}</tbody></table>`;
+    }
+    $('audioToggleBtn') && $('audioToggleBtn').addEventListener('click', () => {
+      soundOn = !soundOn;
+      $('audioToggleBtn').className = `p-2 rounded-lg transition ${soundOn ? 'bg-teal-100 hover:bg-teal-200 text-teal-800' : 'bg-slate-200 text-slate-500'}`;
+      if (soundOn) beep('ok');
+    });
+    window.addEventListener('DOMContentLoaded', () => { renderSpeed(); renderQuiz(); init(); });
+
+  </script>
+
+  <script>
+    // =====================================================================
+    // Exp 20 configuration: tail-flick analgesiometer, rats
+    // =====================================================================
+    const CFG = {
+      exp: 20, sp: 'rat', Sp: 'Rat', sps: 'rats', Sps: 'Rats', ab: 'R', app: 'tailflick',
+      wu: 'g', wtMin: 150, wtMax: 200, wtDec: 1,
+      beakerWt: 142.0,                                        // plastic weighing container
+      cutoff: 10, basalMean: 3.3, basalSd: 0.16, basalLo: 2.3, basalHi: 4.4, screen: [2, 5],
+      noise: 0.06, volKg: { sc: 1, ip: 1, po: 10 },          // mL/kg: injections 1 mL/kg, oral 10 mL/kg
+      markTool: 'tail', watch: 'reaction timer', reading: 'tail-flick latencies',
+      endpoint: 'sudden tail flick'
+    };
+    const DRUGS = {
+      morphine: { label: 'Morphine sulphate', f: 'MORPHINE', sub: 'sulphate • Sch. X', cap: '#b91c1c' },
+      pentazocine: { label: 'Pentazocine', f: 'PENTAZOCINE', sub: 'base • 98%', cap: '#1d4ed8' },
+      tramadol: { label: 'Tramadol HCl', f: 'TRAMADOL', sub: 'hydrochloride', cap: '#047857' },
+      aspirin: { label: 'Aspirin', f: 'ASPIRIN', sub: 'acetylsalicylic acid', cap: '#a16207' },
+      naloxone: { label: 'Naloxone HCl', f: 'NALOXONE', sub: 'hydrochloride', cap: '#7c3aed' }
+    };
+    const PROFILES = {
+      vehicle: { name: "Vehicle (normal saline 1 mL/kg)", short: "Vehicle", route: 'sc', comps: [], veh: 'saline', peak: [0, 0.02, 0] },
+      morphine: { name: "Morphine sulphate (5 mg/kg s.c.)", short: "Morphine", route: 'sc', comps: [{ k: 'morphine', mgkg: 5 }], veh: 'saline', peak: [1.6, 1.2, 0.55],
+        desc: "μ-opioid agonist acting on the spinal dorsal horn and on descending inhibitory pathways (PAG, rostral ventromedial medulla). It markedly prolongs tail-flick latency, peaking at about 30 min, and several rats reach the cut-off." },
+      pentazocine: { name: "Pentazocine (10 mg/kg i.p.)", short: "Pentazocine", route: 'ip', comps: [{ k: 'pentazocine', mgkg: 10 }], veh: 'saline', peak: [0.85, 0.45, 0.12],
+        desc: "κ-agonist / weak μ partial agonist. κ receptors in the spinal cord give moderate spinal analgesia of shorter duration than morphine." },
+      tramadol: { name: "Tramadol (20 mg/kg i.p.)", short: "Tramadol", route: 'ip', comps: [{ k: 'tramadol', mgkg: 20 }], veh: 'saline', peak: [0.65, 0.95, 0.5],
+        desc: "Weak μ agonist (mainly via its O-desmethyl metabolite) that also inhibits 5-HT and NA reuptake, strengthening descending inhibition. The effect builds up and peaks later, at about 60 min." },
+      aspirin: { name: "Aspirin (100 mg/kg p.o.)", short: "Aspirin", route: 'po', comps: [{ k: 'aspirin', mgkg: 100 }], veh: 'cmc', peak: [0.04, 0.05, 0.02],
+        desc: "Peripherally acting NSAID (COX inhibition). The tail-flick reflex to brief radiant heat is not prostaglandin-dependent, so aspirin hardly changes the latency." },
+      naloxone: { name: "Morphine 5 mg/kg + Naloxone 1 mg/kg s.c.", short: "Morphine + Naloxone", route: 'sc', comps: [{ k: 'morphine', mgkg: 5 }, { k: 'naloxone', mgkg: 1 }], veh: 'saline', peak: [1.6, 1.2, 0.55],
+        desc: "Naloxone, a competitive opioid antagonist, abolishes the morphine effect. This confirms that the analgesia is opioid-receptor mediated." }
+    };
+    const MYSTERY_KEYS = ["morphine", "pentazocine", "tramadol", "aspirin"];
+    const mysteryKey = MYSTERY_KEYS[Math.floor(Math.random() * 4)];
+    const MANUAL = [
+      ['Analgesiometer', ''], ['Heat intensity', '5–6 A (ammeter)'], ['Wire position', '≈ 2 cm from tail tip (1.5–3)'], ['Cut-off', '10 s'], ['End-point', 'sudden tail flick'],
+      ['Rats', ''], ['Body weight', '150–200 g'], ['Screening (basal)', '2–5 s'], ['n per group', '6'], ['Marking', 'number on tail (marker)'],
+      ['Dosing (rats)', ''], ['Injections (s.c./i.p.)', '1 mL/kg'], ['Oral (gavage)', '10 mL/kg'], ['Morphine', '5 mg/kg s.c. → 5 mg/mL'], ['Pentazocine', '10 mg/kg i.p. → 10 mg/mL'],
+      ['Tramadol', '20 mg/kg i.p. → 20 mg/mL'], ['Aspirin (1% CMC)', '100 mg/kg p.o. → 10 mg/mL'], ['Naloxone (+ morphine)', '1 mg/kg s.c. → 1 mg/mL'],
+      ['Readings', ''], ['Times', 'basal, 30, 60, 90 min'], ['Window', '± 5 min of due time']
+    ];
+    const QUIZ = [
+      { q: "The tail-flick response is mainly a:", o: ["Spinal reflex (modulated by descending pathways)", "Purely cortical response", "Peripheral inflammatory response"], a: 0 },
+      { q: "The heat source in the analgesiometer is:", o: ["Water bath at 55 °C", "A nichrome wire heated by an electric current", "A hot plate"], a: 1 },
+      { q: "Why is a 10-second cut-off used?", o: ["To prevent tissue damage to the tail", "Because the drug wears off", "To save time"], a: 0, e: "Burnt tail skin becomes hypersensitive, so later readings from that rat are invalid." },
+      { q: "The usual heat intensity (current) is:", o: ["1–2 A", "5–6 A", "9–10 A"], a: 1, e: "Higher currents heat faster and compress the latencies; lower currents prolong them." },
+      { q: "Where on the tail is the heat applied?", o: ["At the base", "About 2 cm from the tip", "Anywhere"], a: 1, e: "Latency depends on the site, so the same site must be used for every reading." },
+      { q: "Aspirin shows little effect in this test because:", o: ["It is not absorbed in rats", "The acute thermal reflex is not prostaglandin-mediated; aspirin acts peripherally", "It blocks opioid receptors"], a: 1 },
+      { q: "Naloxone abolishes morphine's effect because it is a:", o: ["Competitive μ-opioid receptor antagonist", "GABA-A agonist", "COX-2 inhibitor"], a: 0 },
+      { q: "A 180 g rat is to receive morphine 5 mg/kg s.c. from a 5 mg/mL solution. The volume is:", o: ["0.018 mL", "0.18 mL", "1.8 mL"], a: 1, e: "0.18 kg × 5 mg/kg = 0.9 mg; 0.9 ÷ 5 mg/mL = 0.18 mL (1 mL/kg)." },
+      { q: "Why must each post-drug reading be taken at the right time after THAT rat's own dose?", o: ["Because the drug effect changes with time; readings off schedule fall on a different part of the time-course", "To keep the room temperature constant", "Because the timer resets every 30 min"], a: 0 }
+    ];
+    const REF_DATA = {
+      C: [[168, 3.2, 3.4, 3.1, 3.3], [182, 2.8, 2.9, 3.0, 2.7], [155, 3.6, 3.5, 3.8, 3.6], [191, 3.0, 3.2, 2.9, 3.1], [174, 3.9, 3.7, 4.0, 3.8], [163, 2.6, 2.8, 2.7, 2.6]],
+      T: [[177, 3.1, 8.6, 7.2, 5.0], [159, 3.5, 10.0, 8.4, 5.6], [186, 2.9, 7.9, 6.5, 4.6], [170, 3.3, 9.4, 7.9, 5.2], [196, 3.8, 10.0, 9.1, 6.0], [161, 2.7, 7.4, 6.2, 4.3]]
+    };
+    const COPY = { infSig: 'Points to an opioid-type analgesic acting at spinal and supraspinal sites.', readingWord: 'tail-flick latency', apparatusName: 'analgesiometer', lat: 'Tail-flick latency', chartY: 'Tail-flick latency (s)' };
+  </script>
+  <script>
+    // =====================================================================
+    // In-vivo analgesia engine: state, animals and the pharmacological model
+    // (shared by Exp 19 hot plate and Exp 20 tail flick; species/apparatus from CFG)
+    // =====================================================================
+    const TP = ['Basal', '30 min', '60 min', '90 min'], DUE = [0, 30, 60, 90], WIN = 5, NA = 12;
+    const ROUTE_NAME = { sc: 's.c.', ip: 'i.p.', po: 'p.o.' };
+    let S = null, HINTS = true;
+
+    function freshAnimals() {
+      const out = [];
+      for (let i = 0; i < NA; i++) {
+        const act = Math.random();                       // activity: calm animals are caught first
+        let b = CFG.basalMean * Math.exp(gauss() * CFG.basalSd) * (1.12 - 0.24 * act);
+        b = clamp(b, CFG.basalLo, CFG.basalHi);
+        const wt = +(CFG.wtMin + Math.random() * (CFG.wtMax - CFG.wtMin)).toFixed(CFG.wtDec);
+        out.push({
+          i, id: null, wt, basal: b, sens: Math.exp(gauss() * 0.2), act, loc: 'home',
+          weighed: false, wDisp: null, wTyped: '', tareOK: true, marked: false, group: null, gi: null,
+          dose: null, volTyped: '', R: [null, null, null, null], injured: false, flags: [], cx: 0, cy: 0
+        });
+      }
+      return out;
+    }
+    function freshState() {
+      return {
+        station: 1, clock: 0, an: freshAnimals(), hand: null, sel: null, nextMark: 1, alloc: null,
+        bal: { tared: false, beaker: true, load: null },
+        ab: { tared: false, boat: null, mg: 0, want: '' },
+        sol: { flask: null, comps: {}, veh: null, made: false, mixed: false, labelled: false, used: 0, concTyped: '', concChecked: false },
+        dose: { vol: null, src: null, drawn: 0, route: null, tool: null },
+        app: null, warned: {}, log: [],
+        drugKey: S ? S.drugKey : 'morphine', isUnknown: S ? S.isUnknown : false,
+        stats: {}, statsTyped: {}
+      };
+    }
+    const say = (m, a) => showFeedback(m, a);
+    function once(k, m, a) { if (S.warned[k]) return; S.warned[k] = 1; say(m, a); }
+    const aName = a => a.id ? `${CFG.ab}${a.id}${a.marked ? '' : '?'}` : `unmarked ${CFG.sp}`;
+    const grpName = g => g === 'C' ? 'Group I (vehicle)' : 'Group II (test)';
+    const testProfile = () => S.isUnknown ? PROFILES[mysteryKey] : PROFILES[S.drugKey];
+    const testRoute = () => S.isUnknown ? 'ip' : testProfile().route;
+    const vehKind = () => S.isUnknown ? 'saline' : testProfile().veh;
+    const volPerKg = () => CFG.volKg[testRoute()];
+    function addFlag(a, f) { if (!a.flags.includes(f)) a.flags.push(f); }
+    function stdMgkg(k) { if (k === 'naloxone') return 1; return PROFILES[k].comps[0].mgkg; }
+
+    // ---------------------------------------------------------------- solutions
+    // concentration (mg/mL) of each drug in a dosing source
+    function srcConc(src) {
+      if (src === 'test') { const s = S.sol, o = {}; if (!s.flask || !s.made) return o; for (const k in s.comps) o[k] = s.comps[k] / s.flask; return o; }
+      if (src === 'coded') { const p = PROFILES[mysteryKey], o = {}; p.comps.forEach(c => o[c.k] = c.mgkg / CFG.volKg.ip); return o; }
+      return {};
+    }
+    const requiredConc = () => { const o = {}; testProfile().comps.forEach(c => o[c.k] = c.mgkg / volPerKg()); return o; };
+    function solQuality() {           // problems with the student's own test solution
+      const s = S.sol, req = requiredConc(), out = [];
+      if (S.isUnknown) return out;
+      for (const k in req) { const c = (s.comps[k] || 0) / (s.flask || 1); if (!s.comps[k]) out.push(`${DRUGS[k].label} missing`); else if (Math.abs(c / req[k] - 1) > 0.05) out.push(`${DRUGS[k].label} ${fx(c, 3)} mg/mL (needs ${fx(req[k], 3)})`); }
+      for (const k in s.comps) if (!(k in req)) out.push(`${DRUGS[k].label} should not be in this solution`);
+      if (s.veh && s.veh !== testProfile().veh) out.push(testProfile().veh === 'cmc' ? 'aspirin not suspended in 1% CMC (settles: doses vary)' : 'made up in CMC instead of saline');
+      if (!s.mixed) out.push('not mixed after making up');
+      return out;
+    }
+
+    // ---------------------------------------------------------------- pharmacodynamics
+    function curve(p, t) {
+      const T = [0, 10, 20, 30, 60, 90, 150, 240], V = [0, 0.3 * p[0], 0.75 * p[0], p[0], p[1], p[2], 0.3 * p[2], 0];
+      if (t <= 0) return 0; if (t >= 240) return 0;
+      for (let i = 0; i < T.length - 1; i++) if (t <= T[i + 1]) return V[i] + (V[i + 1] - V[i]) * (t - T[i]) / (T[i + 1] - T[i]);
+      return 0;
+    }
+    function routeFactor(correct, given) {
+      if (correct === given) return { sp: 1, amp: 1 };
+      if (given === 'po') return { sp: 0.6, amp: 0.35 };          // first-pass loss, slow absorption
+      if (correct === 'po') return { sp: 1.5, amp: 1 };
+      if (given === 'ip') return { sp: 1.4, amp: 1.1 };           // s.c. drug given i.p.: faster, higher peak
+      return { sp: 0.8, amp: 0.95 };                              // i.p. drug given s.c.
+    }
+    const hill = r => r <= 0 ? 0 : Math.pow(r, 1.5) / (Math.pow(r, 1.5) + Math.pow(0.8, 1.5));
+    const fD = r => hill(r) / hill(1);
+    function excessAt(a, tmin) {
+      const d = a.dose; if (!d) return 0;
+      let tot = 0;
+      for (const k in d.mgkg) {
+        if (k === 'naloxone' || !(d.mgkg[k] > 0)) continue;
+        const prof = PROFILES[k], correct = d.src === 'coded' ? 'ip' : prof.route, rf = routeFactor(correct, d.route);
+        tot += curve(prof.peak, tmin * rf.sp) * rf.amp * fD(d.mgkg[k] / stdMgkg(k));
+      }
+      if (d.mgkg.naloxone > 0) tot *= 1 / (1 + 11 * d.mgkg.naloxone / 1);
+      return tot;
+    }
+    // true latency of animal a now; appF = apparatus factor (temperature, current, position)
+    function trueLatency(a, appF) {
+      const tmin = a.dose ? (S.clock - a.dose.t) / 60 : 0;
+      const ex = excessAt(a, tmin);
+      const susp = a.dose && a.dose.badSusp ? 3 : 1;
+      let L = a.basal * appF * (1 + ex * a.sens) * (1 + gauss() * CFG.noise * susp);
+      if (a.injured) L *= 0.65;
+      return Math.max(CFG.app === 'hotplate' ? 2.0 : 1.4, L);
+    }
+
+    // ---------------------------------------------------------------- readings
+    function nextSlot(a) {
+      for (let k = 0; k < 4; k++) { const r = a.R[k]; if (!r || r.invalid) return k; }
+      return -1;
+    }
+    function slotTiming(a, k) {   // [flag or null] for a reading taken now into slot k
+      if (k === 0) return a.dose ? 'basal taken after dosing' : null;
+      if (!a.dose) return 'post-drug reading before dosing';
+      const t = (S.clock - a.dose.t) / 60, due = DUE[k];
+      if (t < due - WIN) return `tested early (${fx(t, 0)} min, due ${due})`;
+      if (t > due + WIN) return `tested late (${fx(t, 0)} min, due ${due})`;
+      return null;
+    }
+    function storeReading(a, k, val, flags, invalid) {
+      const prev = a.R[k];
+      const fl = flags.slice();
+      if (prev && prev.invalid) fl.push('re-test');
+      if (k === 0 && !invalid && (val < CFG.screen[0] || val > CFG.screen[1])) fl.push(`basal outside the screening range (${CFG.screen[0]}–${CFG.screen[1]} s)`);
+      a.R[k] = { val: Math.round(val * 100) / 100, tmin: a.dose ? (S.clock - a.dose.t) / 60 : null, flags: fl, typed: '', invalid: !!invalid, clock: S.clock };
+      renderNotebook(); renderCtx(); refreshChecklist();
+    }
+    // the value the student should have written: what the watch shows, to 1 decimal
+    const shownVal = r => r ? Math.round(r.val * 10) / 10 : null;
+    function typedNum(v) { return v === '' || v === null || v === undefined ? NaN : +v; }
+    function readingOK(r) { if (!r || !isFinite(typedNum(r.typed))) return false; const v = typedNum(r.typed); return Math.abs(v - shownVal(r)) <= 0.051 || (shownVal(r) > CFG.cutoff && Math.abs(v - CFG.cutoff) < 0.051); }
+    function weightOK(a) { return a.weighed && isFinite(typedNum(a.wTyped)) && Math.abs(typedNum(a.wTyped) - a.wDisp) <= (CFG.wtDec ? 0.051 : 0.51); }
+    const volNeeded = a => isFinite(typedNum(a.wTyped)) ? typedNum(a.wTyped) / (CFG.wu === 'g' ? 1000 : 1) * volPerKg() : NaN;
+    function volOK(a) { const v = typedNum(a.volTyped), n = volNeeded(a); return isFinite(v) && isFinite(n) && Math.abs(v - n) <= Math.max(0.006, n * 0.04); }
+    // the value used for analysis: the student's own entry
+    const dataVal = (a, k) => { const r = a.R[k]; if (!r || r.invalid) return NaN; const v = typedNum(r.typed); return isFinite(v) ? v : NaN; };
+    const groupAn = g => S.an.filter(a => a.group === g).sort((x, y) => x.gi - y.gi);
+    function mpeOf(a, k) { const b = dataVal(a, 0), t = dataVal(a, k); if (!isFinite(b) || !isFinite(t) || CFG.cutoff - b <= 0) return NaN; return (Math.min(t, CFG.cutoff) - b) / (CFG.cutoff - b) * 100; }
+    function colVals(g, k) { const v = groupAn(g).map(a => dataVal(a, k)); return v.length === 6 && v.every(isFinite) ? v : null; }
+    function mpeVals(g, k) { const v = groupAn(g).map(a => mpeOf(a, k)); return v.length === 6 && v.every(isFinite) ? v : null; }
+    const allFlags = () => S.an.flatMap(a => a.flags.map(f => `${aName(a)}: ${f}`).concat(a.R.flatMap((r, k) => r ? r.flags.map(f => `${aName(a)} ${TP[k]}: ${f}`) : [])));
+
+    // ---------------------------------------------------------------- clock & due readings
+    function nextDue() {
+      let best = null;
+      S.an.forEach(a => {
+        if (!a.dose) return;
+        const k = nextSlot(a); if (k < 1) return;
+        const dueAt = a.dose.t + DUE[k] * 60;
+        if (!best || dueAt < best.at) best = { a, k, at: dueAt };
+      });
+      return best;
+    }
+    function tickClock(dtSim, dtR) {
+      // reaction timing on the apparatus is real time; lab time is not sped up while an animal is on test
+      S.clock += (S.app && S.app.trial) ? dtR : dtSim;
+      $('labClock').textContent = fmtHMS(S.clock);
+      const d = nextDue(), card = $('dueCard');
+      if (d) {
+        card.style.display = '';
+        const left = d.at - S.clock;
+        $('dueTitle').textContent = `${aName(d.a)} • ${TP[d.k]} reading`;
+        $('dueClock').textContent = left >= 0 ? fmtMS(left) : '−' + fmtMS(-left);
+        $('dueSub').textContent = left > WIN * 60 ? 'not due yet: use the speed control to wait' : left >= -WIN * 60 ? 'DUE NOW (window ± 5 min)' : 'window missed: test it as soon as possible';
+        $('dueClock').style.color = left > WIN * 60 ? '#fbbf24' : left >= -WIN * 60 ? '#4ade80' : '#f87171';
+      } else card.style.display = 'none';
+    }
+    // =====================================================================
+    // Exp 20 apparatus: tail-flick analgesiometer (station 3)
+    // =====================================================================
+    const APP_DEFS = `<linearGradient id="tubeGlass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bae6fd" stop-opacity="0.5"/><stop offset="0.14" stop-color="#ffffff" stop-opacity="0.55"/><stop offset="0.3" stop-color="#e0f2fe" stop-opacity="0.08"/><stop offset="0.78" stop-color="#e0f2fe" stop-opacity="0.08"/><stop offset="0.92" stop-color="#ffffff" stop-opacity="0.32"/><stop offset="1" stop-color="#7dd3fc" stop-opacity="0.5"/></linearGradient>
+      <linearGradient id="dialFace" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffbeb"/><stop offset="1" stop-color="#f1e7c8"/></linearGradient>
+      <radialGradient id="wireHalo" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#fdba74" stop-opacity="0.95"/><stop offset="0.5" stop-color="#f97316" stop-opacity="0.4"/><stop offset="1" stop-color="#f97316" stop-opacity="0"/></radialGradient>`;
+    const WIRE_X = 742, PXCM = 12, TAIL_CM = 16, TUBE_CY = 246, TUBE_R = 27, TUBE_W = 190, TOPY = 284, AMP_OK = [5, 6];
+    const DIAL = { cx: 452, cy: 392, r: 46 };
+    const ampAngle = a => (-140 + clamp(a, 0, 10) * 10) * Math.PI / 180;
+    function ratMarkup(st, withTail) {
+      const L = (cls, near, d) => `<path class="${cls}" d="${st ? d : ''}" stroke="${near ? '#f0a3b4' : '#d98fa2'}" stroke-width="${near ? 3.6 : 3}" stroke-linecap="round" fill="none"/>`;
+      const body = 'M -50 4 C -54 -18, -28 -31, 0 -29 C 22 -28, 36 -19, 42 -9 C 46 2, 36 15, 12 16 C -14 18, -48 18, -50 4 Z';
+      return `<g>${L('lf1', 0, 'M 18 6 Q 21 12 20 18')}${L('lf2', 0, 'M -32 10 Q -33 14 -30 18')}</g>
+        ${withTail ? `<path d="M -48 6 C -78 12, -96 30, -80 42 C -66 52, -40 50, -20 46" stroke="#e7b0b8" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M -48 6 C -78 12, -96 30, -80 42 C -66 52, -40 50, -20 46" stroke="#c48c95" stroke-width="4" fill="none" stroke-dasharray="0.8 3" opacity="0.6"/>` : ''}
+        <g><path d="${body}" fill="url(#furGrad)" stroke="#d6cec9" stroke-width="0.6"/><path d="${body}" fill="#fff" filter="url(#furT)"/><path d="${body}" fill="url(#bellyShade)"/>
+          <ellipse cx="-31" cy="4" rx="17" ry="13" fill="url(#furGrad)" stroke="#e0d8d4" stroke-width="0.5"/></g>
+        <g>${L('ln1', 1, 'M 22 6 Q 25 12 26 18')}${L('ln2', 1, 'M -28 10 Q -27 14 -24 18')}</g>
+        <g class="head"><path d="M 30 -15 C 40 -27, 58 -23, 72 -9 C 76 -5, 76 -1, 71 1 C 60 5, 44 7, 33 4 C 27 -1, 26 -9, 30 -15 Z" fill="url(#furGrad)" stroke="#e0d8d4" stroke-width="0.5"/>
+          <g transform="rotate(-14 38 -22)"><ellipse cx="38" cy="-22" rx="6.5" ry="8" fill="#f7eef0"/><ellipse cx="38.4" cy="-21.6" rx="5" ry="6.6" fill="url(#earGrad)"/></g>
+          <ellipse cx="54" cy="-11" rx="2.6" ry="2.4" fill="url(#eyeGrad)"/><circle cx="53.3" cy="-11.8" r="0.75" fill="#fff"/><ellipse cx="74.4" cy="-3.2" rx="2.3" ry="1.8" fill="#ef9db2"/>
+          <g stroke="#94a3b8" stroke-opacity="0.7" stroke-width="0.4" fill="none"><path d="M 70 -2 Q 80 -8 92 -10"/><path d="M 70 -1 Q 81 -2 94 -2"/><path d="M 70 0 Q 80 4 91 8"/></g></g>`;
+    }
+    const sideAnimalStatic = () => ratMarkup(true, true);
+    function freshApp() { return { power: false, amp: 2.0, pos: 4 + Math.random() * 2, trial: null, heat: false, timer: 0, run: false }; }
+    function appMakeReady() { Object.assign(S.app, { power: true, amp: 5.5, pos: 2 }); }
+    const ampOK = () => S.app.amp >= AMP_OK[0] - 1e-6 && S.app.amp <= AMP_OK[1] + 1e-6;
+    const posOK = () => S.app.pos >= 1.5 - 1e-6 && S.app.pos <= 3 + 1e-6;
+    const appReady = () => S.app.power && ampOK();
+    const appSetOK = appReady;
+    function appFactor(amp, pos) {
+      let f = Math.pow(5.5 / Math.max(0.5, amp), 1.5);
+      f *= 1 + 0.15 * Math.pow(Math.abs(pos - 2), 1.3);
+      return f;
+    }
+    function sceneApparatus() {
+      const A = S.app, tr = A.trial;
+      let s = notice(20, 16, 300, 'TAIL-FLICK END-POINTS', [['Heat intensity 5–6 A (ammeter)'], ['Wire about 2 cm from the tail tip'], ['HEAT starts the timer; STOP at the flick'], ['Small twitches are NOT the end-point'], ['Same site, same current for every reading'], ['CUT-OFF 10 s: switch the heat OFF', '#b91c1c', 800]], -0.5);
+      s += groupCages(10, 300, 168, 124, 6);
+      // cabinet
+      s += `<ellipse cx="680" cy="438" rx="320" ry="10" fill="url(#contact)"/>
+        <g filter="url(#sh)"><polygon points="370,300 990,300 1000,${TOPY} 384,${TOPY}" fill="#4b5563" stroke="#1f2937"/>
+        <rect x="370" y="300" width="620" height="130" rx="4" fill="url(#cabF)" stroke="#64748b"/><rect x="370" y="300" width="620" height="130" rx="4" fill="#fff" filter="url(#brushed)"/></g>
+        <polygon points="${WIRE_X - 10},299 ${WIRE_X + 2},299 ${WIRE_X + 10},${TOPY + 1} ${WIRE_X - 2},${TOPY + 1}" fill="#0b0f16"/>
+        <ellipse id="wireHalo" cx="${WIRE_X}" cy="${TOPY + 6}" rx="26" ry="14" fill="url(#wireHalo)" opacity="${A.heat ? 1 : 0}"/>
+        <line id="wire" x1="${WIRE_X - 6}" y1="298" x2="${WIRE_X + 6}" y2="${TOPY + 2}" stroke="${A.heat ? '#fb923c' : '#71717a'}" stroke-width="2.4" stroke-linecap="round"/>`;
+      // cm scale towards the tail tip
+      s += `<rect x="${WIRE_X}" y="${TOPY + 4}" width="${6 * PXCM + 2}" height="9" fill="#f8fafc" opacity=".9"/><rect x="${WIRE_X + 1.5 * PXCM}" y="${TOPY + 4}" width="${1.5 * PXCM}" height="9" fill="#22c55e" opacity=".55"/>`;
+      for (let i = 0; i <= 30; i++) { const x = WIRE_X + i * PXCM / 5, big = i % 5 === 0; s += `<line x1="${x}" y1="${TOPY + 4}" x2="${x}" y2="${TOPY + (big ? 10 : 7)}" stroke="#0f172a" stroke-width="${big ? 0.9 : 0.5}"/>`; if (big) s += lbl(x, TOPY + 22, String(i / 5), { s: 8, c: '#e2e8f0', w: 700, f: 'JetBrains Mono' }); }
+      s += lbl(WIRE_X + 3 * PXCM, TOPY + 32, 'cm from wire →', { s: 8, c: '#cbd5e1' });
+      // restrainer and rat (rat faces left; tail runs right to the tip)
+      const tipX = WIRE_X + A.pos * PXCM, baseX = tipX - TAIL_CM * PXCM, TX1 = baseX + 6, TX0 = TX1 - TUBE_W;
+      s += `<g class="hot" data-act="rest"><rect x="${TX0 + 12}" y="${TUBE_CY + TUBE_R - 2}" width="${TUBE_W - 24}" height="8" rx="2" fill="#475569" stroke="#1f2937" stroke-width=".6"/>
+        <rect x="${TX0}" y="${TUBE_CY - TUBE_R}" width="${TUBE_W}" height="${TUBE_R * 2}" fill="#e0f2fe" fill-opacity=".12"/>
+        <ellipse cx="${TX0}" cy="${TUBE_CY}" rx="8" ry="${TUBE_R}" fill="#cbd5e1" fill-opacity=".5" stroke="#bae6fd" stroke-width="1.2"/>
+        ${tr ? `<g transform="translate(${TX0 + TUBE_W / 2 + 8} ${TUBE_CY + 6}) scale(-1.0 1.0)">${ratMarkup(true, false)}</g>` : ''}
+        <rect x="${TX0}" y="${TUBE_CY - TUBE_R}" width="${TUBE_W}" height="${TUBE_R * 2}" fill="url(#tubeGlass)" stroke="#bae6fd" stroke-opacity=".9"/>
+        <path d="M ${TX0 + 8} ${TUBE_CY - TUBE_R + 6} L ${TX1 - 8} ${TUBE_CY - TUBE_R + 6}" stroke="#fff" stroke-width="2.5" opacity=".6"/>
+        <ellipse cx="${TX1}" cy="${TUBE_CY}" rx="8" ry="${TUBE_R}" fill="#94a3b8" fill-opacity=".35" stroke="#475569" stroke-width="1.6"/></g>
+        ${lbl(TX0 + TUBE_W / 2, TUBE_CY - TUBE_R - 10, 'Perspex restrainer', { s: 9.5, c: '#e2e8f0' })}`;
+      if (tr) s += `<g id="tailG"><path id="tailP" d="" stroke="#e7b0b8" stroke-width="5" fill="none" stroke-linecap="round"/><path id="tailR" d="" stroke="#c48c95" stroke-width="5" fill="none" stroke-dasharray="0.8 3" opacity=".6"/>
+        <text id="tailNo" font-size="7" font-weight="900" fill="#111827" font-family="Inter"></text></g>${tag(tipX, TOPY - 34, `tip • wire ${fx(A.pos, 2)} cm ${posOK() ? '✓' : ''}`, posOK() ? '#065f46' : '#9f1239')}`;
+      s += `<g class="hot" data-act="pos:-1"><rect x="${TX0 + 40}" y="${TUBE_CY + TUBE_R + 8}" width="36" height="16" rx="3" fill="#111827"/>${lbl(TX0 + 58, TUBE_CY + TUBE_R + 20, '◀ slide', { s: 7.5, c: '#fff' })}</g>
+        <g class="hot" data-act="pos:1"><rect x="${TX0 + 84}" y="${TUBE_CY + TUBE_R + 8}" width="36" height="16" rx="3" fill="#111827"/>${lbl(TX0 + 102, TUBE_CY + TUBE_R + 20, 'slide ▶', { s: 7.5, c: '#fff' })}</g>`;
+      // front panel: ammeter, intensity, timer, buttons, power
+      let ticks = '';
+      for (let i = 0; i <= 20; i++) { const a = ampAngle(i / 2), big = i % 4 === 0, r1 = DIAL.r - (big ? 9 : 5); ticks += `<line x1="${DIAL.cx + Math.cos(a) * DIAL.r}" y1="${DIAL.cy + Math.sin(a) * DIAL.r}" x2="${DIAL.cx + Math.cos(a) * r1}" y2="${DIAL.cy + Math.sin(a) * r1}" stroke="#1f2937" stroke-width="${big ? 1.5 : 0.8}"/>` + (big ? lbl(DIAL.cx + Math.cos(a) * (DIAL.r - 17), DIAL.cy + Math.sin(a) * (DIAL.r - 17) + 3, String(i / 2), { s: 7, c: '#1f2937', w: 700, f: 'JetBrains Mono' }) : ''); }
+      const arc = (a0, a1, r) => `M ${DIAL.cx + Math.cos(ampAngle(a0)) * r} ${DIAL.cy + Math.sin(ampAngle(a0)) * r} A ${r} ${r} 0 0 1 ${DIAL.cx + Math.cos(ampAngle(a1)) * r} ${DIAL.cy + Math.sin(ampAngle(a1)) * r}`;
+      const na = ampAngle(A.power ? A.amp : 0);
+      s += `<rect x="392" y="308" width="120" height="112" rx="6" fill="#1f2937"/><rect x="398" y="314" width="108" height="98" rx="4" fill="url(#dialFace)"/>
+        <path d="${arc(5, 6, DIAL.r - 3)}" stroke="#22c55e" stroke-width="6" fill="none" opacity=".85"/>${ticks}${lbl(DIAL.cx, DIAL.cy - 14, 'A', { s: 11, w: 900, c: '#1f2937' })}
+        <line id="needle" x1="${DIAL.cx}" y1="${DIAL.cy}" x2="${DIAL.cx + Math.cos(na) * (DIAL.r - 4)}" y2="${DIAL.cy + Math.sin(na) * (DIAL.r - 4)}" stroke="#b91c1c" stroke-width="1.8" stroke-linecap="round"/><circle cx="${DIAL.cx}" cy="${DIAL.cy}" r="4" fill="#1f2937"/>
+        ${lbl(DIAL.cx, 406, 'AMMETER 0–10 A', { s: 6.5, c: '#475569', f: 'JetBrains Mono' })}`;
+      s += `${lbl(560, 316, 'HEAT INTENSITY', { s: 7.5, c: '#13294f', w: 800, f: 'JetBrains Mono' })}<circle cx="560" cy="350" r="24" fill="url(#knobG)" stroke="#000"/>
+        <line x1="560" y1="350" x2="${560 + Math.sin((-135 + A.amp * 27) * Math.PI / 180) * 20}" y2="${350 - Math.cos((-135 + A.amp * 27) * Math.PI / 180) * 20}" stroke="#f8fafc" stroke-width="3" stroke-linecap="round"/>
+        <g class="hot" data-act="amp:-1"><rect x="530" y="380" width="26" height="18" rx="4" fill="#334155"/>${lbl(543, 393, '−', { s: 12, c: '#fff', w: 900 })}</g>
+        <g class="hot" data-act="amp:1"><rect x="564" y="380" width="26" height="18" rx="4" fill="#334155"/>${lbl(577, 393, '+', { s: 12, c: '#fff', w: 900 })}</g>${lbl(560, 412, '±0.5 A', { s: 7, c: '#334155', f: 'JetBrains Mono' })}`;
+      s += `<rect x="612" y="310" width="150" height="58" rx="6" fill="#1f2937"/>${lbl(687, 321, 'REACTION TIME (s)', { s: 7, c: '#9ca3af', f: 'JetBrains Mono' })}
+        <rect x="620" y="325" width="134" height="36" rx="3" fill="#050505"/><text x="748" y="354" text-anchor="end" font-family="DSEG7, JetBrains Mono" font-size="24" fill="#22c55e" opacity=".08">88.88</text>
+        <text id="swDisp" x="748" y="354" text-anchor="end" font-family="DSEG7, JetBrains Mono" font-size="24" fill="#22c55e" filter="url(#glow)">${A.timer.toFixed(2)}</text>
+        <g class="hot" data-act="heat"><circle cx="640" cy="396" r="19" fill="#14532d"/><circle cx="640" cy="394" r="16" fill="url(#btnGreen)" stroke="#14532d"/>${lbl(640, 397, 'HEAT', { s: 8, c: '#fff', w: 900 })}</g>
+        <circle id="heatLamp" cx="687" cy="390" r="5" fill="${A.heat ? '#f97316' : '#422006'}" stroke="#1c1917"/>${lbl(687, 405, 'HEAT ON', { s: 6, c: '#334155', f: 'JetBrains Mono' })}
+        <g class="hot" data-act="stop"><circle cx="734" cy="396" r="19" fill="#450a0a"/><circle cx="734" cy="394" r="16" fill="url(#btnRed)" stroke="#450a0a"/>${lbl(734, 397, 'STOP', { s: 8, c: '#fff', w: 900 })}</g>`;
+      s += `<g class="hot" data-act="power">${lbl(806, 316, 'POWER', { s: 7.5, c: '#1e293b', f: 'JetBrains Mono' })}<rect x="788" y="320" width="36" height="48" rx="5" fill="#0b0f16" stroke="#475569"/><rect x="793" y="${A.power ? 324 : 344}" width="26" height="20" rx="3" fill="${A.power ? '#dc2626' : '#7f1d1d'}"/>${lbl(806, 337, 'I', { s: 9, c: '#fff' })}${lbl(806, 360, 'O', { s: 9, c: '#fff' })}</g>
+        <circle cx="806" cy="384" r="4.5" fill="${A.power ? '#ef4444' : '#422006'}"/>${lbl(806, 398, 'MAINS', { s: 6, c: '#334155', f: 'JetBrains Mono' })}
+        <rect x="846" y="318" width="132" height="64" rx="3" fill="#f8fafc" stroke="#94a3b8"/>${lbl(912, 334, 'XPRISM Instruments', { s: 7.5, w: 800, c: '#681197' })}${lbl(912, 350, 'ANALGESIOMETER', { s: 10, w: 900, c: '#b91c1c' })}${lbl(912, 363, "TAIL-FLICK (D'Amour–Smith)", { s: 6.5, c: '#334155' })}${lbl(912, 375, '230 V AC • 0–10 A', { s: 6.5, c: '#334155', f: 'JetBrains Mono' })}`;
+      s += heldAnimal(880, 170);
+      return s;
+    }
+    // ---------------------------------------------------------------- analgesiometer: actions and the timed trial
+    function act3(a, arg) {
+      const A = S.app, tr = A.trial;
+      if (a === 'power') {
+        if (A.heat) return say('Press STOP (heat off) before switching the mains off.', true);
+        A.power = !A.power; beep('click');
+        say(A.power ? `Analgesiometer ON. Intensity set to ${A.amp.toFixed(1)} A${ampOK() ? '.' : ': adjust it to 5–6 A with the intensity control.'}` : 'Analgesiometer switched OFF.');
+      } else if (a === 'amp') {
+        if (A.heat) return say('Do not change the intensity during a reading.', true);
+        A.amp = clamp(+(A.amp + arg * 0.5).toFixed(1), 0, 10); beep('tick');
+        say(`Heat intensity ${A.amp.toFixed(1)} A.${A.amp > 6 ? ' Above 6 A the tail heats too fast: latencies are compressed and the skin can burn.' : A.amp < 5 ? ' Below 5 A the basal latency becomes long and variable.' : ''}`, !ampOK());
+      } else if (a === 'pos') {
+        if (A.heat) return say('Do not move the restrainer while the heat is on.', true);
+        A.pos = clamp(+(A.pos - arg * 0.25).toFixed(2), 0, 8); beep('tick');   // sliding the restrainer right brings the tip towards the wire
+        if (tr) say(`Wire now ${fx(A.pos, 2)} cm from the tail tip${posOK() ? ' ✓ (1.5–3 cm)' : ' (aim for about 2 cm)'}.`, !posOK());
+      } else if (a === 'an') {
+        if (tr) return say('A rat is in the restrainer: finish that reading first.', true);
+        const x = S.an[arg];
+        if (S.hand !== null && S.hand !== x.i) { const h = S.an[S.hand]; h.loc = h.group; }
+        if (nextSlot(x) < 0) { buildScene(); return say(`${aName(x)} has all four readings.`, true); }
+        S.hand = x.i; x.loc = 'hand'; beep('click');
+        const k = nextSlot(x), tf = slotTiming(x, k);
+        say(`${aName(x)} picked up for its ${TP[k]} reading.${tf ? ' Note: ' + tf + '.' : ''} Put it in the restrainer.`, !!tf);
+      } else if (a === 'cage') {
+        if (S.hand !== null && !tr) { const h = S.an[S.hand]; h.loc = h.group; S.hand = null; say(`${aName(h)} put back.`); }
+      } else if (a === 'rest') {
+        if (tr) return removeFromRestrainer();
+        if (S.hand === null) return say(`Pick a ${CFG.sp} from a group cage first.`, true);
+        const x = S.an[S.hand];
+        A.trial = { a: x, k: nextSlot(x), e: 0, L: null, heated: false, responded: false, stop: null, alarm: false, burnt: false, ph: Math.random() * 6, fl: [] };
+        S.hand = null; x.loc = 'app'; beep('click');
+        say(`${aName(x)} in the restrainer, tail over the wire groove. Slide the restrainer until the wire is about 2 cm from the tail tip, then press HEAT.`);
+      } else if (a === 'heat') {
+        if (!A.power) return say('Switch the analgesiometer ON first.', true);
+        if (!tr) return say('Put a rat in the restrainer first.', true);
+        if (tr.heated) return say('This rat has been heated once. Take it out (click the restrainer); repeat heating of the same site gives unreliable latencies.', true);
+        startHeat();
+      } else if (a === 'stop') {
+        if (A.heat) { A.heat = false; A.run = false; if (tr && tr.stop === null) tr.stop = tr.e; beep('tick'); say(`Heat OFF. Timer reads ${A.timer.toFixed(2)} s. Take the rat out of the restrainer (click it).`); }
+      }
+      buildScene(); renderCtx(); refreshChecklist();
+    }
+    function startHeat() {
+      const A = S.app, tr = A.trial, x = tr.a, fl = tr.fl;
+      const tf = slotTiming(x, tr.k); if (tf) fl.push(tf);
+      if (!ampOK()) fl.push(`intensity ${A.amp.toFixed(1)} A (not 5–6 A)`);
+      if (!posOK()) fl.push(`wire ${fx(A.pos, 2)} cm from the tip (not 1.5–3 cm)`);
+      if (!x.marked) fl.push('identity uncertain (unmarked)');
+      let L = A.pos < 0.4 ? Infinity : trueLatency(x, appFactor(A.amp, A.pos));
+      if (A.pos < 0.4) fl.push('heat beam missed the tail');
+      tr.L = L >= CFG.cutoff ? Infinity : L; tr.heated = true; tr.e = 0;
+      A.heat = true; A.timer = 0; A.run = true; beep('click');
+      say(`HEAT ON: the timer is running. Watch the tail and press STOP at the sudden flick (not at small twitches). Cut-off ${CFG.cutoff} s.`);
+    }
+    function removeFromRestrainer() {
+      const A = S.app, tr = A.trial, x = tr.a, c = CFG.cutoff, fl = tr.fl.slice();
+      if (A.heat) return say('Switch the heat OFF (STOP) before taking the rat out.', true);
+      let invalid = false;
+      if (!tr.heated) { A.trial = null; x.loc = x.group; buildScene(); renderCtx(); return say(`${aName(x)} returned to its cage without a reading.`); }
+      if (isFinite(tr.L) && tr.stop < tr.L - 0.05) { fl.push('stopped before the tail flick'); invalid = true; }
+      else if (isFinite(tr.L) && tr.stop - tr.L > 1.0) fl.push(`stopped ${fx(tr.stop - tr.L, 1)} s after the flick`);
+      if (!isFinite(tr.L) && tr.stop < c - 0.3) { fl.push('heat stopped before the cut-off without a flick'); invalid = true; }
+      if (tr.burnt) { fl.push(`CUT-OFF EXCEEDED: heat on for ${fx(tr.stop, 1)} s without a flick (tail burn)`); x.injured = true; addFlag(x, 'tail burn after cut-off breach: later readings invalid'); }
+      else if (x.injured) fl.push('burnt tail (earlier cut-off breach)');
+      const val = A.timer;
+      if (!invalid && val > c + 0.05) fl.push(`timer read ${val.toFixed(2)} s: above the cut-off, record ${c} s`);
+      A.trial = null; x.loc = x.group; $('cutBanner').style.display = 'none';
+      storeReading(x, tr.k, val, fl, invalid);
+      beep(invalid ? 'warn' : 'ok');
+      say(invalid ? `${aName(x)} returned to its cage. Reading not valid (${fl.join('; ')}): re-test after a short rest.` :
+        `${aName(x)} back in its cage. Read the timer (${val.toFixed(2)} s) and type the ${TP[tr.k]} latency into the notebook${fl.length ? '. ⚑ ' + fl.join('; ') : '.'}`, invalid || fl.length > 0);
+      buildScene(); renderCtx(); refreshChecklist();
+    }
+    window.addEventListener('keydown', e => { if (e.code === 'Space' && S && S.station === 3 && !/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) { e.preventDefault(); act3('stop'); } });
+
+    function appFrame(dtSim, dtR) {
+      const A = S.app, tr = A.trial;
+      if (A.run) A.timer += dtR;
+      if (tr && A.heat) {
+        tr.e += dtR;
+        if (tr.e >= tr.L && !tr.responded) { tr.responded = true; beep('tick'); }
+        if (tr.e >= CFG.cutoff && !tr.alarm && !tr.responded) { tr.alarm = true; beep('warn'); $('cutBanner').style.display = ''; $('cutBanner').textContent = `CUT-OFF ${CFG.cutoff} s: press STOP to switch the heat OFF now`; }
+        if (tr.e >= CFG.cutoff + 1 && !tr.burnt && !tr.responded) { tr.burnt = true; say(`Tissue protection: the tail of ${aName(tr.a)} has been heated beyond the ${CFG.cutoff} s cut-off. Switch the heat off now; this is recorded as a welfare breach.`, true); }
+      }
+      if (S.station !== 3) return;
+      const d = $('swDisp'); if (!d) return;
+      d.textContent = A.timer.toFixed(2);
+      const halo = $('wireHalo'); if (halo) halo.setAttribute('opacity', A.heat ? 0.75 + Math.sin(performance.now() / 90) * 0.2 : 0);
+      if (tr) drawTail(tr);
+    }
+    function drawTail(tr) {
+      const A = S.app, p = $('tailP'); if (!p) return;
+      const tipX = WIRE_X + A.pos * PXCM, baseX = tipX - TAIL_CM * PXCM, T = performance.now() / 1000 + tr.ph;
+      let lift = 0, side = 0;
+      if (A.heat && !tr.responded && tr.e > 0) lift = Math.max(0, Math.sin(T * 9)) * Math.min(2.5, tr.e * 0.4) * (Math.sin(T * 1.7) > 0.4 ? 1 : 0.2);   // small twitches
+      if (tr.responded) { const r = tr.e - tr.L; lift = r < 0.25 ? r / 0.25 * 34 : 34 - Math.min(18, (r - 0.25) * 30); side = 1; }
+      const y0 = TUBE_CY + 12, yb = TOPY - 2, x1 = baseX + 40, xm = baseX + 90;
+      const d = `M ${baseX + 2} ${y0} C ${baseX + 20} ${y0 + 4}, ${x1} ${yb}, ${xm} ${yb} L ${tipX - 60} ${yb} Q ${tipX - 26} ${yb - lift * 0.3} ${tipX} ${yb - lift}`;
+      p.setAttribute('d', d); p.setAttribute('stroke-width', 5); $('tailR').setAttribute('d', d);
+      const no = $('tailNo'); if (no && tr.a.marked) { no.setAttribute('x', xm - 6); no.setAttribute('y', yb - 5); no.textContent = tr.a.id; }
+    }
+    function ctx3() {
+      const A = S.app, tr = A.trial;
+      let h = `<div class="grid2"><span class="k">Analgesiometer</span><span class="v">${A.power ? 'ON' : 'OFF'} • ${A.amp.toFixed(1)} A ${ampOK() ? '✓' : ''}</span>`;
+      if (tr) h += `<span class="k">Restrainer</span><span class="v">${aName(tr.a)} • ${TP[tr.k]}</span><span class="k">Wire from tip</span><span class="v">${fx(A.pos, 2)} cm ${posOK() ? '✓' : ''}</span>`;
+      else if (S.hand !== null) h += `<span class="k">In hand</span><span class="v">${aName(S.an[S.hand])}</span>`;
+      h += `</div>`;
+      if (!A.power) h += `<div class="note">Switch ON the analgesiometer and set the heat intensity to 5–6 A (− / +). Check the ammeter.</div>`;
+      else if (!ampOK()) h += `<div class="warnbox">Intensity ${A.amp.toFixed(1)} A: the method uses 5–6 A.</div>`;
+      h += `<div class="note">Put the rat in the restrainer, slide it (◀ ▶) until the wire is about 2 cm from the tail tip, press HEAT, press STOP at the sudden flick, then click the restrainer to take the rat out. Cut-off ${CFG.cutoff} s.</div>`;
+      return h;
+    }
+    function appTargets() {
+      const A = S.app, tr = A.trial;
+      if (!A.power) return ['power'];
+      if (!ampOK()) return [A.amp < 5 ? 'amp:1' : 'amp:-1'];
+      if (tr) { if (A.heat) return ['stop']; if (tr.heated) return ['rest']; if (!posOK()) return [A.pos > 2 ? 'pos:1' : 'pos:-1']; return ['heat']; }
+      if (S.hand !== null) return ['rest'];
+      return null;
+    }
+    // =====================================================================
+    // Shared realistic rodent art (albino Wistar rat / Swiss albino mouse).
+    // Anatomical silhouettes, strand-textured fur with fuzzy edge, rim light,
+    // veined ears, glossy ruby eyes, whiskers, ringed tail, toed paws.
+    // Side views face +x, top views have the head at +x.  Origin = body centre.
+    // =====================================================================
+    const ANI_DEFS = `
+      <filter id="furStrand" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".55 .08" numOctaves="3" seed="12" result="n"/><feColorMatrix in="n" values="0 0 0 0 .52  0 0 0 0 .46  0 0 0 0 .43  0 0 0 .75 -.2"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+      <filter id="furStrandT" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".12 .6" numOctaves="3" seed="21" result="n"/><feColorMatrix in="n" values="0 0 0 0 .52  0 0 0 0 .46  0 0 0 0 .43  0 0 0 .75 -.2"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+      <filter id="furFuzz" x="-6%" y="-8%" width="112%" height="116%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="3" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+      <filter id="aniBlur"><feGaussianBlur stdDeviation="1.6"/></filter>
+      <filter id="aniSoft"><feGaussianBlur stdDeviation=".5"/></filter>
+      <linearGradient id="aniBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".4" stop-color="#f7f3f0"/><stop offset=".78" stop-color="#e6ddd9"/><stop offset="1" stop-color="#c9bcb7"/></linearGradient>
+      <linearGradient id="aniBodyT" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#fbf8f6"/><stop offset=".5" stop-color="#f1ebe7"/><stop offset="1" stop-color="#ddd2cd"/></linearGradient>
+      <linearGradient id="aniShade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".6" stop-color="#9a8782" stop-opacity="0"/><stop offset="1" stop-color="#5f4c48" stop-opacity=".38"/></linearGradient>
+      <linearGradient id="aniTail" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#efbdc6"/><stop offset="1" stop-color="#dc98a8"/></linearGradient>
+      <radialGradient id="aniEye" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ff8097"/><stop offset=".5" stop-color="#b3122c"/><stop offset="1" stop-color="#430410"/></radialGradient>
+      <radialGradient id="aniEar" cx=".5" cy=".62" r=".65"><stop offset="0" stop-color="#fcd7df"/><stop offset=".7" stop-color="#f2adbf"/><stop offset="1" stop-color="#e48fa6"/></radialGradient>
+      <linearGradient id="aniPaw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6bcc8"/><stop offset="1" stop-color="#e395a8"/></linearGradient>`;
+
+    const _ANI_SIDE = 'M45 1.5 C42 -2 37 -7 29 -10 C22 -13 14 -16 3 -16.5 C-9 -17 -21 -14.5 -28 -8 C-33 -3 -33 6 -29 11 C-25 15 -17 15.5 -9 15.5 C0 15.5 9 14.5 17 12 C24 10 31 8.5 37 6 C41 4.5 44 3 45 1.5Z';
+    const _ANI_TOP = 'M27 0 C25 -2.4 22 -4.6 18 -5.8 C15 -7 12.5 -8.6 8 -9.4 C1 -10.6 -8 -10.2 -13.5 -7.8 C-18 -5.8 -20.5 -2.8 -20.5 0 C-20.5 2.8 -18 5.8 -13.5 7.8 C-8 10.2 1 10.6 8 9.4 C12.5 8.6 15 7 18 5.8 C22 4.6 25 2.4 27 0Z';
+    const _toes = (x, y, n, len, dx, dy, w = .5) => Array.from({ length: n }, (_, i) => { const a = (i - (n - 1) / 2) * .42; return `<line x1="${x}" y1="${y}" x2="${(x + (dx * Math.cos(a) - dy * Math.sin(a)) * len).toFixed(2)}" y2="${(y + (dx * Math.sin(a) + dy * Math.cos(a)) * len).toFixed(2)}" stroke="#c77a8f" stroke-width="${w}" stroke-linecap="round"/>`; }).join('');
+    const _whisk = (x, y, dir, sc) => [[-9, -14], [-3, -17], [4, -16], [9, -11], [12, -5]].map(([a, b], i) => `<path d="M${x} ${y + (i - 2) * .55 * sc} Q${x + dir * (8 + i) * sc} ${y + (a * .55) * sc} ${x + dir * (19 + i * 1.5) * sc} ${y + b * sc * .8}" fill="none" stroke="#fff" stroke-opacity=".62" stroke-width=".28"/>`).join('');
+
+    // ---- side view. o: {flip, sw (paw swelling 0..1), ink, kind:'rat'|'mouse'}  Returns art only (no marks).
+    function animalSideArt(o = {}) {
+        const mouse = o.kind === 'mouse', sc = mouse ? .47 : 1, sw = o.sw || 0;
+        const pawC = `rgb(${Math.round(240 - 16 * sw)},${Math.round(160 - 70 * sw)},${Math.round(176 - 70 * sw)})`;
+        const tail = mouse ? 'M-30 3 C-48 5 -58 -2 -70 5 C-80 10 -90 8 -96 14' : 'M-30 3 C-44 4 -52 12 -64 10 C-72 9 -76 14 -82 12';
+        const earRot = mouse ? -12 : -20, earS = mouse ? 1.5 : 1;
+        return `<g transform="scale(${sc})">
+        <ellipse cx="2" cy="16.5" rx="${mouse ? 40 : 36}" ry="3.6" fill="#000" opacity=".3" filter="url(#aniBlur)"/>
+        <path d="${tail}" fill="none" stroke="url(#aniTail)" stroke-width="${mouse ? 3.2 : 2.7}" stroke-linecap="round"/>
+        <path d="${tail}" fill="none" stroke="#b97585" stroke-width="${mouse ? 3.2 : 2.7}" stroke-linecap="round" stroke-dasharray=".55 1.5" opacity=".6"/>
+        <g opacity=".85"><path d="M22 10 Q26 14 25 16.6 L31 16.8 Q31 13 28 10Z" fill="#d9a2ae"/><path d="M-20 12 Q-18 16 -16 16.4 L-7 16.6 Q-7 14 -10 12Z" fill="#d9a2ae"/></g>
+        <path d="${_ANI_SIDE}" fill="url(#aniBody)" filter="url(#furFuzz)"/>
+        <path d="${_ANI_SIDE}" fill="#fff" filter="url(#furStrand)" opacity=".85"/>
+        <path d="${_ANI_SIDE}" fill="url(#aniShade)"/>
+        <path d="M-27 -8 C-20 -14.5 -8 -16.8 3 -16.3 C13 -15.8 21 -13.4 28 -10" fill="none" stroke="#fff" stroke-width="1.5" stroke-opacity=".85" filter="url(#aniSoft)"/>
+        <ellipse cx="-15" cy="3" rx="13.5" ry="11.5" fill="#fff" opacity=".28"/><path d="M-27 4 C-26 -4 -20 -9 -13 -9.5" fill="none" stroke="#d8cdc8" stroke-width=".6" opacity=".55"/>
+        <ellipse cx="19" cy="2.5" rx="9" ry="9.5" fill="#fff" opacity=".16"/>
+        <g transform="rotate(${earRot} 23 -12) translate(${(23 * (1 - earS)).toFixed(1)} ${(-13 * (1 - earS)).toFixed(1)}) scale(${earS})"><ellipse cx="23" cy="-14" rx="4.8" ry="6.2" fill="#f4eae6" stroke="#e6d9d4" stroke-width=".4"/><ellipse cx="23.2" cy="-13.6" rx="3.5" ry="4.8" fill="url(#aniEar)"/><path d="M23 -9.5 Q23.4 -13 22.2 -17 M23.8 -10 Q25 -13 25.4 -16" fill="none" stroke="#d2728d" stroke-width=".35" opacity=".65"/></g>
+        <ellipse cx="34" cy="-4.8" rx="2.5" ry="2.25" fill="#3a0a14"/><ellipse cx="34" cy="-4.8" rx="2" ry="1.8" fill="url(#aniEye)"/><circle cx="33.2" cy="-5.6" r=".68" fill="#fff"/><circle cx="35" cy="-4" r=".3" fill="#fff" opacity=".6"/><path d="M31.6 -6.4 Q34 -8 36.5 -6.2" fill="none" stroke="#e5d6d1" stroke-width=".55"/>
+        <ellipse cx="44.6" cy="1.6" rx="2" ry="1.55" fill="#e98aa1"/><circle cx="45.4" cy="1.2" r=".5" fill="#8a2d44"/><path d="M43 4.2 Q40 5.6 37.4 5.3" fill="none" stroke="#b49a98" stroke-width=".4"/>
+        ${_whisk(41, 2.6, 1, 1)}
+        <path d="M17 9 Q23 12 22 15.5 L29 16 Q29 12 26 8.5Z" fill="url(#aniPaw)" opacity=".95"/>${_toes(22.5, 15.7, 3, 4.2, 1, 0.25)}
+        <ellipse cx="-13" cy="14.2" rx="${(6.8 + sw * 3.2).toFixed(1)}" ry="${(2.5 + sw * 1.3).toFixed(1)}" fill="${pawC}"/><ellipse cx="-13" cy="13.6" rx="${(5.4 + sw * 3).toFixed(1)}" ry="${(1.3 + sw * .8).toFixed(1)}" fill="#fff" opacity=".22"/>${_toes(-7.5, 15, 4, 4.4, 1, .18)}
+        ${o.ink ? `<line x1="-18" y1="11" x2="-8" y2="11" stroke="#1e3a8a" stroke-width="1.2"/>` : ''}
+        </g>`;
+    }
+    // ---- top view (head to +x). o: {kind}
+    function animalTopArt(o = {}) {
+        const mouse = o.kind !== 'rat';
+        return `<g transform="scale(.72)">
+        <ellipse cx="0" cy="2.6" rx="24" ry="11" fill="#000" opacity=".26" filter="url(#aniBlur)"/>
+        <path d="M-20 0 C-30 3 -38 -3 -50 2 C-56 5 -60 2 -64 5" fill="none" stroke="url(#aniTail)" stroke-width="2.3" stroke-linecap="round"/>
+        <path d="M-20 0 C-30 3 -38 -3 -50 2 C-56 5 -60 2 -64 5" fill="none" stroke="#b97585" stroke-width="2.3" stroke-linecap="round" stroke-dasharray=".5 1.4" opacity=".6"/>
+        ${[-1, 1].map(s => `<g>
+          <ellipse cx="11" cy="${s * 8.6}" rx="3.3" ry="2" fill="#f1ebe7" stroke="#ddd2cd" stroke-width=".3" transform="rotate(${s * 28} 11 ${s * 8.6})"/>
+          <ellipse cx="13.6" cy="${s * 10.6}" rx="2.2" ry="1.25" fill="url(#aniPaw)" stroke="#d58a9c" stroke-width=".25" transform="rotate(${s * 40} 13.6 ${s * 10.6})"/>
+          <ellipse cx="-9.5" cy="${s * 9.2}" rx="5" ry="3" fill="#f1ebe7" stroke="#ddd2cd" stroke-width=".3" transform="rotate(${s * -18} -9.5 ${s * 9.2})"/>
+          <ellipse cx="-5.4" cy="${s * 11.6}" rx="3.8" ry="1.5" fill="url(#aniPaw)" stroke="#d58a9c" stroke-width=".25" transform="rotate(${s * -14} -5.4 ${s * 11.6})"/>
+          ${_toes(-2.6, s * 11.9, 4, 1.9, .8, s * .2, .3)}${_toes(15.3, s * 11.6, 3, 1.5, .6, s * .7, .3)}
+        </g>`).join('')}
+        <path d="${_ANI_TOP}" fill="url(#aniBodyT)" filter="url(#furFuzz)"/>
+        <path d="${_ANI_TOP}" fill="#fff" filter="url(#furStrandT)" opacity=".85"/>
+        <path d="M-16 0 L16 0" stroke="#d5c9c4" stroke-width=".9" opacity=".35" filter="url(#aniSoft)"/>
+        <ellipse cx="-9" cy="-5.6" rx="8" ry="5" fill="#fff" opacity=".3"/><ellipse cx="-9" cy="5.6" rx="8" ry="5" fill="#fff" opacity=".3"/>
+        <path d="M-18 -4 C-12 -9.4 2 -9.6 9 -8.4" fill="none" stroke="#fff" stroke-width="1.1" stroke-opacity=".7" filter="url(#aniSoft)"/>
+        ${[-1, 1].map(s => `<g><ellipse cx="14.5" cy="${s * 6.4}" rx="3.9" ry="3.3" fill="#f3e9e5" stroke="#e5d8d3" stroke-width=".35"/><ellipse cx="14.7" cy="${s * 6.4}" rx="2.7" ry="2.3" fill="url(#aniEar)"/><path d="M13 ${s * 6.4} Q15 ${s * 6.8} 17 ${s * 6.2}" fill="none" stroke="#d2728d" stroke-width=".3" opacity=".6"/>
+          <ellipse cx="21.4" cy="${s * 3}" rx="1.35" ry="1.2" fill="#3a0a14"/><ellipse cx="21.4" cy="${s * 3}" rx="1.05" ry=".95" fill="url(#aniEye)"/><circle cx="21" cy="${s * 3 - .45}" r=".38" fill="#fff"/></g>`).join('')}
+        <ellipse cx="27" cy="0" rx="1.5" ry="1.3" fill="#e98aa1"/>
+        ${[-1, 1].map(s => [[-12, 5], [-6, 7], [1, 8]].map(([a, b]) => `<path d="M25.5 ${s * 1} Q${31 + b * .3} ${s * (1 + b * .6)} ${34 + b} ${s * (3 + b * 1.5 + a * -.1)}" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width=".26"/>`).join('')).join('')}
+        </g>`;
+    }
+
+    // =====================================================================
+    // Shared SVG: defs, room, cages, animals (top view), balances, bottles
+    // =====================================================================
+    const DEFS = `<defs>
+      <filter id="sh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="3" dy="5" stdDeviation="4" flood-color="#000" flood-opacity=".42"/></filter>
+      <filter id="sh2" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="1" dy="2" stdDeviation="1.5" flood-color="#000" flood-opacity=".5"/></filter>
+      <filter id="glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="blur2"><feGaussianBlur stdDeviation="2"/></filter>
+      <filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="7" result="n"/><feColorMatrix in="n" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .07 0"/></filter>
+      <filter id="furT" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9 .25" numOctaves="2" seed="5"/><feColorMatrix values="0 0 0 0 .55  0 0 0 0 .5  0 0 0 0 .48  0 0 0 .35 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+      <filter id="shavF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".18 .5" numOctaves="3" seed="11"/><feColorMatrix values="0 0 0 0 .45  0 0 0 0 .3  0 0 0 0 .12  0 0 0 .55 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+      <filter id="brushed" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".01 .9" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .16 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+      <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#26313d"/><stop offset="1" stop-color="#1c252f"/></linearGradient>
+      <radialGradient id="spot" cx=".5" cy=".3" r=".75"><stop offset="0" stop-color="#6b7c8e" stop-opacity=".45"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+      <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2d3946"/><stop offset="1" stop-color="#27323e"/></linearGradient>
+      <linearGradient id="bench" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a4048"/><stop offset=".06" stop-color="#23272d"/><stop offset="1" stop-color="#16191d"/></linearGradient>
+      <linearGradient id="steel" x1="0" x2="1"><stop offset="0" stop-color="#6b7280"/><stop offset=".35" stop-color="#f3f4f6"/><stop offset=".55" stop-color="#d1d5db"/><stop offset="1" stop-color="#4b5563"/></linearGradient>
+      <linearGradient id="steelH" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9ca3af"/><stop offset=".4" stop-color="#f9fafb"/><stop offset="1" stop-color="#6b7280"/></linearGradient>
+      <linearGradient id="cabF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2e8f0"/><stop offset=".5" stop-color="#cbd5e1"/><stop offset="1" stop-color="#94a3b8"/></linearGradient>
+      <linearGradient id="cabD" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#475569"/><stop offset="1" stop-color="#1e293b"/></linearGradient>
+      <linearGradient id="glass" x1="0" x2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".75"/><stop offset=".12" stop-color="#ffffff" stop-opacity=".22"/><stop offset=".5" stop-color="#e0f2fe" stop-opacity=".14"/><stop offset=".85" stop-color="#ffffff" stop-opacity=".3"/><stop offset="1" stop-color="#bae6fd" stop-opacity=".7"/></linearGradient>
+      <linearGradient id="polyc" x1="0" x2="1"><stop offset="0" stop-color="#e0f2fe" stop-opacity=".42"/><stop offset=".1" stop-color="#ffffff" stop-opacity=".18"/><stop offset=".9" stop-color="#ffffff" stop-opacity=".14"/><stop offset="1" stop-color="#bae6fd" stop-opacity=".45"/></linearGradient>
+      <linearGradient id="shav" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1d9a8"/><stop offset="1" stop-color="#c79b58"/></linearGradient>
+      <linearGradient id="liquid" x1="0" x2="1"><stop offset="0" stop-color="#60a5fa" stop-opacity=".85"/><stop offset=".5" stop-color="#bfdbfe" stop-opacity=".75"/><stop offset="1" stop-color="#3b82f6" stop-opacity=".9"/></linearGradient>
+      <linearGradient id="milky" x1="0" x2="1"><stop offset="0" stop-color="#e5e7eb" stop-opacity=".95"/><stop offset=".5" stop-color="#ffffff" stop-opacity=".9"/><stop offset="1" stop-color="#cbd5e1" stop-opacity=".95"/></linearGradient>
+      <linearGradient id="amberG" x1="0" x2="1"><stop offset="0" stop-color="#3b1d06"/><stop offset=".3" stop-color="#9a5a17"/><stop offset=".5" stop-color="#c0812f"/><stop offset="1" stop-color="#3b1d06"/></linearGradient>
+      <linearGradient id="hdpe" x1="0" x2="1"><stop offset="0" stop-color="#cbd5e1"/><stop offset=".4" stop-color="#f8fafc"/><stop offset="1" stop-color="#94a3b8"/></linearGradient>
+      <radialGradient id="lcd" cx=".5" cy=".5" r=".8"><stop offset="0" stop-color="#d4e6be"/><stop offset="1" stop-color="#a3bc8c"/></radialGradient>
+      <radialGradient id="furGrad" cx="0.42" cy="0.32" r="0.78"><stop offset="0" stop-color="#ffffff"/><stop offset="0.6" stop-color="#f6f3f1"/><stop offset="1" stop-color="#d8d0cc"/></radialGradient>
+      <linearGradient id="bellyShade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.65" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#6b5a58" stop-opacity="0.3"/></linearGradient>
+      <radialGradient id="earGrad" cx="0.5" cy="0.55" r="0.6"><stop offset="0" stop-color="#f9d0d9"/><stop offset="0.7" stop-color="#f1adbf"/><stop offset="1" stop-color="#e293a8"/></radialGradient>
+      <radialGradient id="eyeGrad" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#ff5d77"/><stop offset="0.55" stop-color="#c0142f"/><stop offset="1" stop-color="#5c0614"/></radialGradient>
+      <radialGradient id="contact" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#000" stop-opacity="0.6"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+      <radialGradient id="knobG" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#6b7280"/><stop offset="0.6" stop-color="#1f2937"/><stop offset="1" stop-color="#030712"/></radialGradient>
+      <radialGradient id="btnGreen" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#4ade80"/><stop offset="1" stop-color="#15803d"/></radialGradient>
+      <radialGradient id="btnRed" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#f87171"/><stop offset="1" stop-color="#991b1b"/></radialGradient>
+      ${APP_DEFS}
+    ${ANI_DEFS}</defs>`;
+    function room(benchY = 430) {
+      let t = '';
+      for (let y = 0; y < benchY; y += 38) for (let x = (y / 38) % 2 ? -26 : 0; x < 1000; x += 52) t += `<rect x="${x}" y="${y}" width="51" height="37" fill="url(#tile)" stroke="#1a222b" stroke-width="1"/>`;
+      return `<rect width="1000" height="560" fill="url(#wall)"/>${t}<rect width="1000" height="${benchY}" fill="url(#spot)"/>
+        <rect y="${benchY - 6}" width="1000" height="8" fill="#5b636d"/>
+        <rect y="${benchY}" width="1000" height="${560 - benchY}" fill="url(#bench)"/>
+        <rect y="${benchY}" width="1000" height="${560 - benchY}" filter="url(#grain)" opacity=".7"/>
+        <rect y="${benchY + 2}" width="1000" height="2" fill="#fff" opacity=".08"/>`;
+    }
+    const lbl = (x, y, t, o = {}) => `<text x="${x}" y="${y}" font-size="${o.s || 10}" fill="${o.c || '#1e293b'}" text-anchor="${o.a || 'middle'}" font-weight="${o.w || 600}" font-family="${o.f || 'Inter, sans-serif'}">${t}</text>`;
+    const tag = (x, y, t, c = '#0f172a') => `<g><rect x="${x - t.length * 3.1 - 6}" y="${y - 11}" width="${t.length * 6.2 + 12}" height="16" rx="4" fill="${c}" opacity=".85"/>${lbl(x, y + 1, t, { c: '#fff', s: 10 })}</g>`;
+    const benchLbl = (x, y, t) => lbl(x, y, t, { c: '#e2e8f0', s: 10.5, w: 700 });
+    // a pinned paper notice on the wall (bright, readable)
+    function notice(x, y, w, title, lines, rot = 0.6) {
+      const h = 34 + lines.length * 17;
+      return `<g transform="translate(${x} ${y}) rotate(${rot})" filter="url(#sh)"><rect width="${w}" height="${h}" fill="#fffdf4"/><circle cx="${w / 2}" cy="8" r="4" fill="#dc2626"/>
+        ${lbl(w / 2, 26, title, { s: 12, w: 800, c: '#0a1f44' })}${lines.map((l, i) => `<text x="14" y="${46 + i * 17}" font-size="10.5" fill="${l[1] || '#13294f'}" font-weight="${l[2] || 500}" font-family="Inter, sans-serif">${l[0]}</text>`).join('')}</g>`;
+    }
+
+    // ---------------------------------------------------------------- animals (top view, in cages)
+    const MARKPOS = { H: [15, 0], N: [7, 0], B: [-3, 0], R: [-13, 0], LF: [5, -6.5], RF: [5, 6.5], LH: [-10, -6.5], RH: [-10, 6.5] };
+    const MARKCODE = [null, ['H'], ['N'], ['B'], ['R'], ['LF'], ['RF'], ['LH'], ['RH'], ['H', 'R'], ['N', 'R'], ['LF', 'RH'], ['RF', 'LH']];
+    function topAnimal(a, x, y, rot, act) {
+      const sc = CFG.sp === 'rat' ? 1.2 : 1, gcol = a.group === 'T' ? '#6d28d9' : a.group === 'C' ? '#334155' : '#0f172a';
+      const marks = a.marked ? (CFG.markTool === 'picric' ? MARKCODE[a.id].map(p => `<ellipse cx="${MARKPOS[p][0]}" cy="${MARKPOS[p][1]}" rx="3.6" ry="2.8" fill="#f59e0b" opacity=".85"/>`).join('')
+        : `<text x="-30" y="3" font-size="6" font-weight="900" fill="#111827" font-family="Inter" transform="rotate(0)">${a.id}</text><path d="M -27 -3.5 v7 M -21 -3.5 v7" stroke="#111827" stroke-width=".6" opacity=".5"/>`) : '';
+      const sleepy = a.dose && excessAt(a, (S.clock - a.dose.t) / 60) > 1.0;  // heavily opioid-treated animals sit still (Straub tail not shown)
+      return `<g class="hot" data-act="${act}" transform="translate(${x} ${y}) rotate(${rot}) scale(${sc})">${animalTopArt({ kind: CFG.sp === 'rat' ? 'rat' : 'mouse' })}${marks}</g>`;
+    }
+    const tagS = (x, y, t, c) => `<g><rect x="${x - t.length * 2.6 - 4}" y="${y - 8}" width="${t.length * 5.2 + 8}" height="12" rx="3" fill="${c}" opacity=".88"/>${lbl(x, y + 1.5, t, { c: '#fff', s: 8.5, w: 700 })}</g>`;
+    const animalTag = (a, x, y) => a.id ? tagS(x, y, aName(a), a.group === 'T' ? '#6d28d9' : a.group === 'C' ? '#334155' : '#0f172a') : '';
+    // polycarbonate cage with stainless-steel lid, wood-shaving bedding and a card holder
+    function cage(x, y, w, h, title, sub, act, animals, actPrefix = 'an') {
+      let s = `<g filter="url(#sh)"><ellipse cx="${x + w / 2}" cy="${y + h + 4}" rx="${w / 2 + 14}" ry="8" fill="url(#contact)"/>`;
+      s += `<path d="M${x} ${y} L${x + w} ${y} L${x + w - 10} ${y + h} L${x + 10} ${y + h} Z" fill="url(#polyc)" stroke="#e2e8f0" stroke-opacity=".8" stroke-width="1.4"/>`;
+      s += `<path d="M${x + 6} ${y + h * 0.5} L${x + w - 6} ${y + h * 0.5} L${x + w - 10} ${y + h} L${x + 10} ${y + h} Z" fill="url(#shav)"/><path d="M${x + 6} ${y + h * 0.5} L${x + w - 6} ${y + h * 0.5} L${x + w - 10} ${y + h} L${x + 10} ${y + h} Z" fill="#fff" filter="url(#shavF)"/></g>`;
+      s += `<rect class="hot" data-act="${act}" x="${x}" y="${y}" width="${w}" height="${h}" fill="#fff" opacity="0"/>`;
+      const n = animals.length, cols = Math.min(6, Math.max(3, Math.ceil(n / 2))), rows = Math.ceil(n / cols) || 1;
+      let tags = '';
+      animals.forEach((a, j) => {
+        const c = j % cols, r = Math.floor(j / cols);
+        const ax = x + 34 + (c + 0.5) * (w - 68) / cols + (r % 2 ? 6 : -4), ay = y + h * 0.56 + (r + 0.5) * (h * 0.38) / rows;
+        a.cx = ax; a.cy = ay;
+        s += topAnimal(a, ax, ay, (a.i * 47) % 40 - 20 + (a.i % 2 ? 180 : 0), `${actPrefix}:${a.i}`);
+        tags += animalTag(a, ax, r === 0 && rows > 1 ? ay - 14 : ay + 16);
+      });
+      s += tags;
+      s += `<path d="M${x - 4} ${y - 2} L${x + w + 4} ${y - 2}" stroke="url(#steelH)" stroke-width="7" stroke-linecap="round"/>`;
+      for (let bx = x + 8; bx < x + w - 4; bx += 9) s += `<line x1="${bx}" y1="${y - 1}" x2="${bx + 4}" y2="${y + 12}" stroke="#cbd5e1" stroke-width="1.1" opacity=".75"/>`;
+      s += `<path d="M${x + 2} ${y + 12} L${x + w - 2} ${y + 12}" stroke="#94a3b8" stroke-width="2"/>`;
+      s += `<g><rect x="${x + w - 112}" y="${y + 18}" width="100" height="30" rx="2" fill="#fef3c7" stroke="#d97706"/>${lbl(x + w - 62, y + 30, title, { s: 8.5, w: 800, c: '#7c2d12' })}${lbl(x + w - 62, y + 42, sub, { s: 7.5, w: 600, c: '#451a03', f: 'JetBrains Mono' })}</g>`;
+      return s;
+    }
+    function groupCages(x, y, w, h, gap) {
+      return cage(x, y, w, h, 'GROUP I • VEHICLE', `${groupAn('C').length} ${CFG.sps}`, 'cage:C', groupAn('C').filter(a => a.loc === 'C')) +
+        cage(x + w + gap, y, w, h, 'GROUP II • TEST', `${groupAn('T').length} ${CFG.sps}`, 'cage:T', groupAn('T').filter(a => a.loc === 'T'));
+    }
+
+    // ---------------------------------------------------------------- reagent bottles & vials
+    function powderJar(k, x, y) {
+      const d = DRUGS[k];
+      return `<g class="hot" data-act="drug:${k}" filter="url(#sh)">
+        <rect x="${x + 6}" y="${y - 14}" width="40" height="15" rx="3" fill="${d.cap}"/><rect x="${x + 6}" y="${y - 14}" width="40" height="4" rx="2" fill="#fff" opacity=".3"/>
+        <path d="M${x} ${y + 8} Q${x} ${y} ${x + 10} ${y} L${x + 42} ${y} Q${x + 52} ${y} ${x + 52} ${y + 8} L${x + 52} ${y + 78} Q${x + 52} ${y + 84} ${x + 46} ${y + 84} L${x + 6} ${y + 84} Q${x} ${y + 84} ${x} ${y + 78} Z" fill="url(#amberG)" stroke="#1c0d02"/>
+        <rect x="${x + 3}" y="${y + 22}" width="46" height="44" fill="#fff" stroke="#cbd5e1"/><rect x="${x + 3}" y="${y + 22}" width="46" height="8" fill="${d.cap}"/>
+        ${lbl(x + 26, y + 28.5, 'PURE DRUG', { s: 5.5, c: '#fff', w: 800 })}${lbl(x + 26, y + 42, d.f, { s: d.f.length > 9 ? 6.6 : 8, w: 900, c: '#0f172a' })}
+        ${lbl(x + 26, y + 51, d.sub, { s: 4.8, w: 500, c: '#334155' })}${lbl(x + 26, y + 60, '1 g', { s: 5.5, w: 700, c: '#64748b' })}
+        <rect x="${x + 5}" y="${y + 4}" width="5" height="76" rx="2.5" fill="#fff" opacity=".22"/></g>`;
+    }
+    function bottle(act, x, y, title, sub, liquid, capCol) {
+      return `<g class="hot" data-act="${act}" filter="url(#sh)">
+        <rect x="${x + 18}" y="${y - 16}" width="24" height="14" rx="2" fill="${capCol}"/><rect x="${x + 21}" y="${y - 4}" width="18" height="8" fill="#e5e7eb"/>
+        <path d="M${x} ${y + 14} Q${x} ${y + 4} ${x + 16} ${y + 2} L${x + 44} ${y + 2} Q${x + 60} ${y + 4} ${x + 60} ${y + 14} L${x + 60} ${y + 104} Q${x + 60} ${y + 110} ${x + 54} ${y + 110} L${x + 6} ${y + 110} Q${x} ${y + 110} ${x} ${y + 104} Z" fill="url(#glass)" stroke="#e2e8f0" stroke-width="1.3"/>
+        <path d="M${x + 2} ${y + 34} L${x + 58} ${y + 34} L${x + 58} ${y + 104} Q${x + 58} ${y + 108} ${x + 54} ${y + 108} L${x + 6} ${y + 108} Q${x + 2} ${y + 108} ${x + 2} ${y + 104} Z" fill="url(#${liquid})"/>
+        <rect x="${x + 5}" y="${y + 46}" width="50" height="38" fill="#fff" stroke="#cbd5e1"/>${lbl(x + 30, y + 60, title, { s: 9, w: 900, c: '#0f172a' })}${lbl(x + 30, y + 72, sub, { s: 6.5, w: 600, c: '#334155' })}
+        <rect x="${x + 5}" y="${y + 8}" width="5" height="96" rx="2.5" fill="#fff" opacity=".4"/></g>`;
+    }
+    function vial(act, x, y, title, sub, fillCol, level = 0.6) {
+      const h = 64, ly = y + 16 + (1 - level) * (h - 20);
+      return `${act !== 'none' || true ? lbl(x + 16, y - 6, title, { s: 8.5, c: '#e2e8f0', w: 700 }) : ''}<g class="hot" data-act="${act}" filter="url(#sh2)">
+        <rect x="${x + 3}" y="${y}" width="26" height="12" rx="2" fill="#475569"/><rect x="${x + 6}" y="${y + 12}" width="20" height="5" fill="#9ca3af"/>
+        <rect x="${x}" y="${y + 16}" width="32" height="${h - 16}" rx="5" fill="url(#glass)" stroke="#e2e8f0"/>
+        ${level > 0 ? `<rect x="${x + 2}" y="${ly}" width="28" height="${y + h - ly - 2}" rx="4" fill="${fillCol}" opacity=".8"/>` : ''}
+        <rect x="${x + 1}" y="${y + 24}" width="30" height="20" fill="#fff" stroke="#cbd5e1"/>${lbl(x + 16, y + 33, title, { s: 5.6, w: 900, c: '#1e3a8a' })}${lbl(x + 16, y + 41, sub, { s: 5, w: 600, c: '#334155', f: 'JetBrains Mono' })}</g>`;
+    }
+    // =====================================================================
+    // Station 1: animals (pick, weigh, mark, allocate)  •  Station 2: drug solution
+    // =====================================================================
+    function topPanBalance(x, y) {
+      const b = S.bal, load = b.load !== null ? S.an[b.load] : null;
+      const disp = (b.beaker ? CFG.beakerWt : 0) + (load ? load.wt : 0) - (b.tared ? CFG.beakerWt : 0);
+      let s = `<g filter="url(#sh)"><path d="M${x} ${y + 60} L${x + 190} ${y + 60} L${x + 180} ${y + 120} L${x + 10} ${y + 120} Z" fill="url(#cabF)" stroke="#64748b"/>
+        <rect x="${x + 10}" y="${y + 52}" width="170" height="10" rx="3" fill="url(#steelH)"/>
+        <rect x="${x + 30}" y="${y + 74}" width="96" height="30" rx="3" fill="#111827"/><rect x="${x + 34}" y="${y + 78}" width="88" height="22" rx="2" fill="url(#lcd)"/>
+        <text x="${x + 118}" y="${y + 96}" text-anchor="end" font-family="DSEG7, JetBrains Mono" font-size="17" fill="#1f2937">${disp.toFixed(1)}</text>${lbl(x + 131, y + 96, 'g', { s: 9, c: '#e2e8f0' })}
+        ${lbl(x + 95, y + 115, 'TOP-PAN BALANCE • max 600 g • d = 0.1 g', { s: 6.5, c: '#334155', w: 600 })}</g>
+        <g class="hot" data-act="tare"><rect x="${x + 140}" y="${y + 76}" width="34" height="14" rx="3" fill="#b91c1c"/>${lbl(x + 157, y + 86, 'TARE', { s: 7.5, c: '#fff', w: 800 })}</g>
+        <rect x="${x + 140}" y="${y + 93}" width="34" height="10" rx="3" fill="#334155"/>${lbl(x + 157, y + 100.5, 'ON', { s: 6, c: '#cbd5e1' })}
+        <ellipse cx="${x + 95}" cy="${y + 52}" rx="70" ry="8" fill="url(#steel)" stroke="#6b7280"/>`;
+      s += `<g class="hot" data-act="bal">`;
+      // plastic beaker/container on the pan
+      s += `<path d="M${x + 48} ${y - 40} L${x + 142} ${y - 40} L${x + 136} ${y + 48} L${x + 54} ${y + 48} Z" fill="url(#polyc)" stroke="#e2e8f0" stroke-width="1.5"/>`;
+      if (load) s += `<g transform="translate(${x + 95} ${y + 30}) scale(${CFG.sp === 'rat' ? 0.62 : 0.95})">${sideAnimalStatic()}</g>${tag(x + 95, y - 48, aName(load) + (load.marked ? ' • marked' : ' • not marked yet'), '#0f172a')}`;
+      s += `<path d="M${x + 48} ${y - 40} L${x + 142} ${y - 40}" stroke="#fff" stroke-width="2.5" opacity=".7"/><rect x="${x + 54}" y="${y - 34}" width="5" height="76" fill="#fff" opacity=".35"/></g>`;
+      s += benchLbl(x + 95, y + 138, `Balance with ${CFG.sp === 'rat' ? 'container' : 'beaker'} (${b.tared ? 'tared' : 'not tared'})`);
+      return s;
+    }
+    function heldAnimal(x, y) {
+      if (S.hand === null) return '';
+      const a = S.an[S.hand];
+      return `<g transform="translate(${x} ${y})"><g transform="rotate(-80)">${topAnimal(a, 0, 0, 0, 'hand')}</g>
+        <path d="M -8 -58 q 8 -14 22 -6 l 6 18 q -12 8 -24 0 z" fill="#7c3aed" stroke="#4c1d95"/>${lbl(0, 62, 'held by the tail base', { s: 9, c: '#fde68a' })}</g>`;
+    }
+    function sceneAnimals() {
+      let s = '';
+      s += notice(24, 18, 270, CFG.markTool === 'picric' ? 'PICRIC ACID MARKING CODE' : 'TAIL NUMBERING', CFG.markTool === 'picric'
+        ? [['1 head • 2 neck • 3 back • 4 rump'], ['5 L fore • 6 R fore • 7 L hind • 8 R hind'], ['9 head+rump • 10 neck+rump'], ['11 L fore+R hind • 12 R fore+L hind'], ['Weigh in the TARED beaker, then mark.', '#b91c1c', 700]]
+        : [['Write the number on the tail base'], ['with a permanent marker (1–12).'], ['Re-mark daily; it fades with grooming.'], ['Weigh in the TARED container first.', '#b91c1c', 700]], -0.5);
+      s += notice(706, 18, 270, 'RANDOM ALLOCATION', [['12 folded lots in the jar: 6 × "I", 6 × "II"'], ['Each marked animal draws one lot.'], ['Never allocate in catching order:'], ['the first caught are the calmer ones.', '#b91c1c', 700]], 0.7);
+      const home = S.an.filter(a => a.loc === 'home');
+      s += cage(16, 296, 330, 128, 'STOCK CAGE', `${home.length} ${CFG.sps} • 12 ♂`, 'home', home, 'home');
+      s += topPanBalance(392, 292);
+      // marking tool
+      if (CFG.markTool === 'picric') s += `<g class="hot" data-act="mark" filter="url(#sh2)"><rect x="606" y="336" width="34" height="56" rx="5" fill="url(#amberG)" stroke="#1c0d02"/><rect x="614" y="318" width="18" height="20" rx="3" fill="#111827"/><rect x="619" y="296" width="8" height="24" rx="3" fill="url(#glass)" stroke="#e2e8f0"/><rect x="608" y="352" width="30" height="24" fill="#fef3c7" stroke="#d97706"/>${lbl(623, 362, 'PICRIC', { s: 6, w: 900, c: '#7c2d12' })}${lbl(623, 371, 'ACID sat.', { s: 5.5, c: '#7c2d12' })}</g>${benchLbl(623, 410, 'Marker')}`;
+      else s += `<g class="hot" data-act="mark" filter="url(#sh2)"><rect x="596" y="372" width="62" height="13" rx="6" fill="#111827" transform="rotate(-18 627 378)"/><rect x="646" y="368" width="14" height="13" rx="3" fill="#dc2626" transform="rotate(-18 627 378)"/>${lbl(622, 383, 'PERMANENT', { s: 5.5, c: '#fff', w: 800 })}</g>${benchLbl(623, 410, 'Tail marker')}`;
+      if (!S.alloc) {
+        s += `<g class="hot" data-act="lots" filter="url(#sh)"><path d="M672 316 L722 316 L726 394 Q726 402 718 402 L676 402 Q668 402 668 394 Z" fill="url(#glass)" stroke="#e2e8f0" stroke-width="1.4"/>`;
+        for (let k = 0; k < 12; k++) s += `<rect x="${676 + (k % 4) * 11}" y="${372 + Math.floor(k / 4) * 9}" width="10" height="7" rx="1" fill="#fffbeb" stroke="#d6d3d1" stroke-width=".5" transform="rotate(${(k * 37) % 40 - 20} ${681 + (k % 4) * 11} ${375 + Math.floor(k / 4) * 9})"/>`;
+        s += `<rect x="666" y="310" width="62" height="8" rx="3" fill="#94a3b8"/></g>${benchLbl(697, 420, 'Lots jar')}`;
+        const hold = S.an.filter(a => a.loc === 'hold');
+        s += cage(744, 296, 240, 128, 'MARKED', `${hold.length} weighed`, 'hold', hold, 'hold');
+      } else {
+        s += cage(664, 296, 160, 128, 'GROUP I', 'VEHICLE', 'cage:C', groupAn('C'), 'an') + cage(830, 296, 160, 128, 'GROUP II', 'TEST', 'cage:T', groupAn('T'), 'an');
+      }
+      s += heldAnimal(500, 150);
+      return s;
+    }
+    function act1(a, arg) {
+      if (a === 'home') {
+        if (S.hand !== null || S.bal.load !== null) return say(`Deal with the ${CFG.sp} you already have first (balance → mark → marked cage).`, true);
+        const left = S.an.filter(x => x.loc === 'home'); if (!left.length) return say(`The stock cage is empty: all ${NA} ${CFG.sps} are weighed.`);
+        const pickA = left.sort((p, q) => p.act - q.act)[0];   // the calmest is caught first
+        pickA.loc = 'hand'; S.hand = pickA.i; pickA.catchNo = NA - left.length + 1; beep('click');
+        say(`${CFG.Sp} caught (catch no. ${pickA.catchNo}) and held by the base of the tail. Put it in the ${S.bal.tared ? 'tared ' : ''}${CFG.sp === 'rat' ? 'container' : 'beaker'} on the balance.`);
+      } else if (a === 'tare') {
+        if (S.bal.load !== null) return say(`Tare with the empty ${CFG.sp === 'rat' ? 'container' : 'beaker'} only: take the animal out first.`, true);
+        S.bal.tared = true; beep('tick'); say('Balance tared to 0.0 g with the empty container.');
+      } else if (a === 'bal') {
+        if (S.hand === null) { if (S.bal.load !== null) say('The reading is on the display: type it into the notebook, mark the animal, then move it to the marked cage.'); return; }
+        const x = S.an[S.hand]; S.hand = null; x.loc = 'bal'; S.bal.load = x.i;
+        x.weighed = true; x.tareOK = S.bal.tared; x.wDisp = +((S.bal.tared ? 0 : CFG.beakerWt) + x.wt).toFixed(1);
+        if (!S.bal.tared) { addFlag(x, 'weighed without taring (reading includes the container)'); say(`Reading ${x.wDisp.toFixed(1)} g. Note: the balance was not tared, so this includes the ${CFG.sp === 'rat' ? 'container' : 'beaker'}.`, true); }
+        else say(`Stable reading ${x.wDisp.toFixed(1)} g. ${x.marked ? '' : `Mark the ${CFG.sp} (${CFG.markTool === 'picric' ? 'picric acid' : 'tail marker'}), `}type the weight into the notebook row, then move it to the marked cage.`);
+        if (!x.marked) { x.id = S.nextMark++; }
+        beep('tick');
+      } else if (a === 'mark') {
+        if (S.bal.load === null) return say(`Mark the ${CFG.sp} while it sits on the balance.`, true);
+        const x = S.an[S.bal.load]; if (x.marked) return say(`${aName(x)} is already marked.`);
+        x.marked = true; beep('ok');
+        say(CFG.markTool === 'picric' ? `Picric acid applied to the fur: code ${x.id} (${MARKCODE[x.id].join(' + ')}). This is ${aName(x)}.` : `Number ${x.id} written on the tail base: ${aName(x)}.`);
+      } else if (a === 'hold' || a.startsWith('hold')) {
+        if (S.bal.load === null) return say(`Take a ${CFG.sp} from the stock cage first.`, true);
+        const x = S.an[S.bal.load];
+        if (!x.marked) addFlag(x, 'not marked: identity uncertain');
+        x.loc = 'hold'; S.bal.load = null; beep('click');
+        say(`${aName(x)} placed in the marked cage. ${S.an.filter(q => q.loc === 'home').length ? 'Next animal.' : `All ${NA} weighed: allocate them to groups by drawing lots.`}`);
+      } else if (a === 'lots') {
+        if (S.an.some(q => q.loc !== 'hold')) return say(`Weigh and mark all ${NA} ${CFG.sps} before allocation.`, true);
+        allocate('random');
+      } else if (a === 'an' || a === 'cage') say('Animals are tested on the apparatus (station 3) and dosed at station 4.');
+      buildScene(); renderCtx(); renderNotebook(); refreshChecklist();
+    }
+    function allocate(mode) {
+      const xs = S.an.slice();
+      let order;
+      if (mode === 'random') order = shuffle(xs);
+      else order = xs.slice().sort((p, q) => p.catchNo - q.catchNo);
+      order.forEach((x, j) => { x.group = j < 6 ? 'C' : 'T'; });
+      ['C', 'T'].forEach(g => S.an.filter(x => x.group === g).sort((p, q) => p.id - q.id).forEach((x, j) => { x.gi = j + 1; x.loc = g; }));
+      S.alloc = mode; beep('done');
+      if (mode === 'order') { S.an.forEach(x => addFlag(x, 'groups not randomised (catching order)')); say('Allocated by catching order: the first six (calmest) animals form Group I. This is a selection bias and is flagged.', true); }
+      else say(`Each ${CFG.sp} drew a lot. Group I: ${groupAn('C').map(aName).join(', ')}. Group II: ${groupAn('T').map(aName).join(', ')}.`);
+      buildScene(); renderCtx(); renderNotebook(); refreshChecklist();
+    }
+
+    // ---------------------------------------------------------------- station 2: solution
+    const FLASKS = [5, 10, 25];
+    function volFlask(v, x, y) {
+      const sel = S.sol.flask === v, sc = v === 5 ? 0.8 : v === 10 ? 0.92 : 1.08, s0 = S.sol;
+      const filled = sel && s0.made, powder = sel && Object.keys(s0.comps).length && !s0.made;
+      const col = sel && s0.veh === 'cmc' ? 'url(#milky)' : 'url(#liquid)';
+      return `<g class="hot" data-act="flask:${v}" transform="translate(${x} ${y}) scale(${sc})" filter="url(#sh)">
+        <path d="M-7 -120 L7 -120 L7 -42 Q38 -30 38 0 Q38 30 0 30 Q-38 30 -38 0 Q-38 -30 -7 -42 Z" fill="url(#glass)" stroke="${sel ? '#fde047' : '#e2e8f0'}" stroke-width="${sel ? 2.4 : 1.4}"/>
+        ${filled ? `<path d="M-6 -90 L6 -90 L6 -42 Q36 -29 36 0 Q36 28 0 28 Q-36 28 -36 0 Q-36 -29 -6 -42 Z" fill="${col}" opacity="${s0.mixed ? 0.9 : 0.75}"/>` : ''}
+        ${powder ? `<ellipse cx="0" cy="24" rx="14" ry="3" fill="#f8fafc"/>` : ''}
+        <line x1="-9" y1="-90" x2="9" y2="-90" stroke="#f8fafc" stroke-width="1.6"/>
+        <rect x="-8" y="-128" width="16" height="9" rx="2" fill="${sel && s0.mixed ? '#2563eb' : '#94a3b8'}"/>
+        ${sel && s0.labelled ? `<rect x="-24" y="-6" width="48" height="18" fill="#fff" stroke="#94a3b8"/>${lbl(0, 3, 'TEST', { s: 6.5, w: 900, c: '#5b21b6' })}${lbl(0, 10, (Object.keys(s0.comps).map(k => k.slice(0, 4)).join('+')).toUpperCase(), { s: 5, c: '#334155' })}` : ''}
+        ${lbl(0, 50, v + ' mL', { s: 12, c: '#e2e8f0', w: 800 })}${lbl(0, 62, 'Class A', { s: 8, c: '#94a3b8' })}</g>`;
+    }
+    function analyticalBalance(x, y) {
+      const ab = S.ab, disp = (ab.tared ? 0 : 0.2150) + ab.mg / 1000;
+      return `<g filter="url(#sh)"><rect x="${x}" y="${y + 110}" width="220" height="40" rx="4" fill="url(#cabF)" stroke="#64748b"/>
+        <rect x="${x + 10}" y="${y}" width="200" height="112" fill="url(#glass)" stroke="#e2e8f0" stroke-width="1.5"/><path d="M${x + 10} ${y} L${x + 210} ${y}" stroke="#94a3b8" stroke-width="5"/>
+        <rect x="${x + 16}" y="${y + 8}" width="5" height="96" fill="#fff" opacity=".35"/>
+        <ellipse cx="${x + 110}" cy="${y + 104}" rx="46" ry="6" fill="url(#steel)" stroke="#6b7280"/>
+        <path d="M${x + 88} ${y + 100} L${x + 132} ${y + 100} L${x + 126} ${y + 92} L${x + 94} ${y + 92} Z" fill="#f8fafc" stroke="#94a3b8"/>
+        ${ab.mg > 0 ? `<ellipse cx="${x + 110}" cy="${y + 94}" rx="${clamp(3 + ab.mg / 15, 3, 14)}" ry="2.4" fill="#fff"/>` : ''}
+        <rect x="${x + 40}" y="${y + 118}" width="104" height="24" rx="3" fill="#111827"/><text x="${x + 138}" y="${y + 136}" text-anchor="end" font-family="DSEG7, JetBrains Mono" font-size="15" fill="#4ade80" filter="url(#glow)">${disp.toFixed(4)}</text>
+        ${lbl(x + 152, y + 136, 'g', { s: 9, c: '#334155', w: 800 })}</g>
+        <g class="hot" data-act="atare"><rect x="${x + 166}" y="${y + 120}" width="40" height="16" rx="3" fill="#b91c1c"/>${lbl(x + 186, y + 131, 'TARE', { s: 8, c: '#fff', w: 800 })}</g>
+        <rect class="hot" data-act="abal" x="${x + 12}" y="${y + 6}" width="196" height="104" fill="#fff" opacity="0"/>
+        ${benchLbl(x + 110, y + 168, 'Analytical balance d = 0.1 mg (boat ' + (ab.tared ? 'tared' : 'not tared') + ')')}`;
+    }
+    function sceneSolutions() {
+      let s = '';
+      s += `<rect x="12" y="172" width="${S.isUnknown ? 420 : 340}" height="11" fill="url(#steelH)" filter="url(#sh2)"/><rect x="22" y="183" width="6" height="26" fill="#6b7280"/><rect x="${S.isUnknown ? 420 : 340}" y="183" width="6" height="26" fill="#6b7280"/>`;
+      Object.keys(DRUGS).forEach((k, j) => s += powderJar(k, 18 + j * 66, 86));
+      if (S.isUnknown) s += vial('coded', 360, 106, 'DRUG X', 'coded • ready', '#fde68a', 0.8) + lbl(376, 200, 'Coded vial', { s: 9, c: '#e2e8f0' });
+      const req = requiredConc(), p = testProfile();
+      s += notice(470, 16, 300, 'DOSE → CONCENTRATION', [[`Dose volume (${ROUTE_NAME[testRoute()]}, ${CFG.sps}) = ${volPerKg()} mL/kg`], ['conc (mg/mL) = dose (mg/kg) ÷ mL/kg'], ['mass (mg) = conc × flask volume (mL)'], ['Make up to the mark, stopper, invert 10×'], [S.isUnknown ? 'Unknown: use the coded vial as supplied' : `Test: ${p.name}`, '#5b21b6', 700]], 0.5);
+      s += analyticalBalance(30, 250);
+      FLASKS.forEach((v, j) => s += volFlask(v, 330 + j * 92, 392));
+      s += bottle('saline', 610, 304, 'SALINE', '0.9% NaCl • 500 mL', 'liquid', '#2563eb') + benchLbl(640, 432, '');
+      s += bottle('cmc', 690, 304, '1% CMC', 'Na-CMC in water', 'milky', '#64748b');
+      s += lbl(640, 452, 'Normal saline', { s: 9.5, c: '#e2e8f0' }) + lbl(720, 452, '1% CMC', { s: 9.5, c: '#e2e8f0' });
+      s += `<g filter="url(#sh2)"><rect x="772" y="404" width="200" height="16" rx="4" fill="url(#steelH)"/></g>${lbl(872, 444, 'Dosing tray', { s: 9.5, c: '#e2e8f0' })}`;
+      if (S.sol.labelled) s += vial('none', 800, 336, 'TEST SOLN', `${fx(S.sol.flask - S.sol.used, 1)} mL left`, S.sol.veh === 'cmc' ? '#f1f5f9' : '#93c5fd', clamp(1 - S.sol.used / S.sol.flask, 0.05, 1));
+      if (S.isUnknown) s += vial('none', 850, 336, 'DRUG X', 'coded', '#fde68a', 0.8);
+      s += vial('none', 900, 336, 'SALINE', 'vehicle', '#93c5fd', 0.7);
+      return s;
+    }
+    function act2(a, arg) {
+      const s = S.sol, ab = S.ab;
+      if (a === 'atare') { if (ab.mg > 0) return say('Transfer the drug in the boat to the flask before taring again.', true); ab.tared = true; beep('tick'); say('Weighing boat tared: 0.0000 g.'); }
+      else if (a === 'drug') {
+        if (S.isUnknown) return say('In the unknown (exam) run the drug is supplied ready-made in the coded vial: no weighing needed.', true);
+        if (!ab.tared) return say('Tare the empty weighing boat first (TARE on the analytical balance).', true);
+        if (ab.mg > 0 && ab.boat !== arg) return say('The boat already holds another drug: transfer it to the flask first.', true);
+        S.selDrug = arg; beep('click'); say(`${DRUGS[arg].label} jar opened. Enter the mass to weigh in the panel and add it with the spatula.`);
+      }
+      else if (a === 'flask') {
+        if (S.isUnknown) return say('Not needed for the coded unknown.', true);
+        if (s.flask !== arg) {
+          if (Object.keys(s.comps).length && !confirm('Start again with a different flask? The current solution will be discarded.')) return;
+          S.sol = { flask: arg, comps: {}, veh: null, made: false, mixed: false, labelled: false, used: 0, concTyped: '', concChecked: false }; beep('click');
+          say(`${arg} mL volumetric flask selected.`);
+        } else if (ab.mg > 0) {
+          if (s.made) return say('The flask is already made up to volume.', true);
+          s.comps[ab.boat] = (s.comps[ab.boat] || 0) + ab.mg; say(`${fx(ab.mg, 1)} mg ${DRUGS[ab.boat].label} transferred quantitatively into the ${s.flask} mL flask (boat rinsed in with a little vehicle).`); ab.mg = 0; ab.boat = null; beep('ok');
+        } else if (!s.made) say(Object.keys(s.comps).length ? 'Now make up to the mark with the vehicle (saline or 1% CMC).' : 'Weigh the drug first.', true);
+        else if (!s.mixed) { s.mixed = true; beep('ok'); say('Stoppered and inverted 10 times: uniform. Work out the concentration and enter it in the panel.'); }
+        else if (!s.labelled) { if (!s.concChecked) return say('Enter and check the concentration of your solution first.', true); s.labelled = true; beep('done'); say('Labelled (drug, conc., date) and transferred to the dosing vial on the tray.'); }
+      }
+      else if (a === 'saline' || a === 'cmc') {
+        if (S.isUnknown) return say('The coded drug is ready to use; saline is the vehicle for Group I (station 4).');
+        if (!s.flask) return say('Choose a volumetric flask first.', true);
+        if (!Object.keys(s.comps).length) return say('Put the weighed drug into the flask before making up to volume.', true);
+        if (s.made) return say('Already made up to the mark.', true);
+        s.veh = a; s.made = true; beep('ok');
+        say(`Made up to the ${s.flask} mL mark with ${a === 'cmc' ? '1% CMC (suspension)' : 'normal saline'}. Stopper and mix (click the flask).`);
+        if (a !== testProfile().veh) say(testProfile().veh === 'cmc' ? 'Aspirin is poorly water-soluble: in saline it settles, so each draw contains a different dose. It should be suspended in 1% CMC.' : 'This drug is water-soluble: saline is the usual vehicle.', true);
+      }
+      else if (a === 'abal') { if (S.selDrug) say('Enter the mass in the panel and press "Add with spatula".'); }
+      buildScene(); renderCtx(); refreshChecklist();
+    }
+    function weighDrug() {
+      const v = parseFloat($('wMass').value);
+      if (!S.selDrug) return say('Open a drug jar first.', true);
+      if (!(v > 0 && v < 1000)) return say('Enter a mass between 0.1 and 999 mg.', true);
+      const got = Math.round(v * (1 + gauss() * 0.006) * 10) / 10;
+      S.ab.mg += got; S.ab.boat = S.selDrug; beep('tick');
+      say(`Balance reads ${(S.ab.mg / 1000).toFixed(4)} g (${fx(S.ab.mg, 1)} mg ${DRUGS[S.selDrug].label}). Now click the flask to transfer it.`);
+      buildScene(); renderCtx();
+    }
+    function checkConc() {
+      const s = S.sol, req = requiredConc();
+      let ok = true;
+      Object.keys(s.comps).forEach(k => {
+        const inp = $('conc_' + k); if (!inp) return;
+        const v = parseFloat(inp.value), tru = s.comps[k] / s.flask, good = isFinite(v) && Math.abs(v - tru) <= tru * 0.02 + 1e-4;
+        inp.classList.toggle('ok-in', good); inp.classList.toggle('bad-in', !good); if (!good) ok = false;
+      });
+      if (!ok) return say('Concentration = mass weighed (mg) ÷ flask volume (mL). Recalculate.', true);
+      s.concChecked = true;
+      const q = solQuality();
+      if (q.length) say(`Concentration recorded. Check against the required dose: ${q.join('; ')}.`, true);
+      else say(`Correct: your solution matches the required ${Object.keys(req).map(k => fx(req[k], 3) + ' mg/mL ' + DRUGS[k].label).join(' + ')}. Click the flask to label it.`);
+      renderCtx(); refreshChecklist();
+    }
+    // =====================================================================
+    // Station 4: dosing (pick animal, calculate volume, draw, route, inject)
+    // =====================================================================
+    const syrCap = () => CFG.sp === 'rat' && testRoute() === 'po' ? 5 : 1;
+    function syringeSVG(x, y) {
+      const d = S.dose, cap = syrCap(), fill = d.drawn ? clamp(d.drawn / cap, 0, 1) : 0, col = d.src === 'cmc' || (d.src === 'test' && S.sol.veh === 'cmc') ? '#f1f5f9' : d.src === 'coded' ? '#fde68a' : '#93c5fd';
+      const L = 210, bx = x, by = y;
+      let s = `<g class="hot" data-act="syr" filter="url(#sh2)">
+        <rect x="${bx}" y="${by - 9}" width="${L}" height="18" rx="3" fill="url(#glass)" stroke="#e2e8f0" stroke-width="1.2"/>
+        ${fill > 0 ? `<rect x="${bx + L - 4 - fill * (L - 10)}" y="${by - 7}" width="${fill * (L - 10)}" height="14" fill="${col}" opacity=".9"/>` : ''}`;
+      for (let k = 0; k <= 10; k++) { const tx = bx + L - 4 - k * (L - 10) / 10; s += `<line x1="${tx}" y1="${by - 9}" x2="${tx}" y2="${by - (k % 5 ? 3 : 0)}" stroke="#0f172a" stroke-width=".8"/>${k % 2 ? '' : lbl(tx, by - 12, (k / 10 * cap).toFixed(1), { s: 6.5, c: '#e2e8f0', w: 700 })}`; }
+      const px = bx + L - 4 - fill * (L - 10);
+      s += `<rect x="${px - 6}" y="${by - 8}" width="6" height="16" fill="#334155"/><rect x="${px - 150}" y="${by - 3}" width="${148}" height="6" fill="#e2e8f0" stroke="#94a3b8" stroke-width=".6"/><rect x="${px - 156}" y="${by - 12}" width="6" height="24" rx="2" fill="#e2e8f0" stroke="#94a3b8"/>
+        <rect x="${bx + L}" y="${by - 4}" width="10" height="8" fill="${d.tool === 'gavage' ? '#9ca3af' : '#16a34a'}"/>`;
+      s += d.tool === 'gavage' ? `<path d="M${bx + L + 10} ${by} L${bx + L + 70} ${by} Q${bx + L + 82} ${by} ${bx + L + 84} ${by + 8}" stroke="#d1d5db" stroke-width="2.4" fill="none"/><circle cx="${bx + L + 85}" cy="${by + 10}" r="3.4" fill="#e5e7eb" stroke="#6b7280"/>`
+        : `<line x1="${bx + L + 10}" y1="${by}" x2="${bx + L + 42}" y2="${by}" stroke="#e5e7eb" stroke-width="1.2"/>`;
+      s += `</g>${lbl(bx + L / 2, by + 26, `${cap} mL syringe • ${d.tool === 'gavage' ? 'oral gavage needle' : '26 G needle'} • ${d.drawn ? fx(d.drawn, 2) + ' mL ' + (d.src === 'test' ? 'test soln' : d.src) : 'empty'}`, { s: 9.5, c: '#fde68a', w: 700 })}`;
+      return s;
+    }
+    function handlingArea(x, y) {
+      if (S.hand === null) return `<g opacity=".9"><rect x="${x - 150}" y="${y - 60}" width="300" height="130" rx="10" fill="#0f172a" opacity=".35" stroke="#475569" stroke-dasharray="6 5"/>${lbl(x, y + 4, `Pick a ${CFG.sp} from its group cage`, { s: 12, c: '#cbd5e1' })}</g>`;
+      const a = S.an[S.hand], sc = CFG.sp === 'rat' ? 1.15 : 2.1;
+      let s = `<g transform="translate(${x} ${y}) scale(${sc})">${sideAnimalStatic()}</g>`;
+      s += `<path d="M${x - 40} ${y - 52} q 30 -26 70 -6 l -4 22 q -30 -12 -60 0 z" fill="#7c3aed" stroke="#4c1d95" opacity=".92"/>${lbl(x - 6, y - 64, 'scruff hold', { s: 9, c: '#ddd6fe' })}`;
+      const spot = (act, cx, cy, t, ok) => `<g class="hot" data-act="${act}"><circle cx="${cx}" cy="${cy}" r="15" fill="${ok ? '#22c55e' : '#38bdf8'}" opacity=".28" stroke="#fff" stroke-width="1.5"/><circle cx="${cx}" cy="${cy}" r="3" fill="#fff"/></g>${tag(cx, cy + 30, t, '#0f172a')}`;
+      const P = CFG.sp === 'rat' ? { sc: [-8, -26], ip: [-22, 12], po: [76, -3] } : { sc: [-4, -20], ip: [-14, 10], po: [56, -2] };
+      s += spot('inj:sc', x + P.sc[0] * sc, y + P.sc[1] * sc, 's.c. (loose skin)', false);
+      s += spot('inj:ip', x + P.ip[0] * sc, y + P.ip[1] * sc, 'i.p. (lower R quadrant)', false);
+      s += spot('inj:po', x + P.po[0] * sc, y + P.po[1] * sc, 'p.o. (mouth)', false);
+      s += tag(x, y + 92, `${aName(a)} • ${a.group === 'C' ? 'Group I' : 'Group II'} • ${a.wTyped || '?'} g recorded`, a.group === 'T' ? '#5b21b6' : '#334155');
+      return s;
+    }
+    function sceneDosing() {
+      let s = '';
+      s += notice(20, 16, 300, 'DOSING — ' + CFG.Sps.toUpperCase(), [[`Volume (mL) = body wt (kg) × ${CFG.volKg.sc} mL/kg ${CFG.sp === 'rat' ? '(inj.)' : ''}`], CFG.sp === 'rat' ? ['Oral (gavage) volume = 10 mL/kg'] : ['Same volume per kg for every route'], ['s.c.: tent the loose skin, 26 G needle'], ['i.p.: lower right quadrant, head down'], ['p.o.: gavage needle along the palate'], ['Note the clock time of each dose!', '#b91c1c', 700]], -0.4);
+      s += groupCages(10, 300, 200, 124, 6);
+      s += handlingArea(CFG.sp === 'rat' ? 545 : 560, 300);
+      s += syringeSVG(690, 140);
+      s += `<g class="hot" data-act="gavage" filter="url(#sh2)"><path d="M700 210 L780 210 Q792 210 794 218" stroke="#d1d5db" stroke-width="3" fill="none"/><circle cx="795" cy="221" r="4.5" fill="#e5e7eb" stroke="#6b7280"/><rect x="690" y="205" width="12" height="10" fill="#9ca3af"/></g>${lbl(745, 236, S.dose.tool === 'gavage' ? 'needle in use: click to swap back' : 'oral gavage needle (click to fit)', { s: 9, c: '#e2e8f0' })}`;
+      s += `<g filter="url(#sh2)"><rect x="690" y="404" width="296" height="16" rx="4" fill="url(#steelH)"/></g>`;
+      let vx = 700;
+      if (S.isUnknown) { s += vial('src:coded', vx, 330, 'DRUG X', 'coded', '#fde68a', 0.8); vx += 60; }
+      else if (S.sol.labelled) { s += vial('src:test', vx, 330, 'TEST SOLN', `${fx(S.sol.flask - S.sol.used, 2)} mL`, S.sol.veh === 'cmc' ? '#f1f5f9' : '#93c5fd', clamp(1 - S.sol.used / S.sol.flask, 0.05, 1)); vx += 60; }
+      s += vial('src:saline', vx, 330, 'SALINE', '0.9% NaCl', '#93c5fd', 0.75); vx += 60;
+      s += vial('src:cmc', vx, 330, '1% CMC', 'vehicle', '#f1f5f9', 0.75);
+      s += lbl(838, 444, 'Dosing tray: solutions & vehicles', { s: 9.5, c: '#e2e8f0' });
+      return s;
+    }
+    function act4(a, arg) {
+      const d = S.dose;
+      if (a === 'an') {
+        const x = S.an[arg];
+        if (S.hand !== null && S.hand !== x.i) { const h = S.an[S.hand]; h.loc = h.group; }
+        if (x.dose) { buildScene(); return say(`${aName(x)} was already dosed at ${fmtHMS(x.dose.t)}. Pick an undosed animal.`, true); }
+        S.hand = x.i; x.loc = 'hand'; beep('click');
+        say(`${aName(x)} restrained by the scruff. Calculate its dose volume from the recorded weight (${x.wTyped || 'not recorded!'} g) and enter it in the panel.`, !x.wTyped);
+      }
+      else if (a === 'cage') { if (S.hand !== null) { const h = S.an[S.hand]; h.loc = h.group; S.hand = null; say(`${aName(h)} returned to its cage undosed.`); } }
+      else if (a === 'gavage') { if (d.drawn) return say('Fit the needle before drawing up the dose (expel and redraw if you need to swap).', true); d.tool = d.tool === 'gavage' ? 'needle' : 'gavage'; beep('click'); say(d.tool === 'gavage' ? 'Ball-tipped oral gavage needle fitted.' : '26 G hypodermic needle fitted.'); }
+      else if (a === 'src') {
+        if (S.hand === null) return say(`Restrain the ${CFG.sp} first, then draw its dose.`, true);
+        const x = S.an[S.hand], v = typedNum(x.volTyped);
+        if (!(v > 0)) return say('Enter and record the dose volume in the panel before drawing up.', true);
+        if (v > syrCap()) return say(`${fx(v, 2)} mL does not fit the ${syrCap()} mL syringe: re-check your calculation.`, true);
+        if (arg === 'test' && S.sol.used + v > S.sol.flask - 0.2) return say('Not enough test solution left in the vial: prepare more at station 2.', true);
+        d.src = arg; d.drawn = Math.round(v * 100) / 100; beep('tick');
+        say(`${fx(d.drawn, 2)} mL of ${arg === 'test' ? 'test solution' : arg === 'coded' ? 'coded drug X' : arg === 'saline' ? 'normal saline' : '1% CMC'} drawn up, air bubbles expelled.`);
+      }
+      else if (a === 'syr') { if (d.drawn) { d.drawn = 0; d.src = null; say('Syringe emptied back into waste.'); } }
+      else if (a === 'inj') {
+        if (S.hand === null) return say(`Pick a ${CFG.sp} first.`, true);
+        if (!d.drawn) return say('Draw up the dose first (click a solution vial on the tray).', true);
+        if (arg === 'po' && d.tool !== 'gavage') return say('Oral dosing needs the ball-tipped gavage needle, not a hypodermic needle.', true);
+        if (arg !== 'po' && d.tool === 'gavage') return say('A gavage needle cannot be used for injection: fit the 26 G needle.', true);
+        giveDose(S.an[S.hand], arg);
+      }
+      buildScene(); renderCtx(); renderNotebook(); refreshChecklist();
+    }
+    function giveDose(x, route) {
+      const d = S.dose, conc = srcConc(d.src), kg = x.wt / 1000, mgkg = {};
+      for (const k in conc) mgkg[k] = d.drawn * conc[k] / kg;
+      const p = testProfile();
+      x.dose = { t: S.clock, vol: d.drawn, src: d.src, route, mgkg, badSusp: d.src === 'test' && p.veh === 'cmc' && S.sol.veh !== 'cmc' };
+      if (d.src === 'test') S.sol.used += d.drawn;
+      const fl = [];
+      if (!x.R[0]) fl.push('dosed before the basal reading');
+      if (!weightOK(x)) fl.push('weight entry does not match the balance');
+      if (!volOK(x)) fl.push(`dose volume entry wrong (needs ${fx(volNeeded(x), 2)} mL)`);
+      const isDrug = d.src === 'test' || d.src === 'coded';
+      if (x.group === 'C' && isDrug) fl.push('vehicle-group animal received the DRUG');
+      if (x.group === 'T' && !isDrug) fl.push('test-group animal received vehicle only');
+      if (x.group === 'C' && !isDrug && d.src !== vehKind()) fl.push(`vehicle not matched (${d.src} instead of ${vehKind()})`);
+      if (route !== testRoute()) fl.push(`route ${ROUTE_NAME[route]} instead of ${ROUTE_NAME[testRoute()]}`);
+      if (x.group === 'T' && d.src === 'test') { solQuality().forEach(q => fl.push('solution: ' + q)); }
+      for (const k in mgkg) { const r = mgkg[k] / stdMgkg(k); if (r > 1.5) fl.push(`${DRUGS[k].label} ${fx(mgkg[k], 1)} mg/kg = ${fx(r, 1)}× the intended dose`); else if (r < 0.75 && x.group === 'T') fl.push(`${DRUGS[k].label} under-dosed (${fx(mgkg[k], 1)} mg/kg)`); }
+      fl.forEach(f => addFlag(x, f));
+      d.drawn = 0; d.src = null; S.hand = null; x.loc = x.group; beep('ok');
+      say(`${aName(x)} dosed ${ROUTE_NAME[route]} at lab time ${fmtHMS(S.clock)}. Readings due at +30, +60 and +90 min.${fl.length ? ' ⚑ ' + fl.join('; ') : ''}`, fl.length > 0);
+    }
+    // =====================================================================
+    // Stations, context panel, checklist / hints, notebook, main loop
+    // =====================================================================
+    function goStation(n) {
+      if (S.app.trial && n !== 3) return say(`A ${CFG.sp} is on the apparatus: finish that reading first.`, true);
+      if (S.hand !== null && n !== S.station) { const h = S.an[S.hand]; h.loc = h.group || (h.weighed ? 'bal' : 'home'); if (h.loc === 'bal') S.bal.load = h.i; S.hand = null; }
+      S.station = n;
+      document.querySelectorAll('#stationBtns button').forEach(b => b.classList.toggle('on', +b.dataset.s === n));
+      buildScene(); renderCtx(); refreshChecklist();
+    }
+    function buildScene() {
+      const st = S.station;
+      $('scene').innerHTML = DEFS + room(480) + '<g transform="translate(0 50)">' + (st === 1 ? sceneAnimals() : st === 2 ? sceneSolutions() : st === 3 ? sceneApparatus() : sceneDosing()) + '</g>';
+      refreshHints(true);
+    }
+    function onSceneClick(e) {
+      const t = e.target.closest('[data-act]'); if (!t) return;
+      const [a, arg0] = t.dataset.act.split(':'); const arg = arg0 !== undefined && /^-?\d+$/.test(arg0) ? +arg0 : arg0;
+      if (a === 'none') return;
+      if (S.station === 1) act1(a, arg); else if (S.station === 2) act2(a, arg); else if (S.station === 3) act3(a, arg); else act4(a, arg);
+    }
+    // ---------------------------------------------------------------- context panel
+    function renderCtx() {
+      const st = S.station, p = testProfile();
+      let t = '', h = '';
+      if (st === 1) {
+        t = 'Animals: weigh, mark, allocate';
+        const w = S.an.filter(a => a.weighed).length, m = S.an.filter(a => a.marked).length;
+        h = `<div class="grid2"><span class="k">Weighed</span><span class="v">${w}/${NA}</span><span class="k">Marked</span><span class="v">${m}/${NA}</span><span class="k">Balance</span><span class="v">${S.bal.tared ? 'tared' : 'NOT tared'}</span>`;
+        if (S.bal.load !== null) h += `<span class="k">On balance</span><span class="v">${aName(S.an[S.bal.load])} • ${S.an[S.bal.load].wDisp.toFixed(1)} g</span>`;
+        h += `</div>`;
+        if (!S.alloc) h += `<div class="note">Catch → balance → ${CFG.markTool === 'picric' ? 'picric acid' : 'tail number'} → marked cage, for all ${NA}. Type each weight into the notebook. Then click the lots jar.</div>` +
+          (S.an.every(a => a.loc === 'hold') ? `<div class="row"><button class="xb-btn sec" onclick="if(confirm('Allocate without randomisation? The first six caught go to Group I.')) allocate('order')">Allocate in catching order instead</button></div>` : '');
+        else h += `<div class="note">Allocation: <b>${S.alloc === 'random' ? 'random (lots)' : 'catching order (biased)'}</b>. Group I: ${groupAn('C').map(aName).join(', ')}; Group II: ${groupAn('T').map(aName).join(', ')}.</div>`;
+      } else if (st === 2) {
+        t = 'Drug solution';
+        h = `<div class="grid2"><span class="k">Test drug</span><span class="v">${S.isUnknown ? 'Coded unknown (drug X)' : p.name}</span><span class="k">Dose volume</span><span class="v">${volPerKg()} mL/kg (${ROUTE_NAME[testRoute()]})</span>`;
+        if (!S.isUnknown) {
+          h += `<span class="k">Flask</span><span class="v">${S.sol.flask ? S.sol.flask + ' mL' : '—'}</span><span class="k">In flask</span><span class="v">${Object.keys(S.sol.comps).map(k => fx(S.sol.comps[k], 1) + ' mg ' + DRUGS[k].label).join(' + ') || '—'}</span>`;
+          h += `<span class="k">Boat</span><span class="v">${S.ab.mg ? fx(S.ab.mg, 1) + ' mg ' + DRUGS[S.ab.boat].label : 'empty'}</span></div>`;
+          if (S.selDrug && !S.sol.made) h += `<div class="row"><span class="k">Weigh ${DRUGS[S.selDrug].label}</span><input id="wMass" class="xb-in" type="number" step="0.1" placeholder="mg"><button class="xb-btn" onclick="weighDrug()">Add with spatula</button></div>`;
+          if (S.sol.mixed) h += `<div class="note">Concentration of your solution (mg/mL):</div>` + Object.keys(S.sol.comps).map(k => `<div class="row"><span class="k" style="width:110px">${DRUGS[k].label}</span><input id="conc_${k}" class="xb-in ${S.sol.concChecked ? 'ok-in' : ''}" type="number" step="0.001" placeholder="mg/mL" value="${S.sol.concTyped && S.sol.concTyped[k] || ''}" oninput="(S.sol.concTyped=S.sol.concTyped||{})['${k}']=this.value"></div>`).join('') + (S.sol.concChecked ? '' : `<div class="row"><button class="xb-btn" onclick="checkConc()">Check concentration</button></div>`);
+          h += `<div class="note">Required: dose ${p.comps.map(c => c.mgkg + ' mg/kg ' + DRUGS[c.k].label).join(' + ')} in ${volPerKg()} mL/kg. Work out the concentration, the mass for your flask, weigh it (tared boat), transfer, make up to the mark with the right vehicle, mix, check, label.</div>`;
+          const q = S.sol.concChecked ? solQuality() : []; if (q.length) h += `<div class="warnbox">⚑ ${q.join('; ')}</div>`;
+        } else h += `</div><div class="note">The coded vial already contains the standard dose of drug X for ${CFG.volKg.ip} mL/kg i.p. Nothing to prepare: go to the apparatus.</div>`;
+      } else if (st === 3) { t = COPY.apparatusName[0].toUpperCase() + COPY.apparatusName.slice(1); h = ctx3(); }
+      else {
+        t = 'Dosing';
+        h = `<div class="grid2"><span class="k">Prescribed</span><span class="v">${S.isUnknown ? 'drug X, ' + CFG.volKg.ip + ' mL/kg i.p.' : p.name}</span><span class="k">Group I</span><span class="v">${vehKind() === 'cmc' ? '1% CMC' : 'saline'}, same route & mL/kg</span><span class="k">Dosed</span><span class="v">${S.an.filter(a => a.dose).length}/${NA}</span></div>`;
+        if (S.hand !== null) {
+          const a = S.an[S.hand];
+          h += `<div class="note"><b>${aName(a)}</b> (${grpName(a.group)}) • recorded weight <b>${a.wTyped || '—'} g</b></div>
+            <div class="row"><span class="k">Dose volume</span><input id="volIn" class="xb-in ${a.volTyped !== '' ? (volOK(a) ? 'ok-in' : 'bad-in') : ''}" type="number" step="0.01" placeholder="mL" value="${a.volTyped}"><button class="xb-btn" onclick="setVol()">Record</button></div>
+            <div class="note">Then: draw from the right vial → choose the site/route on the ${CFG.sp} (fit the gavage needle for p.o.).</div>`;
+        } else h += `<div class="note">Pick an undosed ${CFG.sp} from its group cage. Give each its dose at its own clock time; the notebook stores the time.</div>`;
+      }
+      $('ctxTitle').textContent = t; $('ctx').innerHTML = h;
+    }
+    function setVol() {
+      const a = S.an[S.hand]; if (!a) return;
+      a.volTyped = $('volIn').value; renderCtx(); renderNotebook();
+      say(volOK(a) ? `Dose volume ${a.volTyped} mL recorded for ${aName(a)}.` : `Check the volume: body weight (kg) × ${volPerKg()} mL/kg.`, !volOK(a));
+      refreshChecklist();
+    }
+    // ---------------------------------------------------------------- checklist & hints
+    const allValid = k => S.an.every(a => a.R[k] && !a.R[k].invalid);
+    const STEPS = [
+      { t: () => `Catch, weigh & mark all ${NA} ${CFG.sps}`, st: 1, done: () => S.an.every(a => a.weighed && ['hold', 'C', 'T', 'app', 'hand'].includes(a.loc) && (a.loc !== 'hand' || a.group)) },
+      { t: () => 'Type every body weight into the notebook', st: 1, done: () => S.an.every(a => a.wTyped !== '') },
+      { t: () => 'Allocate to groups by drawing lots', st: 1, done: () => !!S.alloc },
+      { t: () => 'Prepare the test-drug solution', st: 2, done: () => S.isUnknown || S.sol.labelled },
+      { t: () => `Set up the ${COPY.apparatusName}`, st: 3, done: () => S.appWasReady || S.an.some(a => a.R[0]) },
+      { t: () => `Basal ${COPY.readingWord}s (all ${NA})`, st: 3, done: () => allValid(0) },
+      { t: () => `Dose all ${NA} (vehicle / test)`, st: 4, done: () => S.an.every(a => a.dose) },
+      { t: () => '30-min readings', st: 3, done: () => allValid(1) },
+      { t: () => '60-min readings', st: 3, done: () => allValid(2) },
+      { t: () => '90-min readings', st: 3, done: () => allValid(3) },
+      { t: () => 'Type every reading into the notebook', st: 0, done: () => S.an.every(a => a.R.every(r => r && r.typed !== '')) },
+      { t: () => 'Statistics & conclusion (observation sheet)', st: 0, done: () => statsDone() }
+    ];
+    function currentStep() { return STEPS.find(s => !s.done()); }
+    function refreshChecklist() {
+      const cur = currentStep();
+      $('checklist').innerHTML = STEPS.map(s => { const d = s.done(), c = s === cur; return `<li class="${d ? 'done' : c ? 'cur' : ''}"><span class="k">${d ? '✓' : c ? '▶' : '○'}</span><span>${s.t()}${s.st ? ` <span style="color:#94a3b8;font-weight:400">(stn ${s.st})</span>` : ''}</span></li>`; }).join('');
+      let msg = '';
+      if (!cur) msg = 'Practical complete. Review the observation sheet, the viva and the results summary.';
+      else if (cur.st && cur.st !== S.station) msg = `Go to station ${cur.st}: ${$('stationBtns').children[cur.st - 1].innerText.replace(/^\d/, '')}.`;
+      else msg = nextHint(cur);
+      $('nowBox').innerHTML = `<div class="t">Next: ${cur ? cur.t() : 'done'}</div>${msg}`;
+      document.querySelectorAll('#stationBtns button').forEach(b => b.classList.toggle('done', STEPS.filter(s => s.st === +b.dataset.s).every(s => s.done())));
+      refreshHints();
+    }
+    function bestFlask() { const need = 6 * CFG.wtMax / 1000 * volPerKg() * 1.4 + 1; return FLASKS.find(v => v >= need) || 25; }
+    function targets() {
+      const st = S.station;
+      if (st === 1) {
+        if (S.hand !== null) return ['bal'];
+        if (S.bal.load !== null) return S.an[S.bal.load].marked ? ['hold'] : ['mark'];
+        if (S.an.some(a => a.loc === 'home')) return S.bal.tared ? ['home'] : ['tare'];
+        return S.alloc ? [] : ['lots'];
+      }
+      if (st === 2) {
+        if (S.isUnknown) return [];
+        const s = S.sol, req = requiredConc();
+        if (!s.flask) return ['flask:' + bestFlask()];
+        if (S.ab.mg > 0) return ['flask:' + s.flask];
+        if (!s.made) { const miss = Object.keys(req).filter(k => !s.comps[k]); if (miss.length) return S.ab.tared ? ['drug:' + miss[0]] : ['atare']; return [testProfile().veh]; }
+        if (!s.mixed) return ['flask:' + s.flask];
+        if (s.concChecked && !s.labelled) return ['flask:' + s.flask];
+        return [];
+      }
+      if (st === 3) {
+        const t = appTargets(); if (t) return t;
+        const due = S.an.filter(a => { const k = nextSlot(a); if (k < 0) return false; if (k === 0) return !a.dose; return a.dose && S.clock >= a.dose.t + (DUE[k] - WIN) * 60; });
+        return due.map(a => 'an:' + a.i);
+      }
+      if (S.hand === null) return S.an.filter(a => !a.dose && a.R[0]).map(a => 'an:' + a.i);
+      const a = S.an[S.hand], d = S.dose;
+      if (!volOK(a) && a.volTyped === '') return [];
+      if (!d.drawn) { if (testRoute() === 'po' && d.tool !== 'gavage') return ['gavage']; return [a.group === 'T' ? (S.isUnknown ? 'src:coded' : 'src:test') : 'src:' + vehKind()]; }
+      return ['inj:' + testRoute()];
+    }
+    function nextHint(cur) {
+      const st = S.station;
+      if (st === 3 && !S.app.trial && S.hand === null && appReady()) { const d = nextDue(); if (cur.t().includes('min') && d && d.at - S.clock > WIN * 60) return `Next due: ${aName(d.a)} at lab time ${fmtHMS(d.at)}. Speed up the clock to wait.`; return `Pick the ${CFG.sp} that is due (highlighted).`; }
+      if (st === 4 && S.hand !== null && S.an[S.hand].volTyped === '') return 'Enter and record the dose volume in the panel.';
+      return 'Highlighted items show what to click next.';
+    }
+    let _hk = '';
+    function refreshHints(force) {
+      const cur = currentStep();
+      const want = HINTS && cur && cur.st === S.station ? targets() : [];
+      const key = S.station + '|' + want.join(',');
+      if (key === _hk && !force) return; _hk = key;
+      document.querySelectorAll('#scene .pulse').forEach(e => e.classList.remove('pulse'));
+      want.forEach(a => document.querySelectorAll(`#scene [data-act="${a}"]`).forEach(e => e.classList.add('pulse')));
+    }
+    // ---------------------------------------------------------------- notebook
+    function renderNotebook() {
+      const rows = S.an.filter(a => a.weighed).sort((p, q) => (p.group || 'Z').localeCompare(q.group || 'Z') || (p.gi || p.id) - (q.gi || q.id));
+      $('nbInfo').textContent = `${rows.length}/${NA} animals • ${S.an.reduce((n, a) => n + a.R.filter(r => r).length, 0)} readings`;
+      if (!rows.length) { $('nbBody').innerHTML = `<tr><td colspan="10" style="color:#94a3b8;padding:8px;font-family:Inter">No animals weighed yet.</td></tr>`; return; }
+      $('nbBody').innerHTML = rows.map(a => {
+        const cls = (S.hand === a.i || (S.app.trial && S.app.trial.a === a) ? 'sel ' : '') + (a.group ? 'g' + a.group : '');
+        const wc = a.wTyped === '' ? '' : weightOK(a) ? 'ok-in' : 'bad-in', vc = a.volTyped === '' ? '' : volOK(a) ? 'ok-in' : 'bad-in';
+        const cells = [0, 1, 2, 3].map(k => {
+          const r = a.R[k];
+          if (r) return `<td><input class="nb-in ${r.typed === '' ? '' : readingOK(r) ? 'ok-in' : 'bad-in'}" data-a="${a.i}" data-k="${k}" value="${r.typed}" placeholder="s">${r.invalid ? '<span class="nb-sub nb-late">invalid: re-test</span>' : r.flags.length ? `<span class="nb-sub nb-late" title="${r.flags.join('; ')}">⚑ ${r.flags.length}</span>` : ''}${r.tmin !== null && k ? `<span class="nb-sub">at ${fx(r.tmin, 0)} min</span>` : ''}</td>`;
+          if (k && a.dose) { const at = a.dose.t + DUE[k] * 60, left = at - S.clock; return `<td><span class="nb-sub ${Math.abs(left) <= WIN * 60 ? 'nb-due' : left < -WIN * 60 ? 'nb-late' : ''}">due ${fmtHMS(at)}</span></td>`; }
+          return '<td style="color:#cbd5e1">–</td>';
+        }).join('');
+        const fl = a.flags.concat(a.R.flatMap((r, k) => r ? r.flags.map(f => TP[k] + ': ' + f) : []));
+        return `<tr class="${cls}"><td><b>${aName(a)}</b></td><td>${a.group ? `<span class="chip ${a.group}">${a.group === 'C' ? 'I' : 'II'}-${a.gi}</span>` : '—'}</td>
+          <td><input class="nb-in ${wc}" data-a="${a.i}" data-f="w" value="${a.wTyped}" placeholder="g"></td>
+          <td><input class="nb-in ${vc}" data-a="${a.i}" data-f="v" value="${a.volTyped}" placeholder="mL" ${a.group ? '' : 'disabled'}></td>
+          <td>${a.dose ? fmtHMS(a.dose.t) + `<span class="nb-sub">${ROUTE_NAME[a.dose.route]} • ${fx(a.dose.vol, 2)} mL</span>` : '–'}</td>${cells}
+          <td class="l" style="max-width:220px">${fl.length ? `<span class="flag" title="${fl.join('\n')}">⚑ ${fl.length}</span> <span style="font-size:9.5px;color:#9f1239">${fl.slice(0, 2).join('; ')}${fl.length > 2 ? '…' : ''}</span>` : ''}</td></tr>`;
+      }).join('');
+    }
+    function onNbInput(e) {
+      const t = e.target; if (!t.classList.contains('nb-in')) return;
+      const a = S.an[+t.dataset.a];
+      if (t.dataset.f === 'w') a.wTyped = t.value; else if (t.dataset.f === 'v') a.volTyped = t.value; else a.R[+t.dataset.k].typed = t.value;
+      const ok = t.dataset.f === 'w' ? weightOK(a) : t.dataset.f === 'v' ? volOK(a) : readingOK(a.R[+t.dataset.k]);
+      t.classList.toggle('ok-in', t.value !== '' && ok); t.classList.toggle('bad-in', t.value !== '' && !ok);
+      if (e.type === 'change') { refreshChecklist(); if (S.station === 4) renderCtx(); }
+    }
+    // ---------------------------------------------------------------- loop & init
+    let _acc = 0;
+    function frame(dtSim, dtR) {
+      if (!S) return;
+      tickClock(dtSim, dtR);
+      appFrame(dtSim, dtR);
+      if (!S.appWasReady && appReady()) { S.appWasReady = true; beep('done'); if (S.station === 3) say(`${COPY.apparatusName[0].toUpperCase() + COPY.apparatusName.slice(1)} ready and stable. Pick a ${CFG.sp} for its basal reading.`); refreshChecklist(); }
+      _acc += dtR;
+      if (_acc > 0.7) { _acc = 0; refreshHints(); if (S.station === 3 && !document.activeElement.closest('#ctx')) renderCtx(); if (S.station === 4 || S.station === 1) { /* cages show sedation */ } renderNotebookDue(); }
+    }
+    let _lastDueMin = -1;
+    function renderNotebookDue() { const m = Math.floor(S.clock / 60); if (m !== _lastDueMin && !document.activeElement.classList.contains('nb-in')) { _lastDueMin = m; renderNotebook(); refreshChecklist(); } }
+    function renderManual() { $('manualTbl').innerHTML = MANUAL.map(([k, v]) => v ? `<tr><td>${k}</td><td class="mono">${v}</td></tr>` : `<tr><td colspan="2" style="font-weight:700;color:#334155;padding-top:6px">${k}</td></tr>`).join(''); }
+    function newExperiment() {
+      S = freshState(); S.app = freshApp(); _hk = '';
+      $('cutBanner').style.display = 'none';
+      goStation(1); renderNotebook(); resetStatsInputs(); renderObservation();
+      say(`New practical. Start at station 1: tare the ${CFG.sp === 'rat' ? 'container' : 'beaker'} on the balance, then catch the first ${CFG.sp} from the stock cage.`);
+    }
+    function onDrugSelectChange() {
+      const v = $('drugSelect').value;
+      if (S.an.some(a => a.group === 'T' && a.dose) || S.sol.made) {
+        if (!confirm('Changing the test drug discards the solution and all Group II doses and post-drug readings. Continue?')) { $('drugSelect').value = S.isUnknown ? 'unknown' : S.drugKey; return; }
+        S.an.filter(a => a.group === 'T').forEach(a => { a.dose = null; a.volTyped = ''; a.R = [a.R[0] && !a.R[0].flags.includes('basal taken after dosing') ? a.R[0] : null, null, null, null]; a.flags = a.flags.filter(f => /weigh|mark|random/.test(f)); });
+      }
+      S.isUnknown = v === 'unknown'; S.drugKey = S.isUnknown ? 'morphine' : v;
+      S.sol = { flask: null, comps: {}, veh: null, made: false, mixed: false, labelled: false, used: 0, concTyped: '', concChecked: false }; S.ab.mg = 0; S.ab.boat = null; S.selDrug = null;
+      $('drugStatusBadge').textContent = S.isUnknown ? 'Coded drug X' : PROFILES[S.drugKey].short;
+      buildScene(); renderCtx(); renderNotebook(); refreshChecklist(); renderObservation();
+      say(`Test drug: ${S.isUnknown ? 'coded unknown (drug X, i.p.)' : PROFILES[S.drugKey].name}.`);
+    }
+    function init() {
+      $('drugSelect').value = 'morphine';
+      $('unknownDrugDeduction').innerHTML += MYSTERY_KEYS.map(k => `<option value="${k}">${PROFILES[k].name}</option>`).join('');
+      $('scene').addEventListener('click', onSceneClick);
+      $('nbBody').addEventListener('input', onNbInput); $('nbBody').addEventListener('change', onNbInput);
+      renderManual(); buildStatsTable();
+      S = null; newExperiment(); switchTab('experiment');
+      startLoop(frame);
+    }
+    // =====================================================================
+    // Observation sheet: tables, the student's statistics, charts, inference, results
+    // =====================================================================
+    const STAT_ROWS = [
+      ['mC', 'Group I (vehicle): mean latency (s)', [0, 1, 2, 3]], ['sC', 'Group I: SEM (s)', [0, 1, 2, 3]],
+      ['mT', 'Group II (test): mean latency (s)', [0, 1, 2, 3]], ['sT', 'Group II: SEM (s)', [0, 1, 2, 3]],
+      ['p', 'Group II: mean %MPE', [1, 2, 3]], ['t', '|t| Group II vs Group I (df = 10)', [0, 1, 2, 3]]
+    ];
+    function statTruth(r, k) {
+      const C = colVals('C', k), T = colVals('T', k);
+      if (r === 'mC') return C ? mean(C) : NaN; if (r === 'sC') return C ? sem(C) : NaN;
+      if (r === 'mT') return T ? mean(T) : NaN; if (r === 'sT') return T ? sem(T) : NaN;
+      if (r === 'p') { const m = mpeVals('T', k); return m ? mean(m) : NaN; }
+      if (r === 't') return C && T ? Math.abs(tTest(C, T).t) : NaN;
+      return NaN;
+    }
+    function buildStatsTable() {
+      $('statBody').innerHTML = STAT_ROWS.map(([r, l, ks]) => `<tr><td class="p-2 border-r text-left font-sans font-semibold text-slate-700">${l}</td>${[0, 1, 2, 3].map(k => `<td class="p-1.5 border-r">${ks.includes(k) ? `<input id="st_${r}_${k}" class="stat-in" type="number" step="any" oninput="checkStats()">` : '—'}</td>`).join('')}</tr>`).join('') +
+        `<tr><td class="p-2 border-r text-left font-sans font-semibold text-slate-700">p (from your t) and significance</td>${[0, 1, 2, 3].map(k => `<td class="p-1.5 border-r" id="st_pv_${k}">—</td>`).join('')}</tr>`;
+    }
+    function resetStatsInputs() { document.querySelectorAll('#statBody input').forEach(i => { i.value = ''; i.classList.remove('ok-in', 'bad-in'); }); }
+    function statOK(r, k) {
+      const i = $(`st_${r}_${k}`); if (!i || i.value === '') return false;
+      const v = +i.value, tru = statTruth(r, k); if (!isFinite(tru)) return false;
+      return Math.abs(v - tru) <= Math.max(Math.abs(tru) * 0.02, r === 'p' ? 0.5 : r === 't' ? 0.03 : 0.015);
+    }
+    function checkStats() {
+      STAT_ROWS.forEach(([r, , ks]) => ks.forEach(k => { const i = $(`st_${r}_${k}`); if (!i) return; const ok = statOK(r, k); i.classList.toggle('ok-in', i.value !== '' && ok); i.classList.toggle('bad-in', i.value !== '' && !ok); }));
+      [0, 1, 2, 3].forEach(k => { const c = $('st_pv_' + k); if (!c) return; if (statOK('t', k)) { const p = betai(5, 0.5, 10 / (10 + (+$(`st_t_${k}`).value) ** 2)); c.innerHTML = `${p < 0.001 ? '< 0.001' : p.toFixed(3)} <b>${stars(p)}</b>`; } else c.textContent = '—'; });
+      if (S) refreshChecklist();
+    }
+    function statsDone() { return STAT_ROWS.every(([r, , ks]) => ks.every(k => statOK(r, k))); }
+
+    function obsTable(g) {
+      const p = testProfile(), title = g === 'C' ? `Group I: Vehicle (${vehKind() === 'cmc' ? '1% CMC' : 'normal saline'})` : `Group II: ${S.isUnknown ? 'Unknown Mystery Drug (coded X)' : p.name}`;
+      const rows = groupAn(g).map(a => {
+        const cells = [0, 1, 2, 3].map(k => { const r = a.R[k]; if (!r || r.typed === '') return `<td class="p-1.5 border-r">--</td>`; const bad = !readingOK(r) || r.invalid; return `<td class="p-1.5 border-r ${bad ? 'text-rose-600 font-bold' : k ? 'text-indigo-700' : ''}">${r.typed}${r.flags.length ? '<sup title="' + r.flags.join('; ') + '">⚑</sup>' : ''}${shownVal(r) >= CFG.cutoff ? '*' : ''}</td>`; }).join('');
+        const mp = [1, 2, 3].map(k => mpeOf(a, k)).filter(isFinite);
+        return `<tr><td class="p-1.5 border-r font-bold">${aName(a)}${a.flags.length ? '<sup title="' + a.flags.join('; ') + '">⚑</sup>' : ''}</td><td class="p-1.5 border-r">${a.wTyped || '--'}</td><td class="p-1.5 border-r">${a.dose ? fx(a.dose.vol, 2) : '--'}</td>${cells}<td class="p-1.5 font-bold">${mp.length ? fx(Math.max(...mp), 1) : '--'}</td></tr>`;
+      }).join('') || `<tr><td colspan="8" class="p-3 text-slate-400">Groups not allocated yet.</td></tr>`;
+      return `<div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+        <div class="${g === 'C' ? 'bg-slate-100 text-slate-800' : 'bg-indigo-50 text-indigo-900'} px-4 py-2 border-b border-slate-200 text-xs font-bold uppercase tracking-wide">${title}</div>
+        <table class="w-full text-xs border-collapse"><thead><tr class="bg-slate-50 text-slate-600 border-b border-slate-200"><th class="p-1.5 border-r">${CFG.Sp}</th><th class="p-1.5 border-r">Wt (g)</th><th class="p-1.5 border-r">Vol (mL)</th><th class="p-1.5 border-r">Basal (s)</th><th class="p-1.5 border-r">30 min</th><th class="p-1.5 border-r">60 min</th><th class="p-1.5 border-r">90 min</th><th class="p-1.5">Peak %MPE</th></tr></thead>
+        <tbody class="divide-y divide-slate-200 font-mono text-[11px] text-center">${rows}</tbody></table>
+        <div class="px-3 py-1.5 text-[10px] text-slate-500">* cut-off reached (${CFG.cutoff} s): animal removed without a response.</div></div>`;
+    }
+    function renderObservation() {
+      if (!S) return;
+      $('obsTables').innerHTML = obsTable('C') + obsTable('T');
+      checkStats();
+      const ser = ['C', 'T'].map(g => ({ name: g === 'C' ? 'Vehicle' : (S.isUnknown ? 'Drug X' : testProfile().short), color: g === 'C' ? '#64748b' : '#dc2626', pts: [0, 1, 2, 3].map(k => { const v = colVals(g, k); return v ? [DUE[k], mean(v), sem(v)] : null; }).filter(Boolean) }));
+      lineChart('chartTime', { series: ser, xMin: -6, xMax: 96, yMin: 0, yMax: CFG.cutoff + 2, xTicks: DUE.map((d, k) => [d, k ? d + ' min' : 'Basal']), xLabel: 'Time after dosing', yLabel: COPY.chartY, hlines: [{ y: CFG.cutoff, color: '#e11d48', label: `cut-off ${CFG.cutoff} s` }], empty: 'Record readings to plot' });
+      const bars = [];
+      [1, 2, 3].forEach(k => ['C', 'T'].forEach(g => { const m = mpeVals(g, k); bars.push({ label: `${g === 'C' ? 'I' : 'II'} ${DUE[k]}'`, v: m ? mean(m) : NaN, e: m ? sem(m) : 0, color: g === 'C' ? '#64748b' : '#dc2626', note: m ? fx(mean(m), 0) : '' }); }));
+      barChart('chartMPE', { bars, yMin: Math.min(0, ...bars.filter(b => isFinite(b.v)).map(b => b.v - b.e)), yMax: 100, yLabel: '%MPE', empty: 'No complete time point yet' });
+      const inf = $('lblInference'), det = $('lblInferenceDetail');
+      const fl = allFlags(); $('flagSummary').innerHTML = fl.length ? `<b>⚑ ${fl.length} protocol flag(s):</b> ${fl.slice(0, 6).join('; ')}${fl.length > 6 ? '…' : ''}` : '';
+      const ready = [0, 1, 2, 3].every(k => colVals('C', k) && colVals('T', k));
+      if (!ready) { inf.innerText = 'Pending'; det.innerText = 'Complete and type in all readings for both groups.'; return; }
+      const ps = [1, 2, 3].map(k => tTest(colVals('C', k), colVals('T', k)));
+      const best = [1, 2, 3].reduce((b, k) => mean(mpeVals('T', k)) > mean(mpeVals('T', b)) ? k : b, 1), peak = mean(mpeVals('T', best));
+      const sig = peak >= 10 && ps.some((r, j) => r.p < 0.05 && mean(colVals('T', j + 1)) > mean(colVals('C', j + 1)));
+      inf.innerText = sig ? (peak > 50 ? `Significant ${CFG.app === 'hotplate' ? 'central ' : ''}analgesic activity` : 'Moderate analgesic activity') : `No significant analgesic effect in the ${COPY.apparatusName} test`;
+      det.innerText = (sig ? `Latency was significantly prolonged; peak effect at ${TP[best]} (%MPE ≈ ${peak.toFixed(0)}%). ${COPY.infSig}`
+        : `Latencies stayed close to vehicle at every time point (peak %MPE ≈ ${peak.toFixed(0)}%). Peripheral NSAIDs, or an opioid blocked by naloxone, behave this way.${ps.some(r => r.p < 0.05) ? ' A statistically significant difference this small (%MPE < 10%) is not a meaningful analgesic effect; check the basal values of the two groups.' : ''}`) + (fl.length ? ` Interpret with caution: ${fl.length} protocol flag(s) recorded.` : '');
+    }
+    function buildResults() {
+      const choice = $('unknownDrugDeduction').value, p = testProfile();
+      const rows = [['Test drug', S.isUnknown ? 'Unknown (coded drug X)' : p.short], ['Allocation', S.alloc === 'random' ? 'Random (lots)' : S.alloc ? 'Catching order (biased)' : '—']];
+      [0, 1, 2, 3].forEach(k => { const c = colVals('C', k), t = colVals('T', k); rows.push([`${TP[k]}: I vs II (s)`, c && t ? `${fx(mean(c), 2)} ± ${fx(sem(c), 2)} vs ${fx(mean(t), 2)} ± ${fx(sem(t), 2)}` : '--']); });
+      [1, 2, 3].forEach(k => { const m = mpeVals('T', k), c = colVals('C', k), t = colVals('T', k); rows.push([`%MPE at ${TP[k]}`, m ? `${fx(mean(m), 1)}% (${pLabel(tTest(c, t).p)})` : '--']); });
+      const nOk = STAT_ROWS.reduce((n, [r, , ks]) => n + ks.filter(k => statOK(r, k)).length, 0), nAll = STAT_ROWS.reduce((n, r) => n + r[2].length, 0);
+      rows.push(['Your statistics correct', `${nOk}/${nAll}`]);
+      const nRead = S.an.reduce((n, a) => n + a.R.filter(r => r && r.typed !== '').length, 0), nGood = S.an.reduce((n, a) => n + a.R.filter(r => readingOK(r)).length, 0);
+      rows.push(['Readings entered / matching the watch', `${nRead} / ${nGood}`]);
+      rows.push(['Protocol flags', String(allFlags().length)]);
+      rows.push(['Your deduction', choice ? PROFILES[choice].short : 'Not submitted']);
+      let text;
+      if (choice && S.isUnknown) { const ok = choice === mysteryKey, a = PROFILES[mysteryKey]; text = `${ok ? '<strong>CORRECT DIAGNOSIS!</strong>' : '<strong>INCORRECT.</strong>'} The mystery drug was <strong>${a.name}</strong>. ${a.desc}`; }
+      else text = !S.isUnknown && colVals('T', 3) ? p.desc + ' ' + ($('lblInferenceDetail').innerText || '') : 'Complete both groups (and submit a deduction in exam mode) to see the summary.';
+      return { rows, text };
+    }
+    function submitEvaluation() {
+      if (!$('unknownDrugDeduction').value) return say('Select your deduced compound first.', true);
+      openResultsModal();
+    }
+    // completed textbook dataset (vehicle vs morphine) for demonstration and the automated platform test
+    function loadReferenceDataset() {
+      $('drugSelect').value = 'morphine';
+      S = freshState(); S.app = freshApp(); S.drugKey = 'morphine'; S.isUnknown = false; $('drugStatusBadge').textContent = 'Morphine';
+      const REF = REF_DATA, p = PROFILES.morphine;
+      S.sol = { flask: 10, comps: { morphine: requiredConc().morphine * 10 }, veh: 'saline', made: true, mixed: true, labelled: true, used: 0, concTyped: {}, concChecked: true };
+      S.bal.tared = true; S.alloc = 'random'; appMakeReady(); S.appWasReady = true;
+      S.clock = 2 * 3600;
+      S.an.forEach((a, j) => {
+        const g = j < 6 ? 'C' : 'T', d = REF[g][j % 6];
+        a.id = j + 1; a.marked = true; a.weighed = true; a.wt = d[0]; a.wDisp = d[0]; a.wTyped = String(d[0]); a.group = g; a.gi = j % 6 + 1; a.loc = g; a.catchNo = j + 1;
+        const vol = +(d[0] / 1000 * volPerKg()).toFixed(2); a.volTyped = String(vol);
+        const t0 = 600 + j * 90; a.dose = { t: t0, vol, src: g === 'T' ? 'test' : 'saline', route: p.route, mgkg: g === 'T' ? { morphine: 5 } : {} };
+        a.R = d.slice(1).map((v, k) => ({ val: v, tmin: k ? DUE[k] : null, flags: [], typed: String(v), invalid: false, clock: t0 + DUE[k] * 60 }));
+      });
+      goStation(1); renderNotebook();
+      STAT_ROWS.forEach(([r, , ks]) => ks.forEach(k => { const v = statTruth(r, k); $(`st_${r}_${k}`).value = r === 'p' ? v.toFixed(1) : v.toFixed(3); }));
+      renderObservation(); refreshChecklist();
+      say('Loaded the reference dataset (vehicle vs morphine 5 mg/kg s.c.).');
+    }
+  </script>
+  <script src="../assets/js/viva.js"></script>
+</body>
+</html>
