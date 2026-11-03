@@ -160,15 +160,15 @@ SITE_URL = env('SITE_URL', 'http://localhost:8000')
 # Legal entity shown in the Privacy Policy / Terms. Fill these in deploy/.env before going live.
 LEGAL = {
     'org_name': env('LEGAL_ORG_NAME', 'Aaron Innovations'),
-    'org_address': env('LEGAL_ORG_ADDRESS', 'Rajouri Garden, New Delhi, India'),
+    'org_address': env('LEGAL_ORG_ADDRESS', 'Kolkata, India'),
     'contact_email': env('LEGAL_CONTACT_EMAIL', 'drvaraprasadsaka@gmail.com'),
     'grievance_officer': env('LEGAL_GRIEVANCE_OFFICER', 'Dr. Vara Prasad Saka'),
     'grievance_email': env('LEGAL_GRIEVANCE_EMAIL', 'drvaraprasadsaka@gmail.com'),
-    'jurisdiction': env('LEGAL_JURISDICTION', 'New Delhi, India'),
+    'jurisdiction': env('LEGAL_JURISDICTION', 'Kolkata, India'),
     'hosting_location': env('LEGAL_HOSTING_LOCATION', 'India'),
 }
 # Bump when the Privacy Policy / Terms change: every user is asked to accept again.
-POLICY_VERSION = '2026-11-03'
+POLICY_VERSION = '2026-11-03b'
 POLICY_EFFECTIVE = '3 November 2026'
 # Trial rules & animal-ethics agreement shown as a pop-up after sign-in (bump to ask everyone again)
 ETHICS_VERSION = '2026-11-02'
