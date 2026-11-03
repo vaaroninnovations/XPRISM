@@ -6,6 +6,7 @@ sign-up page. A failure to send is logged and never breaks the sign-up itself.
 """
 import logging
 import threading
+from email.mime.image import MIMEImage
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -21,6 +22,7 @@ from django.utils.http import urlsafe_base64_encode
 from .models import Role
 
 log = logging.getLogger(__name__)
+LOGO_CID = 'xprism-logo'
 
 
 class EmailVerificationTokenGenerator(PasswordResetTokenGenerator):
@@ -59,11 +61,25 @@ def _deliver(msg):
         log.exception('Could not send e-mail "%s" to %s', msg.subject, msg.to)
 
 
+def _attach_logo(msg):
+    """Embed the logo in the message, so it shows without loading anything from the site."""
+    try:
+        logo = MIMEImage((settings.BASE_DIR / 'static' / 'assets' / 'img' / 'xprism-lockup.png').read_bytes())
+    except OSError:
+        log.exception('Could not read the logo for e-mails')
+        return
+    logo.add_header('Content-ID', f'<{LOGO_CID}>')
+    logo.add_header('Content-Disposition', 'inline', filename='xprism-logo.png')
+    msg.mixed_subtype = 'related'
+    msg.attach(logo)
+
+
 def _send_to(to, name, subject, template, ctx):
     ctx = {'name': name, 'site_name': settings.SITE_NAME, 'site_full_name': settings.SITE_FULL_NAME,
-           'support_email': settings.LEGAL['contact_email'], **ctx}
+           'support_email': settings.LEGAL['contact_email'], 'logo_cid': LOGO_CID, **ctx}
     msg = EmailMultiAlternatives(subject, render_to_string(f'emails/{template}.txt', ctx), settings.DEFAULT_FROM_EMAIL, to)
     msg.attach_alternative(render_to_string(f'emails/{template}.html', ctx), 'text/html')
+    _attach_logo(msg)
     if getattr(settings, 'EMAIL_ASYNC', False):
         threading.Thread(target=_deliver, args=(msg,), daemon=True).start()
     else:

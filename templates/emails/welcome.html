@@ -2,7 +2,7 @@
 {% block body %}
 <p style="margin:0 0 14px;">Hello {{ name }},</p>
 <p style="margin:0 0 14px;">Welcome to <strong>{{ site_name }}</strong>! Your account is ready. {{ site_name }} lets you practise pharmacology experiments through realistic, interactive simulations, putting the 3Rs (Replacement, Reduction and Refinement) into practice.</p>
-<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;background:#f0fdfa;border:1px solid #99f6e4;border-radius:8px;margin:0 0 18px;">
+<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;background:#faf3fe;border:1px solid #e5c6f9;border-radius:8px;margin:0 0 18px;">
   <tr><td style="padding:14px 18px;font-size:14px;">
     <div><span style="color:#475569;">Username:</span> <strong style="font-family:JetBrains Mono,Consolas,monospace;">{{ user.username }}</strong></div>
     {% if batch %}<div><span style="color:#475569;">Class:</span> <strong>{{ batch.name }}</strong>{% if batch.college %} · {{ batch.college.name }}{% endif %}</div>{% endif %}
@@ -10,12 +10,12 @@
   </td></tr>
 </table>
 {% if is_trial %}
-<p style="margin:0 0 14px;">With the free trial you can explore each experiment once. When you are ready for unlimited access, see the subscription options at <a href="{{ subscribe_url }}" style="color:#0f766e;">{{ subscribe_url }}</a> or write to {{ subscription_contact }}.</p>
+<p style="margin:0 0 14px;">With the free trial you can explore each experiment once. When you are ready for unlimited access, see the subscription options at <a href="{{ subscribe_url }}" style="color:#7e13b5;">{{ subscribe_url }}</a> or write to {{ subscription_contact }}.</p>
 {% else %}
 <p style="margin:0 0 14px;">Your assignments from your faculty will appear on your dashboard. Sign in with the username above and the password you chose.</p>
 {% endif %}
 <p style="margin:24px 0;text-align:center;">
-  <a href="{{ login_url }}" style="display:inline-block;background:#0d9488;color:#ffffff;text-decoration:none;font-weight:600;padding:12px 26px;border-radius:8px;">Open the lab</a>
+  <a href="{{ login_url }}" style="display:inline-block;background:#7e13b5;color:#ffffff;text-decoration:none;font-weight:600;padding:12px 26px;border-radius:8px;">Open the lab</a>
 </p>
 <p style="margin:0;font-size:13px;color:#475569;">We have also sent a separate e-mail asking you to verify your address. Please click the link in it.</p>
 {% endblock %}

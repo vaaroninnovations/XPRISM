@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{{ site_name }}</title></head>
-<body style="margin:0;padding:0;background:#f1f5f9;font-family:Inter,Segoe UI,Helvetica,Arial,sans-serif;color:#0f172a;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;padding:24px 12px;">
+<body style="margin:0;padding:0;background:#f4f2f9;font-family:Inter,Segoe UI,Helvetica,Arial,sans-serif;color:#0a1f44;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f2f9;padding:24px 12px;">
     <tr><td align="center">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;">
-        <tr><td style="padding:20px 28px;border-bottom:3px solid #0d9488;">
-          <div style="font-size:20px;font-weight:800;letter-spacing:.5px;color:#0f766e;">{{ site_name }}</div>
-          <div style="font-size:12px;color:#64748b;">{{ site_full_name }}</div>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border:1px solid #e7e2f1;border-radius:12px;">
+        <tr><td style="padding:18px 28px 14px;">
+          <img src="cid:{{ logo_cid }}" alt="{{ site_name }}" width="146" height="49" style="display:block;border:0;width:146px;height:49px;">
+          <div style="font-size:12px;color:#64748b;margin-top:6px;">{{ site_full_name }}</div>
         </td></tr>
+        <tr><td height="3" style="height:3px;font-size:0;line-height:0;background-color:#7e13b5;background-image:linear-gradient(90deg,#4e1c8f,#7e13b5 30%,#066eaa 70%,#2bbfb0);">&nbsp;</td></tr>
         <tr><td style="padding:28px;font-size:15px;line-height:1.6;">
           {% block body %}{% endblock %}
         </td></tr>
-        <tr><td style="padding:16px 28px;border-top:1px solid #e2e8f0;font-size:12px;color:#64748b;">
-          Questions? Write to <a href="mailto:{{ support_email }}" style="color:#0f766e;">{{ support_email }}</a>.<br>
+        <tr><td style="padding:16px 28px;border-top:1px solid #e7e2f1;font-size:12px;color:#64748b;">
+          Questions? Write to <a href="mailto:{{ support_email }}" style="color:#7e13b5;">{{ support_email }}</a>.<br>
           This is an automatic message from {{ site_name }}; please do not reply to it.
         </td></tr>
       </table>

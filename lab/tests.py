@@ -835,5 +835,16 @@ class FreeYearTests(Base):
         app.refresh_from_db()
         self.assertEqual((app.email, app.phone, app.status), ('', '', FreeYearApplication.REJECTED))
 
+    def test_emails_carry_the_logo_and_site_colours(self):
+        self.apply()
+        msg = mail.outbox[0].message()
+        self.assertEqual(msg.get_content_type(), 'multipart/related')
+        logo = [p for p in msg.walk() if p.get_content_type() == 'image/png'][0]
+        self.assertEqual(logo['Content-ID'], '<xprism-logo>')
+        html = [p for p in msg.walk() if p.get_content_type() == 'text/html'][0].get_payload(decode=True).decode()
+        self.assertIn('src="cid:xprism-logo"', html)
+        self.assertIn('#7e13b5', html)
+        self.assertNotIn('#0d9488', html)
+
     def test_year_end_on_leap_day(self):
         self.assertEqual(one_year_after(datetime.date(2028, 2, 29)), datetime.date(2029, 2, 28))
