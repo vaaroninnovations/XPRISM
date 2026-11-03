@@ -17,6 +17,7 @@ from django.views.decorators.http import require_POST
 from . import access
 from .emails import send_signup_emails, send_verification_email, verification_token
 from .forms import ConsentForm, DataRequestForm, EthicsAgreementForm, SignupForm, TrialSignupForm, INPUT
+from .free_year import erase_personal_data
 from .models import Attempt, ConsentRecord, DataRequest, Enrollment, Role, User
 from .permissions import audit, client_ip
 
@@ -222,6 +223,10 @@ def _export(u):
                       'submitted_at': a.submitted_at.isoformat() if a.submitted_at else None, 'auto_score': a.auto_score,
                       'marks': a.final_marks, 'max_marks': float(a.assignment.max_marks), 'feedback': a.feedback, 'submission': a.payload}
                      for a in u.attempts.select_related('assignment__experiment')],
+        'free_year_applications': [{'applying_for': f.get_kind_display(), 'name': f.name, 'email': f.email, 'phone': f.phone, 'institution': f.institution,
+                                    'occupation': f.occupation, 'message': f.message, 'status': f.status, 'applied_at': f.created_at.isoformat(),
+                                    'awarded_until': f.awarded_until.isoformat() if f.awarded_until else None}
+                                   for f in u.free_year_applications.all()],
     }
 
 
@@ -248,6 +253,7 @@ def my_data(request):
 
 def anonymise_user(user):
     """Erase personal identifiers but keep de-identified academic records (marks) for the college's statistics."""
+    erase_personal_data(user)
     user.first_name, user.last_name, user.email, user.roll_no = 'Deleted', 'user', '', ''
     user.username = f'deleted-{user.pk}'
     user.is_active, user.anonymised = False, True

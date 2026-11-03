@@ -419,3 +419,7 @@ input[type=file] { font-size: 12px; }
 @media (min-width: 1024px) { .xh-hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; padding-top: 72px; padding-bottom: 80px; } }
 @media (max-width: 639px) { .xh-wrap { padding: 0 16px; } .xh-sec, .xh-cta { padding: 52px 0; } .xh-hero-grid { padding-top: 40px; padding-bottom: 48px; } .xh-actions .xh-btn { flex: 1 1 100%; } }
 @media (prefers-reduced-motion: reduce) { .xh-card, .xh-cta-choices a, .xh-bench-stage img { transition: none; } .xh-card:hover, .xh-cta-choices a:hover { transform: none; } }
+
+/* free-year application pop-up */
+.free-year-modal { width: calc(100% - 24px); max-height: 92vh; overflow: hidden auto; }
+.free-year-modal::backdrop { background: rgba(10, 31, 68, .7); backdrop-filter: blur(4px); }

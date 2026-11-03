@@ -294,6 +294,35 @@ class DataRequest(models.Model):
         ordering = ['-created_at']
 
 
+class FreeYearApplication(models.Model):
+    """A request for one free year of access, made from the public pop-up and decided by a super admin."""
+    INDIVIDUAL, COLLEGE = 'individual', 'college'
+    KINDS = [(COLLEGE, 'My college'), (INDIVIDUAL, 'Myself')]
+    OCCUPATIONS = [('faculty', 'Faculty / teacher'), ('student', 'Student'), ('researcher', 'Researcher'), ('other', 'Other')]
+    PENDING, APPROVED, REJECTED = 'pending', 'approved', 'rejected'
+    kind = models.CharField('Applying for', max_length=12, choices=KINDS, default=COLLEGE)
+    name = models.CharField('Full name', max_length=120)
+    email = models.EmailField('E-mail', max_length=150)
+    phone = models.CharField('Phone', max_length=20, blank=True)
+    institution = models.CharField('College / institution', max_length=200)
+    occupation = models.CharField('I am a', max_length=40, choices=OCCUPATIONS, default='faculty')
+    message = models.TextField(max_length=1000, blank=True)
+    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='free_year_applications')
+    status = models.CharField(max_length=10, choices=[(PENDING, 'Pending'), (APPROVED, 'Approved'), (REJECTED, 'Declined')], default=PENDING)
+    created_at = models.DateTimeField(auto_now_add=True)
+    reviewed_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    review_note = models.TextField(blank=True)
+    awarded_until = models.DateField(null=True, blank=True)
+    awarded_college = models.ForeignKey(College, null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'{self.name} <{self.email}> ({self.status})'
+
+
 class TrialVisit(models.Model):
     """One free exploration of an experiment by a user without a subscription."""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='trial_visits')

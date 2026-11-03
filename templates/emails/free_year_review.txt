@@ -1,0 +1,13 @@
+{% autoescape off %}A new application for one free year of {{ site_name }} is waiting for your review.
+
+Name: {{ app.name }}
+E-mail: {{ app.email }}{% if app.phone %}
+Phone: {{ app.phone }}{% endif %}
+Institution: {{ app.institution }}
+Role: {{ app.get_occupation_display }}
+Applying for: {{ app.get_kind_display }}{% if app.message %}
+Message: {{ app.message }}{% endif %}
+
+Review the application: {{ review_url }}
+
+{{ site_name }}{% endautoescape %}

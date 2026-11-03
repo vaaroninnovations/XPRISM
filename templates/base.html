@@ -63,7 +63,7 @@
   <nav class="site-subheader bg-slate-800 text-white px-4 md:px-6 py-2 flex flex-wrap items-center justify-between gap-2 shadow">
     <div class="flex flex-wrap items-center gap-1 bg-slate-900/80 p-1 rounded-lg border border-slate-700">
       {% for label, href in NAV %}
-      <a href="{{ href }}" class="px-3 py-1.5 rounded-md text-xs font-medium transition {% if request.path == href or href != '/' and request.path|slice:':12' == href|slice:':12' %}bg-teal-500 text-white shadow font-semibold{% else %}text-slate-300 hover:text-white{% endif %}">{{ label }}{% if label == 'Requests' and OPEN_REQUESTS %} <span class="ml-1 px-1.5 rounded-full bg-rose-500 text-white text-[10px]">{{ OPEN_REQUESTS }}</span>{% endif %}</a>
+      <a href="{{ href }}" class="px-3 py-1.5 rounded-md text-xs font-medium transition {% if request.path == href or href != '/' and request.path|slice:':12' == href|slice:':12' %}bg-teal-500 text-white shadow font-semibold{% else %}text-slate-300 hover:text-white{% endif %}">{{ label }}{% if label == 'Requests' and OPEN_REQUESTS %} <span class="ml-1 px-1.5 rounded-full bg-rose-500 text-white text-[10px]">{{ OPEN_REQUESTS }}</span>{% endif %}{% if label == 'Free year' and PENDING_FREE_YEAR %} <span class="ml-1 px-1.5 rounded-full bg-rose-500 text-white text-[10px]">{{ PENDING_FREE_YEAR }}</span>{% endif %}</a>
       {% endfor %}
     </div>
     <div class="flex items-center gap-1 text-xs">
@@ -74,6 +74,7 @@
   </nav>
   {% if user.is_shared_demo %}<div class="bg-amber-50 border-b border-amber-200 text-amber-900 text-xs text-center px-4 py-1.5" role="status"><b>Shared demo:</b> sample data only, visible to everyone using this login. Don't enter real student details. Resets every night.</div>{% endif %}
   {% endif %}
+  {% if SHOW_FREE_YEAR %}<div class="bg-teal-50 border-b border-teal-200 text-teal-900 text-xs text-center px-4 py-1.5"><b>Use XPRISM for 1 year, free of cost.</b> <button type="button" data-free-year-open class="underline font-semibold hover:text-teal-700">Apply here</button></div>{% endif %}
 
   <main class="{% block main_class %}flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-4{% endblock %}">
     {% if messages or NEEDS_EMAIL_VERIFY %}<div class="{% block notices_class %}space-y-4{% endblock %}">{% endif %}
@@ -102,6 +103,7 @@
     </div>
   </footer>
   {% if NEEDS_ETHICS %}{% include 'lab/_ethics_modal.html' %}{% endif %}
+  {% if SHOW_FREE_YEAR %}{% include 'lab/_free_year_modal.html' %}{% endif %}
   {% block scripts %}{% endblock %}
 </body>
 </html>

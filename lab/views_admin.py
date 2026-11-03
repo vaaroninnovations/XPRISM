@@ -7,10 +7,12 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
+from . import free_year
+from .emails import send_free_year_approved, send_free_year_declined, set_password_url
 from .forms import BrandingForm, CollegeCreateForm, CollegeForm, StaffUserForm, make_username, temp_password
 import datetime
 
-from .models import Attempt, AuditLog, Batch, College, DataRequest, Experiment, Role, TrialVisit, User
+from .models import Attempt, AuditLog, Batch, College, DataRequest, Experiment, FreeYearApplication, Role, TrialVisit, User
 from .permissions import audit, role_required
 from .views_auth import anonymise_user
 
@@ -181,7 +183,8 @@ def platform_dashboard(request):
              'submissions': Attempt.objects.exclude(status=Attempt.STARTED).count(), 'experiments': Experiment.objects.filter(is_active=True).count(),
              'open_requests': DataRequest.objects.filter(status=DataRequest.OPEN).exclude(kind=DataRequest.EXPORT).count(),
              'trial_users': User.objects.filter(is_trial_account=True, is_active=True).count(),
-             'trial_visits': TrialVisit.objects.count()}
+             'trial_visits': TrialVisit.objects.count(),
+             'free_year': FreeYearApplication.objects.filter(status=FreeYearApplication.PENDING).count()}
     return render(request, 'lab/platform_dashboard.html', {'colleges': colleges, 'stats': stats})
 
 
@@ -224,6 +227,55 @@ def platform_experiments(request):
         messages.success(request, 'Experiment catalogue updated.')
         return redirect('platform_experiments')
     return render(request, 'lab/platform_experiments.html', {'exps': Experiment.objects.all()})
+
+
+def _award_free_year(request, app):
+    """Award the year and tell the applicant. Returns the message for the super admin."""
+    if app.kind == FreeYearApplication.COLLEGE:
+        cid = request.POST.get('college', 'new')
+        college, admin = free_year.award_college(app, None if cid == 'new' else get_object_or_404(College, pk=cid))
+        link = set_password_url(admin, request) if admin else None
+        send_free_year_approved(app, username=admin.username if admin else None, college=college, set_password_url=link, request=request)
+        until = f'until {college.subscription_until:%d %b %Y}' if college.subscription_until else 'with no end date'
+        return f'{college.name} is subscribed {until}.' + (f' College admin username: {admin.username}. If the e-mail does not arrive, send them this link to set a password: {link}' if admin else '')
+    u, created = free_year.award_individual(app)
+    link = set_password_url(u, request) if created else None
+    send_free_year_approved(app, username=u.username, set_password_url=link, request=request)
+    text = f'{u.username} is subscribed until {u.subscribed_until:%d %b %Y}.'
+    if created:
+        return f'{text} New account created. If the e-mail does not arrive, send them this link to set a password: {link}'
+    return text if u.is_active else f'{text} Note: this account is deactivated, so they cannot sign in until you activate it.'
+
+
+@_platform
+def free_year_applications(request):
+    """Applications from the free-year pop-up: approve to award one year, or decline."""
+    if request.method == 'POST':
+        with transaction.atomic():
+            app = get_object_or_404(FreeYearApplication.objects.select_for_update(), pk=request.POST.get('id'))
+            decision, note = request.POST.get('decision'), request.POST.get('note', '').strip()
+            if app.status != FreeYearApplication.PENDING:
+                messages.error(request, 'This application has already been decided.')
+            elif decision in ('approve', 'decline'):
+                app.reviewed_by, app.reviewed_at, app.review_note = request.user, timezone.now(), note
+                if decision == 'approve':
+                    text = _award_free_year(request, app)
+                    app.status = FreeYearApplication.APPROVED
+                else:
+                    send_free_year_declined(app)
+                    app.status, text = FreeYearApplication.REJECTED, f'Application #{app.pk} declined.'
+                app.save()
+                audit(request, f'free_year_{decision}', f'#{app.pk} {app.email}', college=app.awarded_college, until=str(app.awarded_until or ''))
+                messages.success(request, text)
+        return redirect('free_year_applications')
+    qs = FreeYearApplication.objects.select_related('user', 'reviewed_by', 'awarded_college')
+    colleges = list(College.objects.order_by('name'))
+    by_name = {c.name.casefold(): c.pk for c in colleges}
+    pending = list(qs.filter(status=FreeYearApplication.PENDING))
+    for a in pending:
+        a.account = free_year.find_account(a)
+        a.suggested_college = (a.user.college_id if a.user_id else None) or by_name.get(a.institution.casefold())
+    return render(request, 'lab/free_year_applications.html', {'pending': pending, 'decided': qs.exclude(status=FreeYearApplication.PENDING)[:50], 'colleges': colleges})
 
 
 @_platform

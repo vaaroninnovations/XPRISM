@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import Assignment, Attempt, AuditLog, Batch, College, ConsentRecord, DataRequest, Enrollment, Experiment, User
+from .models import Assignment, Attempt, AuditLog, Batch, College, ConsentRecord, DataRequest, Enrollment, Experiment, FreeYearApplication, User
 
 
 @admin.register(User)
@@ -62,3 +62,4 @@ class AuditLogAdmin(admin.ModelAdmin):
 
 admin.site.register(ConsentRecord, list_display=('user', 'policy_version', 'accepted_at'))
 admin.site.register(DataRequest, list_display=('username_snapshot', 'kind', 'status', 'created_at'))
+admin.site.register(FreeYearApplication, list_display=('name', 'email', 'kind', 'institution', 'status', 'created_at'), raw_id_fields=('user', 'reviewed_by'))

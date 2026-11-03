@@ -16,6 +16,7 @@ urlpatterns = [
     path('healthz', pub.healthz),
     re_path(r'^experiments/(?P<slug>[a-z0-9-]+)(?:\.html)?$', pub.experiment_page, name='experiment'),
     path('subscribe/', pub.subscribe, name='subscribe'),
+    path('api/free-year/apply', pub.free_year_apply, name='free_year_apply'),
     path('ethics/', pub.legal, {'page': 'ethics'}, name='ethics'),
     path('about/', pub.legal, {'page': 'about'}, name='about'),
     path('agreement/', au.ethics_agreement, name='ethics_agreement'),
@@ -78,4 +79,5 @@ urlpatterns = [
     path('platform/colleges/new/', adm.college_form, name='college_new'),
     path('platform/colleges/<int:pk>/', adm.college_form, name='college_edit'),
     path('platform/experiments/', adm.platform_experiments, name='platform_experiments'),
+    path('platform/free-year/', adm.free_year_applications, name='free_year_applications'),
 ]

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Free-year applications{% endblock %}
+{% block content %}
+<div><h1 class="text-xl font-bold text-slate-900">Free-year applications</h1><p class="text-xs text-slate-500">Check each applicant before you approve. Approving awards one year of access straight away and e-mails the applicant.</p></div>
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 overflow-x-auto">
+  <h2 class="text-sm font-bold text-slate-800 mb-3">Waiting for review</h2>
+  <table class="obs-table w-full text-xs text-left"><thead><tr><th>#</th><th>Received</th><th>Applicant</th><th>Institution</th><th>Applying for</th><th>Message</th><th>Decision</th></tr></thead><tbody>
+  {% for a in pending %}<tr>
+    <td>{{ a.pk }}</td><td class="mono">{{ a.created_at|date:"d M Y" }}</td>
+    <td><div class="font-semibold">{{ a.name }}</div><div class="mono">{{ a.email }}</div>{% if a.phone %}<div class="mono">{{ a.phone }}</div>{% endif %}<div class="text-slate-500">{{ a.get_occupation_display }}</div>{% if a.account %}<div class="text-amber-700">Has an account: {{ a.account.username }}</div>{% endif %}</td>
+    <td>{{ a.institution }}</td><td>{{ a.get_kind_display }}</td><td class="max-w-xs">{{ a.message|default:"—" }}</td>
+    <td><form method="post" class="flex flex-col gap-1 items-start">{% csrf_token %}<input type="hidden" name="id" value="{{ a.pk }}">
+      {% if a.kind == a.COLLEGE %}<label class="text-[11px] text-slate-600">College to subscribe
+        <select name="college" class="block border rounded px-2 py-1 text-[11px] w-52"><option value="new">Create new: {{ a.institution }}</option>{% for c in colleges %}<option value="{{ c.pk }}"{% if c.pk == a.suggested_college %} selected{% endif %}>{{ c.name }}</option>{% endfor %}</select></label>{% endif %}
+      <input name="note" maxlength="500" placeholder="Reason (e-mailed if you decline)" aria-label="Reason" class="border rounded px-2 py-1 text-[11px] w-52">
+      <div class="flex gap-1"><button name="decision" value="approve" class="px-2 py-1 rounded bg-teal-600 text-white text-[11px]" onclick="return confirm('Award one free year to this applicant?')">Approve: award 1 year</button><button name="decision" value="decline" class="px-2 py-1 rounded border text-[11px]" onclick="return confirm('Decline this application? The applicant will be told by e-mail.')">Decline</button></div>
+    </form></td></tr>
+  {% empty %}<tr><td colspan="7" class="text-slate-400 py-3">No applications are waiting.</td></tr>{% endfor %}
+  </tbody></table>
+</div>
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 overflow-x-auto">
+  <h2 class="text-sm font-bold text-slate-800 mb-3">Decided (latest 50)</h2>
+  <table class="obs-table w-full text-xs text-left"><thead><tr><th>#</th><th>Applicant</th><th>Institution</th><th>Decision</th><th>Awarded</th><th>Reviewed</th><th>Note</th></tr></thead><tbody>
+  {% for a in decided %}<tr><td>{{ a.pk }}</td><td>{{ a.name }}<div class="mono">{{ a.email }}</div></td><td>{{ a.institution }}</td><td>{{ a.get_status_display }}</td>
+    <td>{% if a.status == a.APPROVED %}{% if a.awarded_college %}{{ a.awarded_college.name }}{% elif a.user %}{{ a.user.username }}{% endif %} {% if a.awarded_until %}to <span class="mono">{{ a.awarded_until|date:"d M Y" }}</span>{% else %}(no end date){% endif %}{% else %}—{% endif %}</td>
+    <td class="mono">{{ a.reviewed_at|date:"d M Y" }}{% if a.reviewed_by %} by {{ a.reviewed_by.username }}{% endif %}</td><td>{{ a.review_note|default:"—" }}</td></tr>
+  {% empty %}<tr><td colspan="7" class="text-slate-400 py-3">None yet.</td></tr>{% endfor %}
+  </tbody></table>
+</div>
+{% endblock %}

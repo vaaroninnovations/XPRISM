@@ -5,7 +5,7 @@ from django import forms
 from django.contrib.auth import password_validation
 from django.utils import timezone
 
-from .models import Assignment, Batch, College, Experiment, Role, User
+from .models import Assignment, Batch, College, Experiment, FreeYearApplication, Role, User
 
 INPUT = 'w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500'
 CHECK = 'accent-teal-600 w-4 h-4'
@@ -268,6 +268,25 @@ class TrialSignupForm(StyledMixin, forms.Form):
             except forms.ValidationError as e:
                 self.add_error('password1', e)
         return cd
+
+
+class FreeYearApplicationForm(forms.ModelForm):
+    """Submitted from the pop-up in templates/lab/_free_year_modal.html, which holds the markup."""
+    consent = forms.BooleanField(error_messages={'required': 'Please agree so that we can review your application.'})
+    website = forms.CharField(required=False)   # hidden from people: anything here came from a bot
+
+    class Meta:
+        model = FreeYearApplication
+        fields = ['kind', 'name', 'email', 'phone', 'institution', 'occupation', 'message']
+
+    def clean_email(self):
+        return self.cleaned_data['email'].strip().lower()
+
+    def clean_phone(self):
+        phone = self.cleaned_data['phone'].strip()
+        if phone and not re.fullmatch(r'\+?[0-9][0-9 ()-]{6,18}', phone):
+            raise forms.ValidationError('Enter a valid phone number.')
+        return phone
 
 
 class EthicsAgreementForm(forms.Form):
