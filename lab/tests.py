@@ -883,6 +883,19 @@ class FreeYearInvitationTests(Base):
         self.assertIn('We met at <the> conference', msg.body)
         self.assertIn('We met at &lt;the&gt; conference', msg.alternatives[0][0])
 
+    def test_invitation_addresses_management_and_lists_about_modules_and_company(self):
+        Experiment.objects.filter(no=25).update(is_active=False)
+        self.invite('a@college.edu')
+        msg = mail.outbox[0]
+        html = msg.alternatives[0][0]
+        for text in ('The Management and Administration', 'About XPRISM', 'Modules in XPRISM (24)', 'Isolated tissue experiments', 'Aaron Innovations', 'Kolkata, India', 'developed by Dr. Vara Prasad Saka', self.e14.title):
+            self.assertIn(text, html)
+        self.assertNotIn('New Delhi', html)
+        self.assertNotIn('Castor Oil', html)
+        self.assertIn(f'{self.e18.no}. {self.e18.title}', msg.body)
+        self.assertIn('Kolkata, India', msg.body)
+        self.assertNotIn('Castor Oil', msg.body)
+
     def test_invalid_and_already_contacted_addresses_are_skipped(self):
         FreeYearInvitation.objects.create(email='old@college.edu', status=FreeYearInvitation.SENT)
         FreeYearApplication.objects.create(name='A', email='applied@college.edu', institution='X')

@@ -1,14 +1,36 @@
-{% autoescape off %}Dear colleague,
+{% autoescape off %}To,
+The Management and Administration
 
-We invite your college to apply to use {{ site_name }} for 1 year, free of cost.
+Respected Sir / Madam,
 
-{{ site_name }} offers computer-assisted simulation learning with LMS, as per the PCI syllabus and CCSEA guidelines, along with 3R recommendations.
+On behalf of {{ company }}, we are pleased to invite your institution to apply to use {{ site_name }} for 1 year, free of cost.
 {% if note %}
 {{ note }}
 {% endif %}
+ABOUT {{ site_name }}
+
+{{ site_name }} ({{ site_full_name }}) offers computer-assisted simulation learning with LMS, as per the PCI syllabus and CCSEA guidelines, along with 3R recommendations. It gives students realistic, interactive alternatives to animal experiments, so that practical skills can be learned without harming animals.
+
+- Replacement: interactive simulations of the experimental pharmacology practicals in the B.Pharm curriculum.
+- Reduction: students can repeat a practical as often as they need, so any animal work that is still required begins only after the method has been mastered.
+- Refinement: each module teaches correct handling, dosing, humane end-points and the observations that matter.
+- Learning management: batches, class codes, assignments, automatic marking, exam mode, grading and feedback, Excel marks sheets and an audit log.
+
+MODULES IN {{ site_name }} ({{ n_modules }})
+{% for section in modules %}
+{{ section.name }}
+{% for e in section.items %}{{ e.no }}. {{ e.title }}
+{% endfor %}{% endfor %}
+HOW TO APPLY
+
+Please complete the short application at the link below. Every application is verified by our team. Once it is approved, your institution's subscription and College Admin account are set up for one year.
+
 Apply for the free year: {{ apply_url }}
 
-Every application is reviewed by our team. Once it is approved, your college's accounts and subscription are set up for you.
+Yours faithfully,
 
-Sent by {{ org.org_name }}, {{ org.org_address }}.
-Do not want these invitations? Opt out: {{ opt_out_url }}{% endautoescape %}
+{{ company }}
+{{ company_location }}
+{{ site_name }} is developed by {{ creator }}.
+
+If you do not wish to receive this invitation again, you may opt out: {{ opt_out_url }}{% endautoescape %}

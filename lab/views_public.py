@@ -16,14 +16,11 @@ from django.views.decorators.http import require_GET, require_POST
 from . import access
 from .emails import send_free_year_received
 from .forms import FreeYearApplicationForm
-from .models import Assignment, Attempt, Experiment, FreeYearApplication, FreeYearInvitation, Role
+from .models import CATEGORIES, Assignment, Attempt, Experiment, FreeYearApplication, FreeYearInvitation, Role
 from .permissions import audit, client_ip
 
 FREE_YEAR_MAX_PER_HOUR = 5
 
-CATEGORIES = [('In-vivo', 'In-vivo simulations', 'Behavioural, anticonvulsant, analgesic, anti-inflammatory, cardiovascular and gastrointestinal studies'),
-              ('Isolated tissue', 'Isolated tissue experiments', 'Frog and rat preparations, kymograph recording and dose–response curves'),
-              ('Bioassay', 'Bioassay experiments', 'Histamine bioassays, three-point and four-point designs, and pA2 estimation')]
 FEATURED = (4, 11, 12, 14, 18, 21)      # the experiments previewed on the home page
 
 

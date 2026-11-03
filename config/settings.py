@@ -149,6 +149,7 @@ SITE_DEFAULT_LOCATION = env('SITE_DEFAULT_LOCATION', 'Aaron Innovations')
 SITE_CREATOR = 'Dr. Vara Prasad Saka'
 SITE_CREATOR_EMAIL = env('SITE_CREATOR_EMAIL', 'drvaraprasadsaka@gmail.com')
 SITE_INSTITUTION = 'Aaron Innovations'
+SITE_COMPANY_LOCATION = env('SITE_COMPANY_LOCATION', 'Kolkata, India')     # shown in invitation e-mails
 SITE_AIM_SHORT = ('Putting the 3Rs (Replacement, Reduction and Refinement) into practice by giving students '
                   'realistic, interactive alternatives to animal experiments.')
 SITE_AIM = ('XPRISM exists to put the 3Rs (Replacement, Reduction and Refinement) into everyday practice in '

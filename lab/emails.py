@@ -20,7 +20,7 @@ from django.utils import timezone
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
-from .models import FreeYearInvitation, Role
+from .models import CATEGORIES, Experiment, FreeYearInvitation, Role
 
 log = logging.getLogger(__name__)
 LOGO_CID = 'xprism-logo'
@@ -127,13 +127,17 @@ def send_free_year_declined(app):
 def send_free_year_invitations(invitations, note='', request=None):
     """Send one at a time on a single background thread, recording how each went, so a long list never delays the page or floods the mail server."""
     base = _base_url(request)
-    subject = f'Invitation: use {settings.SITE_NAME} for 1 year, free of cost'
+    subject = f'Invitation to your institution: {settings.SITE_NAME} virtual pharmacology lab, free of cost for 1 year'
+    experiments = list(Experiment.objects.filter(is_active=True))
+    content = {'note': note, 'apply_url': f'{base}/?apply=1', 'company': settings.SITE_INSTITUTION, 'company_location': settings.SITE_COMPANY_LOCATION,
+               'creator': settings.SITE_CREATOR, 'n_modules': len(experiments),
+               'modules': [{'name': name, 'items': [e for e in experiments if e.category == category]} for category, name, _ in CATEGORIES]}
 
     def deliver():
         for inv in invitations:
             opt_out_url = base + reverse('invitation_opt_out', args=[inv.token])
             try:
-                msg = _message([inv.email], '', subject, 'free_year_invitation', {'note': note, 'apply_url': f'{base}/?apply=1', 'opt_out_url': opt_out_url, 'org': settings.LEGAL})
+                msg = _message([inv.email], '', subject, 'free_year_invitation', {**content, 'opt_out_url': opt_out_url})
                 msg.extra_headers['List-Unsubscribe'] = f'<{opt_out_url}>'
                 msg.send(fail_silently=False)
             except Exception:

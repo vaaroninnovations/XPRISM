@@ -95,6 +95,11 @@ class User(AbstractUser):
         super().save(*args, **kwargs)
 
 
+CATEGORIES = [('In-vivo', 'In-vivo simulations', 'Behavioural, anticonvulsant, analgesic, anti-inflammatory, cardiovascular and gastrointestinal studies'),
+              ('Isolated tissue', 'Isolated tissue experiments', 'Frog and rat preparations, kymograph recording and dose–response curves'),
+              ('Bioassay', 'Bioassay experiments', 'Histamine bioassays, three-point and four-point designs, and pA2 estimation')]
+
+
 class Experiment(models.Model):
     no = models.PositiveSmallIntegerField(unique=True)
     slug = models.SlugField(max_length=120, unique=True)

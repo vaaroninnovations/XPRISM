@@ -1,14 +1,33 @@
 {% extends 'emails/_layout.html' %}
 {% block body %}
-<p style="margin:0 0 14px;">Dear colleague,</p>
-<p style="margin:0 0 14px;">We invite your college to apply to use <strong>{{ site_name }}</strong> for <strong>1 year, free of cost</strong>.</p>
-<p style="margin:0 0 14px;">{{ site_name }} offers computer-assisted simulation learning with LMS, as per the PCI syllabus and CCSEA guidelines, along with 3R recommendations.</p>
+<p style="margin:0 0 14px;">To,<br><strong>The Management and Administration</strong></p>
+<p style="margin:0 0 14px;">Respected Sir / Madam,</p>
+<p style="margin:0 0 14px;">On behalf of {{ company }}, we are pleased to invite your institution to apply to use <strong>{{ site_name }}</strong> for <strong>1 year, free of cost</strong>.</p>
 {% if note %}<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;background:#faf3fe;border:1px solid #e5c6f9;border-radius:8px;margin:0 0 18px;">
   <tr><td style="padding:14px 18px;font-size:14px;">{{ note|linebreaksbr }}</td></tr>
 </table>{% endif %}
+<h2 style="margin:22px 0 8px;font-size:16px;color:#55117a;">About {{ site_name }}</h2>
+<p style="margin:0 0 14px;">{{ site_name }} ({{ site_full_name }}) offers computer-assisted simulation learning with LMS, as per the PCI syllabus and CCSEA guidelines, along with 3R recommendations. It gives students realistic, interactive alternatives to animal experiments, so that practical skills can be learned without harming animals.</p>
+<ul style="margin:0 0 14px;padding-left:20px;">
+  <li style="margin-bottom:6px;"><strong>Replacement:</strong> interactive simulations of the experimental pharmacology practicals in the B.Pharm curriculum.</li>
+  <li style="margin-bottom:6px;"><strong>Reduction:</strong> students can repeat a practical as often as they need, so any animal work that is still required begins only after the method has been mastered.</li>
+  <li style="margin-bottom:6px;"><strong>Refinement:</strong> each module teaches correct handling, dosing, humane end-points and the observations that matter.</li>
+  <li style="margin-bottom:6px;"><strong>Learning management:</strong> batches, class codes, assignments, automatic marking, exam mode, grading and feedback, Excel marks sheets and an audit log.</li>
+</ul>
+<h2 style="margin:22px 0 8px;font-size:16px;color:#55117a;">Modules in {{ site_name }} ({{ n_modules }})</h2>
+{% for section in modules %}
+<p style="margin:12px 0 4px;font-size:14px;font-weight:600;">{{ section.name }}</p>
+<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;font-size:14px;line-height:1.5;margin:0 0 6px;">
+  {% for e in section.items %}<tr><td valign="top" style="width:30px;padding:2px 0;color:#64748b;">{{ e.no }}.</td><td style="padding:2px 0;">{{ e.title }}</td></tr>
+  {% endfor %}
+</table>
+{% endfor %}
+<h2 style="margin:22px 0 8px;font-size:16px;color:#55117a;">How to apply</h2>
+<p style="margin:0 0 14px;">Please complete the short application using the button below. Every application is verified by our team. Once it is approved, your institution's subscription and College Admin account are set up for one year.</p>
 <p style="margin:24px 0;text-align:center;">
   <a href="{{ apply_url }}" style="display:inline-block;background:#7e13b5;color:#ffffff;text-decoration:none;font-weight:600;padding:12px 26px;border-radius:8px;">Apply for the free year</a>
 </p>
-<p style="margin:0 0 14px;font-size:13px;color:#475569;">Every application is reviewed by our team. Once it is approved, your college's accounts and subscription are set up for you.</p>
-<p style="margin:0;font-size:12px;color:#64748b;">Sent by {{ org.org_name }}, {{ org.org_address }}. Do not want these invitations? <a href="{{ opt_out_url }}" style="color:#7e13b5;">Opt out</a>.</p>
+<p style="margin:0 0 4px;">Yours faithfully,</p>
+<p style="margin:0 0 18px;"><strong>{{ company }}</strong><br>{{ company_location }}<br><span style="font-size:13px;color:#475569;">{{ site_name }} is developed by {{ creator }}.</span></p>
+<p style="margin:0;font-size:12px;color:#64748b;">If you do not wish to receive this invitation again, you may <a href="{{ opt_out_url }}" style="color:#7e13b5;">opt out</a>.</p>
 {% endblock %}
