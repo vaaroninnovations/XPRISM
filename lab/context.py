@@ -1,6 +1,6 @@
 from django.conf import settings
 
-from .models import DataRequest, Role
+from .models import DataRequest, FreeYearApplication, Role
 
 
 def site(request):
@@ -16,12 +16,20 @@ def site(request):
         if r == Role.COLLEGE_ADMIN:
             nav = [('College', '/college/'), ('Staff', '/college/users/'), ('Batches', '/faculty/batches/'), ('Experiments', '/college/experiments/'), ('Requests', '/college/requests/'), ('Audit log', '/college/audit/')]
         if u.is_platform_admin:
-            nav = [('Platform', '/platform/'), ('Colleges', '/platform/colleges/'), ('Trial users', '/platform/trials/'), ('Catalogue', '/platform/experiments/'), ('Batches', '/faculty/batches/'), ('Requests', '/college/requests/'), ('Audit log', '/college/audit/'), ('Django admin', '/admin/')]
+            nav = [('Platform', '/platform/'), ('Free year', '/platform/free-year/'), ('Colleges', '/platform/colleges/'), ('Trial users', '/platform/trials/'), ('Catalogue', '/platform/experiments/'), ('Batches', '/faculty/batches/'), ('Requests', '/college/requests/'), ('Audit log', '/college/audit/'), ('Django admin', '/admin/')]
     open_requests = 0
     if u.is_authenticated and (u.is_platform_admin or u.role == Role.COLLEGE_ADMIN):
         qs = DataRequest.objects.filter(status=DataRequest.OPEN)
         open_requests = (qs if u.is_platform_admin else qs.filter(college=u.college)).count()
+    pending_free_year = u.is_authenticated and u.is_platform_admin and FreeYearApplication.objects.filter(status=FreeYearApplication.PENDING).count()
+    # the free-year offer: for visitors and free-trial users, never on top of the sign-in steps
+    show_free_year = not request.path.startswith(('/accounts/', '/consent/'))
+    if show_free_year and u.is_authenticated:
+        show_free_year = (not u.has_full_access and not u.is_shared_demo and not u.must_change_password
+                          and u.consent_version == settings.POLICY_VERSION and u.ethics_version == settings.ETHICS_VERSION
+                          and not u.free_year_applications.exclude(status=FreeYearApplication.REJECTED).exists())
     return {
+        'PENDING_FREE_YEAR': pending_free_year, 'SHOW_FREE_YEAR': show_free_year,
         'SITE_NAME': settings.SITE_NAME, 'SITE_TAGLINE': settings.SITE_TAGLINE,
         'SITE_FULL_NAME': settings.SITE_FULL_NAME, 'SITE_CREATOR': settings.SITE_CREATOR,
         'SITE_CREATOR_EMAIL': settings.SITE_CREATOR_EMAIL, 'SITE_INSTITUTION': settings.SITE_INSTITUTION,

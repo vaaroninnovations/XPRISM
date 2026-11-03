@@ -2,7 +2,8 @@
 {% block title %}Platform{% endblock %}
 {% block content %}
 <div class="flex flex-wrap items-end justify-between gap-3"><div><h1 class="text-xl font-bold text-slate-900">Platform administration</h1><p class="text-xs text-slate-500">Super admin</p></div><a href="{% url 'college_new' %}" class="px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow">+ New college</a></div>
-<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 text-center">
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 text-center">
+  <a href="{% url 'free_year_applications' %}" class="bg-white rounded-xl border p-3 hover:border-teal-300"><div class="text-[10px] uppercase text-slate-500 font-mono">Free-year applications</div><div class="text-xl font-extrabold mono {% if stats.free_year %}text-rose-700{% endif %}">{{ stats.free_year }}</div></a>
   <div class="bg-white rounded-xl border p-3"><div class="text-[10px] uppercase text-slate-500 font-mono">Colleges</div><div class="text-xl font-extrabold mono">{{ stats.colleges }}</div></div>
   <div class="bg-white rounded-xl border p-3"><div class="text-[10px] uppercase text-slate-500 font-mono">Active users</div><div class="text-xl font-extrabold mono">{{ stats.users }}</div></div>
   <div class="bg-white rounded-xl border p-3"><div class="text-[10px] uppercase text-slate-500 font-mono">Submissions</div><div class="text-xl font-extrabold mono">{{ stats.submissions }}</div></div>

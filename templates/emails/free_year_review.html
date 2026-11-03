@@ -1,0 +1,18 @@
+{% extends 'emails/_layout.html' %}
+{% block body %}
+<p style="margin:0 0 14px;">A new application for one free year of {{ site_name }} is waiting for your review.</p>
+<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;background:#f0fdfa;border:1px solid #99f6e4;border-radius:8px;margin:0 0 18px;">
+  <tr><td style="padding:14px 18px;font-size:14px;">
+    <div><span style="color:#475569;">Name:</span> <strong>{{ app.name }}</strong></div>
+    <div><span style="color:#475569;">E-mail:</span> {{ app.email }}</div>
+    {% if app.phone %}<div><span style="color:#475569;">Phone:</span> {{ app.phone }}</div>{% endif %}
+    <div><span style="color:#475569;">Institution:</span> {{ app.institution }}</div>
+    <div><span style="color:#475569;">Role:</span> {{ app.get_occupation_display }}</div>
+    <div><span style="color:#475569;">Applying for:</span> {{ app.get_kind_display }}</div>
+    {% if app.message %}<div><span style="color:#475569;">Message:</span> {{ app.message }}</div>{% endif %}
+  </td></tr>
+</table>
+<p style="margin:24px 0;text-align:center;">
+  <a href="{{ review_url }}" style="display:inline-block;background:#0d9488;color:#ffffff;text-decoration:none;font-weight:600;padding:12px 26px;border-radius:8px;">Review the application</a>
+</p>
+{% endblock %}

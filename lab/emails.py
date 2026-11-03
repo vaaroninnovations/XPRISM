@@ -8,13 +8,17 @@ import logging
 import threading
 
 from django.conf import settings
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.contrib.auth import get_user_model
+from django.contrib.auth.tokens import PasswordResetTokenGenerator, default_token_generator
 from django.core.mail import EmailMultiAlternatives
 from django.db import transaction
+from django.db.models import Q
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+
+from .models import Role
 
 log = logging.getLogger(__name__)
 
@@ -42,6 +46,12 @@ def verification_url(user, request=None):
     return _base_url(request) + reverse('verify_email', args=[uid, verification_token.make_token(user)])
 
 
+def set_password_url(user, request=None):
+    """One-time link for an account the applicant did not choose a password for."""
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    return _base_url(request) + reverse('password_reset_confirm', args=[uid, default_token_generator.make_token(user)])
+
+
 def _deliver(msg):
     try:
         msg.send(fail_silently=False)
@@ -49,15 +59,47 @@ def _deliver(msg):
         log.exception('Could not send e-mail "%s" to %s', msg.subject, msg.to)
 
 
-def _send(user, subject, template, ctx):
-    ctx = {'user': user, 'name': user.first_name or user.username, 'site_name': settings.SITE_NAME,
-           'site_full_name': settings.SITE_FULL_NAME, 'support_email': settings.LEGAL['contact_email'], **ctx}
-    msg = EmailMultiAlternatives(subject, render_to_string(f'emails/{template}.txt', ctx), settings.DEFAULT_FROM_EMAIL, [user.email])
+def _send_to(to, name, subject, template, ctx):
+    ctx = {'name': name, 'site_name': settings.SITE_NAME, 'site_full_name': settings.SITE_FULL_NAME,
+           'support_email': settings.LEGAL['contact_email'], **ctx}
+    msg = EmailMultiAlternatives(subject, render_to_string(f'emails/{template}.txt', ctx), settings.DEFAULT_FROM_EMAIL, to)
     msg.attach_alternative(render_to_string(f'emails/{template}.html', ctx), 'text/html')
     if getattr(settings, 'EMAIL_ASYNC', False):
         threading.Thread(target=_deliver, args=(msg,), daemon=True).start()
     else:
         _deliver(msg)
+
+
+def _send(user, subject, template, ctx):
+    _send_to([user.email], user.first_name or user.username, subject, template, {'user': user, **ctx})
+
+
+def _super_admin_addresses():
+    admins = get_user_model().objects.filter(Q(role=Role.SUPERADMIN) | Q(is_superuser=True), is_active=True).exclude(email='')
+    return sorted({a.email.lower() for a in admins} | ({settings.SUBSCRIPTION_CONTACT.lower()} if settings.SUBSCRIPTION_CONTACT else set()))
+
+
+def send_free_year_received(app, request=None):
+    """Tell the super admins there is an application to review, and the applicant that it arrived."""
+    review_url = _base_url(request) + reverse('free_year_applications')
+
+    def go():
+        to = _super_admin_addresses()
+        if to:
+            _send_to(to, 'Super admin', f'New free-year application #{app.pk}', 'free_year_review', {'app': app, 'review_url': review_url})
+        _send_to([app.email], app.name, f'We received your {settings.SITE_NAME} application', 'free_year_received', {'app': app})
+    transaction.on_commit(go)
+
+
+def send_free_year_approved(app, username=None, college=None, set_password_url=None, request=None):
+    login_url = _base_url(request) + reverse('login')
+    transaction.on_commit(lambda: _send_to([app.email], app.name, f'Your free year of {settings.SITE_NAME} is ready', 'free_year_approved', {
+        'app': app, 'username': username, 'college': college, 'set_password_url': set_password_url, 'login_url': login_url,
+        'valid_days': max(1, settings.PASSWORD_RESET_TIMEOUT // 86400)}))
+
+
+def send_free_year_declined(app):
+    transaction.on_commit(lambda: _send_to([app.email], app.name, f'Your {settings.SITE_NAME} application', 'free_year_declined', {'app': app}))
 
 
 def send_verification_email(user, request=None):

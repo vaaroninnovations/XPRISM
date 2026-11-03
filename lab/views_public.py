@@ -4,15 +4,22 @@ import re
 
 from django.conf import settings
 from django.contrib.auth.views import redirect_to_login
-from django.http import Http404, HttpResponse
+from django.core.cache import cache
+from django.db import transaction
+from django.http import Http404, HttpResponse, JsonResponse
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
-from django.views.decorators.http import require_GET
+from django.views.decorators.http import require_GET, require_POST
 
 from . import access
-from .models import Assignment, Attempt, Experiment, Role
+from .emails import send_free_year_received
+from .forms import FreeYearApplicationForm
+from .models import Assignment, Attempt, Experiment, FreeYearApplication, Role
+from .permissions import audit, client_ip
+
+FREE_YEAR_MAX_PER_HOUR = 5
 
 CATEGORIES = [('In-vivo', 'In-vivo simulations', 'Behavioural, anticonvulsant, analgesic, anti-inflammatory, cardiovascular and gastrointestinal studies'),
               ('Isolated tissue', 'Isolated tissue experiments', 'Frog and rat preparations, kymograph recording and dose–response curves'),
@@ -80,6 +87,34 @@ def subscribe(request):
     expired_college = u.is_authenticated and u.college and not u.college.is_subscribed
     return render(request, 'lab/subscribe.html', {'exp': exp, 'left': left, 'expired_college': expired_college,
                                                   'contact': settings.SUBSCRIPTION_CONTACT or settings.LEGAL['contact_email']}, status=402 if exp else 200)
+
+
+@require_POST
+def free_year_apply(request):
+    """Receives the free-year pop-up. Says the same thing whether or not the e-mail is already known, so it cannot be used to discover who has applied."""
+    u = request.user
+    if u.is_authenticated and u.has_full_access:
+        return JsonResponse({'error': 'Your account already has full access.'}, status=400)
+    form = FreeYearApplicationForm(request.POST)
+    if not form.is_valid():
+        return JsonResponse({'errors': form.errors}, status=400)
+    if form.cleaned_data['website']:
+        return JsonResponse({'ok': True})
+    # X-Real-IP is set by nginx, so unlike X-Forwarded-For a visitor cannot choose it
+    key = f"free-year-ip:{request.META.get('HTTP_X_REAL_IP') or client_ip(request)}"
+    cache.add(key, 0, 3600)
+    if cache.incr(key) > FREE_YEAR_MAX_PER_HOUR:
+        return JsonResponse({'error': 'Too many applications from this network. Please try again in an hour.'}, status=429)
+    app = form.save(commit=False)
+    if u.is_authenticated:
+        app.user = u
+        app.email = u.email or app.email
+    if not FreeYearApplication.objects.filter(email__iexact=app.email).exclude(status=FreeYearApplication.REJECTED).exists():
+        with transaction.atomic():
+            app.save()
+            audit(request, 'free_year_applied', f'#{app.pk}', kind=app.kind)
+            send_free_year_received(app, request)
+    return JsonResponse({'ok': True, 'email': app.email})
 
 
 def legal(request, page):

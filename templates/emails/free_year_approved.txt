@@ -1,0 +1,14 @@
+{% autoescape off %}Hello {{ name }},
+
+Your application has been approved. {% if college %}{{ college.name }} has{% else %}You have{% endif %} free, unlimited access to {{ site_name }}{% if app.awarded_until %} until {{ app.awarded_until|date:"d F Y" }}{% endif %}.
+{% if username %}
+Username: {{ username }}
+{% endif %}{% if set_password_url %}
+Choose a password to start. This link works once and for {{ valid_days }} day{{ valid_days|pluralize }}. After that, use "Forgot password" on the sign-in page.
+{{ set_password_url }}
+{% else %}{% if not username %}
+Please ask your college admin for your sign-in details.
+{% endif %}
+Open the lab: {{ login_url }}
+{% endif %}
+{{ site_name }}{% endautoescape %}

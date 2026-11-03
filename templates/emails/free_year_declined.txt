@@ -1,0 +1,9 @@
+{% autoescape off %}Hello {{ name }},
+
+We reviewed your application to use {{ site_name }} for one year, free of cost, and could not approve it this time.
+{% if app.review_note %}
+Reason: {{ app.review_note }}
+{% endif %}
+If you have any questions, write to {{ support_email }}.
+
+{{ site_name }}{% endautoescape %}
