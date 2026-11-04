@@ -180,5 +180,12 @@
   "title": "Polymerase Chain Reaction (PCR) Analysis",
   "slug": "26-polymerase-chain-reaction-pcr-analysis",
   "description": "Tissue or cell selection, RNA and DNA separation, RNA quantification, cDNA preparation, real-time PCR with fold-change analysis, and gel electrophoresis of DNA and RNA."
+ },
+ {
+  "no": 27,
+  "cat": "Cell culture",
+  "title": "MTT Assay: Cell Viability and IC50",
+  "slug": "27-mtt-assay-cell-viability-ic50",
+  "description": "Culture and count cancer cells, seed a 96-well plate, treat with a serial dilution, convert MTT to formazan, read at 570 nm and find the IC50."
  }
 ]

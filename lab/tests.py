@@ -89,7 +89,7 @@ class PublicTests(Base):
         for text in ['Replacement', 'Reduction', 'Refinement', 'Explore our 3Rs commitment', '/accounts/trial/', '/accounts/signup/', '/accounts/login/', '/modules/', '/documentation/']:
             self.assertContains(home, text)
         self.assertContains(home, 'class="expCard', count=6)
-        self.assertContains(self.client.get('/modules/'), 'class="expCard', count=26)
+        self.assertContains(self.client.get('/modules/'), 'class="expCard', count=27)
         docs = self.client.get('/documentation/')
         self.assertContains(docs, 'id="exp-18"')
         self.assertContains(docs, 'Exam mode')
@@ -108,6 +108,15 @@ class PublicTests(Base):
         r = self.client.get(e.url)
         self.assertContains(r, 'Polymerase Chain Reaction')
         self.assertContains(r, 'trueFold()')
+
+    def test_mtt_module_is_catalogued_and_marks_the_ic50(self):
+        e = Experiment.objects.get(no=27)
+        self.assertEqual(e.category, 'Cell culture')
+        self.assertContains(self.client.get('/modules/'), 'xh-tag-cell')
+        self.login(self.st)
+        r = self.client.get(e.url)
+        self.assertContains(r, 'MTT Assay')
+        self.assertContains(r, 'trueIC50()')
 
 
 class AuthTests(Base):
@@ -897,7 +906,7 @@ class FreeYearInvitationTests(Base):
         self.invite('a@college.edu')
         msg = mail.outbox[0]
         html = msg.alternatives[0][0]
-        for text in ('The Management and Administration', 'About XPRISM', 'Modules in XPRISM (25)', 'Isolated tissue experiments', 'Aaron Innovations', 'Kolkata, India', 'developed by Dr. Vara Prasad Saka', self.e14.title):
+        for text in ('The Management and Administration', 'About XPRISM', 'Modules in XPRISM (26)', 'Isolated tissue experiments', 'Aaron Innovations', 'Kolkata, India', 'developed by Dr. Vara Prasad Saka', self.e14.title):
             self.assertIn(text, html)
         self.assertNotIn('New Delhi', html)
         self.assertNotIn('Castor Oil', html)
