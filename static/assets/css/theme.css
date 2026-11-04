@@ -317,6 +317,7 @@ input[type=file] { font-size: 12px; }
 .xh-tag-viv { background: #f0f9ff; color: #075985; border-color: #bae6fd; }
 .xh-tag-iso { background: #fffbeb; color: #92400e; border-color: #fde68a; }
 .xh-tag-bio { background: #f5f3ff; color: #5b21b6; border-color: #ddd6fe; }
+.xh-tag-mol { background: #ecfdf5; color: #065f46; border-color: #a7f3d0; }
 .xh-card h3 { margin-top: 10px; font-size: 14px; font-weight: 700; line-height: 1.35; color: var(--xp-navy); }
 .xh-card p { margin-top: 6px; font-size: 12px; line-height: 1.55; color: #475569; }
 .xh-card-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto; padding-top: 12px; font-size: 11px; font-weight: 600; }

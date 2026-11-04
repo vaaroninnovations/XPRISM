@@ -89,7 +89,7 @@ class PublicTests(Base):
         for text in ['Replacement', 'Reduction', 'Refinement', 'Explore our 3Rs commitment', '/accounts/trial/', '/accounts/signup/', '/accounts/login/', '/modules/', '/documentation/']:
             self.assertContains(home, text)
         self.assertContains(home, 'class="expCard', count=6)
-        self.assertContains(self.client.get('/modules/'), 'class="expCard', count=25)
+        self.assertContains(self.client.get('/modules/'), 'class="expCard', count=26)
         docs = self.client.get('/documentation/')
         self.assertContains(docs, 'id="exp-18"')
         self.assertContains(docs, 'Exam mode')
@@ -99,6 +99,15 @@ class PublicTests(Base):
         urls = ['/', '/modules/', '/documentation/', '/about/', '/faculty/', '/faculty/batches/', f'/faculty/batches/{self.batch.pk}/', '/faculty/batches/new/']
         for url in urls:
             self.assertNotRegex(self.client.get(url).content.decode(), r'(?i)semester|\bsem\s+v', url)
+
+    def test_pcr_module_is_catalogued_and_marks_the_fold_change(self):
+        e = Experiment.objects.get(no=26)
+        self.assertEqual(e.category, 'Molecular biology')
+        self.assertContains(self.client.get('/modules/'), 'xh-tag-mol')
+        self.login(self.st)
+        r = self.client.get(e.url)
+        self.assertContains(r, 'Polymerase Chain Reaction')
+        self.assertContains(r, 'trueFold()')
 
 
 class AuthTests(Base):
@@ -888,7 +897,7 @@ class FreeYearInvitationTests(Base):
         self.invite('a@college.edu')
         msg = mail.outbox[0]
         html = msg.alternatives[0][0]
-        for text in ('The Management and Administration', 'About XPRISM', 'Modules in XPRISM (24)', 'Isolated tissue experiments', 'Aaron Innovations', 'Kolkata, India', 'developed by Dr. Vara Prasad Saka', self.e14.title):
+        for text in ('The Management and Administration', 'About XPRISM', 'Modules in XPRISM (25)', 'Isolated tissue experiments', 'Aaron Innovations', 'Kolkata, India', 'developed by Dr. Vara Prasad Saka', self.e14.title):
             self.assertIn(text, html)
         self.assertNotIn('New Delhi', html)
         self.assertNotIn('Castor Oil', html)

@@ -43,7 +43,7 @@ const ok = (name, cond, extra = '') => { results.push([cond ? 'PASS' : 'FAIL', n
   // ---------------------------------------------------------------- 1. visitor
   let { ctx, p } = await newCtx();
   await p.goto(BASE + '/modules/');
-  ok('visitor: catalogue shows 25 experiments', (await p.$$('.expCard')).length === 25);
+  ok('visitor: catalogue shows 26 experiments', (await p.$$('.expCard')).length === 26);
   ok('visitor: 4 demo cards', (await p.$$('text=Demo • no login')).length === 4);
   await snap(p, 'landing');
   await p.click('a.expCard:has-text("Routes of Drug Administration")'); await p.waitForTimeout(800);

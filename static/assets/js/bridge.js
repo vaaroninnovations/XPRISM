@@ -61,7 +61,7 @@
   var BLOCK = ['doseAllInstant', 'loadReferenceDataset', 'autoFillCurrentState', 'fillAllMockData', 'skipAbsorption', 'autoRunTrial', 'runFullProtocol',
     'instantRunGroup', 'skipWait', 'runAllInstant', 'runCompleteBatchExperiment', 'fillSampleVideoDataset', 'instantTimePoint', 'runSeries', 'runAll',
     'guidedRun', 'runStandards', 'pilotRun', 'processAll', 'measureAll', 'runPlanInstant',
-    'verifyNumber', 'verifyUnknownDeduction', 'submitEvaluation'];          // answer checkers would reveal the true value
+    'verifyNumber', 'verifyFold', 'verifyUnknownDeduction', 'submitEvaluation'];          // answer checkers would reveal the true value
   var HIDE_ONLY = ['openResultsModal'];                                     // the summary may name the unknown; the bridge still uses it internally
   var LABEL_RX = /assistant (tests|classifies)|auto-time/i;
   function lockdown() {

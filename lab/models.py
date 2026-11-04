@@ -97,7 +97,8 @@ class User(AbstractUser):
 
 CATEGORIES = [('In-vivo', 'In-vivo simulations', 'Behavioural, anticonvulsant, analgesic, anti-inflammatory, cardiovascular and gastrointestinal studies'),
               ('Isolated tissue', 'Isolated tissue experiments', 'Frog and rat preparations, kymograph recording and dose–response curves'),
-              ('Bioassay', 'Bioassay experiments', 'Histamine bioassays, three-point and four-point designs, and pA2 estimation')]
+              ('Bioassay', 'Bioassay experiments', 'Histamine bioassays, three-point and four-point designs, and pA2 estimation'),
+              ('Molecular biology', 'Molecular biology experiments', 'RNA and DNA isolation, cDNA synthesis, PCR analysis and gel electrophoresis')]
 
 
 class Experiment(models.Model):

@@ -3,7 +3,7 @@
   <div class="xh-card-body">
     <div class="xh-card-meta">
       <span class="mono">EXP #{{ e.no|stringformat:"02d" }}</span>
-      <span class="xh-tag {% if e.category == 'Bioassay' %}xh-tag-bio{% elif e.category == 'Isolated tissue' %}xh-tag-iso{% else %}xh-tag-viv{% endif %}">{{ e.category }}</span>
+      <span class="xh-tag {% if e.category == 'Bioassay' %}xh-tag-bio{% elif e.category == 'Isolated tissue' %}xh-tag-iso{% elif e.category == 'Molecular biology' %}xh-tag-mol{% else %}xh-tag-viv{% endif %}">{{ e.category }}</span>
     </div>
     <h3>{{ e.title }}</h3>
     <p>{{ e.description }}</p>

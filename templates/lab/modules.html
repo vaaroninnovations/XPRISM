@@ -40,7 +40,7 @@
 <section class="pt-4 catSection" data-cat="{{ s.cat }}">
   <div class="flex items-end justify-between gap-3 mb-3">
     <div><h2 class="text-lg font-bold text-slate-900">{{ s.name }}</h2><p class="text-xs text-slate-500">{{ s.sub }}</p></div>
-    <span class="mono text-[11px] text-slate-500 shrink-0">{{ s.items|length }} experiments</span>
+    <span class="mono text-[11px] text-slate-500 shrink-0">{{ s.items|length }} experiment{{ s.items|length|pluralize }}</span>
   </div>
   <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
     {% for e in s.items %}{% include 'lab/_exp_card.html' %}{% endfor %}

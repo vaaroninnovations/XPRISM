@@ -173,5 +173,12 @@
   "title": "Antidiarrhoeal Activity: Castor Oil Model",
   "slug": "25-antidiarrhoeal-activity-castor-oil-model",
   "description": "Onset, wet and total faeces with loperamide and atropine; % inhibition."
+ },
+ {
+  "no": 26,
+  "cat": "Molecular biology",
+  "title": "Polymerase Chain Reaction (PCR) Analysis",
+  "slug": "26-polymerase-chain-reaction-pcr-analysis",
+  "description": "Tissue or cell selection, RNA and DNA separation, RNA quantification, cDNA preparation, real-time PCR with fold-change analysis, and gel electrophoresis of DNA and RNA."
  }
 ]
