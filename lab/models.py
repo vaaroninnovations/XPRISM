@@ -99,7 +99,8 @@ CATEGORIES = [('In-vivo', 'In-vivo simulations', 'Behavioural, anticonvulsant, a
               ('Isolated tissue', 'Isolated tissue experiments', 'Frog and rat preparations, kymograph recording and dose–response curves'),
               ('Bioassay', 'Bioassay experiments', 'Histamine bioassays, three-point and four-point designs, and pA2 estimation'),
               ('Molecular biology', 'Molecular biology experiments', 'RNA and DNA isolation, cDNA synthesis, PCR analysis and gel electrophoresis'),
-              ('Cell culture', 'Cell culture experiments', 'Cultured cell handling, 96-well plate assays, cell viability and IC50')]
+              ('Cell culture', 'Cell culture experiments', 'Cultured cell handling, 96-well plate assays, cell viability and IC50'),
+              ('Neurobehavioural', 'Neurobehavioural experiments (M.Pharm)', 'Learning, memory and anxiety mazes: Y-maze, radial arm maze, light-dark box, water maze and Barnes maze')]
 
 
 class Experiment(models.Model):
