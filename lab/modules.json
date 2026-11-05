@@ -187,5 +187,40 @@
   "title": "MTT Assay: Cell Viability and IC50",
   "slug": "27-mtt-assay-cell-viability-ic50",
   "description": "Culture and count cancer cells, seed a 96-well plate, treat with a serial dilution, convert MTT to formazan, read at 570 nm and find the IC50."
+ },
+ {
+  "no": 28,
+  "cat": "Neurobehavioural",
+  "title": "Y-Maze: Spontaneous Alternation",
+  "slug": "28-y-maze-spontaneous-alternation",
+  "description": "M.Pharm. Spatial working memory by spontaneous alternation, with scopolamine amnesia and reversal by a test drug; one-way ANOVA and Dunnett."
+ },
+ {
+  "no": 29,
+  "cat": "Neurobehavioural",
+  "title": "Radial Arm Maze: Working and Reference Memory",
+  "slug": "29-radial-arm-maze-working-reference-memory",
+  "description": "M.Pharm. Food restriction, training, baiting 4 of 8 arms, then working and reference memory errors after scopolamine and a test drug."
+ },
+ {
+  "no": 30,
+  "cat": "Neurobehavioural",
+  "title": "Light-Dark Box: Anxiolytic Activity",
+  "slug": "30-light-dark-box-anxiety",
+  "description": "M.Pharm. Time in the light, transitions and latency against vehicle and diazepam, with the lamp set by the student."
+ },
+ {
+  "no": 31,
+  "cat": "Neurobehavioural",
+  "title": "Morris Water Maze: Spatial Learning and Memory",
+  "slug": "31-morris-water-maze-spatial-memory",
+  "description": "M.Pharm. Pool set-up, four days of hidden-platform training, a probe trial and video tracking; repeated-measures ANOVA."
+ },
+ {
+  "no": 32,
+  "cat": "Neurobehavioural",
+  "title": "Barnes Maze: Spatial Learning and Memory",
+  "slug": "32-barnes-maze-spatial-memory",
+  "description": "M.Pharm. Habituation, four days of escape training, primary latency and errors, search strategy and a probe trial."
  }
 ]

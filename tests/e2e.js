@@ -47,7 +47,7 @@ const ok = (name, cond, extra = '') => { results.push([cond ? 'PASS' : 'FAIL', n
   // ---------------------------------------------------------------- 1. visitor
   let { ctx, p } = await newCtx();
   await p.goto(BASE + '/modules/');
-  ok('visitor: catalogue shows 27 experiments', (await p.$$('.expCard')).length === 27);
+  ok('visitor: catalogue shows 32 experiments', (await p.$$('.expCard')).length === 32);
   ok('visitor: free-trial call to action', (await p.$$('a:has-text("Start free trial")')).length >= 1);
   await snap(p, 'landing');
   await p.goto(BASE + '/experiments/01-routes-of-drug-administration.html');
@@ -82,7 +82,7 @@ const ok = (name, cond, extra = '') => { results.push([cond ? 'PASS' : 'FAIL', n
   await Promise.all([p.waitForLoadState('load'), p.click('#mcpBar a:has-text("Finish & back to lab")')]);
   const card1 = await p.textContent('a.expCard[data-state="used"]').catch(() => '');
   ok('trial: back on index, module 1 now Subscription only', card1.includes('Routes of Drug Administration') && card1.includes('Subscription only'));
-  ok('trial: counter shows 26 / 27 left', (await p.textContent('section')).replace(/\s+/g, ' ').includes('26 / 27'));
+  ok('trial: counter shows 31 / 32 left', (await p.textContent('section')).replace(/\s+/g, ' ').includes('31 / 32'));
   await snap(p, 'trial_index');
   await p.click('a.expCard[data-state="used"]'); await p.waitForLoadState('load');
   ok('trial: used module opens the subscription page', (await p.textContent('main')).includes('You have already explored'));
