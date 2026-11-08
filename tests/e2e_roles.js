@@ -47,7 +47,7 @@ const ok = (name, cond, extra = '') => { results.push([cond ? 'PASS' : 'FAIL', n
   // ---------------------------------------------------------------- 1. visitor
   let { ctx, p } = await newCtx();
   await p.goto(BASE + '/modules/');
-  ok('visitor: catalogue shows 40 experiments', (await p.$$('.expCard')).length === 40);
+  ok('visitor: catalogue shows 43 experiments', (await p.$$('.expCard')).length === 43);
   ok('visitor: no open demo cards', (await p.$$('text=Demo • no login')).length === 0);
   await snap(p, 'landing');
   await p.click('a.expCard:has-text("Routes of Drug Administration")'); await p.waitForTimeout(800);
@@ -94,7 +94,7 @@ const ok = (name, cond, extra = '') => { results.push([cond ? 'PASS' : 'FAIL', n
   await p.goto(BASE + '/college/experiments/');
   await p.uncheck('input[name=enabled][value="3"]');
   await Promise.all([p.waitForLoadState('load'), p.click('button:has-text("Save")')]);
-  ok('college admin: experiment 3 switched off', (await msgText(p)).includes('39 experiments enabled'));
+  ok('college admin: experiment 3 switched off', (await msgText(p)).includes('42 experiments enabled'));
   ok('college admin: no JS errors', p.errors.length === 0, p.errors.join(' | '));
   await ctx.close();
 

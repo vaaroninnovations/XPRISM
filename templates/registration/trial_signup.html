@@ -3,7 +3,7 @@
 {% block width %}max-w-lg{% endblock %}
 {% block card %}
 <div><div class="mono text-[11px] text-amber-700 font-bold">FREE TRIAL</div><h1 class="text-xl font-bold text-slate-900">Explore every experiment once, free</h1>
-<p class="text-xs text-slate-500 mt-1">All 40 pharmacology simulations: in-vivo, isolated tissue, bioassays, molecular biology, cell culture, M.Pharm neurobehavioural tests, biochemical assays, ethics and clinical research. Each module can be opened once; after you leave it, it is available by subscription. We store only your name, e-mail, institution and which modules you have explored (<a href="{% url 'privacy' %}" target="_blank" class="underline">Privacy Policy</a>).</p></div>
+<p class="text-xs text-slate-500 mt-1">All 43 pharmacology simulations: in-vivo, isolated tissue, bioassays, molecular biology, cell culture, M.Pharm neurobehavioural tests, biochemical assays, ethics and clinical research. Each module can be opened once; after you leave it, it is available by subscription. We store only your name, e-mail, institution and which modules you have explored (<a href="{% url 'privacy' %}" target="_blank" class="underline">Privacy Policy</a>).</p></div>
 <form method="post" class="space-y-3" novalidate>{% csrf_token %}<input type="hidden" name="next" value="{{ next }}">
   {{ form.non_field_errors }}
   {% include 'registration/_fields.html' %}
