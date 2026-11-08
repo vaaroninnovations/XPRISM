@@ -131,6 +131,17 @@ class PublicTests(Base):
             self.assertContains(r, 'unknownDrugDeduction')
             self.assertContains(r, 'mysteryKey')
 
+    def test_modules_page_is_grouped_by_level(self):
+        expected = {no: 'Research' if no in (26, 27) else 'Advanced' if no >= 28 else 'Basic' for no in range(1, 35)}
+        self.assertEqual(dict(Experiment.objects.values_list('no', 'level')), expected)
+        page = self.client.get('/modules/').content.decode()
+        positions = [page.index(f'<section class="xh-level levelSection" data-level="{level}">') for level in ('Basic', 'Advanced', 'Research')]
+        self.assertEqual(positions, sorted(positions))
+        self.assertLess(page.index('Histamine Bioassay: Matching Method'), positions[1])
+        self.assertTrue(positions[1] < page.index('Barnes Maze') < positions[2])
+        self.assertGreater(page.index('MTT Assay'), positions[2])
+        self.assertEqual(page.count('class="catBtn"'), 2 + 3 + 6)
+
 
 class AuthTests(Base):
     def test_lockout_after_failures(self):

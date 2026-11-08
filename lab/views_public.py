@@ -16,7 +16,7 @@ from django.views.decorators.http import require_GET, require_POST
 from . import access
 from .emails import send_free_year_received
 from .forms import FreeYearApplicationForm
-from .models import CATEGORIES, Assignment, Attempt, Experiment, FreeYearApplication, FreeYearInvitation, Role
+from .models import CATEGORIES, LEVELS, Assignment, Attempt, Experiment, FreeYearApplication, FreeYearInvitation, Role
 from .permissions import audit, client_ip
 
 FREE_YEAR_MAX_PER_HOUR = 5
@@ -51,6 +51,15 @@ def _sections(exps):
     return [dict(cat=c, name=n, sub=sub, items=[e for e in exps if e.category == c]) for c, n, sub in CATEGORIES]
 
 
+def _levels(exps):
+    out = []
+    for level, sub in LEVELS:
+        items = [e for e in exps if e.level == level]
+        if items:
+            out.append(dict(level=level, sub=sub, n=len(items), groups=[s for s in _sections(items) if s['items']]))
+    return out
+
+
 def landing(request):
     exps, trial = _catalogue(request)
     return render(request, 'lab/landing.html', {'featured': [e for e in exps if e.no in FEATURED], 'sections': _sections(exps), 'n_total': len(exps), 'trial': trial})
@@ -59,7 +68,7 @@ def landing(request):
 def modules(request):
     exps, trial = _catalogue(request)
     left = sum(1 for e in exps if e.trial_state == access.AVAILABLE) if trial else None
-    return render(request, 'lab/modules.html', {'sections': _sections(exps), 'n_total': len(exps), 'trial': trial, 'trial_left': left})
+    return render(request, 'lab/modules.html', {'levels': _levels(exps), 'sections': _sections(exps), 'n_total': len(exps), 'trial': trial, 'trial_left': left})
 
 
 def documentation(request):

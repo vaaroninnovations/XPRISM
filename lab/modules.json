@@ -1,6 +1,7 @@
 [
  {
   "no": 1,
+  "level": "Basic",
   "cat": "In-vivo",
   "title": "Routes of Drug Administration",
   "slug": "01-routes-of-drug-administration",
@@ -8,6 +9,7 @@
  },
  {
   "no": 2,
+  "level": "Basic",
   "cat": "In-vivo",
   "title": "Effects of Drugs on Rabbit Eye",
   "slug": "02-effects-of-drugs-on-rabbit-eye",
@@ -15,6 +17,7 @@
  },
  {
   "no": 3,
+  "level": "Basic",
   "cat": "In-vivo",
   "title": "Anticonvulsant Activity: MES (Electroconvulsometer)",
   "slug": "03-anticonvulsant-activity-mes-electroconvulsometer",
@@ -22,6 +25,7 @@
  },
  {
   "no": 4,
+  "level": "Basic",
   "cat": "In-vivo",
   "title": "Muscle Relaxant Activity: Rota-Rod",
   "slug": "04-muscle-relaxant-activity-rota-rod",
@@ -29,6 +33,7 @@
  },
  {
   "no": 5,
+  "level": "Basic",
   "cat": "In-vivo",
   "title": "Anticonvulsant Activity: PTZ-Induced Seizures",
   "slug": "05-anticonvulsant-activity-ptz-induced-seizures",
@@ -36,6 +41,7 @@
  },
  {
   "no": 6,
+  "level": "Basic",
   "cat": "In-vivo",
   "title": "Hepatic Enzyme Induction: Phenobarbitone Sleeping Time",
   "slug": "06-hepatic-enzyme-induction-phenobarbitone-sleeping-time",
@@ -43,6 +49,7 @@
  },
  {
   "no": 7,
+  "level": "Basic",
   "cat": "Isolated tissue",
   "title": "Ciliary Motility of Frog Oesophagus",
   "slug": "07-ciliary-motility-of-frog-oesophagus",
@@ -50,6 +57,7 @@
  },
  {
   "no": 8,
+  "level": "Basic",
   "cat": "In-vivo",
   "title": "Local Anaesthetics",
   "slug": "08-local-anaesthetics",
@@ -57,6 +65,7 @@
  },
  {
   "no": 9,
+  "level": "Basic",
   "cat": "In-vivo",
   "title": "Locomotor Activity: Actophotometer",
   "slug": "09-locomotor-activity-actophotometer",
@@ -64,6 +73,7 @@
  },
  {
   "no": 10,
+  "level": "Basic",
   "cat": "In-vivo",
   "title": "Catalepsy & Stereotypy",
   "slug": "10-catalepsy-and-stereotypy",
@@ -71,6 +81,7 @@
  },
  {
   "no": 11,
+  "level": "Basic",
   "cat": "In-vivo",
   "title": "Anxiolytic Activity: Elevated Plus Maze",
   "slug": "11-anxiolytic-activity-elevated-plus-maze",
@@ -78,6 +89,7 @@
  },
  {
   "no": 12,
+  "level": "Basic",
   "cat": "Isolated tissue",
   "title": "DRC of Acetylcholine: Frog Rectus Abdominis",
   "slug": "12-drc-of-acetylcholine-frog-rectus-abdominis",
@@ -85,6 +97,7 @@
  },
  {
   "no": 13,
+  "level": "Basic",
   "cat": "Isolated tissue",
   "title": "Physostigmine & Atropine on ACh DRC (Rat Ileum)",
   "slug": "13-physostigmine-and-atropine-on-ach-drc-rat-ileum",
@@ -92,6 +105,7 @@
  },
  {
   "no": 14,
+  "level": "Basic",
   "cat": "Bioassay",
   "title": "Histamine Bioassay: Matching Method",
   "slug": "14-histamine-bioassay-matching-method",
@@ -99,6 +113,7 @@
  },
  {
   "no": 15,
+  "level": "Basic",
   "cat": "Bioassay",
   "title": "Histamine Bioassay: Interpolation & Bracketing",
   "slug": "15-histamine-bioassay-interpolation-and-bracketing",
@@ -106,6 +121,7 @@
  },
  {
   "no": 16,
+  "level": "Basic",
   "cat": "Bioassay",
   "title": "Three-Point Bioassay",
   "slug": "16-three-point-bioassay",
@@ -113,6 +129,7 @@
  },
  {
   "no": 17,
+  "level": "Basic",
   "cat": "Bioassay",
   "title": "Four-Point Bioassay",
   "slug": "17-four-point-bioassay",
@@ -120,6 +137,7 @@
  },
  {
   "no": 18,
+  "level": "Basic",
   "cat": "Bioassay",
   "title": "pA2 Value: Schild Plot",
   "slug": "18-pa2-value-schild-plot",
@@ -127,6 +145,7 @@
  },
  {
   "no": 19,
+  "level": "Basic",
   "cat": "In-vivo",
   "title": "Analgesic Activity: Eddy's Hot Plate",
   "slug": "19-analgesic-activity-eddys-hot-plate",
@@ -134,6 +153,7 @@
  },
  {
   "no": 20,
+  "level": "Basic",
   "cat": "In-vivo",
   "title": "Analgesic Activity: Tail-Flick Analgesiometer",
   "slug": "20-analgesic-activity-tail-flick-analgesiometer",
@@ -141,6 +161,7 @@
  },
  {
   "no": 21,
+  "level": "Basic",
   "cat": "In-vivo",
   "title": "Anti-inflammatory Activity: Carrageenan Paw Oedema",
   "slug": "21-anti-inflammatory-activity-carrageenan-paw-oedema",
@@ -148,6 +169,7 @@
  },
  {
   "no": 22,
+  "level": "Basic",
   "cat": "In-vivo",
   "title": "Drugs on Blood Pressure & Heart Rate",
   "slug": "22-drugs-on-blood-pressure-and-heart-rate",
@@ -155,6 +177,7 @@
  },
  {
   "no": 23,
+  "level": "Basic",
   "cat": "In-vivo",
   "title": "Anti-ulcer Activity: Pylorus Ligation",
   "slug": "23-anti-ulcer-activity-pylorus-ligation",
@@ -162,6 +185,7 @@
  },
  {
   "no": 24,
+  "level": "Basic",
   "cat": "In-vivo",
   "title": "Gastrointestinal Motility: Charcoal Meal",
   "slug": "24-gastrointestinal-motility-charcoal-meal",
@@ -169,6 +193,7 @@
  },
  {
   "no": 25,
+  "level": "Basic",
   "cat": "In-vivo",
   "title": "Antidiarrhoeal Activity: Castor Oil Model",
   "slug": "25-antidiarrhoeal-activity-castor-oil-model",
@@ -176,6 +201,7 @@
  },
  {
   "no": 26,
+  "level": "Research",
   "cat": "Molecular biology",
   "title": "Polymerase Chain Reaction (PCR) Analysis",
   "slug": "26-polymerase-chain-reaction-pcr-analysis",
@@ -183,6 +209,7 @@
  },
  {
   "no": 27,
+  "level": "Research",
   "cat": "Cell culture",
   "title": "MTT Assay: Cell Viability and IC50",
   "slug": "27-mtt-assay-cell-viability-ic50",
@@ -190,6 +217,7 @@
  },
  {
   "no": 28,
+  "level": "Advanced",
   "cat": "Neurobehavioural",
   "title": "Y-Maze: Spontaneous Alternation",
   "slug": "28-y-maze-spontaneous-alternation",
@@ -197,6 +225,7 @@
  },
  {
   "no": 29,
+  "level": "Advanced",
   "cat": "Neurobehavioural",
   "title": "Radial Arm Maze: Working and Reference Memory",
   "slug": "29-radial-arm-maze-working-reference-memory",
@@ -204,6 +233,7 @@
  },
  {
   "no": 30,
+  "level": "Advanced",
   "cat": "Neurobehavioural",
   "title": "Light-Dark Box: Anxiolytic Activity",
   "slug": "30-light-dark-box-anxiety",
@@ -211,6 +241,7 @@
  },
  {
   "no": 31,
+  "level": "Advanced",
   "cat": "Neurobehavioural",
   "title": "Morris Water Maze: Spatial Learning and Memory",
   "slug": "31-morris-water-maze-spatial-memory",
@@ -218,6 +249,7 @@
  },
  {
   "no": 32,
+  "level": "Advanced",
   "cat": "Neurobehavioural",
   "title": "Barnes Maze: Spatial Learning and Memory",
   "slug": "32-barnes-maze-spatial-memory",
@@ -225,6 +257,7 @@
  },
  {
   "no": 33,
+  "level": "Advanced",
   "cat": "Neurobehavioural",
   "title": "Pole Climbing: Conditioned Avoidance Response",
   "slug": "33-pole-climbing-conditioned-avoidance",
@@ -232,6 +265,7 @@
  },
  {
   "no": 34,
+  "level": "Advanced",
   "cat": "Neurobehavioural",
   "title": "Forced Swim Test: Antidepressant Activity",
   "slug": "34-forced-swim-test-antidepressant",

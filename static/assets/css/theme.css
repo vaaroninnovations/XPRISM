@@ -329,6 +329,12 @@ input[type=file] { font-size: 12px; }
 .xh-card-used h3, .xh-card-used p { color: #64748b; }
 .xh-filterbar { position: sticky; top: 0; z-index: 10; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 1px 3px rgba(8,25,59,.06); }
 .xh-filters { display: flex; flex-wrap: wrap; gap: 4px; }
+.xh-filtergroups { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.xh-level { padding-top: 24px; }
+.xh-level-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; padding-bottom: 10px; border-bottom: 2px solid var(--xp-purple); }
+.xh-level-head h2 { font-size: 20px; font-weight: 800; color: var(--xp-navy); }
+.xh-level-head p { margin-top: 2px; font-size: 12px; color: #475569; }
+.xh-subhead { font-size: 15px; font-weight: 700; color: var(--xp-navy); }
 .catBtn { padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 500; color: #475569; }
 .catBtn:hover { color: var(--xp-navy); background: #f1f5f9; }
 .catBtn[aria-pressed="true"] { background: var(--xp-purple); color: #fff; font-weight: 600; }
