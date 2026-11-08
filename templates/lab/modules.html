@@ -29,45 +29,61 @@
 </section>
 
 <div class="xh-filterbar">
-  <div id="catFilters" class="xh-filters" role="group" aria-label="Filter by category">
-    <button data-cat="all" aria-pressed="true" class="catBtn">All modules</button>
-    {% for s in sections %}{% if s.items %}<button data-cat="{{ s.cat }}" aria-pressed="false" class="catBtn">{{ s.cat }}</button>{% endif %}{% endfor %}
+  <div class="xh-filtergroups">
+    <div id="lvlFilters" class="xh-filters" role="group" aria-label="Filter by level">
+      <button data-level="all" aria-pressed="true" class="catBtn">All levels</button>
+      {% for l in levels %}<button data-level="{{ l.level }}" aria-pressed="false" class="catBtn">{{ l.level }}</button>{% endfor %}
+    </div>
+    <div id="catFilters" class="xh-filters" role="group" aria-label="Filter by category">
+      <button data-cat="all" aria-pressed="true" class="catBtn">All categories</button>
+      {% for s in sections %}{% if s.items %}<button data-cat="{{ s.cat }}" aria-pressed="false" class="catBtn">{{ s.cat }}</button>{% endif %}{% endfor %}
+    </div>
   </div>
   <input id="search" placeholder="Search experiments, drugs, apparatus…" class="w-64 max-w-full bg-white border border-slate-300 text-xs rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-teal-500" aria-label="Search experiments">
 </div>
 
-{% for s in sections %}{% if s.items %}
-<section class="pt-4 catSection" data-cat="{{ s.cat }}">
-  <div class="flex items-end justify-between gap-3 mb-3">
-    <div><h2 class="text-lg font-bold text-slate-900">{{ s.name }}</h2><p class="text-xs text-slate-500">{{ s.sub }}</p></div>
-    <span class="mono text-[11px] text-slate-500 shrink-0">{{ s.items|length }} experiment{{ s.items|length|pluralize }}</span>
+{% for l in levels %}
+<section class="xh-level levelSection" data-level="{{ l.level }}">
+  <div class="xh-level-head">
+    <div><h2>{{ l.level }}</h2><p>{{ l.sub }}</p></div>
+    <span class="mono text-[11px] text-slate-500 shrink-0">{{ l.n }} experiment{{ l.n|pluralize }}</span>
   </div>
-  <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-    {% for e in s.items %}{% include 'lab/_exp_card.html' %}{% endfor %}
+  {% for s in l.groups %}
+  <div class="pt-4 catSection" data-cat="{{ s.cat }}">
+    <div class="flex items-end justify-between gap-3 mb-3">
+      <div><h3 class="xh-subhead">{{ s.name }}</h3><p class="text-xs text-slate-500">{{ s.sub }}</p></div>
+      <span class="mono text-[11px] text-slate-500 shrink-0">{{ s.items|length }} experiment{{ s.items|length|pluralize }}</span>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+      {% for e in s.items %}{% include 'lab/_exp_card.html' %}{% endfor %}
+    </div>
   </div>
+  {% endfor %}
 </section>
-{% endif %}{% endfor %}
+{% endfor %}
 <p id="noMatch" class="hidden text-sm text-slate-500 text-center py-16">No experiments match your search.</p>
 {% endblock %}
 {% block scripts %}
 <script>
   (function () {
-    let cat = 'all';
+    let cat = 'all', level = 'all';
     const q = document.getElementById('search');
     function apply() {
       const t = q.value.trim().toLowerCase(); let shown = 0;
-      document.querySelectorAll('.catSection').forEach(sec => {
-        let n = 0;
-        sec.querySelectorAll('.expCard').forEach(c => { const ok = (cat === 'all' || sec.dataset.cat === cat) && (!t || c.dataset.text.includes(t)); c.style.display = ok ? '' : 'none'; if (ok) n++; });
-        sec.style.display = n ? '' : 'none'; shown += n;
+      document.querySelectorAll('.levelSection').forEach(ls => {
+        let inLevel = 0;
+        ls.querySelectorAll('.catSection').forEach(sec => {
+          let n = 0;
+          sec.querySelectorAll('.expCard').forEach(c => { const ok = (level === 'all' || ls.dataset.level === level) && (cat === 'all' || sec.dataset.cat === cat) && (!t || c.dataset.text.includes(t)); c.style.display = ok ? '' : 'none'; if (ok) n++; });
+          sec.style.display = n ? '' : 'none'; inLevel += n;
+        });
+        ls.style.display = inLevel ? '' : 'none'; shown += inLevel;
       });
       document.getElementById('noMatch').classList.toggle('hidden', shown > 0);
     }
-    document.querySelectorAll('.catBtn').forEach(b => b.addEventListener('click', () => {
-      cat = b.dataset.cat;
-      document.querySelectorAll('.catBtn').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
-      apply();
-    }));
+    const press = (group, b) => document.querySelectorAll(group + ' .catBtn').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    document.querySelectorAll('#catFilters .catBtn').forEach(b => b.addEventListener('click', () => { cat = b.dataset.cat; press('#catFilters', b); apply(); }));
+    document.querySelectorAll('#lvlFilters .catBtn').forEach(b => b.addEventListener('click', () => { level = b.dataset.level; press('#lvlFilters', b); apply(); }));
     q.addEventListener('input', apply);
   })();
 </script>

@@ -1,4 +1,4 @@
-{% load static %}<a href="{% if e.used %}{% url 'subscribe' %}?exp={{ e.slug }}{% elif e.assignment %}{{ e.assignment.launch_url }}{% elif e.locked %}{% url 'trial_signup' %}{% else %}{{ e.url }}{% endif %}" data-text="{{ e.title|lower }} {{ e.description|lower }} {{ e.category|lower }}" data-state="{{ e.trial_state|default:'' }}" class="expCard xh-card{% if e.used %} xh-card-used{% endif %}">
+{% load static %}<a href="{% if e.used %}{% url 'subscribe' %}?exp={{ e.slug }}{% elif e.assignment %}{{ e.assignment.launch_url }}{% elif e.locked %}{% url 'trial_signup' %}{% else %}{{ e.url }}{% endif %}" data-text="{{ e.title|lower }} {{ e.description|lower }} {{ e.category|lower }} {{ e.level|lower }}" data-state="{{ e.trial_state|default:'' }}" class="expCard xh-card{% if e.used %} xh-card-used{% endif %}">
   <div class="xh-thumb"><img src="{% static 'img/modules/'|add:e.slug|add:'.jpg' %}" alt="" width="680" height="425" loading="lazy"></div>
   <div class="xh-card-body">
     <div class="xh-card-meta">

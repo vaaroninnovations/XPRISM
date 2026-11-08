@@ -22,9 +22,9 @@ class Command(BaseCommand):
     def handle(self, *a, **o):
         mods = json.loads((Path(__file__).resolve().parents[2] / 'modules.json').read_text(encoding='utf-8'))
         for m in mods:
-            e, created = Experiment.objects.get_or_create(no=m['no'], defaults={'slug': m['slug'], 'title': m['title'], 'category': m['cat'], 'description': m.get('description', '')})
+            e, created = Experiment.objects.get_or_create(no=m['no'], defaults={'slug': m['slug'], 'title': m['title'], 'category': m['cat'], 'level': m['level'], 'description': m.get('description', '')})
             if not created:
-                e.slug, e.title, e.category, e.description = m['slug'], m['title'], m['cat'], m.get('description', '')
+                e.slug, e.title, e.category, e.level, e.description = m['slug'], m['title'], m['cat'], m['level'], m.get('description', '')
                 e.save()
         self.stdout.write(self.style.SUCCESS(f'{len(mods)} experiments in catalogue.'))
         if o['admin_username']:

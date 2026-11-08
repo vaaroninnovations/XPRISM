@@ -103,11 +103,17 @@ CATEGORIES = [('In-vivo', 'In-vivo simulations', 'Behavioural, anticonvulsant, a
               ('Neurobehavioural', 'Neurobehavioural experiments (M.Pharm)', 'Learning, memory, anxiety, avoidance and antidepressant tests: Y-maze, radial arm maze, light-dark box, water maze, Barnes maze, pole climbing and forced swim')]
 
 
+LEVELS = [('Basic', 'B.Pharm practicals: core techniques, screening methods, isolated tissues and bioassays'),
+          ('Advanced', 'M.Pharm screening: neurobehavioural models of learning, memory, anxiety, avoidance and depression'),
+          ('Research', 'Research methods: molecular biology and cell-based assays')]
+
+
 class Experiment(models.Model):
     no = models.PositiveSmallIntegerField(unique=True)
     slug = models.SlugField(max_length=120, unique=True)
     title = models.CharField(max_length=200)
     category = models.CharField(max_length=40)
+    level = models.CharField(max_length=20, default='Basic')
     description = models.TextField(blank=True)
     is_demo = models.BooleanField('Open to visitors without login', default=False)
     is_active = models.BooleanField(default=True)
