@@ -12,4 +12,5 @@ class LabConfig(AppConfig):
             if user is not None:
                 from .access import consume_open
                 consume_open(user, 'logout')
-        user_logged_out.connect(end_trial_visits, dispatch_uid='lab_end_trial_visits')
+        # weak=False: this is a local function, and a weak reference would let it be garbage-collected after ready() returns
+        user_logged_out.connect(end_trial_visits, weak=False, dispatch_uid='lab_end_trial_visits')

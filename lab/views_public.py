@@ -14,8 +14,10 @@ from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
 
 from . import access
-from .emails import send_free_year_received
-from .forms import FreeYearApplicationForm
+from .contact import TOPICS
+from .context import PUBLIC_PAGES
+from .emails import send_contact_received, send_free_year_received
+from .forms import ContactForm, FreeYearApplicationForm
 from .models import CATEGORIES, LEVELS, Assignment, Attempt, Experiment, FreeYearApplication, FreeYearInvitation, Role
 from .permissions import audit, client_ip
 
@@ -131,6 +133,59 @@ def invitation_opt_out(request, token):
         inv.save(update_fields=['opted_out_at'])
         audit(request, 'free_year_invitation_opt_out', f'#{inv.pk}')
     return render(request, 'lab/invitation_opt_out.html', {'inv': inv})
+
+
+CONTACT_MAX_PER_HOUR = 10
+
+
+def contact(request):
+    u = request.user
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if request.POST.get('website'):         # a hidden field only bots fill in: looks like success, stores nothing
+            return redirect(f"{reverse('contact')}?sent=XP-000000")
+        key = f"contact-ip:{request.META.get('HTTP_X_REAL_IP') or client_ip(request)}"
+        cache.add(key, 0, 3600)
+        if cache.incr(key) > CONTACT_MAX_PER_HOUR:
+            form.add_error(None, 'Too many requests from this network. Please try again in an hour.')
+        elif form.is_valid():
+            with transaction.atomic():
+                item = form.save(commit=False)
+                item.subtopic = form.cleaned_data['subtopic']
+                if u.is_authenticated:
+                    item.user = u
+                item.save()
+                audit(request, 'contact_received', item.reference, topic=item.topic)
+                send_contact_received(item, request)
+            return redirect(f"{reverse('contact')}?sent={item.reference}")
+    else:
+        topic = request.GET.get('topic', '')
+        initial = {'topic': topic} if topic in {k for k, _, _ in TOPICS} else {}
+        if u.is_authenticated:
+            initial.update(name=u.get_full_name(), email=u.email, institution=(u.college.name if u.college else u.institution))
+        form = ContactForm(initial=initial)
+    sent = request.GET.get('sent', '') if request.method == 'GET' else ''
+    return render(request, 'lab/contact.html', {'form': form, 'topics': {k: subs for k, _, subs in TOPICS}, 'sent': sent if re.fullmatch(r'XP-\d{6}', sent) else ''})
+
+
+@require_GET
+def robots_txt(request):
+    base = settings.SITE_URL.rstrip('/')
+    if settings.SEO['noindex']:
+        lines = ['User-agent: *', 'Disallow: /']
+    else:
+        private = ['/admin/', '/accounts/', '/api/', '/platform/', '/college/', '/faculty/', '/student/', '/me/', '/home/', '/consent/', '/agreement/', '/subscribe/', '/invitation/', '/experiments/']
+        lines = ['User-agent: *', 'Allow: /'] + [f'Disallow: {p}' for p in private] + ['', f'Sitemap: {base}/sitemap.xml']
+    return HttpResponse('\n'.join(lines) + '\n', content_type='text/plain; charset=utf-8')
+
+
+@require_GET
+def sitemap_xml(request):
+    """The public pages only. Module pages need an account, so they are described on /modules/ instead of being listed here."""
+    base = settings.SITE_URL.rstrip('/')
+    urls = '' if settings.SEO['noindex'] else ''.join(f'<url><loc>{html.escape(base + p)}</loc></url>' for p in PUBLIC_PAGES)
+    body = f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>\n'
+    return HttpResponse(body, content_type='application/xml; charset=utf-8')
 
 
 def legal(request, page):

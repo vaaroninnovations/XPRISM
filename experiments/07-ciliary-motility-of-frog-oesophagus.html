@@ -1130,23 +1130,67 @@
         ${['1  Frog arrives pithed (done by staff).', '2  Pin the four limbs, belly up.', '3  Scissors: cut both mouth angles; forceps lift', '    and remove the lower jaw.', '4  Scissors: slit the oesophagus midline (3 cuts).', '5  Pin the flaps out, mucosa up. Keep it moist!', '6  Mark START and FINISH 20 mm apart.'].map((t, i) => lbl(10, 38 + i * 14, t, { s: 8.4, a: 'start', c: i === 5 ? '#b91c1c' : '#13294f', w: i === 5 ? 700 : 600 })).join('')}</g>`;
       return s;
     }
+    // ---- frog anatomy helpers: a limb is a tapered ribbon along a curve, never a thick line
+    const _frogCurve = (a, b, c, n = 14) => Array.from({ length: n + 1 }, (_, i) => { const t = i / n, u = 1 - t; return [u * u * a[0] + 2 * u * t * b[0] + t * t * c[0], u * u * a[1] + 2 * u * t * b[1] + t * t * c[1]]; });
+    function _frogNormals(p) { return p.map((q, i) => { const a = p[Math.max(0, i - 1)], b = p[Math.min(p.length - 1, i + 1)], dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1; return [-dy / l, dx / l]; }); }
+    function _frogRibbon(p, w0, w1, belly = 0) {
+      const n = _frogNormals(p), w = i => { const t = i / (p.length - 1); return (w0 + (w1 - w0) * t + belly * Math.sin(Math.PI * t)) / 2; };
+      const L = p.map((q, i) => [q[0] + n[i][0] * w(i), q[1] + n[i][1] * w(i)]), R = p.map((q, i) => [q[0] - n[i][0] * w(i), q[1] - n[i][1] * w(i)]).reverse();
+      return 'M' + [...L, ...R].map(q => q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join('L') + 'Z';
+    }
+    function _frogAcross(p, w0, w1, belly, ts, col, sw, op) {
+      const n = _frogNormals(p);
+      return ts.map(t => { const i = Math.round(t * (p.length - 1)), f = i / (p.length - 1), h = (w0 + (w1 - w0) * f + belly * Math.sin(Math.PI * f)) * .3, q = p[i], m = n[i]; return `<path d="M${(q[0] + m[0] * h).toFixed(1)} ${(q[1] + m[1] * h).toFixed(1)}Q${(q[0] + m[0] * h * .1 + (p[Math.min(i + 1, p.length - 1)][0] - q[0]) * .9).toFixed(1)} ${(q[1] + m[1] * h * .1 + (p[Math.min(i + 1, p.length - 1)][1] - q[1]) * .9).toFixed(1)} ${(q[0] - m[0] * h).toFixed(1)} ${(q[1] - m[1] * h).toFixed(1)}" fill="none" stroke="${col}" stroke-width="${sw}" stroke-linecap="round" opacity="${op}"/>`; }).join('');
+    }
+    function _frogFoot(x, y, ang, len, col, web) {
+      const a = [-.42, -.2, 0, .2, .44], l = [.62, .82, 1, 1.18, .86], tips = a.map((d, i) => [x + Math.cos(ang + d) * len * l[i], y + Math.sin(ang + d) * len * l[i]]);
+      return `<path d="M${x.toFixed(1)} ${y.toFixed(1)}L${tips.map(t => t[0].toFixed(1) + ' ' + t[1].toFixed(1)).join('L')}Z" fill="${web}" opacity=".7"/>` + tips.map(t => { const dx = t[0] - x, dy = t[1] - y; return `<path d="${_frogRibbon([[x, y], [x + dx * .5, y + dy * .5], [t[0], t[1]]], 3.6, 1.4)}" fill="${col}"/>`; }).join('');
+    }
+    // ---- the pithed frog, belly up on the wax: pale wet belly, spotted yellow flanks, grey-brown hands and feet
+    const FROG_V_DEFS = `<defs>
+      <radialGradient id="fvBelly" cx=".5" cy=".42" r=".66"><stop offset="0" stop-color="#fbf8ef"/><stop offset=".7" stop-color="#ece6d4"/><stop offset="1" stop-color="#d5cca9"/></radialGradient>
+      <linearGradient id="fvFlank" x1="0" x2="1"><stop offset="0" stop-color="#8f8434"/><stop offset=".2" stop-color="#bfae4e"/><stop offset=".8" stop-color="#bfae4e"/><stop offset="1" stop-color="#8f8434"/></linearGradient>
+      <linearGradient id="fvThigh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7f2e5"/><stop offset=".65" stop-color="#e7dfc8"/><stop offset="1" stop-color="#b9ad80"/></linearGradient>
+      <radialGradient id="fvJaw" cx=".5" cy=".62" r=".7"><stop offset="0" stop-color="#fbf7e8"/><stop offset=".7" stop-color="#ece3b0"/><stop offset="1" stop-color="#c9b95f"/></radialGradient>
+      <linearGradient id="fvRim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6d6a2d"/><stop offset="1" stop-color="#a39a45"/></linearGradient>
+      <filter id="fvWrinkle" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".13 .3" numOctaves="3" seed="4"/><feColorMatrix values="0 0 0 0 .55  0 0 0 0 .5  0 0 0 0 .35  0 0 0 .9 -.36"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+    </defs>`;
+    let _frogV = null;
+    function frogVentral() {
+      if (_frogV) return _frogV;
+      let seed = 31; const rn = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+      const M = (p, s) => s > 0 ? p : p.map(q => [660 - q[0], q[1]]);
+      const spots = (p, w0, w1, belly, n, side) => { const nm = _frogNormals(p); let o = ''; for (let i = 0; i < n; i++) { const k = Math.floor(rn() * p.length), f = k / (p.length - 1), h = ((w0 + (w1 - w0) * f + belly * Math.sin(Math.PI * f)) / 2) * (.72 + rn() * .26) * side; o += `<ellipse cx="${(p[k][0] + nm[k][0] * h).toFixed(1)}" cy="${(p[k][1] + nm[k][1] * h).toFixed(1)}" rx="${(1 + rn() * 2.2).toFixed(1)}" ry="${(.8 + rn() * 1.5).toFixed(1)}" fill="#5a5f2c" opacity="${(.35 + rn() * .35).toFixed(2)}"/>`; } return o; };
+      const hind = s => {
+        const thigh = M(_frogCurve([300, 346], [222, 324], [150, 352]), s), shank = M(_frogCurve([150, 352], [198, 412], [272, 404]), s), foot = M(_frogCurve([272, 404], [212, 416], [152, 386], 8), s), dir = Math.atan2(386 - 412, s > 0 ? -60 : 60);
+        const side = s > 0 ? 1 : -1, end = foot[foot.length - 1];
+        return `<path d="${_frogRibbon(shank, 28, 14, 5)}" fill="url(#fvThigh)"/>${spots(shank, 28, 14, 5, 7, side)}
+          <path d="${_frogRibbon(foot, 15, 8)}" fill="#8a7e74"/><path d="${_frogRibbon(foot, 7, 3)}" fill="#a79a8c" opacity=".7"/>${_frogFoot(end[0], end[1], dir, 30, '#54484a', '#8d8274')}
+          <path d="${_frogRibbon(thigh, 64, 30, 8)}" fill="url(#fvThigh)"/><path d="${_frogRibbon(thigh, 64, 30, 8)}" fill="#fff" filter="url(#fvWrinkle)"/>${spots(thigh, 64, 30, 8, 11, side)}`;
+      };
+      const fore = s => {
+        const arm = M(_frogCurve([268, 208], [214, 232], [196, 200]), s), hand = M(_frogCurve([196, 200], [178, 184], [160, 174], 6), s), dir = s > 0 ? Math.PI * 1.12 : -Math.PI * .12, end = hand[hand.length - 1];
+        return `<path d="${_frogRibbon(arm, 36, 20, 6)}" fill="url(#fvThigh)"/>${spots(arm, 36, 20, 6, 4, s > 0 ? -1 : 1)}<path d="${_frogRibbon(hand, 20, 11)}" fill="#7d7168"/>${_frogFoot(end[0], end[1], dir, 22, '#54484a', '#7d7168')}`;
+      };
+      const flank = 'M262 176 C232 198 218 250 228 306 C238 350 280 374 330 378 C380 374 422 350 432 306 C442 250 428 198 398 176 C368 158 292 158 262 176Z';
+      const belly = 'M268 178 C242 200 230 252 238 304 C248 346 286 370 330 372 C374 370 412 346 422 304 C430 252 418 200 392 178 C364 162 296 162 268 178Z';
+      let fl = ''; for (let i = 0; i < 44; i++) { const s = rn() < .5 ? -1 : 1, y = 190 + rn() * 165, w = 102 + (1 - Math.abs(y - 262) / 120) * 8; fl += `<ellipse cx="${(330 + s * (w - rn() * 12)).toFixed(1)}" cy="${y.toFixed(1)}" rx="${(1.8 + rn() * 3.6).toFixed(1)}" ry="${(1.4 + rn() * 3).toFixed(1)}" fill="#3a4416" opacity="${(.55 + rn() * .4).toFixed(2)}"/>`; }
+      const head = 'M330 40 C372 40 412 78 418 122 C420 148 410 164 396 172 C360 180 300 180 264 172 C250 164 240 148 242 122 C248 78 288 40 330 40Z';
+      const jaw = 'M330 47 C368 47 405 82 411 122 C413 145 404 159 391 166 C358 174 302 174 269 166 C256 159 247 145 249 122 C255 82 292 47 330 47Z';
+      const eye = s => { let d = ''; for (let i = 0; i < 16; i++) d += `<circle cx="${(330 + s * 42 + (rn() - .5) * 26).toFixed(1)}" cy="${(112 + (rn() - .5) * 12).toFixed(1)}" r="${(.5 + rn() * .7).toFixed(1)}" fill="#4d4660" opacity=".7"/>`; return `<ellipse cx="${330 + s * 42}" cy="112" rx="15" ry="7" fill="#a59eb4" opacity=".3"/>${d}`; };
+      return (_frogV = `${FROG_V_DEFS}<g filter="url(#sh2)">${hind(1)}${hind(-1)}${fore(1)}${fore(-1)}<path d="${flank}" fill="url(#fvFlank)"/>${fl}<path d="${belly}" fill="url(#fvBelly)"/><path d="${belly}" fill="#fff" filter="url(#fvWrinkle)"/>
+        <path d="M278 214 C266 252 270 300 292 342" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" opacity=".5"/><path d="M382 214 C394 252 390 300 368 342" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".32"/>
+        <path d="${head}" fill="url(#fvRim)"/><path d="${jaw}" fill="url(#fvJaw)"/><path d="${jaw}" fill="#fff" filter="url(#fvWrinkle)"/>${eye(-1)}${eye(1)}</g>`);
+    }
     function dyn2() {
       if (S.station !== 2) return;
       const F = S.frog, open = F.slit >= 3;
       let h = '';
-      h += limbPath('M285 200 C240 214 200 190 150 168', 22) + limbPath('M375 200 C420 214 462 190 512 168', 22) + toes(145, 168, 200, 4) + toes(516, 168, -20, 4);
-      h += limbPath('M285 300 C230 330 200 372 148 384', 30) + limbPath('M375 300 C430 330 462 372 514 384', 30) + toes(138, 384, 160, 5) + toes(526, 384, 20, 5);
-      h += `<path d="M330 150 C 412 150, 442 200, 440 262 C 438 322, 400 372, 330 378 C 260 372, 222 322, 220 262 C 218 200, 248 150, 330 150Z" fill="url(#belly)" stroke="#6a7a2c" stroke-width="3.5"/>
-        <path d="M330 150 C 412 150, 442 200, 440 262 C 438 322, 400 372, 330 378 C 260 372, 222 322, 220 262 C 218 200, 248 150, 330 150Z" fill="#fff" opacity=".35" filter="url(#skinF)"/>
-        <path d="M240 190 C226 230 226 300 270 350 M420 190 C434 230 434 300 390 350" stroke="#6a7a2c" stroke-width="9" fill="none" opacity=".45" stroke-linecap="round"/>`;
-      // head
-      h += `<ellipse cx="330" cy="104" rx="84" ry="68" fill="url(#frogSkin)" stroke="#2f3a12" stroke-width="3"/><ellipse cx="330" cy="104" rx="84" ry="68" fill="#fff" filter="url(#skinF)" opacity=".4"/>`;
-      h += [-1, 1].map(s => `<g><ellipse cx="${330 + s * 52}" cy="64" rx="19" ry="17" fill="#6c7f35" stroke="#2f3a12" stroke-width="2"/><ellipse cx="${330 + s * 52}" cy="64" rx="13" ry="12" fill="#caa63a"/><ellipse cx="${330 + s * 52}" cy="64" rx="9" ry="6.5" fill="#12100a" transform="rotate(${s * 8} ${330 + s * 52} 64)"/><circle cx="${330 + s * 49}" cy="60" r="2.4" fill="#fff" opacity=".85"/></g>`).join('');
-      h += `<circle cx="322" cy="38" r="1.6" fill="#2b3511"/><circle cx="338" cy="38" r="1.6" fill="#2b3511"/>`;
+      h += frogVentral();
       if (F.jaw) {
         h += `<path d="M262 118 C 290 100, 370 100, 398 118 L 392 168 C 362 178, 298 178, 268 168 Z" fill="url(#mucG)" stroke="#8b3a3a" stroke-width="1.6"/><path d="M300 140 C 318 132, 342 132, 360 140 C 352 156, 308 156, 300 140Z" fill="#d86a73"/><path d="M308 108 C 322 114, 338 114, 352 108" stroke="#fde8e4" stroke-width="2" fill="none" opacity=".7"/><ellipse cx="330" cy="122" rx="30" ry="6" fill="#fff" opacity=".22"/>`;
         h += lbl(330, 180, 'pharynx', { s: 7.5, c: '#fde68a' });
-      } else h += `<path d="M262 124 C 300 150, 360 150, 398 124" stroke="#2f3a12" stroke-width="2.4" fill="none"/>${F.cutL ? '<path d="M262 124 L246 112" stroke="#3b0d12" stroke-width="3.5" stroke-linecap="round"/>' : ''}${F.cutR ? '<path d="M398 124 L414 112" stroke="#3b0d12" stroke-width="3.5" stroke-linecap="round"/>' : ''}`;
+      } else h += `<path d="M258 124 l14 3 M402 124 l-14 3" stroke="#6b6a30" stroke-width="1.6" fill="none" stroke-linecap="round"/>${F.cutL ? '<path d="M262 124 L246 112" stroke="#3b0d12" stroke-width="3.5" stroke-linecap="round"/>' : ''}${F.cutR ? '<path d="M398 124 L414 112" stroke="#3b0d12" stroke-width="3.5" stroke-linecap="round"/>' : ''}`;
       // oesophagus
       const y0 = 178, y1 = 340;
       if (F.jaw && !open) {

@@ -5,7 +5,8 @@ from django import forms
 from django.contrib.auth import password_validation
 from django.utils import timezone
 
-from .models import Assignment, Batch, College, Experiment, FreeYearApplication, Role, User
+from .contact import GROUPED_SUBTOPICS, NEEDS_INSTITUTION, SUBTOPICS
+from .models import Assignment, Batch, College, ContactRequest, Experiment, FreeYearApplication, Role, User
 
 INPUT = 'w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500'
 CHECK = 'accent-teal-600 w-4 h-4'
@@ -287,6 +288,45 @@ class FreeYearApplicationForm(forms.ModelForm):
         if phone and not re.fullmatch(r'\+?[0-9][0-9 ()-]{6,18}', phone):
             raise forms.ValidationError('Enter a valid phone number.')
         return phone
+
+
+class ContactForm(StyledMixin, forms.ModelForm):
+    subtopic = forms.ChoiceField(label='Sub-topic', choices=[('', 'Choose a sub-topic')] + GROUPED_SUBTOPICS)
+    consent = forms.BooleanField(label='I agree that XPRISM may use these details to respond to this request', error_messages={'required': 'Please agree so that we can respond to you.'})
+    website = forms.CharField(required=False, widget=forms.HiddenInput)     # filled only by bots; the visible trap is in the template
+
+    class Meta:
+        model = ContactRequest
+        fields = ['topic', 'subtopic', 'name', 'email', 'phone', 'institution', 'message']
+        widgets = {'message': forms.Textarea(attrs={'rows': 5})}
+
+    def __init__(self, *a, **kw):
+        super().__init__(*a, **kw)
+        del self.fields['website']
+        self.fields['topic'].choices = [('', 'Choose a subject')] + [c for c in self.fields['topic'].choices if c[0]]
+        self.fields['institution'].help_text = 'Needed for demos, quotations, training and partnerships'
+        self._style()
+
+    def clean_email(self):
+        return self.cleaned_data['email'].strip().lower()
+
+    def clean_phone(self):
+        phone = self.cleaned_data['phone'].strip()
+        if phone and not re.fullmatch(r'\+?[0-9][0-9 ()-]{6,18}', phone):
+            raise forms.ValidationError('Enter a valid phone number.')
+        return phone
+
+    def clean(self):
+        cd = super().clean()
+        topic, _, sub = (cd.get('subtopic') or '').partition('.')
+        if cd.get('topic') and cd.get('subtopic'):
+            if topic != cd['topic'] or sub not in SUBTOPICS.get(topic, {}):
+                self.add_error('subtopic', 'Choose a sub-topic that belongs to this subject.')
+            else:
+                cd['subtopic'] = sub
+        if cd.get('topic') in NEEDS_INSTITUTION and not cd.get('institution', '').strip():
+            self.add_error('institution', 'Please tell us your college or institution.')
+        return cd
 
 
 class EthicsAgreementForm(forms.Form):

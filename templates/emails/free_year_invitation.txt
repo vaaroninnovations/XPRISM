@@ -3,7 +3,7 @@ The Management and Administration
 
 Respected Sir / Madam,
 
-On behalf of {{ company }}, we are pleased to invite your institution to apply to use {{ site_name }} for 1 year, free of cost.
+On behalf of {{ company }}, we are pleased to invite your institution to apply to use {{ site_name }} for 1 month, free of cost.
 {% if note %}
 {{ note }}
 {% endif %}
@@ -23,9 +23,9 @@ MODULES IN {{ site_name }} ({{ n_modules }})
 {% endfor %}{% endfor %}
 HOW TO APPLY
 
-Please complete the short application at the link below. Every application is verified by our team. Once it is approved, your institution's subscription and College Admin account are set up for one year.
+Please complete the short application at the link below. Every application is verified by our team. Once it is approved, your institution's subscription and College Admin account are set up for one month.
 
-Apply for the free year: {{ apply_url }}
+Apply for the free month: {{ apply_url }}
 
 Yours faithfully,
 

@@ -11,8 +11,8 @@ from django.core.management import call_command
 from django.test import TestCase, override_settings
 from django.utils import timezone
 
-from .free_year import one_year_after
-from .models import Assignment, Attempt, AuditLog, Batch, College, ConsentRecord, DataRequest, Enrollment, Experiment, FreeYearApplication, FreeYearInvitation, Role, TrialVisit, User
+from .free_year import one_month_after
+from .models import Assignment, Attempt, AuditLog, Batch, College, ConsentRecord, ContactRequest, DataRequest, Enrollment, Experiment, FreeYearApplication, FreeYearInvitation, Role, TrialVisit, User
 from .views_auth import anonymise_user
 
 PW = 'Str0ng!Passw0rd'
@@ -805,7 +805,7 @@ class FreeYearTests(Base):
         app = FreeYearApplication.objects.get()
         self.decide(app, 'approve')
         u = User.objects.get(username='asha@example.com')
-        year = one_year_after(timezone.localdate())
+        year = one_month_after(timezone.localdate())
         self.assertEqual((u.subscribed_until, u.is_trial_account, u.first_name, u.last_name), (year, True, 'Asha', 'Rao'))
         self.assertTrue(u.has_full_access)
         app.refresh_from_db()
@@ -822,7 +822,7 @@ class FreeYearTests(Base):
         mail.outbox.clear()
         self.decide(FreeYearApplication.objects.get())
         t.refresh_from_db()
-        self.assertEqual(t.subscribed_until, one_year_after(end))
+        self.assertEqual(t.subscribed_until, one_month_after(end))
         self.assertEqual(User.objects.filter(email='t@example.com').count(), 1)
         self.assertNotIn('/accounts/password/reset/', mail.outbox[0].body)
 
@@ -831,7 +831,7 @@ class FreeYearTests(Base):
         self.decide(FreeYearApplication.objects.get(), college='new')
         c = College.objects.get(name='Rao College of Pharmacy')
         admin = User.objects.get(college=c, role=Role.COLLEGE_ADMIN)
-        self.assertEqual(c.subscription_until, one_year_after(timezone.localdate()))
+        self.assertEqual(c.subscription_until, one_month_after(timezone.localdate()))
         self.assertTrue(c.is_subscribed)
         self.assertEqual((admin.username, admin.email), (f'{c.code}-admin', 'asha@example.com'))
 
@@ -841,7 +841,7 @@ class FreeYearTests(Base):
         self.apply(kind='college', institution='College Two')
         self.decide(FreeYearApplication.objects.get(), college=self.c2.pk)
         self.c2.refresh_from_db()
-        self.assertEqual(self.c2.subscription_until, one_year_after(timezone.localdate()))
+        self.assertEqual(self.c2.subscription_until, one_month_after(timezone.localdate()))
         self.assertEqual(User.objects.count(), n)
 
     def test_approve_keeps_a_college_with_no_end_date(self):
@@ -904,8 +904,10 @@ class FreeYearTests(Base):
         self.assertIn('#7e13b5', html)
         self.assertNotIn('#0d9488', html)
 
-    def test_year_end_on_leap_day(self):
-        self.assertEqual(one_year_after(datetime.date(2028, 2, 29)), datetime.date(2029, 2, 28))
+    def test_month_end_dates(self):
+        self.assertEqual(one_month_after(datetime.date(2028, 1, 31)), datetime.date(2028, 2, 29))
+        self.assertEqual(one_month_after(datetime.date(2027, 12, 15)), datetime.date(2028, 1, 15))
+        self.assertEqual(one_month_after(datetime.date(2027, 3, 31)), datetime.date(2027, 4, 30))
 
 
 class FreeYearInvitationTests(Base):
@@ -1030,3 +1032,204 @@ class FreeYearInvitationTests(Base):
     def test_invitation_link_opens_the_popup(self):
         self.client.logout()
         self.assertContains(self.client.get('/?apply=1'), "get('apply') === '1'")
+
+
+class SignInTests(Base):
+    def make(self, **kw):
+        u = User.objects.create_user(username=kw.pop('username', 'asha@example.com'), password='Strong#Pass77', role=Role.STUDENT, consent_version=settings.POLICY_VERSION, ethics_version=settings.ETHICS_VERSION, **kw)
+        return u
+
+    def sign_in(self, name, password='Strong#Pass77', query=''):
+        return self.client.post('/accounts/login/' + query, {'username': name, 'password': password})
+
+    def test_capitals_and_spaces_in_the_username_do_not_matter(self):
+        self.make(is_trial_account=True, email='asha@example.com')
+        r = self.sign_in('  Asha@Example.COM ')
+        self.assertEqual(r.status_code, 302)
+        self.assertEqual(int(self.client.session['_auth_user_id']), User.objects.get(username='asha@example.com').pk)
+
+    def test_email_signs_in_to_a_college_account(self):
+        self.make(username='clg-bp1', email='neha@example.com')
+        self.assertEqual(self.sign_in('neha@example.com').status_code, 302)
+
+    def test_a_shared_email_does_not_pick_an_account(self):
+        self.make(username='clg-a', email='same@example.com')
+        self.make(username='clg-b', email='same@example.com')
+        self.assertContains(self.sign_in('same@example.com'), 'Incorrect username')
+
+    def test_failed_sign_in_never_shows_the_matched_username(self):
+        self.make(username='clg-bp2', email='hidden@example.com')
+        r = self.sign_in('hidden@example.com', password='wrong')
+        self.assertContains(r, 'hidden@example.com')
+        self.assertNotContains(r, 'clg-bp2')
+
+    def test_next_survives_sign_in_and_rejects_other_sites(self):
+        self.make(email='asha@example.com')
+        self.assertEqual(self.sign_in('asha@example.com', query='?next=/about/')['Location'], '/about/')
+        self.client.logout()
+        self.assertEqual(self.sign_in('asha@example.com', query='?next=https://evil.example/')['Location'], '/home/')
+
+    def test_next_is_carried_between_the_sign_in_pages(self):
+        r = self.client.get('/accounts/login/?next=/modules/')
+        self.assertContains(r, '/accounts/trial/?next=/modules/')
+        self.assertContains(r, '/accounts/signup/?next=/modules/')
+        self.assertContains(self.client.get('/accounts/trial/?next=/modules/'), 'name="next" value="/modules/"')
+
+    def test_after_login_the_button_becomes_sign_out(self):
+        self.login(self.st)
+        r = self.client.get('/about/')
+        self.assertContains(r, '>Sign out</button>', count=1)
+        self.assertNotContains(r, '>Login</a>')
+
+    def test_nav_shows_sign_in_and_contact(self):
+        r = self.client.get('/about/')
+        self.assertContains(r, '>Login</a>', count=1)
+        self.assertNotContains(r, 'Sign out')
+        self.assertNotContains(r, 'xh-signup')
+        self.assertContains(r, 'href="/contact/"')
+
+
+class ContactTests(Base):
+    FORM = {'topic': 'demo', 'subtopic': 'demo.online', 'name': 'Asha Rao', 'email': 'Asha@Example.com', 'phone': '', 'institution': 'ABC College', 'message': 'Please show us the lab.', 'consent': 'on'}
+
+    def send(self, **extra):
+        with self.captureOnCommitCallbacks(execute=True):
+            return self.client.post('/contact/', {**self.FORM, **extra})
+
+    def test_request_reaches_the_super_admin_and_the_sender_is_told(self):
+        r = self.send()
+        item = ContactRequest.objects.get()
+        self.assertEqual(r['Location'], f'/contact/?sent={item.reference}')
+        self.assertEqual((item.topic, item.subtopic, item.email, item.status), ('demo', 'online', 'asha@example.com', ContactRequest.NEW))
+        self.assertEqual(len(mail.outbox), 2)
+        self.assertIn(item.reference, mail.outbox[1].subject)
+        self.assertContains(self.client.get(r['Location']), item.reference)
+        self.login(self.sa)
+        page = self.client.get('/platform/contact/')
+        self.assertContains(page, 'Asha Rao')
+        self.assertContains(page, 'Live online demo')
+        self.assertEqual(self.client.get('/platform/').context['stats']['contact'], 1)
+
+    def test_subtopic_must_belong_to_the_subject(self):
+        self.assertEqual(self.send(topic='billing').status_code, 200)
+        self.assertFalse(ContactRequest.objects.exists())
+
+    def test_a_quotation_needs_an_institution(self):
+        self.assertContains(self.send(topic='quotation', subtopic='quotation.college', institution=''), 'tell us your college')
+        self.assertFalse(ContactRequest.objects.exists())
+
+    def test_every_subtopic_is_accepted(self):
+        from .contact import TOPICS
+        for key, _, subs in TOPICS:
+            for sub, _label in subs:
+                ContactRequest.objects.all().delete()
+                cache.clear()
+                self.assertEqual(self.send(topic=key, subtopic=f'{key}.{sub}').status_code, 302, (key, sub))
+
+    def test_bots_and_floods_are_stopped(self):
+        self.send(website='http://spam.example')
+        self.assertFalse(ContactRequest.objects.exists())
+        for i in range(10):
+            self.send(email=f'a{i}@example.com')
+        self.assertEqual(self.send(email='b@example.com').status_code, 200)
+        self.assertEqual(ContactRequest.objects.count(), 10)
+
+    def test_super_admin_resolves_and_replies(self):
+        self.send()
+        item = ContactRequest.objects.get()
+        mail.outbox.clear()
+        self.login(self.sa)
+        with self.captureOnCommitCallbacks(execute=True):
+            self.client.post('/platform/contact/', {'id': item.pk, 'status': 'resolved', 'note': 'Booked', 'reply': 'See you on Monday.'})
+        item.refresh_from_db()
+        self.assertEqual((item.status, item.admin_note, item.reply, item.handled_by), ('resolved', 'Booked', 'See you on Monday.', self.sa))
+        self.assertIsNotNone(item.resolved_at)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, ['asha@example.com'])
+        self.client.get('/platform/contact/')       # shows, and so clears, the confirmation message
+        self.assertNotContains(self.client.get('/platform/contact/'), item.reference)
+        self.assertContains(self.client.get('/platform/contact/?status=all'), item.reference)
+        self.client.post('/platform/contact/', {'id': item.pk, 'status': 'in_progress'})
+        item.refresh_from_db()
+        self.assertIsNone(item.resolved_at)
+
+    def test_only_one_menu_item_is_highlighted_in_the_inbox(self):
+        self.login(self.sa)
+        for url in ('/platform/contact/', '/platform/colleges/'):
+            self.assertContains(self.client.get(url), 'bg-teal-500 text-white shadow font-semibold', count=1)
+
+    def test_only_super_admins_see_the_inbox(self):
+        self.assertEqual(self.client.get('/platform/contact/').status_code, 302)
+        self.login(self.st)
+        self.assertEqual(self.client.get('/platform/contact/').status_code, 403)
+
+    def test_message_is_escaped_in_the_inbox(self):
+        self.send(message='<script>alert(1)</script>')
+        self.login(self.sa)
+        self.assertNotContains(self.client.get('/platform/contact/'), '<script>alert(1)</script>')
+
+
+class SiteTagTests(Base):
+    def test_robots_and_sitemap(self):
+        r = self.client.get('/robots.txt')
+        self.assertEqual(r['Content-Type'], 'text/plain; charset=utf-8')
+        for text in ('Disallow: /platform/', 'Disallow: /accounts/', 'Disallow: /admin/', f'Sitemap: {settings.SITE_URL.rstrip("/")}/sitemap.xml'):
+            self.assertContains(r, text)
+        s = self.client.get('/sitemap.xml')
+        self.assertIn('application/xml', s['Content-Type'])
+        self.assertContains(s, '/contact/</loc>')
+        self.assertNotContains(s, '/platform/')
+        self.assertNotContains(s, '/experiments/')
+
+    def test_public_pages_are_indexable_and_private_ones_are_not(self):
+        self.assertContains(self.client.get('/about/'), '<meta name="robots" content="index, follow">')
+        self.assertContains(self.client.get('/accounts/login/'), '<meta name="robots" content="noindex, nofollow">')
+        home = self.client.get('/')
+        self.assertContains(home, 'rel="canonical"')
+        self.assertContains(home, 'property="og:image"')
+        self.assertContains(home, 'application/ld+json')
+
+    def test_noindex_switch_closes_the_whole_site(self):
+        with self.settings(SEO={**settings.SEO, 'noindex': True}):
+            self.assertContains(self.client.get('/robots.txt'), 'Disallow: /')
+            self.assertNotContains(self.client.get('/sitemap.xml'), '<loc>')
+            self.assertContains(self.client.get('/'), 'noindex, nofollow')
+
+    def test_verification_tags_come_from_settings(self):
+        with self.settings(SEO={**settings.SEO, 'google_verification': 'abcDEF123456', 'bing_verification': 'BING123456789'}):
+            r = self.client.get('/')
+            self.assertContains(r, '<meta name="google-site-verification" content="abcDEF123456">')
+            self.assertContains(r, '<meta name="msvalidate.01" content="BING123456789">')
+
+    def test_cookie_banner_on_every_page_with_analytics_off(self):
+        for url in ('/', '/accounts/login/', '/contact/', '/privacy/'):
+            r = self.client.get(url)
+            self.assertContains(r, 'id="cookieBanner"')
+            self.assertContains(r, 'data-cookie="essential"')
+            self.assertContains(r, 'data-cookie-settings')
+            self.assertNotContains(r, 'data-cookie="granted"')
+            self.assertNotContains(r, 'googletagmanager')
+        self.login(self.st)
+        self.assertContains(self.client.get('/modules/'), 'id="cookieBanner"')
+
+    def test_cookie_banner_asks_only_where_analytics_can_run(self):
+        with self.settings(GOOGLE_ANALYTICS_ID='G-ABC1234'):
+            home = self.client.get('/')
+            self.assertContains(home, 'data-cookie="granted"')
+            self.assertContains(home, 'data-cookie="denied"')
+            self.assertContains(self.client.get('/privacy/'), 'Google Analytics')
+            login = self.client.get('/accounts/login/')
+            self.assertContains(login, 'data-cookie="essential"')
+            self.assertNotContains(login, 'googletagmanager')
+            self.login(self.st)
+            modules = self.client.get('/modules/')
+            self.assertNotContains(modules, 'data-cookie="granted"')
+            self.assertNotContains(modules, 'googletagmanager')
+
+    def test_experiment_pages_have_no_banner(self):
+        self.login(self.sa)
+        self.assertNotContains(self.client.get(Experiment.objects.get(no=1).url), 'cookieBanner')
+
+    def test_policy_denies_analytics_while_it_is_off(self):
+        self.assertContains(self.client.get('/privacy/'), 'We do not use analytics')
+

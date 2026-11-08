@@ -1,6 +1,30 @@
-from django.conf import settings
+import json
 
-from .models import DataRequest, FreeYearApplication, Role
+from django.conf import settings
+from django.utils.safestring import mark_safe
+
+from .models import ContactRequest, DataRequest, FreeYearApplication, Role
+
+# the pages search engines may list and analytics may measure; everything else is private to its user
+PUBLIC_PAGES = ('/', '/modules/', '/documentation/', '/about/', '/contact/', '/ethics/', '/privacy/', '/terms/', '/conditions/')
+
+
+def _seo(request):
+    base, path = settings.SITE_URL.rstrip('/'), request.path
+    public = path in PUBLIC_PAGES and not settings.SEO['noindex']
+    out = {**settings.SEO, 'canonical': base + path, 'robots': 'index, follow' if public else 'noindex, nofollow',
+           'image': settings.SEO['image'] or f"{base}{settings.STATIC_URL.rstrip('/')}/img/modules/hero-rota-rod.jpg"}
+    if path == '/':
+        data = {'@context': 'https://schema.org', '@type': 'EducationalOrganization', 'name': settings.SITE_NAME, 'alternateName': settings.SITE_FULL_NAME,
+                'url': base + '/', 'logo': f"{base}{settings.STATIC_URL.rstrip('/')}/img/icon-512.png", 'description': settings.SEO['description'], 'parentOrganization': {'@type': 'Organization', 'name': settings.LEGAL['org_name']}}
+        out['jsonld'] = mark_safe(json.dumps(data).replace('<', '\\u003c'))
+    return out
+
+
+def _analytics(request):
+    """IDs for the consent-gated loader. Only anonymous visitors on public pages: never students' work, sign-in tokens or staff pages."""
+    ids = {'ga': settings.GOOGLE_ANALYTICS_ID, 'gtm': settings.GOOGLE_TAG_MANAGER_ID}
+    return ids if any(ids.values()) and not request.user.is_authenticated and request.path in PUBLIC_PAGES else None
 
 
 def site(request):
@@ -16,7 +40,7 @@ def site(request):
         if r == Role.COLLEGE_ADMIN:
             nav = [('College', '/college/'), ('Staff', '/college/users/'), ('Batches', '/faculty/batches/'), ('Experiments', '/college/experiments/'), ('Requests', '/college/requests/'), ('Audit log', '/college/audit/')]
         if u.is_platform_admin:
-            nav = [('Platform', '/platform/'), ('Free year', '/platform/free-year/'), ('Colleges', '/platform/colleges/'), ('Trial users', '/platform/trials/'), ('Catalogue', '/platform/experiments/'), ('Batches', '/faculty/batches/'), ('Requests', '/college/requests/'), ('Audit log', '/college/audit/'), ('Django admin', '/admin/')]
+            nav = [('Platform', '/platform/'), ('Contact', '/platform/contact/'), ('Free month', '/platform/free-year/'), ('Colleges', '/platform/colleges/'), ('Trial users', '/platform/trials/'), ('Catalogue', '/platform/experiments/'), ('Batches', '/faculty/batches/'), ('Requests', '/college/requests/'), ('Audit log', '/college/audit/'), ('Django admin', '/admin/')]
     open_requests = 0
     if u.is_authenticated and (u.is_platform_admin or u.role == Role.COLLEGE_ADMIN):
         qs = DataRequest.objects.filter(status=DataRequest.OPEN)
@@ -30,6 +54,8 @@ def site(request):
                           and not u.free_year_applications.exclude(status=FreeYearApplication.REJECTED).exists())
     return {
         'PENDING_FREE_YEAR': pending_free_year, 'SHOW_FREE_YEAR': show_free_year,
+        'PENDING_CONTACT': u.is_authenticated and u.is_platform_admin and ContactRequest.objects.filter(status=ContactRequest.NEW).count(),
+        'SEO': _seo(request), 'ANALYTICS': _analytics(request), 'ANALYTICS_CONFIGURED': bool(settings.GOOGLE_ANALYTICS_ID or settings.GOOGLE_TAG_MANAGER_ID),
         'SITE_NAME': settings.SITE_NAME, 'SITE_TAGLINE': settings.SITE_TAGLINE,
         'SITE_FULL_NAME': settings.SITE_FULL_NAME, 'SITE_CREATOR': settings.SITE_CREATOR,
         'SITE_CREATOR_EMAIL': settings.SITE_CREATOR_EMAIL, 'SITE_INSTITUTION': settings.SITE_INSTITUTION,

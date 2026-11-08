@@ -9,11 +9,12 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from . import free_year
-from .emails import send_free_year_approved, send_free_year_declined, send_free_year_invitations, set_password_url
+from .emails import send_contact_reply, send_free_year_approved, send_free_year_declined, send_free_year_invitations, set_password_url
 from .forms import BrandingForm, CollegeCreateForm, CollegeForm, StaffUserForm, make_username, temp_password
 import datetime
 
-from .models import Attempt, AuditLog, Batch, College, DataRequest, Experiment, FreeYearApplication, FreeYearInvitation, Role, TrialVisit, User
+from .contact import TOPIC_CHOICES
+from .models import Attempt, AuditLog, Batch, College, ContactRequest, DataRequest, Experiment, FreeYearApplication, FreeYearInvitation, Role, TrialVisit, User
 from .permissions import audit, role_required
 from .views_auth import anonymise_user
 
@@ -183,6 +184,7 @@ def platform_dashboard(request):
     stats = {'colleges': colleges.count(), 'users': User.objects.filter(is_active=True).count(),
              'submissions': Attempt.objects.exclude(status=Attempt.STARTED).count(), 'experiments': Experiment.objects.filter(is_active=True).count(),
              'open_requests': DataRequest.objects.filter(status=DataRequest.OPEN).exclude(kind=DataRequest.EXPORT).count(),
+             'contact': ContactRequest.objects.filter(status=ContactRequest.NEW).count(),
              'trial_users': User.objects.filter(is_trial_account=True, is_active=True).count(),
              'trial_visits': TrialVisit.objects.count(),
              'free_year': FreeYearApplication.objects.filter(status=FreeYearApplication.PENDING).count()}
@@ -231,7 +233,7 @@ def platform_experiments(request):
 
 
 def _award_free_year(request, app):
-    """Award the year and tell the applicant. Returns the message for the super admin."""
+    """Award the month and tell the applicant. Returns the message for the super admin."""
     if app.kind == FreeYearApplication.COLLEGE:
         cid = request.POST.get('college', 'new')
         college, admin = free_year.award_college(app, None if cid == 'new' else get_object_or_404(College, pk=cid))
@@ -250,7 +252,7 @@ def _award_free_year(request, app):
 
 @_platform
 def free_year_applications(request):
-    """Applications from the free-year pop-up: approve to award one year, or decline."""
+    """Applications from the free-year pop-up: approve to award one month, or decline."""
     if request.method == 'POST':
         with transaction.atomic():
             app = get_object_or_404(FreeYearApplication.objects.select_for_update(), pk=request.POST.get('id'))
@@ -312,7 +314,7 @@ def _invite(request, text, note):
 
 @_platform
 def free_year_invitations(request):
-    """Invite colleges by e-mail to apply for the free year."""
+    """Invite colleges by e-mail to apply for the free month."""
     text, note = '', ''
     if request.method == 'POST':
         if not _email_ready():
@@ -369,3 +371,42 @@ def trial_users(request):
         users = users.filter(Q(username__icontains=q) | Q(first_name__icontains=q) | Q(last_name__icontains=q) | Q(institution__icontains=q))
     page = Paginator(users, 50).get_page(request.GET.get('page'))
     return render(request, 'lab/trial_users.html', {'page': page, 'q': q, 'today': timezone.localdate(), 'n_exp': Experiment.objects.filter(is_active=True).count()})
+
+
+
+@_platform
+def contact_requests(request):
+    """Messages from the Contact us page: set a status, keep a note, and optionally e-mail a reply."""
+    if request.method == 'POST':
+        with transaction.atomic():
+            item = get_object_or_404(ContactRequest.objects.select_for_update(), pk=request.POST.get('id'))
+            status, reply = request.POST.get('status'), request.POST.get('reply', '').strip()[:4000]
+            if status not in dict(ContactRequest.STATUSES):
+                messages.error(request, 'Choose a valid status.')
+            else:
+                if reply and not item.email:
+                    messages.error(request, 'This sender has deleted their details, so no reply can be sent.')
+                    reply = ''
+                closing = status in (ContactRequest.RESOLVED, ContactRequest.CLOSED)
+                item.status, item.admin_note, item.handled_by = status, request.POST.get('note', '').strip()[:2000], request.user
+                item.resolved_at = (item.resolved_at or timezone.now()) if closing else None
+                if reply:
+                    item.reply, item.replied_at = reply, timezone.now()
+                    send_contact_reply(item)
+                item.save()
+                audit(request, 'contact_updated', item.reference, status=status, replied=bool(reply))
+                messages.success(request, f'{item.reference} updated.{" Reply sent." if reply else ""}')
+        back = request.POST.get('back', '')
+        return redirect(back if back.startswith('/platform/contact/') else 'contact_requests')
+    status, topic, q = request.GET.get('status', 'active'), request.GET.get('topic', ''), request.GET.get('q', '').strip()
+    qs = ContactRequest.objects.select_related('user', 'handled_by')
+    if status == 'active':
+        qs = qs.filter(status__in=(ContactRequest.NEW, ContactRequest.IN_PROGRESS))
+    elif status in dict(ContactRequest.STATUSES):
+        qs = qs.filter(status=status)
+    if topic in dict(TOPIC_CHOICES):
+        qs = qs.filter(topic=topic)
+    if q:
+        qs = qs.filter(Q(name__icontains=q) | Q(email__icontains=q) | Q(institution__icontains=q) | Q(message__icontains=q))
+    page = Paginator(qs, 25).get_page(request.GET.get('page'))
+    return render(request, 'lab/contact_requests.html', {'page': page, 'status': status, 'topic': topic, 'q': q, 'statuses': ContactRequest.STATUSES, 'topics': TOPIC_CHOICES})

@@ -5,11 +5,11 @@ const FNS = ['runAllInstant', 'runAll', 'guidedRun', 'doseAllInstant', 'runCompl
 (async () => {
   const b = await chromium.launch();
   async function session(user, pw) {
-    const ctx = await b.newContext({ viewport: { width: 1440, height: 950 } });
+    const ctx = await b.newContext({ viewport: { width: 1440, height: 950 } }); await ctx.addInitScript(() => { try { localStorage.setItem('xprism-cookies', 'essential'); } catch (e) { } });
     await ctx.route('**/*', r => r.request().url().startsWith(BASE) ? r.continue() : r.abort());
     const p = await ctx.newPage(); p.on('dialog', d => d.accept());
     await p.goto(BASE + '/accounts/login/'); await p.fill('#id_username', user); await p.fill('#id_password', pw);
-    await Promise.all([p.waitForLoadState('load'), p.click('button:has-text("Sign in")')]);
+    await Promise.all([p.waitForLoadState('load'), p.click('button:has-text("Login")')]);
     if (p.url().includes('/consent/')) { await p.check('#id_accept'); await p.check('#id_age_ok'); await Promise.all([p.waitForLoadState('load'), p.click('button:has-text("Accept and continue")')]); }
     await p.goto(BASE + '/');
     if (await p.$('#ethicsModal')) { await p.check('#ethicsModal input[name=agree_ethics]'); await Promise.all([p.waitForLoadState('load'), p.click('#ethicsModal button:has-text("I agree")')]); }

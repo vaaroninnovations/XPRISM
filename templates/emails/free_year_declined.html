@@ -1,7 +1,7 @@
 {% extends 'emails/_layout.html' %}
 {% block body %}
 <p style="margin:0 0 14px;">Hello {{ name }},</p>
-<p style="margin:0 0 14px;">We reviewed your application to use <strong>{{ site_name }}</strong> for one year, free of cost, and could not approve it this time.</p>
+<p style="margin:0 0 14px;">We reviewed your application to use <strong>{{ site_name }}</strong> for one month, free of cost, and could not approve it this time.</p>
 {% if app.review_note %}<p style="margin:0 0 14px;"><span style="color:#475569;">Reason:</span> {{ app.review_note }}</p>{% endif %}
 <p style="margin:0;font-size:13px;color:#475569;">If you have any questions, write to {{ support_email }}.</p>
 {% endblock %}

@@ -1,4 +1,4 @@
-{% autoescape off %}A new application for one free year of {{ site_name }} is waiting for your review.
+{% autoescape off %}A new application for one free month of {{ site_name }} is waiting for your review.
 
 Name: {{ app.name }}
 E-mail: {{ app.email }}{% if app.phone %}

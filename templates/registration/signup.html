@@ -4,10 +4,10 @@
 {% block card %}
 <div><div class="mono text-[11px] text-teal-700 font-bold">STUDENT SIGN-UP</div><h1 class="text-xl font-bold text-slate-900">Join your class with a class code</h1>
 <p class="text-xs text-slate-500 mt-1">We collect only your name, roll number and (optionally) e-mail, to record your practical work for your faculty. See the <a href="{% url 'privacy' %}" target="_blank" class="underline">Privacy Policy</a>.</p></div>
-<form method="post" class="space-y-3" novalidate>{% csrf_token %}
+<form method="post" class="space-y-3" novalidate>{% csrf_token %}<input type="hidden" name="next" value="{{ next }}">
   {{ form.non_field_errors }}
   {% include 'registration/_fields.html' %}
   <button class="w-full py-2.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow">Create my account</button>
 </form>
-<p class="text-xs text-slate-500">Already have an account? <a href="{% url 'login' %}" class="text-teal-700 hover:underline">Sign in</a></p>
+<p class="text-xs text-slate-500">Already have an account? <a href="{% url 'login' %}{% if next %}?next={{ next|urlencode }}{% endif %}" class="text-teal-700 hover:underline">Login</a></p>
 {% endblock %}

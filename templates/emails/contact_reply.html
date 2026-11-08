@@ -1,0 +1,6 @@
+{% extends 'emails/_layout.html' %}
+{% block body %}
+<p style="margin:0 0 14px;">Hello {{ name }},</p>
+<p style="margin:0 0 14px;">This is our reply to your request <strong>{{ item.reference }}</strong> ({{ item.get_topic_display }}: {{ item.subtopic_display }}).</p>
+<p style="margin:0 0 14px;white-space:pre-line;">{{ item.reply }}</p>
+{% endblock %}

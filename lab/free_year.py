@@ -1,9 +1,10 @@
-"""One free year of access, awarded by a super admin from a FreeYearApplication.
+"""One free month of access, awarded by a super admin from a FreeYearApplication.
 
 An individual gets User.subscribed_until on their account (created if they have none). A college
 gets College.subscription_until, on an existing college or on a new one with its College Admin.
-An award never shortens access: it runs for a year from the later of today and the current end date.
+An award never shortens access: it runs for a month from the later of today and the current end date.
 """
+import calendar
 import re
 
 from django.core.exceptions import ValidationError
@@ -12,7 +13,7 @@ from django.utils import timezone
 from django.utils.text import slugify
 
 from .forms import make_username, temp_password
-from .models import College, FreeYearApplication, Role, User
+from .models import College, ContactRequest, FreeYearApplication, Role, User
 
 
 def parse_addresses(text):
@@ -30,16 +31,15 @@ def parse_addresses(text):
     return list(valid), invalid
 
 
-def one_year_after(day):
-    try:
-        return day.replace(year=day.year + 1)
-    except ValueError:      # 29 February
-        return day.replace(year=day.year + 1, day=28)
+def one_month_after(day):
+    """The same day next month, or that month's last day if it is shorter (31 January gives 28 or 29 February)."""
+    year, month = day.year + (day.month == 12), day.month % 12 + 1
+    return day.replace(year=year, month=month, day=min(day.day, calendar.monthrange(year, month)[1]))
 
 
 def _award_end(current_end):
     today = timezone.localdate()
-    return one_year_after(max(today, current_end) if current_end else today)
+    return one_month_after(max(today, current_end) if current_end else today)
 
 
 def find_account(app):
@@ -103,3 +103,7 @@ def erase_personal_data(user):
         apps = apps | FreeYearApplication.objects.filter(email__iexact=user.email)
     apps.filter(status=FreeYearApplication.PENDING).update(status=FreeYearApplication.REJECTED, review_note='The applicant deleted their account.')
     apps.update(name='Deleted user', email='', phone='', message='', user=None, institution='')
+    requests = ContactRequest.objects.filter(user=user)
+    if user.email:
+        requests = requests | ContactRequest.objects.filter(email__iexact=user.email)
+    requests.update(name='Deleted user', email='', phone='', message='', reply='', user=None, institution='')
