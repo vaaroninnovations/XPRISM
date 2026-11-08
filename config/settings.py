@@ -105,6 +105,10 @@ USE_TZ = True
 STATIC_URL = '/assets/'
 STATICFILES_DIRS = [BASE_DIR / 'static' / 'assets']
 STATIC_ROOT = Path(env('DJANGO_STATIC_ROOT', BASE_DIR / 'staticfiles'))
+STORAGES = {
+    'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+    'staticfiles': {'BACKEND': 'lab.storage.VersionedStaticFilesStorage'},
+}
 EXPERIMENTS_DIR = BASE_DIR / 'experiments'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

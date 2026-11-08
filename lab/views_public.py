@@ -4,6 +4,7 @@ import re
 
 from django.conf import settings
 from django.contrib.auth.views import redirect_to_login
+from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.cache import cache
 from django.db import transaction
 from django.http import Http404, HttpResponse, JsonResponse
@@ -256,6 +257,9 @@ def _closed(attempt_qs, a):
     return None
 
 
+EXP_ASSET = re.compile(r'(?<=["\'])(?:\.\.)?/assets/((?:css|js)/[\w.-]+)(?=["\'])')
+
+
 def experiment_page(request, slug):
     exp = get_object_or_404(Experiment, slug=slug)
     path = settings.EXPERIMENTS_DIR / f'{slug}.html'
@@ -316,8 +320,9 @@ def experiment_page(request, slug):
                     f'try {{ t = ({expr}); }} catch (e) {{}} return {{ given: el ? el.value : "", truth: t, kind: {json.dumps(kind)}, tol: {tol} }}; }};</script>\n')
     ctx_json = json.dumps(ctx).replace('</', '<' + chr(92) + '/')
     inject = (f'<script id="mcp-ctx" type="application/json">{ctx_json}</script>\n'
-              f'{probe_js}<script src="{settings.STATIC_URL}js/bridge.js"></script>\n</body>')
+              f'{probe_js}<script src="{staticfiles_storage.url("js/bridge.js")}"></script>\n</body>')
     page = page.replace('</body>', inject, 1)
+    page = EXP_ASSET.sub(lambda m: staticfiles_storage.url(m[1]), page)
     resp = HttpResponse(page)
     resp['Cache-Control'] = 'no-store'
     return resp
