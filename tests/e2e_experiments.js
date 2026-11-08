@@ -1,4 +1,4 @@
-// All 37 experiments through the app: practice mode capture + exam-mode lockdown (staff preview).
+// All 40 experiments through the app: practice mode capture + exam-mode lockdown (staff preview).
 const { chromium } = require('playwright');
 const BASE = 'http://127.0.0.1:8095';
 const FNS = ['runAllInstant', 'runAll', 'guidedRun', 'doseAllInstant', 'runCompleteBatchExperiment', 'fillAllMockData', 'fillSampleVideoDataset', 'loadReferenceDataset'];
