@@ -1,0 +1,18 @@
+<!doctype html><meta charset="utf-8"><title>bake</title>
+<!-- Dev tool: serve with an endpoint that accepts POST /save/<file> (base64 body). -->
+<body><pre id="log"></pre><script src="paint.js"></script>
+<script>
+(async () => {
+  const boxes = {}, only = new URLSearchParams(location.search).get('only');
+  for (const [name, job] of Object.entries(ANI_JOBS)) {
+    if (only && !only.split(',').includes(name)) continue;
+    const t = performance.now(), { canvas, box } = job(), data = canvas.toDataURL('image/webp', .9).split(',')[1];
+    await fetch('/save/' + name + '.webp', { method: 'POST', body: data });
+    boxes[name] = box;
+    log.textContent += `${name} ${canvas.width}x${canvas.height} ${Math.round(data.length * .75 / 1024)}KB ${Math.round(performance.now() - t)}ms\n`;
+    await new Promise(r => setTimeout(r));
+  }
+  log.textContent += 'DONE ' + JSON.stringify(boxes);
+  document.title = 'done';
+})().catch(e => { document.title = 'error'; log.textContent += 'ERR ' + e.stack; });
+</script>
