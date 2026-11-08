@@ -19,7 +19,7 @@
   const BOX = {
     'side-rat': [-38, -23, 50, 20], 'side-mouse': [-38, -23, 50, 20], earS: [16.5, -22, 30, -7.5],
     footH: [-23, 8, 3, 19], footHfar: [-23, 8, 3, 19], footF: [18, 9, 32, 19], footFfar: [18, 9, 32, 19],
-    top: [-27, -16, 32, 16], 'top-mouse': [-24.27, -11.86, 28.83, 11.78], rbHead: [-152, -130, 152, 150], rbEar: [20, -244, 112, -70], rbBody: [-264, 84, 264, 256],
+    top: [-27, -16, 32, 16], 'top-mouse': [-24.27, -11.86, 28.83, 11.78], 'top-rat': [-25.06, -14.23, 28.77, 14.16], rbHead: [-152, -130, 152, 150], rbEar: [20, -244, 112, -70], rbBody: [-264, 84, 264, 256],
     guineaPig: [112, 28, 906, 412], frogBody: [428, 84, 572, 286], frogVen07: [96, 28, 564, 448], frogVen12: [330, 48, 670, 566]
   };
 
@@ -104,14 +104,14 @@
         </g></g>`;
   }
 
-  // ---- top view (head to +x). o: {kind, noTail (caller draws its own)}. Mice use the render; rats keep the baked art.
+  // ---- top view (head to +x). o: {kind, noTail (caller draws its own)}. The rat is the mouse render reshaped: tools/animal-sprites.
   function animalTopArt(o = {}) {
-    const mouse = o.kind === 'mouse';
+    const mouse = o.kind === 'mouse', render = mouse || o.kind === 'rat';
     const tail = o.noTail ? '' : once(mouse ? 'tailTm' : 'tailT', () => tailArt(TAILS.top, mouse ? 2.2 : 2.7, .8));
     const wh = once('whT', () => whiskerPaint([-1, 1].map(s => [[3, 12, 4.4], [5.5, 15, 8], [8, 13.5, 11.5], [10, 11, 13.5]].map(([a, L, e], i) => `M${f2(25.2 - i * .7)} ${f2(s * (1.2 + i * .35))}Q${f2(25 + L * .55)} ${f2(s * (1.6 + a * .55))} ${f2(25 + L)} ${f2(s * (2 + e))}`).join('')).join(''), .17));
     return `<g transform="scale(.72)">
-        ${mouse ? '<ellipse cx="2.4" cy="2" rx="25.5" ry="10.4" fill="#000" opacity=".26" filter="url(#aniBlur)"/>' : '<ellipse cx="0" cy="2.6" rx="24" ry="11" fill="#000" opacity=".26" filter="url(#aniBlur)"/>'}
-        ${tail}${sprite(mouse ? 'top-mouse' : 'top')}${wh}
+        ${render ? '<ellipse cx="2.4" cy="2" rx="25.5" ry="10.4" fill="#000" opacity=".26" filter="url(#aniBlur)"/>' : '<ellipse cx="0" cy="2.6" rx="24" ry="11" fill="#000" opacity=".26" filter="url(#aniBlur)"/>'}
+        ${tail}${sprite(render ? 'top-' + o.kind : 'top')}${wh}
         </g>`;
   }
 
