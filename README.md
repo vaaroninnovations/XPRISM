@@ -66,14 +66,14 @@ The agreement is stored as a consent record (`ethics-<ETHICS_VERSION>`). Changin
 granted an individual subscription under **Platform → Trial users**, which can also reset a trial.
 Students of a college whose subscription lapses fall back to the one-visit rule.
 
-**One free year:** visitors and free-trial users see a pop-up (on the home and modules pages, at most once
+**One free month:** visitors and free-trial users see a pop-up (on the home and modules pages, at most once
 a week) and an "Apply here" bar on other pages. Applications go to the super admins by e-mail and under
-**Platform → Free year**. Approving awards a year straight away: an individual gets an individual subscription
+**Platform → Free month**. Approving awards a month straight away: an individual gets an individual subscription
 (an account is created if they have none), and a college gets a college subscription (a new college with its
 College Admin, or an existing college chosen from the list). The applicant is e-mailed the decision, with a
 link to set a password if a new account was made. Each e-mail address can hold one application, unless declined.
 
-**Inviting colleges:** under **Platform → Free year → Invite colleges**, paste e-mail addresses to send each one a
+**Inviting colleges:** under **Platform → Free month → Invite colleges**, paste e-mail addresses to send each one a
 separate invitation whose link opens the pop-up. An address is invited once, addresses that have applied are skipped,
 every invitation has an opt-out link, and at most `FREE_YEAR_INVITES_PER_DAY` (default 200) go out in 24 hours.
 Sending needs `EMAIL_HOST` to be set; without it the page refuses to send.

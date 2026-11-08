@@ -1,6 +1,6 @@
 {% autoescape off %}Hello {{ name }},
 
-Thank you for applying to use {{ site_name }} for one year, free of cost, for {{ app.institution }}. We will verify your application and write to you with the decision.
+Thank you for applying to use {{ site_name }} for one month, free of cost, for {{ app.institution }}. We will verify your application and write to you with the decision.
 
 Did not apply? You can ignore this e-mail, or write to {{ support_email }}.
 

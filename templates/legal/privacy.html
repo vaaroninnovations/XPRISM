@@ -18,6 +18,7 @@
   <tr><td>Trial usage</td><td>Which experiment modules you have opened in the free trial and when each visit started and ended</td><td>Generated when you use the Lab</td></tr>
   <tr><td>Academic records</td><td>Batches you belong to, assignments, experiment submissions (observation tables, calculated answers, viva answers), automatic scores, marks and feedback</td><td>Generated when you use the Lab</td></tr>
   <tr><td>Security & audit</td><td>Sign-in times, failed sign-in counts, IP address of key actions (sign-in, grading, exports, data requests), consent records</td><td>Generated automatically</td></tr>
+  <tr><td>Contact requests</td><td>Name, e-mail, phone, institution and your message, used to respond to you</td><td>You</td></tr>
   <tr><td>Technical</td><td>Session and security cookies (see section 8)</td><td>Your browser</td></tr>
 </table>
 <p>We do <b>not</b> collect Aadhaar numbers, financial information, health information, precise location, photographs, or biometric data. Experiments run entirely in your browser; simulation data that you do not submit is not sent to us.</p>
@@ -70,7 +71,7 @@
 <p>The Lab is intended for students of degree and diploma pharmacy programmes, who are normally 18 or older. If you are under 18, you may use the Lab only with the <b>verifiable consent of your parent or lawful guardian</b>, obtained through your college. We do not track or monitor children's behaviour, and we do not direct advertising at anyone. If we learn that a child's data was collected without such consent, we will delete it.</p>
 
 <h2>8. Cookies</h2>
-<p>We use only <b>strictly necessary</b> cookies: a session cookie to keep you signed in, and a CSRF cookie that protects forms against forgery. We do not use analytics, advertising or third-party tracking cookies, and the Lab loads no resources from other websites. Simulations may store small preferences in your browser (e.g. sound on/off) that never leave your device.</p>
+{% if ANALYTICS_CONFIGURED %}<p>We use <b>strictly necessary</b> cookies: a session cookie to keep you signed in, and a CSRF cookie that protects forms against forgery. On our public pages we also use <b>Google Analytics</b> cookies to understand how those pages are used, but only if you choose Accept. If you decline, they are not set. You can change your choice with the Cookie settings link in the footer. Analytics is not used after you sign in or on experiment pages. We do not use advertising cookies.</p>{% else %}<p>We use only <b>strictly necessary</b> cookies: a session cookie to keep you signed in, and a CSRF cookie that protects forms against forgery. We do not use analytics, advertising or third-party tracking cookies, and the Lab loads no resources from other websites. Simulations may store small preferences in your browser (e.g. sound on/off) that never leave your device.</p>{% endif %}
 
 <h2>9. Security</h2>
 <p>Passwords are stored only as salted hashes. All traffic is encrypted with HTTPS. Access is restricted by role and college. Accounts lock after repeated failed sign-ins. Key actions are written to an audit log that cannot be edited. The server and backups are access-controlled. If a personal data breach occurs, we will inform affected users and the Data Protection Board of India as required by the DPDP Rules.</p>

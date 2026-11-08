@@ -1593,7 +1593,7 @@
     }
     function processAll() {
       if (S.station === 1) assistAnimals(); else if (S.station === 2) assistSolutions(); else if (S.station === 3) { if (!placed().length) assistAnimals(); if (CFG.sols().some(d => !d.premade && !S.sol[d.k].labelled)) assistSolutions(); if (MOD.beforeDose) MOD.beforeDose(); assistDosing(); }
-      else if (MOD.assist) MOD.assist();
+      else if (MOD.assist) { if (placed().some(m => m.inj.length < CFG.nInj)) { say(`Dose every ${CFG.sp} at station 3 first, or let the assistant finish that station.`, true); return; } MOD.assist(); }
       renderCtx(); drawDyn(); renderNotebook(); renderObservation(); refreshChecklist(); say('The assistant has finished this station. Check the notebook.');
     }
     function fillAll() { S.trial = null; assistAnimals(); assistSolutions(); if (MOD.beforeDose) MOD.beforeDose(); assistDosing(); MOD.assist(); if (MOD.fillNotes) MOD.fillNotes(); }

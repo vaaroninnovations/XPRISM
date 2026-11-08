@@ -3,6 +3,7 @@
 All deployment-specific values come from environment variables (see deploy/env.example).
 With no environment set, the project runs in local development mode on SQLite.
 """
+import re
 import os
 import sys
 from pathlib import Path
@@ -177,6 +178,25 @@ TRIAL_VISIT_MAX_HOURS = int(env('TRIAL_VISIT_MAX_HOURS', '3'))
 SUBSCRIPTION_CONTACT = env('SUBSCRIPTION_CONTACT', 'drvaraprasadsaka@gmail.com')
 # most invitations sent in 24 hours: mail providers limit daily sending and treat sudden bursts as spam
 FREE_YEAR_INVITES_PER_DAY = int(env('FREE_YEAR_INVITES_PER_DAY', '200'))
+
+# ---------------------------------------------------------------- search engines and analytics (all optional, set in .env)
+def _tag(name, pattern):
+    """An ID that ends up inside a page: ignored unless it has the expected form."""
+    value = env(name, '').strip()
+    return value if re.fullmatch(pattern, value) else ''
+
+
+SEO = {
+    'description': env('SEO_DESCRIPTION', 'XPRISM is a virtual pharmacology laboratory with interactive B.Pharm and M.Pharm simulations, assignments, exam mode and grading, built around the 3Rs.'),
+    'keywords': env('SEO_KEYWORDS', 'virtual pharmacology lab, experimental pharmacology simulation, B.Pharm practicals, M.Pharm practicals, PCI syllabus, CCSEA, 3Rs, computer-assisted learning'),
+    'image': env('SEO_OG_IMAGE', ''),                  # absolute URL; defaults to a screenshot of the lab
+    'twitter': env('SEO_TWITTER_HANDLE', ''),
+    'noindex': env_bool('SEO_NOINDEX', False),         # true on a staging site: keeps the whole site out of search engines
+    'google_verification': _tag('GOOGLE_SITE_VERIFICATION', r'[A-Za-z0-9_-]{10,100}'),
+    'bing_verification': _tag('BING_SITE_VERIFICATION', r'[A-Za-z0-9_-]{10,100}'),
+}
+GOOGLE_ANALYTICS_ID = _tag('GOOGLE_ANALYTICS_ID', r'G-[A-Z0-9]{4,20}')
+GOOGLE_TAG_MANAGER_ID = _tag('GOOGLE_TAG_MANAGER_ID', r'GTM-[A-Z0-9]{4,20}')
 SHARED_DEMO_USERNAMES =[u.strip() for u in env('SHARED_DEMO_USERNAMES', 'xprismdemo,xprismfaculty,xprismassistant,xprismadmin').split(',') if u.strip()]
 DATA_RETENTION_YEARS = int(env('DATA_RETENTION_YEARS', '3'))
 LOGIN_MAX_FAILURES = 5

@@ -1,6 +1,6 @@
 {% autoescape off %}Hello {{ name }},
 
-We reviewed your application to use {{ site_name }} for one year, free of cost, and could not approve it this time.
+We reviewed your application to use {{ site_name }} for one month, free of cost, and could not approve it this time.
 {% if app.review_note %}
 Reason: {{ app.review_note }}
 {% endif %}

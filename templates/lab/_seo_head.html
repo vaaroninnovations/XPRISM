@@ -1,0 +1,13 @@
+{% load static %}<meta name="robots" content="{{ SEO.robots }}">
+  {% if SEO.google_verification %}<meta name="google-site-verification" content="{{ SEO.google_verification }}">{% endif %}
+  {% if SEO.bing_verification %}<meta name="msvalidate.01" content="{{ SEO.bing_verification }}">{% endif %}
+  {% if SEO.keywords %}<meta name="keywords" content="{{ SEO.keywords }}">{% endif %}
+  <link rel="canonical" href="{{ SEO.canonical }}">
+  <meta property="og:site_name" content="{{ SITE_NAME }}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ SEO.canonical }}">
+  <meta property="og:image" content="{{ SEO.image }}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="{{ SEO.image }}">
+  {% if SEO.twitter %}<meta name="twitter:site" content="{{ SEO.twitter }}">{% endif %}
+  {% if SEO.jsonld %}<script type="application/ld+json">{{ SEO.jsonld }}</script>{% endif %}

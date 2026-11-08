@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}{{ SITE_FULL_NAME }}{% endblock %} • XPRISM</title>
+  <meta name="description" content="{% block meta_description %}{{ SEO.description }}{% endblock %}">
+  {% include 'lab/_seo_head.html' %}
   <meta name="theme-color" content="#0a1f44">
   <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32.png' %}">
   <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}">
@@ -27,31 +29,29 @@
       {% endif %}
     </div>
     {% if user.is_authenticated %}
-    <div class="text-right">
+    <div class="flex items-center gap-3">
+      <div class="text-right">
       <div class="text-xs font-semibold text-slate-800 flex items-center justify-end gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span><span>{{ user.display_name }}</span></div>
       <div class="text-[11px] text-slate-500 font-mono">{% if IS_TRIAL %}<span class="text-amber-700 font-semibold">Free trial</span>{% if user.institution %} • {{ user.institution }}{% endif %}{% else %}{{ user.get_role_display }}{% if COLLEGE %} • {{ COLLEGE.name }}{% endif %}{% endif %}</div>
+      </div>
+      <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="xh-authcta">Sign out</button></form>
     </div>
     {% else %}
     <nav class="xh-pubnav" aria-label="Main">
       <a href="{% url 'about' %}"{% if request.path == '/about/' %} aria-current="page"{% endif %}>About</a>
       <a href="{% url 'modules' %}"{% if request.path == '/modules/' %} aria-current="page"{% endif %}>Modules</a>
       <a href="{% url 'documentation' %}"{% if request.path == '/documentation/' %} aria-current="page"{% endif %}>Documentation</a>
+      <a href="{% url 'contact' %}"{% if request.path == '/contact/' %} aria-current="page"{% endif %}>Contact</a>
     </nav>
     <div class="xh-pubauth">
-      <a href="{% url 'login' %}" class="xh-signin">Sign in</a>
-      <details class="xh-drop">
-        <summary class="xh-signup">Sign up</summary>
-        <div class="xh-drop-panel">
-          <a href="{% url 'trial_signup' %}"><b>Start free trial</b><span>One exploration per experiment</span></a>
-          <a href="{% url 'signup' %}"><b>Join with class code</b><span>Your faculty gave you a code</span></a>
-        </div>
-      </details>
+      <a href="{% url 'login' %}" class="xh-authcta"{% if request.path == '/accounts/login/' %} aria-current="page"{% endif %}>Login</a>
       <details class="xh-drop xh-burger">
         <summary aria-label="Menu"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 5.5h14M3 10h14M3 14.5h14"/></svg></summary>
         <div class="xh-drop-panel">
           <a href="{% url 'about' %}"><b>About</b></a>
           <a href="{% url 'modules' %}"><b>Modules</b></a>
           <a href="{% url 'documentation' %}"><b>Documentation</b></a>
+          <a href="{% url 'contact' %}"><b>Contact</b></a>
         </div>
       </details>
     </div>
@@ -63,18 +63,18 @@
   <nav class="site-subheader bg-slate-800 text-white px-4 md:px-6 py-2 flex flex-wrap items-center justify-between gap-2 shadow">
     <div class="flex flex-wrap items-center gap-1 bg-slate-900/80 p-1 rounded-lg border border-slate-700">
       {% for label, href in NAV %}
-      <a href="{{ href }}" class="px-3 py-1.5 rounded-md text-xs font-medium transition {% if request.path == href or href != '/' and request.path|slice:':12' == href|slice:':12' %}bg-teal-500 text-white shadow font-semibold{% else %}text-slate-300 hover:text-white{% endif %}">{{ label }}{% if label == 'Requests' and OPEN_REQUESTS %} <span class="ml-1 px-1.5 rounded-full bg-rose-500 text-white text-[10px]">{{ OPEN_REQUESTS }}</span>{% endif %}{% if label == 'Free year' and PENDING_FREE_YEAR %} <span class="ml-1 px-1.5 rounded-full bg-rose-500 text-white text-[10px]">{{ PENDING_FREE_YEAR }}</span>{% endif %}</a>
+      <a href="{{ href }}" class="px-3 py-1.5 rounded-md text-xs font-medium transition {% if request.path == href or href != '/' and request.path|slice:':14' == href|slice:':14' %}bg-teal-500 text-white shadow font-semibold{% else %}text-slate-300 hover:text-white{% endif %}">{{ label }}{% if label == 'Requests' and OPEN_REQUESTS %} <span class="ml-1 px-1.5 rounded-full bg-rose-500 text-white text-[10px]">{{ OPEN_REQUESTS }}</span>{% endif %}{% if label == 'Free month' and PENDING_FREE_YEAR %} <span class="ml-1 px-1.5 rounded-full bg-rose-500 text-white text-[10px]">{{ PENDING_FREE_YEAR }}</span>{% endif %}{% if label == 'Contact' and PENDING_CONTACT %} <span class="ml-1 px-1.5 rounded-full bg-rose-500 text-white text-[10px]">{{ PENDING_CONTACT }}</span>{% endif %}</a>
       {% endfor %}
     </div>
     <div class="flex items-center gap-1 text-xs">
+      {% if not user.is_platform_admin %}<a href="{% url 'contact' %}" class="px-2.5 py-1.5 rounded-md text-slate-300 hover:text-white">Contact</a>{% endif %}
       <a href="{% url 'my_data' %}" class="px-2.5 py-1.5 rounded-md text-slate-300 hover:text-white">My data</a>
       {% if not user.is_shared_demo %}<a href="{% url 'password_change' %}" class="px-2.5 py-1.5 rounded-md text-slate-300 hover:text-white">Password</a>{% endif %}
-      <form method="post" action="{% url 'logout' %}" class="inline">{% csrf_token %}<button class="px-2.5 py-1.5 rounded-md bg-slate-700 hover:bg-slate-600 text-white font-semibold">Sign out</button></form>
     </div>
   </nav>
   {% if user.is_shared_demo %}<div class="bg-amber-50 border-b border-amber-200 text-amber-900 text-xs text-center px-4 py-1.5" role="status"><b>Shared demo:</b> sample data only, visible to everyone using this login. Don't enter real student details. Resets every night.</div>{% endif %}
   {% endif %}
-  {% if SHOW_FREE_YEAR %}<div class="bg-teal-50 border-b border-teal-200 text-teal-900 text-xs text-center px-4 py-1.5"><b>Use XPRISM for 1 year, free of cost.</b> <button type="button" data-free-year-open class="underline font-semibold hover:text-teal-700">Apply here</button></div>{% endif %}
+  {% if SHOW_FREE_YEAR %}<div class="bg-teal-50 border-b border-teal-200 text-teal-900 text-xs text-center px-4 py-1.5"><b>Use XPRISM for 1 month, free of cost.</b> <button type="button" data-free-year-open class="underline font-semibold hover:text-teal-700">Apply here</button></div>{% endif %}
 
   <main class="{% block main_class %}flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-4{% endblock %}">
     {% if messages or NEEDS_EMAIL_VERIFY %}<div class="{% block notices_class %}space-y-4{% endblock %}">{% endif %}
@@ -99,11 +99,12 @@
   <footer class="site-footer border-t border-slate-200 bg-white">
     <div class="max-w-7xl mx-auto px-6 py-3 text-xs text-slate-500 flex justify-between flex-wrap gap-2">
       <span class="flex items-center gap-2"><img src="{% static 'img/xprism-mark.png' %}" alt="" class="w-6 h-6" width="24" height="24"><span><span class="font-display font-bold text-slate-800">XPRISM</span> • {{ SITE_FULL_NAME }}<br class="sm:hidden"><span class="hidden sm:inline"> • </span>© 2026 {{ SITE_INSTITUTION }} • Created by {{ SITE_CREATOR }}</span></span>
-      <span class="flex gap-3 flex-wrap items-center"><a href="{% url 'about' %}" class="hover:text-teal-700">About</a><a href="{% url 'modules' %}" class="hover:text-teal-700">Modules</a><a href="{% url 'documentation' %}" class="hover:text-teal-700">Documentation</a><a href="{% url 'ethics' %}" class="hover:text-teal-700">Ethical use of animals</a><a href="{% url 'privacy' %}" class="hover:text-teal-700">Privacy Policy</a><a href="{% url 'terms' %}" class="hover:text-teal-700">Terms of Service</a><a href="{% url 'conditions' %}" class="hover:text-teal-700">Conditions of Use</a><a href="mailto:{{ SITE_CREATOR_EMAIL }}" class="hover:text-teal-700">Contact</a></span>
+      <span class="flex gap-3 flex-wrap items-center"><a href="{% url 'about' %}" class="hover:text-teal-700">About</a><a href="{% url 'modules' %}" class="hover:text-teal-700">Modules</a><a href="{% url 'documentation' %}" class="hover:text-teal-700">Documentation</a><a href="{% url 'ethics' %}" class="hover:text-teal-700">Ethical use of animals</a><a href="{% url 'privacy' %}" class="hover:text-teal-700">Privacy Policy</a><a href="{% url 'terms' %}" class="hover:text-teal-700">Terms of Service</a><a href="{% url 'conditions' %}" class="hover:text-teal-700">Conditions of Use</a><a href="{% url 'contact' %}" class="hover:text-teal-700">Contact</a><button type="button" data-cookie-settings class="hover:text-teal-700">Cookie settings</button></span>
     </div>
   </footer>
   {% if NEEDS_ETHICS %}{% include 'lab/_ethics_modal.html' %}{% endif %}
   {% if SHOW_FREE_YEAR %}{% include 'lab/_free_year_modal.html' %}{% endif %}
   {% block scripts %}{% endblock %}
+  {% include 'lab/_cookie_banner.html' %}
 </body>
 </html>

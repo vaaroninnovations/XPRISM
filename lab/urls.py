@@ -14,6 +14,9 @@ urlpatterns = [
     path('documentation/', pub.documentation, name='documentation'),
     path('home/', au.home, name='home'),
     path('healthz', pub.healthz),
+    path('contact/', pub.contact, name='contact'),
+    path('robots.txt', pub.robots_txt, name='robots_txt'),
+    path('sitemap.xml', pub.sitemap_xml, name='sitemap_xml'),
     re_path(r'^experiments/(?P<slug>[a-z0-9-]+)(?:\.html)?$', pub.experiment_page, name='experiment'),
     path('subscribe/', pub.subscribe, name='subscribe'),
     path('api/free-year/apply', pub.free_year_apply, name='free_year_apply'),
@@ -80,6 +83,7 @@ urlpatterns = [
     path('platform/colleges/new/', adm.college_form, name='college_new'),
     path('platform/colleges/<int:pk>/', adm.college_form, name='college_edit'),
     path('platform/experiments/', adm.platform_experiments, name='platform_experiments'),
+    path('platform/contact/', adm.contact_requests, name='contact_requests'),
     path('platform/free-year/', adm.free_year_applications, name='free_year_applications'),
     path('platform/free-year/invite/', adm.free_year_invitations, name='free_year_invitations'),
 ]

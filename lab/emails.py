@@ -101,6 +101,22 @@ def _super_admin_addresses():
     return sorted({a.email.lower() for a in admins} | ({settings.SUBSCRIPTION_CONTACT.lower()} if settings.SUBSCRIPTION_CONTACT else set()))
 
 
+def send_contact_received(item, request=None):
+    """Tell the super admins there is a request to handle, and the sender that it arrived."""
+    review_url = _base_url(request) + reverse('contact_requests')
+
+    def go():
+        to = _super_admin_addresses()
+        if to:
+            _send_to(to, 'Super admin', f'New contact request {item.reference}: {item.get_topic_display()}', 'contact_review', {'item': item, 'review_url': review_url})
+        _send_to([item.email], item.name, f'We received your request ({item.reference})', 'contact_received', {'item': item})
+    transaction.on_commit(go)
+
+
+def send_contact_reply(item):
+    transaction.on_commit(lambda: _send_to([item.email], item.name, f'Reply to your request {item.reference}', 'contact_reply', {'item': item}))
+
+
 def send_free_year_received(app, request=None):
     """Tell the super admins there is an application to review, and the applicant that it arrived."""
     review_url = _base_url(request) + reverse('free_year_applications')
@@ -108,14 +124,14 @@ def send_free_year_received(app, request=None):
     def go():
         to = _super_admin_addresses()
         if to:
-            _send_to(to, 'Super admin', f'New free-year application #{app.pk}', 'free_year_review', {'app': app, 'review_url': review_url})
+            _send_to(to, 'Super admin', f'New free-month application #{app.pk}', 'free_year_review', {'app': app, 'review_url': review_url})
         _send_to([app.email], app.name, f'We received your {settings.SITE_NAME} application', 'free_year_received', {'app': app})
     transaction.on_commit(go)
 
 
 def send_free_year_approved(app, username=None, college=None, set_password_url=None, request=None):
     login_url = _base_url(request) + reverse('login')
-    transaction.on_commit(lambda: _send_to([app.email], app.name, f'Your free year of {settings.SITE_NAME} is ready', 'free_year_approved', {
+    transaction.on_commit(lambda: _send_to([app.email], app.name, f'Your free month of {settings.SITE_NAME} is ready', 'free_year_approved', {
         'app': app, 'username': username, 'college': college, 'set_password_url': set_password_url, 'login_url': login_url,
         'valid_days': max(1, settings.PASSWORD_RESET_TIMEOUT // 86400)}))
 
@@ -127,7 +143,7 @@ def send_free_year_declined(app):
 def send_free_year_invitations(invitations, note='', request=None):
     """Send one at a time on a single background thread, recording how each went, so a long list never delays the page or floods the mail server."""
     base = _base_url(request)
-    subject = f'Invitation to your institution: {settings.SITE_NAME} virtual pharmacology lab, free of cost for 1 year'
+    subject = f'Invitation to your institution: {settings.SITE_NAME} virtual pharmacology lab, free of cost for 1 month'
     experiments = list(Experiment.objects.filter(is_active=True))
     content = {'note': note, 'apply_url': f'{base}/?apply=1', 'company': settings.SITE_INSTITUTION, 'company_location': settings.SITE_COMPANY_LOCATION,
                'creator': settings.SITE_CREATOR, 'n_modules': len(experiments),

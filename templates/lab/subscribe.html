@@ -16,19 +16,19 @@
     <p class="text-sm text-slate-600">The free trial lets you explore each module once. A subscription unlocks unlimited use.</p>
     {% endif %}
   </div>
-  {% if SHOW_FREE_YEAR %}<div class="bg-teal-50 rounded-xl border border-teal-200 p-5 flex flex-wrap items-center justify-between gap-3"><div><h2 class="text-base font-bold text-slate-900">Use XPRISM for 1 year, free of cost</h2><p class="text-xs text-slate-600">Computer-assisted simulation learning with LMS, as per the PCI syllabus and CCSEA guidelines, along with 3R recommendations.</p></div><button type="button" data-free-year-open class="px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow">Apply here</button></div>{% endif %}
+  {% if SHOW_FREE_YEAR %}<div class="bg-teal-50 rounded-xl border border-teal-200 p-5 flex flex-wrap items-center justify-between gap-3"><div><h2 class="text-base font-bold text-slate-900">Use XPRISM for 1 month, free of cost</h2><p class="text-xs text-slate-600">Computer-assisted simulation learning with LMS, as per the PCI syllabus and CCSEA guidelines, along with 3R recommendations.</p></div><button type="button" data-free-year-open class="px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow">Apply here</button></div>{% endif %}
   <div class="grid md:grid-cols-2 gap-4">
     <div class="bg-white rounded-xl border border-teal-200 shadow-sm p-5 space-y-2">
       <div class="text-[11px] font-bold text-teal-700 uppercase tracking-wider">For colleges</div>
       <h2 class="text-base font-bold text-slate-900">College subscription</h2>
       <ul class="text-xs text-slate-600 list-disc pl-5 space-y-1"><li>All 40 experiments, unlimited use, for every student and teacher</li><li>Batches, class codes, assignments, automatic marking, exam mode</li><li>Grading, feedback, Excel marks sheets, audit log</li><li>Supports PCI's requirement for computer-assisted modules in place of animal experiments</li></ul>
-      <a href="mailto:{{ contact }}?subject=College%20subscription%20enquiry" class="inline-block mt-2 px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow">Request a college subscription</a>
+      <a href="{% url 'contact' %}?topic=quotation" class="inline-block mt-2 px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow">Request a college subscription</a>
     </div>
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-2">
       <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">For individuals</div>
       <h2 class="text-base font-bold text-slate-900">Individual subscription</h2>
       <ul class="text-xs text-slate-600 list-disc pl-5 space-y-1"><li>All experiments, unlimited practice</li><li>Observation sheets, statistics and viva for every module</li><li>Ideal for revision before practical examinations</li></ul>
-      <a href="mailto:{{ contact }}?subject=Individual%20subscription%20{% if user.is_authenticated %}({{ user.username|urlencode }}){% endif %}" class="inline-block mt-2 px-4 py-2 rounded-lg border border-slate-300 text-slate-800 text-sm font-semibold hover:bg-slate-50">Ask about individual access</a>
+      <a href="{% url 'contact' %}?topic=quotation" class="inline-block mt-2 px-4 py-2 rounded-lg border border-slate-300 text-slate-800 text-sm font-semibold hover:bg-slate-50">Ask about individual access</a>
       <p class="text-[11px] text-slate-500">Already a student of a subscribed college? <a href="{% url 'signup' %}" class="text-teal-700 underline">Join with your class code</a>.</p>
     </div>
   </div>

@@ -29,6 +29,11 @@ def _safe_next(request, default):
     return default
 
 
+def _next_value(request):
+    """The page to return to, carried through the sign-in and sign-up pages. Empty if it is not safe."""
+    return _safe_next(request, '')
+
+
 def home(request):
     """Send each role to its own start page."""
     u = request.user
@@ -42,10 +47,28 @@ def home(request):
     return redirect({Role.COLLEGE_ADMIN: 'college_dashboard', Role.FACULTY: 'staff_dashboard', Role.LAB_ASSISTANT: 'staff_dashboard'}.get(u.role, 'student_dashboard'))
 
 
+def _account_for(identifier):
+    """The account someone means by what they typed: a username in any capitals, or an e-mail address that belongs to exactly one active account."""
+    name = identifier.strip()
+    if not name:
+        return None
+    user = User.objects.filter(username__iexact=name).first()
+    if user is None and '@' in name:
+        matches = list(User.objects.filter(email__iexact=name, is_active=True, anonymised=False)[:2])
+        user = matches[0] if len(matches) == 1 else None
+    return user
+
+
 def login_view(request):
     if request.user.is_authenticated:
         return redirect(_safe_next(request, '/home/'))
-    form = AuthenticationForm(request, data=request.POST or None)
+    target = _account_for(request.POST.get('username', '')) if request.method == 'POST' else None
+    data = None
+    if request.method == 'POST':
+        data = request.POST.copy()
+        if target:
+            data['username'] = target.username      # so capitals or an e-mail address reach the password check as the real username
+    form = AuthenticationForm(request, data=data)
     for f in form.fields.values():
         f.widget.attrs['class'] = INPUT
     error = None
@@ -53,8 +76,6 @@ def login_view(request):
         ip = client_ip(request)
         ip_key = f'login-ip:{ip}'
         ip_fails = cache.get(ip_key, 0)
-        uname = request.POST.get('username', '').strip()
-        target = User.objects.filter(username__iexact=uname).first()
         now = timezone.now()
         if ip_fails >= 20:
             error = 'Too many failed sign-in attempts from this network. Please wait 15 minutes.'
@@ -80,8 +101,10 @@ def login_view(request):
                     target.failed_logins = 0
                     audit(request, 'account_locked', target.username, college=target.college)
                 target.save(update_fields=['failed_logins', 'locked_until'])
-            error = 'Incorrect username or password.'
-    return render(request, 'registration/login.html', {'form': form, 'error': error, 'next': request.GET.get('next', '')})
+            error = 'Incorrect username, e-mail or password.'
+        form.is_valid()
+        form.data = request.POST        # show what the person typed, never the username it matched
+    return render(request, 'registration/login.html', {'form': form, 'error': error, 'next': _next_value(request)})
 
 
 def signup(request):
@@ -103,8 +126,8 @@ def signup(request):
         messages.success(request, f'Welcome! Your username is {u.username}. You have joined {batch.name}.')
         if u.email:
             messages.info(request, f'We have sent a verification link to {u.email}. Please check your inbox.')
-        return redirect('student_dashboard')
-    return render(request, 'registration/signup.html', {'form': form})
+        return redirect(_safe_next(request, 'student_dashboard'))
+    return render(request, 'registration/signup.html', {'form': form, 'next': _next_value(request)})
 
 
 def trial_signup(request):
@@ -124,8 +147,8 @@ def trial_signup(request):
         login(request, u, backend='django.contrib.auth.backends.ModelBackend')
         audit(request, 'trial_signup', u.username, occupation=u.occupation)
         messages.info(request, f'Welcome! We have sent a verification link to {u.email}. Please check your inbox.')
-        return redirect('modules')
-    return render(request, 'registration/trial_signup.html', {'form': form})
+        return redirect(_safe_next(request, 'modules'))
+    return render(request, 'registration/trial_signup.html', {'form': form, 'next': _next_value(request)})
 
 
 def verify_email(request, uidb64, token):

@@ -6,6 +6,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
+from .contact import TOPIC_CHOICES, subtopic_label
 
 
 class Role(models.TextChoices):
@@ -311,7 +312,7 @@ class DataRequest(models.Model):
 
 
 class FreeYearApplication(models.Model):
-    """A request for one free year of access, made from the public pop-up and decided by a super admin."""
+    """A request for one free month of access, made from the public pop-up and decided by a super admin."""
     INDIVIDUAL, COLLEGE = 'individual', 'college'
     KINDS = [(COLLEGE, 'My college'), (INDIVIDUAL, 'Myself')]
     OCCUPATIONS = [('faculty', 'Faculty / teacher'), ('student', 'Student'), ('researcher', 'Researcher'), ('other', 'Other')]
@@ -344,7 +345,7 @@ def new_invitation_token():
 
 
 class FreeYearInvitation(models.Model):
-    """An e-mail inviting a college to apply for the free year. Each address is invited once, and can opt out."""
+    """An e-mail inviting a college to apply for the free month. Each address is invited once, and can opt out."""
     QUEUED, SENT, FAILED = 'queued', 'sent', 'failed'
     email = models.EmailField(unique=True)
     token = models.CharField(max_length=40, unique=True, default=new_invitation_token, editable=False)    # for the opt-out link
@@ -366,6 +367,41 @@ class FreeYearInvitation(models.Model):
         if self.opted_out_at or self.status == self.SENT:
             return False
         return self.status == self.FAILED or timezone.now() - self.created_at > timezone.timedelta(hours=1)
+
+
+class ContactRequest(models.Model):
+    """A message from the Contact us page, worked through by a super admin at /platform/contact/."""
+    NEW, IN_PROGRESS, RESOLVED, CLOSED = 'new', 'in_progress', 'resolved', 'closed'
+    STATUSES = [(NEW, 'New'), (IN_PROGRESS, 'In progress'), (RESOLVED, 'Resolved'), (CLOSED, 'Closed')]
+    topic = models.CharField('Subject', max_length=20, choices=TOPIC_CHOICES)
+    subtopic = models.CharField('Sub-topic', max_length=30)
+    name = models.CharField('Full name', max_length=120)
+    email = models.EmailField('E-mail', max_length=150)
+    phone = models.CharField('Phone (optional)', max_length=20, blank=True)
+    institution = models.CharField('College / institution', max_length=200, blank=True)
+    message = models.TextField('How can we help?', max_length=4000)
+    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='contact_requests')
+    status = models.CharField(max_length=12, choices=STATUSES, default=NEW)
+    admin_note = models.TextField(blank=True)
+    reply = models.TextField(blank=True)
+    replied_at = models.DateTimeField(null=True, blank=True)
+    handled_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
+    resolved_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at', '-pk']
+
+    def __str__(self):
+        return f'{self.reference} {self.topic} ({self.status})'
+
+    @property
+    def reference(self):
+        return f'XP-{self.pk:06d}'
+
+    @property
+    def subtopic_display(self):
+        return subtopic_label(self.topic, self.subtopic)
 
 
 class TrialVisit(models.Model):

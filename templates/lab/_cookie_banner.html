@@ -1,0 +1,37 @@
+{# Shown until the visitor has chosen. Essential cookies only, unless an analytics ID is set and this is a public page for a signed-out visitor: then analytics needs an Accept, and nothing is sent to Google before it. #}
+<div id="cookieBanner" class="xh-consent" role="region" aria-label="Cookies" hidden>
+  {% if ANALYTICS %}
+  <p>We use essential cookies to keep this site working. We would also like to use optional Google Analytics cookies to see how our public pages are used. See our <a href="{% url 'privacy' %}">Privacy Policy</a>.</p>
+  <div><button type="button" data-cookie="denied" class="xh-consent-no">Decline</button><button type="button" data-cookie="granted" class="xh-consent-yes">Accept</button></div>
+  {% else %}
+  <p>We use essential cookies to keep you signed in and to protect forms.{% if not ANALYTICS_CONFIGURED %} We do not use advertising or tracking cookies.{% endif %} See our <a href="{% url 'privacy' %}">Privacy Policy</a>.</p>
+  <div><button type="button" data-cookie="essential" class="xh-consent-yes">OK</button></div>
+  {% endif %}
+</div>
+{% if ANALYTICS %}{{ ANALYTICS|json_script:"analyticsIds" }}{% endif %}
+<script>
+  (function () {
+    var KEY = 'xprism-cookies', box = document.getElementById('cookieBanner'), loaded = false;
+    function read() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+    function save(v) { try { localStorage.setItem(KEY, v); } catch (e) { } }
+    {% if ANALYTICS %}
+    var ids = JSON.parse(document.getElementById('analyticsIds').textContent);
+    function script(src) { var s = document.createElement('script'); s.async = true; s.src = src; document.head.appendChild(s); }
+    function load() {
+      if (loaded) return; loaded = true;
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { window.dataLayer.push(arguments); };
+      window.gtag('js', new Date());
+      if (ids.gtm) { window.dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' }); script('https://www.googletagmanager.com/gtm.js?id=' + encodeURIComponent(ids.gtm)); }
+      if (ids.ga) { window.gtag('config', ids.ga); script('https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(ids.ga)); }
+      if (/[?&]sent=/.test(location.search)) window.gtag('event', 'generate_lead');
+    }
+    {% else %}
+    function load() { }
+    {% endif %}
+    box.addEventListener('click', function (e) { var v = e.target.getAttribute('data-cookie'); if (!v) return; save(v); box.hidden = true; if (v === 'granted') load(); else if (loaded) location.reload(); });
+    document.querySelectorAll('[data-cookie-settings]').forEach(function (b) { b.addEventListener('click', function () { box.hidden = false; }); });
+    var v = read();
+    {% if ANALYTICS %}if (v === 'granted') load(); else if (v !== 'denied') box.hidden = false;{% else %}if (!v) box.hidden = false;{% endif %}
+  })();
+</script>

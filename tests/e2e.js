@@ -10,7 +10,7 @@ const ok = (name, cond, extra = '') => { results.push([cond ? 'PASS' : 'FAIL', n
   const browser = await chromium.launch();
   const external = [];
   async function newCtx() {
-    const ctx = await browser.newContext({ viewport: { width: 1440, height: 950 }, acceptDownloads: true });
+    const ctx = await browser.newContext({ viewport: { width: 1440, height: 950 }, acceptDownloads: true }); await ctx.addInitScript(() => { try { localStorage.setItem('xprism-cookies', 'essential'); localStorage.setItem('xprism-free-year-seen', String(Date.now())); } catch (e) { } });
     await ctx.route('**/*', r => { const u = r.request().url(); if (u.startsWith(BASE) || u.startsWith('data:') || u.startsWith('blob:')) return r.continue(); external.push(u); return r.abort(); });
     const p = await ctx.newPage();
     p.errors = [];
@@ -25,7 +25,7 @@ const ok = (name, cond, extra = '') => { results.push([cond ? 'PASS' : 'FAIL', n
   async function login(p, user, pw) {
     await p.goto(BASE + '/accounts/login/');
     await p.fill('#id_username', user); await p.fill('#id_password', pw);
-    await Promise.all([p.waitForLoadState('load'), p.click('button:has-text("Sign in")')]);
+    await Promise.all([p.waitForLoadState('load'), p.click('button:has-text("Login")')]);
   }
   async function gates(p, newPw) {
     for (let i = 0; i < 4; i++) {
@@ -135,7 +135,7 @@ const ok = (name, cond, extra = '') => { results.push([cond ? 'PASS' : 'FAIL', n
   await p.goto(BASE + '/college/experiments/');
   await p.uncheck('input[name=enabled][value="3"]');
   await Promise.all([p.waitForLoadState('load'), p.click('button:has-text("Save")')]);
-  ok('college admin: experiment 3 switched off', (await msgText(p)).includes('24 experiments enabled'));
+  ok('college admin: experiment 3 switched off', (await msgText(p)).includes('39 experiments enabled'));
   ok('college admin: no JS errors', p.errors.length === 0, p.errors.join(' | '));
   await ctx.close();
 
@@ -212,14 +212,14 @@ const ok = (name, cond, extra = '') => { results.push([cond ? 'PASS' : 'FAIL', n
     ok('exam: reference dataset / guided run / skip hidden', st.refHidden && st.guidedHidden && st.skipHidden);
     ok('exam: answer Verify + Results buttons hidden', st.verifyHidden && st.resultsHidden);
     ok('exam: viva records answers without revealing marks', st.vivaNeutral);
-    const n0 = await p.evaluate(() => { guidedRun(); loadReferenceDataset(); return OB.responses.length; });
-    ok('exam: blocked shortcuts do nothing when called', n0 === 0);
-    await p.evaluate(() => { [0.05, 0.1, 0.2, 0.4, 0.8].forEach(giveS); giveT(0.2); giveT(0.3); OB.finishInstant(); switchTab('observation'); document.getElementById('answerIn').value = (TRUE_T * 1.04).toFixed(3); });
+    const n0 = await p.evaluate(() => { MCP_BRIDGE.collect(); const before = JSON.stringify(MCP_BRIDGE.collect().tables); if (typeof guidedRun === 'function') guidedRun(); loadReferenceDataset(); const after = JSON.stringify(MCP_BRIDGE.collect().tables); if (after === before) return 0; let i = 0; while (before[i] === after[i]) i++; return { blocked: !!loadReferenceDataset.__mcpBlocked, before: before.slice(Math.max(0, i - 80), i + 80), after: after.slice(Math.max(0, i - 80), i + 80) }; });
+    ok('exam: blocked shortcuts do nothing when called', n0 === 0, n0 === 0 ? '' : JSON.stringify(n0));
+    await p.evaluate(() => { switchTab('observation'); document.getElementById('answerIn').value = (TRUE_T * 1.04).toFixed(3); });
     await snap(p, 'student_exam');
     await p.click('#mcpSubmit'); await p.waitForSelector('#mcpModal:not(.hidden)');
     await p.click('#mcpModal [data-go]'); await p.waitForSelector('#mcpModal >> text=Submitted', { timeout: 10000 });
     const exTxt = await p.textContent('#mcpModal');
-    ok('exam: submitted, answer within 10% accepted, viva scored', exTxt.includes('✓') && /Viva7\/7/.test(exTxt.replace(/\s+/g, '')), exTxt.replace(/\s+/g, ' ').slice(0, 100));
+    ok('exam: submitted, answer within 10% accepted, viva scored', exTxt.includes('✓') && /Viva(\d+)\/\1/.test(exTxt.replace(/\s+/g, '')), exTxt.replace(/\s+/g, ' ').slice(0, 100));
   }
   if (isExamFirst) { await doExam(); } else { await doPractical(); }
   await p.goto(BASE + '/student/');

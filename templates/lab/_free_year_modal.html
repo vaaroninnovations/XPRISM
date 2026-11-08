@@ -1,11 +1,11 @@
-{# Public pop-up: apply for one free year. Opens by itself on the home and modules pages, once a week until dismissed for good by applying. A super admin decides each application at /platform/free-year/ #}
+{# Public pop-up: apply for one free month. Opens by itself on the home and modules pages, once a week until dismissed for good by applying. A super admin decides each application at /platform/free-year/ #}
 {% load static %}
 <dialog id="freeYearModal" class="free-year-modal bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-xl" aria-labelledby="freeYearTitle" data-auto-open="{% if request.path == '/' or request.path == '/modules/' %}1{% endif %}">
   <div class="h-1.5 rounded-t-2xl xp-gradient"></div>
   <div class="px-6 pt-4 pb-3 border-b flex gap-4 items-start">
     <img src="{% static 'img/xprism-mark.png' %}" alt="" class="w-14 h-14 shrink-0 hidden sm:block" width="56" height="56">
     <div class="flex-1 min-w-0">
-      <h2 id="freeYearTitle" class="text-lg font-bold text-slate-900">Apply here to use XPRISM for 1 year, free of cost</h2>
+      <h2 id="freeYearTitle" class="text-lg font-bold text-slate-900">Apply here to use XPRISM for 1 month, free of cost</h2>
       <p class="text-xs text-slate-600 mt-1">Computer-assisted simulation learning with LMS, as per the PCI syllabus and CCSEA guidelines, along with 3R recommendations.</p>
     </div>
     <button type="button" data-free-year-close aria-label="Close" class="text-slate-400 hover:text-slate-700 text-xl leading-none">&times;</button>
@@ -52,7 +52,7 @@
   </form>
   <div id="freeYearDone" class="hidden px-6 py-8 text-center space-y-3" role="status">
     <h3 class="text-base font-bold text-slate-900">Application received</h3>
-    <p class="text-sm text-slate-600">Thank you. Once it has been verified, we will write to <b id="freeYearDoneEmail"></b> with your free year of access.</p>
+    <p class="text-sm text-slate-600">Thank you. Once it has been verified, we will write to <b id="freeYearDoneEmail"></b> with your free month of access.</p>
     <button type="button" data-free-year-close class="px-5 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow">Close</button>
   </div>
 </dialog>

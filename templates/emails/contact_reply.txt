@@ -1,0 +1,7 @@
+{% autoescape off %}Hello {{ name }},
+
+This is our reply to your request {{ item.reference }} ({{ item.get_topic_display }}: {{ item.subtopic_display }}).
+
+{{ item.reply }}
+
+{{ site_name }}{% endautoescape %}

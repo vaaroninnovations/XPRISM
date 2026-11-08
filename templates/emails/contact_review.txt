@@ -1,0 +1,15 @@
+{% autoescape off %}A new contact request is waiting in the super admin panel.
+
+Reference: {{ item.reference }}
+Subject: {{ item.get_topic_display }}: {{ item.subtopic_display }}
+Name: {{ item.name }}
+E-mail: {{ item.email }}{% if item.phone %}
+Phone: {{ item.phone }}{% endif %}{% if item.institution %}
+Institution: {{ item.institution }}{% endif %}
+
+Message:
+{{ item.message }}
+
+Open the request: {{ review_url }}
+
+{{ site_name }}{% endautoescape %}
