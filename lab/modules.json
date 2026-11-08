@@ -294,5 +294,29 @@
   "title": "Clinical Trial Protocol Design",
   "slug": "37-clinical-trial-protocol-design",
   "description": "M.Pharm. Essential documents, trial phases, sample size, randomisation, blinding and Good Clinical Practice scenarios."
+ },
+ {
+  "no": 38,
+  "level": "Basic",
+  "cat": "Biochemical assays",
+  "title": "Serum Biochemical Parameters",
+  "slug": "38-serum-biochemical-parameters",
+  "description": "Run the kit protocol, then calculate glucose, urea, creatinine, ALT and AST from photometer readings and interpret the pattern."
+ },
+ {
+  "no": 39,
+  "level": "Research",
+  "cat": "Biochemical assays",
+  "title": "ELISA: Cytokine Quantification",
+  "slug": "39-elisa-cytokine-quantification",
+  "description": "M.Pharm. Sandwich ELISA steps, a fitted standard curve, TNF-α concentrations and the effect of a test treatment."
+ },
+ {
+  "no": 40,
+  "level": "Research",
+  "cat": "Biochemical assays",
+  "title": "Antioxidant and Oxidative Stress Assays",
+  "slug": "40-antioxidant-oxidative-stress-assays",
+  "description": "M.Pharm. Tissue homogenates, then MDA, reduced glutathione, SOD and catalase calculated from your own readings."
  }
 ]

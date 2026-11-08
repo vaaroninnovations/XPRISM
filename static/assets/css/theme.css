@@ -321,6 +321,7 @@ input[type=file] { font-size: 12px; }
 .xh-tag-cell { background: #fff1f2; color: #9f1239; border-color: #fecdd3; }
 .xh-tag-neuro { background: #eef2ff; color: #3730a3; border-color: #c7d2fe; }
 .xh-tag-eth { background: #fefce8; color: #854d0e; border-color: #fde68a; }
+.xh-tag-assay { background: #f0f9ff; color: #075985; border-color: #bae6fd; }
 .xh-card h3 { margin-top: 10px; font-size: 14px; font-weight: 700; line-height: 1.35; color: var(--xp-navy); }
 .xh-card p { margin-top: 6px; font-size: 12px; line-height: 1.55; color: #475569; }
 .xh-card-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto; padding-top: 12px; font-size: 11px; font-weight: 600; }

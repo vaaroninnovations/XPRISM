@@ -101,12 +101,13 @@ CATEGORIES = [('In-vivo', 'In-vivo simulations', 'Behavioural, anticonvulsant, a
               ('Molecular biology', 'Molecular biology experiments', 'RNA and DNA isolation, cDNA synthesis, PCR analysis and gel electrophoresis'),
               ('Cell culture', 'Cell culture experiments', 'Cultured cell handling, 96-well plate assays, cell viability and IC50'),
               ('Neurobehavioural', 'Neurobehavioural experiments', 'Learning, memory, anxiety, avoidance and antidepressant tests: Y-maze, radial arm maze, light-dark box, water maze, Barnes maze, pole climbing and forced swim'),
-              ('Ethics and clinical', 'Ethics, pharmacovigilance and clinical trials', 'Animal ethics review, adverse drug reaction reporting and clinical trial design')]
+              ('Ethics and clinical', 'Ethics, pharmacovigilance and clinical trials', 'Animal ethics review, adverse drug reaction reporting and clinical trial design'),
+              ('Biochemical assays', 'Biochemical and immunoassays', 'Serum biochemistry, ELISA and oxidative stress markers')]
 
 
-LEVELS = [('Basic', 'B.Pharm practicals: core techniques, screening methods, isolated tissues and bioassays'),
+LEVELS = [('Basic', 'B.Pharm practicals: core techniques, screening methods, isolated tissues, bioassays and serum biochemistry'),
           ('Advanced', 'M.Pharm screening: neurobehavioural models of learning, memory, avoidance and depression, and animal ethics review'),
-          ('Research', 'Research methods: molecular biology, cell-based assays, pharmacovigilance and clinical trial design')]
+          ('Research', 'Research methods: molecular biology, cell-based and biochemical assays, pharmacovigilance and clinical trial design')]
 
 
 class Experiment(models.Model):
