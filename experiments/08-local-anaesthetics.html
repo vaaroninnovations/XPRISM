@@ -402,7 +402,9 @@
     }
     function setPhase(t) { $('phaseIndicator').innerText = t || ''; }
     function renderSteps(steps) {
-      let active = steps.findIndex(s => !s.done);
+      // the step for the method on screen leads; otherwise the first one still to do
+      let active = steps.findIndex(s => s.current && !s.done);
+      if (active < 0) active = steps.findIndex(s => !s.done);
       $('stepper').innerHTML = steps.map((s, i) => {
         const cls = s.done ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : i === active ? 'bg-amber-50 text-amber-800 border-amber-300 ring-1 ring-amber-200' : 'bg-slate-50 text-slate-400 border-slate-200';
         return `<span class="px-2 py-1 rounded-md border ${cls}">${s.done ? '✓' : (i + 1)} ${s.t}</span>`;
@@ -727,16 +729,25 @@
         };
         body = `<g transform="translate(500 215) scale(1.46)">${realRabbitHead({ earTop: -210, body: true })}</g>${eye(ss[0], 360)}${eye(ss[1], 640)}`;
       } else if (S.method === 'B') {
-        const pos = [[380, 170], [620, 170], [380, 270], [620, 270]];
-        body = `${realGuineaPig()}
-          <text x="500" y="128" text-anchor="middle" font-size="10" fill="#9a3412">shaved area • click a wheal to prick it 6 times</text>
-          ${ss.map((s, i) => { const [x, y] = pos[i]; const tw = s.anim > 0 && s.animRes > 0 && Math.floor(s.anim * 10) % 2 === 0; return `<g class="svg-btn" data-site="${s.id}">
-            ${s.t0 !== null ? `<circle cx="${x}" cy="${y}" r="30" fill="#fff7ed" stroke="#fb923c" stroke-width="2"/>` : `<circle cx="${x}" cy="${y}" r="30" fill="none" stroke="#e7b48f" stroke-dasharray="4 3"/>`}
-            ${tw ? `<circle cx="${x}" cy="${y}" r="44" fill="none" stroke="#dc2626" stroke-width="2" opacity=".7"/><circle cx="${x}" cy="${y}" r="54" fill="none" stroke="#dc2626" stroke-width="1" opacity=".4"/>` : ''}
-            ${s.anim > 0 ? `<line x1="${x + 26}" y1="${y - 46}" x2="${x + 6}" y2="${y - 6}" stroke="#334155" stroke-width="2.5"/><circle cx="${x + 28}" cy="${y - 49}" r="4" fill="#ef4444"/>` : ''}
-            <text x="${x}" y="${y + 4}" text-anchor="middle" font-size="13" font-weight="800" fill="#7c2d12">${i + 1}</text>
-            <text x="${x}" y="${y + 46}" text-anchor="middle" font-size="10" font-weight="700" fill="#13294f">${s.drug}</text>
-            <text x="${x}" y="${y + 59}" text-anchor="middle" font-size="9.5" fill="#475569" font-family="JetBrains Mono">${s.t0 === null ? '' : `${fx(sinceMin(s), 0)}′ • ${s.tests.length ? s.tests[s.tests.length - 1].v + '/6' : '—'}`}</text></g>`; }).join('')}`;
+        // Four wheals inside the shaved patch of the render (scene x 396-528, y 144-250). Labels sit out on the fur.
+        const pos = [[426, 170], [498, 170], [426, 224], [498, 224]], R = 17;
+        const hintW = 262;
+        body = `<rect width="1000" height="420" fill="#e9eef2"/>${realGuineaPig()}
+          <rect x="${462 - hintW / 2}" y="116" width="${hintW}" height="19" rx="9.5" fill="#fff" opacity=".88"/>
+          <text x="462" y="129" text-anchor="middle" font-size="10" font-weight="600" fill="#9a3412">shaved area • click a wheal to prick it 6 times</text>
+          ${ss.map((s, i) => {
+            const [x, y] = pos[i], left = i % 2 === 0, w = Math.max(84, s.drug.length * 5.7 + 16), px = left ? 384 - w : 540, inner = left ? 384 : 540;
+            const tw = s.anim > 0 && s.animRes > 0 && Math.floor(s.anim * 10) % 2 === 0;
+            return `<g class="svg-btn" data-site="${s.id}">
+            <line x1="${left ? x - R : x + R}" y1="${y}" x2="${inner}" y2="${y}" stroke="#fff" stroke-width="1.4" opacity=".9"/>
+            <circle cx="${x}" cy="${y}" r="24" fill="#fff" opacity=".001"/>
+            ${s.t0 !== null ? `<circle cx="${x}" cy="${y}" r="${R}" fill="#fff7ed" stroke="#fb923c" stroke-width="2"/>` : `<circle cx="${x}" cy="${y}" r="${R}" fill="none" stroke="#9a3412" stroke-width="1.4" stroke-dasharray="4 3"/>`}
+            ${tw ? `<circle cx="${x}" cy="${y}" r="${R + 7}" fill="none" stroke="#dc2626" stroke-width="2" opacity=".7"/><circle cx="${x}" cy="${y}" r="${R + 13}" fill="none" stroke="#dc2626" stroke-width="1" opacity=".4"/>` : ''}
+            ${s.anim > 0 ? `<line x1="${x + 18}" y1="${y - 25}" x2="${x + 4}" y2="${y - 4}" stroke="#334155" stroke-width="2.5"/><circle cx="${x + 20}" cy="${y - 28}" r="4" fill="#ef4444"/>` : ''}
+            <text x="${x}" y="${y + 4.5}" text-anchor="middle" font-size="13" font-weight="800" fill="#7c2d12">${i + 1}</text>
+            <rect x="${px}" y="${y - 17}" width="${w}" height="34" rx="7" fill="#fff" opacity=".88"/>
+            <text x="${px + w / 2}" y="${y - 3}" text-anchor="middle" font-size="10" font-weight="700" fill="#13294f">${s.drug}</text>
+            <text x="${px + w / 2}" y="${y + 11}" text-anchor="middle" font-size="9.5" fill="#475569" font-family="JetBrains Mono">${s.t0 === null ? 'not injected' : `${fx(sinceMin(s), 0)}′ • ${s.tests.length ? s.tests[s.tests.length - 1].v + '/6' : '—'}`}</text></g>`; }).join('')}`;
       } else {
         const leg = (s, side) => {
           const x = side < 0 ? 430 : 570;
@@ -766,7 +777,12 @@
       $('methodTabs').innerHTML = Object.entries(METHODS).map(([k, M]) => `<button onclick="setMethod('${k}')" class="px-2.5 py-1 text-[11px] rounded font-semibold ${S.method === k ? 'bg-teal-600 text-white' : 'text-slate-600 hover:bg-slate-100'}">${M.label}</button>`).join('');
       $('subjBtns').innerHTML = METHODS[S.method].subjects.map(sb => `<button class="chip ${S.subj === sb.id ? 'on' : ''}" onclick="S.subj='${sb.id}';renderAll()">${sb.label}</button>`).join('');
     }
-    function setMethod(k) { S.method = k; S.subj = METHODS[k].subjects[0].id; renderAll(); }
+    const METHOD_HINT = {
+      A: 'Method A: instil the drugs in the left eyes (right eye = saline) and test the corneal reflex every 5 min.',
+      B: 'Method B: raise a 0.2 mL intradermal wheal at each site on the shaved back, then prick each wheal 6 times every 5 min. No skin twitch = anaesthesia.',
+      C: 'Method C: inject the drug into the abdominal lymph sac of the pithed frog, then dip each foot in 0.1 N HCl and time the withdrawal (cut-off 10 s).'
+    };
+    function setMethod(k) { S.method = k; S.subj = METHODS[k].subjects[0].id; renderAll(); showFeedback(METHOD_HINT[k]); }
     function renderSites() {
       $('siteList').innerHTML = subjSites().map(s => {
         const last = s.tests[s.tests.length - 1];
@@ -782,10 +798,10 @@
     }
     function steps() {
       const st = k => { const ss = allSites().filter(s => s.method === k); return ss.every(s => s.t0 !== null) && ss.every(recovered); };
-      return [{ t: 'A: cornea to recovery', done: st('A') }, { t: 'B: wheals to recovery', done: st('B') }, { t: 'C: frog plexus to recovery', done: st('C') }, { t: 'Compare onset & duration', done: false }];
+      return [{ t: 'A: cornea to recovery', done: st('A'), current: S.method === 'A' }, { t: 'B: wheals to recovery', done: st('B'), current: S.method === 'B' }, { t: 'C: frog plexus to recovery', done: st('C'), current: S.method === 'C' }, { t: 'Compare onset & duration', done: false }];
     }
     function renderAll() { renderMethodTabs(); renderSites(); renderSteps(steps()); drawScene(); }
-    function init() { S = fresh(); $('scene').addEventListener('pointerdown', e => { const g = e.target.closest('[data-site]'); if (g) test(g.dataset.site); }); renderAll(); showFeedback('Method A: instil the drugs in the left eyes (right eye = saline) and test the corneal reflex every 5 min.'); startLoop(tick); }
+    function init() { S = fresh(); $('scene').addEventListener('pointerdown', e => { const g = e.target.closest('[data-site]'); if (g) test(g.dataset.site); }); renderAll(); showFeedback(METHOD_HINT.A); startLoop(tick); }
     function newExperiment() { S = fresh(); renderAll(); $('logBox').innerHTML = ''; showFeedback('New animals prepared.'); }
     function simulateSite(s, ideal) {
       s.t0 = 0; s.tests = [];

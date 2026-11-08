@@ -14,12 +14,12 @@
   'use strict';
 
   // Bump after re-baking: nginx caches /assets/ for 30 days.
-  const ANI_VER = 4;
+  const ANI_VER = 5;
   const BASE = new URL('../img/animals/', document.currentScript.src).href;
   const BOX = {
     'side-rat': [-38, -23, 50, 20], 'side-mouse': [-38, -23, 50, 20], earS: [16.5, -22, 30, -7.5],
     footH: [-23, 8, 3, 19], footHfar: [-23, 8, 3, 19], footF: [18, 9, 32, 19], footFfar: [18, 9, 32, 19],
-    top: [-27, -16, 32, 16], rbHead: [-152, -130, 152, 150], rbEar: [20, -244, 112, -70], rbBody: [-264, 84, 264, 256],
+    top: [-27, -16, 32, 16], 'top-mouse': [-24.27, -11.86, 28.83, 11.78], rbHead: [-152, -130, 152, 150], rbEar: [20, -244, 112, -70], rbBody: [-264, 84, 264, 256],
     guineaPig: [112, 28, 906, 412], frogBody: [428, 84, 572, 286], frogVen07: [96, 28, 564, 448], frogVen12: [330, 48, 670, 566]
   };
 
@@ -30,10 +30,10 @@
   // Holding a preloaded Image keeps the file in the browser's memory cache, so scenes
   // that rebuild their markup every frame reuse it instead of loading it again.
   const held = new Map();
-  function sprite(name) {
+  function sprite(name, attrs = '') {
     const b = BOX[name], url = `${BASE}${name}.webp?v=${ANI_VER}`;
     if (!held.has(name)) { const im = new Image(); im.src = url; held.set(name, im); }
-    return `<image x="${b[0]}" y="${b[1]}" width="${b[2] - b[0]}" height="${b[3] - b[1]}" preserveAspectRatio="none" decoding="sync" href="${url}"/>`;
+    return `<image x="${b[0]}" y="${b[1]}" width="${b[2] - b[0]}" height="${b[3] - b[1]}" preserveAspectRatio="none" decoding="sync" ${attrs} href="${url}"/>`;
   }
 
   // tapered, ringed tail built from an SVG cubic chain
@@ -104,13 +104,14 @@
         </g></g>`;
   }
 
-  // ---- top view (head to +x). o: {kind, noTail (caller draws its own)}
+  // ---- top view (head to +x). o: {kind, noTail (caller draws its own)}. Mice use the render; rats keep the baked art.
   function animalTopArt(o = {}) {
-    const tail = o.noTail ? '' : once('tailT', () => tailArt(TAILS.top, 2.7, .8));
+    const mouse = o.kind === 'mouse';
+    const tail = o.noTail ? '' : once(mouse ? 'tailTm' : 'tailT', () => tailArt(TAILS.top, mouse ? 2.2 : 2.7, .8));
     const wh = once('whT', () => whiskerPaint([-1, 1].map(s => [[3, 12, 4.4], [5.5, 15, 8], [8, 13.5, 11.5], [10, 11, 13.5]].map(([a, L, e], i) => `M${f2(25.2 - i * .7)} ${f2(s * (1.2 + i * .35))}Q${f2(25 + L * .55)} ${f2(s * (1.6 + a * .55))} ${f2(25 + L)} ${f2(s * (2 + e))}`).join('')).join(''), .17));
     return `<g transform="scale(.72)">
-        <ellipse cx="0" cy="2.6" rx="24" ry="11" fill="#000" opacity=".26" filter="url(#aniBlur)"/>
-        ${tail}${sprite('top')}${wh}
+        ${mouse ? '<ellipse cx="2.4" cy="2" rx="25.5" ry="10.4" fill="#000" opacity=".26" filter="url(#aniBlur)"/>' : '<ellipse cx="0" cy="2.6" rx="24" ry="11" fill="#000" opacity=".26" filter="url(#aniBlur)"/>'}
+        ${tail}${sprite(mouse ? 'top-mouse' : 'top')}${wh}
         </g>`;
   }
 
@@ -135,10 +136,9 @@
         <path d="M${cx - r * 1.3} ${cy - r * .05} Q${cx} ${cy - r * 2.05} ${cx + r * 1.3} ${cy - r * .05} Q${cx} ${cy - r * 1.72} ${cx - r * 1.3} ${cy - r * .05}Z" fill="#ece4df"/>
         <path d="M${cx - r * 1.3} ${cy - r * .05} Q${cx} ${cy - r * 1.72} ${cx + r * 1.3} ${cy - r * .05}" fill="none" stroke="#6d4b4d" stroke-width="${r * .07}" opacity=".6"/>`;
   }
-  function realGuineaPig() {
-    const body = 'M138 232 C128 118 236 50 400 50 C540 50 666 66 750 112 C806 142 846 176 880 214 C884 220 884 226 880 232 C846 268 806 300 750 330 C666 376 540 392 400 390 C236 388 148 342 138 232Z';
-    return `<path d="${body}" fill="#000" opacity=".3" filter="url(#realBlur)" transform="translate(6 16)"/>${sprite('guineaPig')}`;
-  }
+  // A cut-out render with its studio shadow baked in pale. Multiplying makes that read as a shadow, but an SVG
+  // blends only with its own content, so the caller must paint the bench behind this inside the same SVG.
+  function realGuineaPig() { return sprite('guineaPig', 'style="mix-blend-mode:multiply"'); }
   function realFrogBody() { return sprite('frogBody'); }
   // belly-up frog on the dissection board: '07' or '12', drawn in that experiment's scene coordinates
   function frogVentralArt(layout) { return sprite('frogVen' + layout); }
