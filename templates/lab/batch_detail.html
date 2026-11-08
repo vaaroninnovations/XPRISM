@@ -53,7 +53,7 @@
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
       <h2 class="text-sm font-bold text-slate-800 mb-2">Add one student</h2>
       <form method="post" action="{% url 'student_add' b.pk %}" class="space-y-2">{% csrf_token %}
-        {% for f in add_form %}<div><label class="block text-[11px] font-semibold text-slate-600">{{ f.label }}</label>{{ f }}</div>{% endfor %}
+        {% for f in add_form %}<div><label for="{{ f.id_for_label }}" class="block text-[11px] font-semibold text-slate-600">{{ f.label }}</label>{{ f }}</div>{% endfor %}
         <button class="w-full py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold">Add student</button></form>
     </div>
   </div>

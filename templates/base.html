@@ -13,7 +13,8 @@
   <link rel="stylesheet" href="{% static 'css/theme.css' %}">
   {% block head %}{% endblock %}
 </head>
-<body class="min-h-screen flex flex-col bg-slate-100">
+<body class="xp-app min-h-screen flex flex-col bg-slate-100">
+  <a href="#main" class="xp-skip">Skip to main content</a>
   <header class="site-header bg-white border-b border-slate-200 px-4 md:px-6 py-2 flex items-center justify-between gap-3 shadow-sm">
     <div class="flex items-center gap-3 min-w-0">
       <a href="/" title="XPRISM home" class="shrink-0"><img src="{% static 'img/xprism-lockup.png' %}" alt="XPRISM" class="h-11 w-auto" width="146" height="49"></a>
@@ -30,7 +31,7 @@
     </div>
     {% if user.is_authenticated %}
     <div class="flex items-center gap-3">
-      <div class="text-right">
+      <div class="text-right xp-who">
       <div class="text-xs font-semibold text-slate-800 flex items-center justify-end gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span><span>{{ user.display_name }}</span></div>
       <div class="text-[11px] text-slate-500 font-mono">{% if IS_TRIAL %}<span class="text-amber-700 font-semibold">Free trial</span>{% if user.institution %} • {{ user.institution }}{% endif %}{% else %}{{ user.get_role_display }}{% if COLLEGE %} • {{ COLLEGE.name }}{% endif %}{% endif %}</div>
       </div>
@@ -76,7 +77,7 @@
   {% endif %}
   {% if SHOW_FREE_YEAR %}<div class="bg-teal-50 border-b border-teal-200 text-teal-900 text-xs text-center px-4 py-1.5"><b>Use XPRISM for 1 month, free of cost.</b> <button type="button" data-free-year-open class="underline font-semibold hover:text-teal-700">Apply here</button></div>{% endif %}
 
-  <main class="{% block main_class %}flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-4{% endblock %}">
+  <main id="main" tabindex="-1" class="{% block main_class %}flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-4{% endblock %}">
     {% if messages or NEEDS_EMAIL_VERIFY %}<div class="{% block notices_class %}space-y-4{% endblock %}">{% endif %}
     {% if messages %}
     <div class="space-y-2">
@@ -106,5 +107,26 @@
   {% if SHOW_FREE_YEAR %}{% include 'lab/_free_year_modal.html' %}{% endif %}
   {% block scripts %}{% endblock %}
   {% include 'lab/_cookie_banner.html' %}
+  <script>
+    (function () {
+      // wide tables: scroll inside their own box, and can be reached and scrolled from the keyboard
+      document.querySelectorAll('main table').forEach(function (t) {
+        var box = t.closest('.overflow-x-auto');
+        if (!box) { box = document.createElement('div'); t.parentNode.insertBefore(box, t); box.appendChild(t); }
+        box.classList.add('xp-scroll');
+      });
+      function mark() { document.querySelectorAll('.xp-scroll').forEach(function (b) { if (b.scrollWidth > b.clientWidth + 1) { b.tabIndex = 0; b.setAttribute('role', 'region'); b.setAttribute('aria-label', 'Scrollable table'); } else { b.removeAttribute('tabindex'); b.removeAttribute('role'); b.removeAttribute('aria-label'); } }); }
+      mark(); window.addEventListener('resize', mark);
+      // a clear working state, and no double submissions. Runs after a form's own checks.
+      document.addEventListener('submit', function (e) {
+        if (e.defaultPrevented || !e.target.matches('main form[method=post]')) return;
+        var b = e.submitter || e.target.querySelector('button:not([type=button])');
+        if (!b) return;
+        b.classList.add('xp-busy'); b.setAttribute('aria-busy', 'true');
+        setTimeout(function () { b.classList.remove('xp-busy'); b.removeAttribute('aria-busy'); }, 6000);   // file downloads stay on the page
+      });
+      window.addEventListener('pageshow', function () { document.querySelectorAll('.xp-busy').forEach(function (b) { b.classList.remove('xp-busy'); b.removeAttribute('aria-busy'); }); });
+    })();
+  </script>
 </body>
 </html>
