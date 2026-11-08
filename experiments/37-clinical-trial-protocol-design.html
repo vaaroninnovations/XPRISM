@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exp 37: Clinical Trial Protocol Design • XPRISM</title>
+  <meta name="description" content="Clinical trial design practical: essential documents, trial phases, sample size, randomisation and blinding, and Good Clinical Practice scenarios.">
+  <meta name="theme-color" content="#0a1f44">
+  <meta name="color-scheme" content="light">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
+  <link rel="stylesheet" href="../assets/css/tailwind.css">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <script src="../assets/js/tone.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    :root { color-scheme: light; }
+    input, select, textarea { background-color: #ffffff; color: #0f172a; -webkit-text-fill-color: #0f172a; caret-color: #0f172a; color-scheme: light; opacity: 1; }
+    input::placeholder { color: #94a3b8; -webkit-text-fill-color: #94a3b8; }
+    input:disabled, select:disabled { background-color: #f1f5f9; color: #64748b; -webkit-text-fill-color: #64748b; }
+    input:focus, select:focus { outline: 2px solid #7e13b5; outline-offset: 1px; }
+    body { font-family: 'Inter', sans-serif; background: #f1f5f9; color: #0a1f44; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .seg { font-family: 'DSEG7', 'JetBrains Mono', monospace; }
+    .obs-table th, .obs-table td { padding: 4px 6px; border-bottom: 1px solid #e2e8f0; }
+    .obs-table thead th { background: #f8fafc; color: #475569; font-weight: 600; }
+    .scroll-thin::-webkit-scrollbar { height: 8px; width: 8px; }
+    .scroll-thin::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+
+    /* ---------- bench layout (self-contained styles) ---------- */
+    .xb-wrap { display: flex; gap: 14px; flex: 1; align-items: flex-start; }
+    .xb-wrap.hidden { display: none; }
+    .xb-main { flex: 1; min-width: 0; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+    .xb-side { width: 340px; flex-shrink: 0; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; max-height: calc(100vh - 150px); }
+    @media (max-width: 1100px) { .xb-wrap { flex-direction: column; } .xb-side { width: 100%; max-height: none; } }
+    .xb-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
+    .xb-st { display: flex; gap: 4px; }
+    .xb-st button { font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; color: #334155; cursor: pointer; }
+    .xb-st button.on { background: #0a1f44; color: #fff; border-color: #0a1f44; }
+    .xb-st button .n { display: inline-block; width: 18px; height: 18px; line-height: 18px; text-align: center; border-radius: 50%; background: #e2e8f0; color: #334155; font-size: 10px; margin-right: 5px; }
+    .xb-st button.on .n { background: #f59e0b; color: #111; }
+    .xb-st button.done .n { background: #10b981; color: #fff; }
+    .xb-scene { position: relative; background: #2a3442; }
+    #scene { display: block; width: 100%; height: auto; touch-action: none; user-select: none; -webkit-user-select: none; }
+    #scene text { pointer-events: none; }
+    #scene .hot { cursor: pointer; }
+    #scene .hot:hover { filter: drop-shadow(0 0 5px rgba(253,224,71,.95)); }
+    #scene .pulse { animation: xpulse 1.4s ease-in-out infinite; }
+    @keyframes xpulse { 0%,100% { filter: drop-shadow(0 0 2px rgba(56,189,248,.3)); } 50% { filter: drop-shadow(0 0 9px rgba(56,189,248,1)); } }
+    .xb-fb { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #0f172a; color: #fff; padding: 8px 14px; font-size: 12px; min-height: 38px; }
+    .xb-fb b { color: #fde68a; }
+    .xb-card { border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; }
+    .xb-h { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #475569; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .xb-now { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 10px; padding: 10px; font-size: 12px; color: #78350f; line-height: 1.45; }
+    .xb-now .t { font-weight: 700; color: #92400e; font-size: 12.5px; margin-bottom: 3px; }
+    .xb-ctx { font-size: 12px; color: #1e293b; line-height: 1.45; }
+    .xb-ctx .row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
+    .xb-in { width: 92px; border: 1px solid #94a3b8; border-radius: 6px; padding: 4px 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+    .xb-btn { font-size: 12px; font-weight: 600; padding: 6px 10px; border-radius: 7px; border: 1px solid transparent; cursor: pointer; background: #0a1f44; color: #fff; }
+    .xb-btn:hover { filter: brightness(1.15); }
+    .xb-btn.sec { background: #fff; color: #0a1f44; border-color: #cbd5e1; }
+    .xb-btn.warn { background: #b91c1c; }
+    .xb-btn:disabled { opacity: .45; cursor: not-allowed; }
+    .xb-steps { list-style: none; margin: 0; padding: 0; font-size: 11.5px; }
+    .xb-steps li { display: flex; gap: 6px; padding: 3px 0; color: #94a3b8; }
+    .xb-steps li.done { color: #047857; }
+    .xb-steps li.cur { color: #92400e; font-weight: 700; }
+    .xb-steps li .k { width: 16px; flex-shrink: 0; text-align: center; }
+    .xb-steps .grp { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: #64748b; font-weight: 700; padding-top: 6px; }
+    .xb-tbl { width: 100%; border-collapse: collapse; font-size: 11px; }
+    .xb-tbl th { background: #f1f5f9; color: #475569; font-weight: 600; padding: 3px; text-align: center; }
+    .xb-tbl td { border-top: 1px solid #e2e8f0; padding: 3px; text-align: center; font-family: 'JetBrains Mono', monospace; }
+    .xb-tbl input { width: 58px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 3px; font-family: 'JetBrains Mono', monospace; font-size: 11px; text-align: center; }
+    .ok-in { border-color: #10b981 !important; background-color: #ecfdf5 !important; color: #065f46 !important; -webkit-text-fill-color: #065f46 !important; font-weight: 700; }
+    .bad-in { border-color: #e11d48 !important; background-color: #fff1f2 !important; color: #9f1239 !important; -webkit-text-fill-color: #9f1239 !important; font-weight: 700; }
+    .flag { display: inline-block; font-size: 9.5px; padding: 0 4px; border-radius: 4px; background: #fee2e2; color: #9f1239; margin: 1px; font-family: Inter, sans-serif; }
+    .xb-speed button { font-size: 11px; font-family: 'JetBrains Mono', monospace; font-weight: 700; padding: 2px 7px; border-radius: 5px; border: 0; background: transparent; color: #475569; cursor: pointer; }
+    .xb-speed { display: flex; border: 1px solid #cbd5e1; border-radius: 7px; background: #fff; padding: 2px; }
+    .xb-strip { background: #1b1b1b; border-top: 1px solid #000; position: relative; }
+    .xb-strip-h { display: flex; justify-content: space-between; color: #a3a3a3; font-size: 10.5px; padding: 5px 10px 0; text-transform: uppercase; letter-spacing: .06em; font-weight: 700; }
+    #kymoStrip { overflow-x: auto; }
+    .xb-man summary { cursor: pointer; font-size: 11px; font-weight: 700; color: #334155; text-transform: uppercase; letter-spacing: .06em; }
+    .xb-man table { width: 100%; font-size: 11px; border-collapse: collapse; margin-top: 6px; }
+    .xb-man td { border-top: 1px solid #e2e8f0; padding: 2px 4px; }
+    .xb-pl { width: 100%; }
+    .tgl { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #475569; }
+    .obs-in { width: 64px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; text-align: center; }
+    @media print {
+      header, #subHeader, #viewTask, #viewExperiment, .no-print { display: none !important; }
+      #viewObservation { display: flex !important; box-shadow: none; border: none; }
+    }
+    .xb-nbk { padding: 10px 12px; background: #fff; border-top: 1px solid #e2e8f0; }
+    .xb-calc { font-size: 12px; color: #1e293b; margin-bottom: 8px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .xb-tbl input { width: 54px; }
+    .xb-bar select.xb-in { font-family: Inter, sans-serif; font-size: 12px; padding: 3px 6px; }
+    .xb-ctx .mono { font-family: 'JetBrains Mono', monospace; }
+    .xb-st button { padding: 6px 9px; }
+    .seqcell { max-width: 150px; overflow-wrap: anywhere; font-size: 9.5px; text-align: left !important; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-100 overflow-x-hidden">
+
+  <!-- TOP BRANDING BAR (XPRISM Header) -->
+  <header class="site-header bg-white border-b border-slate-200 px-4 md:px-6 py-2 flex items-center justify-between gap-3 shadow-sm shrink-0">
+    <div class="flex items-center gap-3 min-w-0">
+    <a href="../index.html" title="Back to Lab Home" class="shrink-0"><img src="../assets/img/xprism-lockup.png" alt="XPRISM" class="h-11 w-auto" width="146" height="49"></a>
+      <div class="min-w-0 border-l border-slate-200 pl-3">
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="text-[10px] uppercase font-bold bg-teal-50 text-teal-700 px-2 py-0.5 rounded-full border border-teal-200 font-display tracking-wide">Virtual Lab</span>
+        <span class="text-[10px] uppercase font-bold bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded-full border border-indigo-200 font-display tracking-wide">M.Pharm</span>
+        <a href="../index.html" class="text-[11px] font-semibold text-teal-700 hover:underline">← All experiments</a>
+      </div>
+      <p class="text-xs text-slate-500">Aaron Innovations • Experimental Pharmacology Research &amp; Interactive Student Module</p>
+    </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="hidden md:block text-right">
+        <div class="text-xs font-semibold text-slate-800 flex items-center justify-end space-x-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Dr. Vara Prasad Saka</span>
+        </div>
+        <div class="text-[11px] text-slate-500 font-mono">ID: 8019152501 • Dept. of Pharmacology</div>
+      </div>
+      <div class="flex items-center gap-2 border-l pl-4 border-slate-200">
+        <a class="site-nav-btn" href="36-animal-ethics-iaec-protocol.html" title="Previous: Exp #36 Animal Ethics: IAEC Protocol Review">‹</a><span class="site-nav-btn" aria-disabled="true">›</span>
+        <button id="audioToggleBtn" class="p-2 rounded-lg bg-teal-100 hover:bg-teal-200 text-teal-800 transition" title="Toggle sound feedback" aria-label="Toggle sound feedback">
+          <svg id="soundIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+        </button>
+        <span class="hidden sm:inline bg-indigo-100 text-indigo-800 text-xs px-2.5 py-1 rounded-md font-medium border border-indigo-200 whitespace-nowrap">Exp #37</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- SUB-HEADER / VIEW TABS -->
+
+  <div id="subHeader" class="site-subheader bg-slate-800 text-white px-4 md:px-6 py-2 flex flex-wrap items-center justify-between gap-3 shadow shrink-0">
+    <div class="text-sm font-semibold tracking-wide flex items-center space-x-2 min-w-0">
+      <span class="text-teal-400 font-mono text-xs px-1.5 py-0.5 rounded bg-teal-950/80 border border-teal-500/40 shrink-0">MODULE 37</span>
+      <span>Examination 37: To Design a Clinical Trial Protocol and Apply ICH Good Clinical Practice</span>
+    </div>
+    <div class="flex items-center space-x-1.5 bg-slate-900/80 p-1 rounded-lg border border-slate-700" role="tablist">
+      <button id="tabTask" onclick="switchTab('task')" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white transition">Task Description</button>
+      <button id="tabExperiment" onclick="switchTab('experiment')" class="px-3.5 py-1.5 rounded-md text-xs font-semibold bg-teal-500 text-white shadow transition">Worksheet</button>
+      <button id="tabObservation" onclick="switchTab('observation')" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white transition">Observation Sheet &amp; Graphs</button>
+    </div>
+  </div>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-5 flex flex-col min-h-0">
+
+    <!-- TAB 1: TASK DESCRIPTION -->
+    <div id="viewTask" class="hidden flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between overflow-y-auto">
+      <div class="max-w-5xl space-y-6">
+        <div class="border-b pb-4">
+          <div class="inline-block px-2.5 py-1 rounded bg-teal-50 text-teal-800 text-xs font-bold font-mono mb-2">OBJECTIVE</div>
+          <h2 class="text-xl font-bold text-slate-900">Designing a Clinical Trial Protocol</h2>
+          <p class="text-sm text-slate-600 mt-2 leading-relaxed">You work through the planning of a fictional trial: which essential document holds what information, which phase fits each aim, how many participants are needed, how to control bias, and what Good Clinical Practice (ICH E6) requires when things happen during the study.</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-4">
+          <div class="p-4 rounded-xl bg-sky-50/70 border border-sky-100 space-y-2"><h3 class="text-sm font-bold text-sky-950">Essential documents</h3><p class="text-xs text-slate-600 leading-relaxed"><b>Protocol:</b> how the trial is run. <b>Investigator's Brochure (IB):</b> what is known about the product. <b>Informed Consent Form (ICF):</b> what participants are told and agree to. <b>Case Report Form (CRF):</b> the data recorded for each participant.</p></div>
+          <div class="p-4 rounded-xl bg-amber-50/70 border border-amber-100 space-y-2"><h3 class="text-sm font-bold text-amber-950">Sample size</h3><p class="text-xs text-slate-600 leading-relaxed font-mono">n per group = 2 (Zα + Zβ)² σ² ÷ Δ²</p><p class="text-xs text-slate-600 leading-relaxed">For a two-sided 5% significance level and 80% power, Zα = 1.96 and Zβ = 0.84. Round up, then enlarge for expected dropout: n ÷ (1 − dropout).</p></div>
+          <div class="p-4 rounded-xl bg-emerald-50/70 border border-emerald-100 space-y-2"><h3 class="text-sm font-bold text-emerald-950">Good Clinical Practice</h3><p class="text-xs text-slate-600 leading-relaxed">Participants' rights, safety and well-being come first. Consent is obtained before any study procedure, and records must be accurate and traceable.</p></div>
+        </div>
+      </div>
+      <div class="pt-6 border-t flex justify-end mt-6"><button onclick="switchTab('experiment')" class="px-6 py-2.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-semibold text-sm shadow transition">Go to Worksheet</button></div>
+    </div>
+
+    <!-- TAB 2: WORKSHEET -->
+    <div id="viewExperiment" class="xb-wrap">
+      <div class="xb-main">
+        <div class="xb-bar"><div class="xb-st" id="caseTabs" style="flex-wrap:wrap"></div></div>
+        <div id="caseBody" style="padding:14px 16px"></div>
+        <div class="xb-fb" id="actionFeedback"><div style="display:flex;align-items:center;gap:8px"><span id="feedbackIcon" style="color:#2dd4bf;font-weight:700">ℹ</span><span id="feedbackText">Ready.</span></div></div>
+      </div>
+      <aside class="xb-side">
+        <div class="xb-now" id="progressBox"></div>
+        <details class="xb-card xb-man" open><summary>Quick reference</summary>
+          <table>
+            <tr><td>Phase I</td><td class="mono">first in human; safety, PK</td></tr>
+            <tr><td>Phase II</td><td class="mono">early efficacy, dose finding</td></tr>
+            <tr><td>Phase III</td><td class="mono">confirmatory, large</td></tr>
+            <tr><td>Phase IV</td><td class="mono">after marketing</td></tr>
+            <tr><td>Zα (two-sided 5%)</td><td class="mono">1.96</td></tr>
+            <tr><td>Zβ (80% power)</td><td class="mono">0.84</td></tr>
+            <tr><td>Randomisation</td><td class="mono">reduces selection bias</td></tr>
+            <tr><td>Blinding</td><td class="mono">reduces assessment bias</td></tr>
+          </table>
+        </details>
+        <div style="padding-top:2px;display:flex;flex-direction:column;gap:6px">
+          <button class="xb-btn" onclick="submitEvaluation()">Check my answers</button>
+          <button class="xb-btn" style="background:#4f46e5" onclick="runAllInstant()">Run the complete experiment (reference answers)</button>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="xb-btn sec" onclick="switchTab('observation')">Observation sheet →</button>
+            <button class="xb-btn sec" onclick="if(confirm('Clear all your answers?')) newWorksheet()">Restart</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <div id="speedBtns" hidden></div>
+
+    <!-- TAB 3: OBSERVATION SHEET -->
+    <div id="viewObservation" class="hidden flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between overflow-y-auto">
+      <div class="space-y-6">
+        <div class="border-b pb-4"><h2 class="text-xl font-bold text-slate-900">Observation Table: Protocol Design Summary</h2><p class="text-xs text-slate-500">All cases are fictional and for teaching • values come from your worksheet</p></div>
+        <div class="border border-slate-200 rounded-xl overflow-x-auto shadow-sm" id="rawBox"></div>
+        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2"><div class="text-[10px] text-slate-500 uppercase font-semibold font-mono">Result</div><div id="lblInference" class="text-sm font-bold text-slate-800">Pending</div><p id="lblInferenceDetail" class="text-[11px] text-slate-600 leading-relaxed"></p></div>
+      </div>
+      <div class="pt-6 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 mt-6 no-print">
+        <div class="text-xs text-slate-500 font-mono">XPRISM • Clinical Trial Protocol Design</div>
+        <div class="flex items-center space-x-3">
+          <button onclick="openModal('modalQuestions')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow transition">Answer Viva Questions</button>
+          <button onclick="openResultsModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow transition">Results &amp; Summary</button>
+          <button onclick="window.print()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg shadow transition">Print Report</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer no-print border-t border-slate-200 bg-white shrink-0">
+    <div class="max-w-7xl mx-auto px-6 py-3 text-xs text-slate-500 font-mono flex justify-between flex-wrap gap-2">
+      <span>XPRISM • Exp #37 • © 2026 Aaron Innovations • Dr. Vara Prasad Saka</span>
+      <span>Simulations are teaching aids that reduce animal use, in line with CCSEA 3Rs guidance. • <a href="../index.html" class="text-teal-700 hover:underline">All experiments</a></span>
+    </div>
+  </footer>
+
+  <!-- MODAL: VIVA -->
+  <div id="modalQuestions" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-base font-bold text-slate-800">Clinical Trial Design: Viva-Voce</h3>
+        <button onclick="closeModal('modalQuestions')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+      <div id="quizScore" class="hidden p-2.5 rounded-lg text-xs font-semibold"></div>
+      <div id="quizBody" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2 text-xs text-slate-700"></div>
+      <div class="pt-3 border-t flex justify-end space-x-2">
+        <button onclick="renderQuiz()" class="px-4 py-2 border rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">Reset</button>
+        <button onclick="evaluateQuestions()" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-lg shadow">Submit Answers</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: RESULTS -->
+  <div id="modalResults" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-base font-bold text-slate-800">Laboratory Results Summary</h3>
+        <button onclick="closeModal('modalResults')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+      <div id="resBody" class="space-y-2 text-xs"></div>
+      <div id="resExplanation" class="p-3 rounded-lg bg-teal-50 border border-teal-200 text-teal-900 leading-relaxed text-[11px]"></div>
+      <div class="pt-3 border-t flex justify-end">
+        <button onclick="closeModal('modalResults')" class="px-6 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg shadow">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =====================================================================
+    // XPRISM shared simulation toolkit (tabs, sound, stats, charts, viva)
+    // =====================================================================
+    const $ = id => document.getElementById(id);
+    const svgNS = "http://www.w3.org/2000/svg";
+    function el(tag, attrs = {}, parent) {
+      const e = document.createElementNS(svgNS, tag);
+      for (const k in attrs) e.setAttribute(k, attrs[k]);
+      if (parent) parent.appendChild(e);
+      return e;
+    }
+    function svgPoint(svg, evt) {
+      const pt = svg.createSVGPoint();
+      const src = evt.touches ? evt.touches[0] : evt;
+      pt.x = src.clientX; pt.y = src.clientY;
+      return pt.matrixTransform(svg.getScreenCTM().inverse());
+    }
+    function gauss() {
+      let u = 0, v = 0;
+      while (u === 0) u = Math.random();
+      while (v === 0) v = Math.random();
+      return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    }
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+    const shuffle = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+    const mean = a => a.length ? a.reduce((s, x) => s + x, 0) / a.length : NaN;
+    const sd = a => { if (a.length < 2) return 0; const m = mean(a); return Math.sqrt(a.reduce((s, x) => s + (x - m) ** 2, 0) / (a.length - 1)); };
+    const sem = a => a.length < 2 ? 0 : sd(a) / Math.sqrt(a.length);
+    const fx = (v, d = 1) => (v === null || v === undefined || !isFinite(v)) ? '—' : (+v).toFixed(d);
+    const fmtMS = s => { s = Math.max(0, Math.round(s)); return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
+    const fmtHMS = s => { s = Math.max(0, Math.round(s)); const h = Math.floor(s / 3600); return `${h}:${String(Math.floor(s % 3600 / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
+    const log10 = Math.log10;
+
+    // ---- t-distribution (two-tailed p) via regularised incomplete beta ----
+    function betacf(a, b, x) {
+      let qab = a + b, qap = a + 1, qam = a - 1, c = 1, d = 1 - qab * x / qap;
+      if (Math.abs(d) < 1e-30) d = 1e-30; d = 1 / d; let h = d;
+      for (let m = 1; m <= 200; m++) {
+        const m2 = 2 * m; let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+        d = 1 + aa * d; if (Math.abs(d) < 1e-30) d = 1e-30; c = 1 + aa / c; if (Math.abs(c) < 1e-30) c = 1e-30; d = 1 / d; h *= d * c;
+        aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+        d = 1 + aa * d; if (Math.abs(d) < 1e-30) d = 1e-30; c = 1 + aa / c; if (Math.abs(c) < 1e-30) c = 1e-30; d = 1 / d;
+        const del = d * c; h *= del; if (Math.abs(del - 1) < 3e-7) break;
+      }
+      return h;
+    }
+    function gammaln(x) {
+      const c = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5];
+      let y = x, t = x + 5.5; t -= (x + 0.5) * Math.log(t); let s = 1.000000000190015;
+      for (let j = 0; j < 6; j++) s += c[j] / ++y;
+      return -t + Math.log(2.5066282746310005 * s / x);
+    }
+    function betai(a, b, x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      const bt = Math.exp(gammaln(a + b) - gammaln(a) - gammaln(b) + a * Math.log(x) + b * Math.log(1 - x));
+      return x < (a + 1) / (a + b + 2) ? bt * betacf(a, b, x) / a : 1 - bt * betacf(b, a, 1 - x) / b;
+    }
+    function tTest(a, b) { // unpaired Student's t (pooled variance)
+      if (a.length < 2 || b.length < 2) return { t: NaN, df: NaN, p: NaN };
+      const df = a.length + b.length - 2;
+      const sp2 = ((a.length - 1) * sd(a) ** 2 + (b.length - 1) * sd(b) ** 2) / df;
+      const se = Math.sqrt(sp2 * (1 / a.length + 1 / b.length));
+      const t = se === 0 ? (mean(a) === mean(b) ? 0 : 99) : (mean(a) - mean(b)) / se;
+      return { t, df, p: betai(df / 2, 0.5, df / (df + t * t)) };
+    }
+    const pLabel = p => !isFinite(p) ? '—' : p < 0.001 ? 'p < 0.001' : p < 0.01 ? 'p < 0.01' : p < 0.05 ? 'p < 0.05' : 'p > 0.05 (ns)';
+    const stars = p => !isFinite(p) ? '' : p < 0.001 ? '***' : p < 0.01 ? '**' : p < 0.05 ? '*' : 'ns';
+    function linreg(xs, ys) {
+      const n = xs.length; if (n < 2) return null;
+      const mx = mean(xs), my = mean(ys);
+      let sxy = 0, sxx = 0, syy = 0;
+      for (let i = 0; i < n; i++) { sxy += (xs[i] - mx) * (ys[i] - my); sxx += (xs[i] - mx) ** 2; syy += (ys[i] - my) ** 2; }
+      const slope = sxy / sxx, intercept = my - slope * mx;
+      return { slope, intercept, r2: syy === 0 ? 1 : (sxy * sxy) / (sxx * syy) };
+    }
+    // log-linear interpolation of the dose giving response `target` on an ascending curve [[dose, resp], ...]
+    function interpDose(pts, target) {
+      const s = pts.filter(p => p[0] > 0).slice().sort((a, b) => a[0] - b[0]);
+      for (let i = 0; i < s.length - 1; i++) {
+        const [d1, r1] = s[i], [d2, r2] = s[i + 1];
+        if ((r1 <= target && r2 >= target) && r2 !== r1) {
+          const f = (target - r1) / (r2 - r1);
+          return Math.pow(10, log10(d1) + f * (log10(d2) - log10(d1)));
+        }
+      }
+      return NaN;
+    }
+
+    // ---- Sound ----
+    let soundOn = true, synth = null;
+    function beep(type = 'click') {
+      if (!soundOn || typeof Tone === 'undefined') return;
+      try {
+        if (!synth) { Tone.start(); synth = new Tone.PolySynth(Tone.Synth).toDestination(); synth.volume.value = -16; }
+        const n = { click: 'C6', ok: 'E5', warn: 'A3', done: 'G5', tick: 'C7', low: 'E3' }[type] || 'C6';
+        synth.triggerAttackRelease(n, type === 'done' ? '8n' : '32n');
+      } catch (e) { /* audio optional */ }
+    }
+
+    // ---- Feedback / stepper ----
+    function showFeedback(msg, isAlert = false) {
+      $('feedbackText').innerHTML = msg;
+      const icon = $('feedbackIcon');
+      icon.innerText = isAlert ? "⚠️" : "ℹ";
+      icon.className = isAlert ? "text-amber-400 font-bold" : "text-teal-400 font-bold";
+      if (isAlert) beep('warn');
+    }
+    function setPhase(t) { $('phaseIndicator').innerText = t || ''; }
+    function renderSteps(steps) {
+      let active = steps.findIndex(s => !s.done);
+      $('stepper').innerHTML = steps.map((s, i) => {
+        const cls = s.done ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : i === active ? 'bg-amber-50 text-amber-800 border-amber-300 ring-1 ring-amber-200' : 'bg-slate-50 text-slate-400 border-slate-200';
+        return `<span class="px-2 py-1 rounded-md border ${cls}">${s.done ? '✓' : (i + 1)} ${s.t}</span>`;
+      }).join('');
+    }
+
+    // ---- Speed ----
+    let SPEED = 1, SPEEDS = [1, 5, 20, 60];
+    function renderSpeed() {
+      $('speedBtns').innerHTML = SPEEDS.map(s => `<button onclick="setSpeed(${s})" class="px-2 py-0.5 text-[11px] rounded font-mono font-semibold ${s === SPEED ? 'bg-teal-600 text-white' : 'text-slate-600 hover:bg-slate-100'}">${s}×</button>`).join('');
+    }
+    function setSpeed(s) { SPEED = s; renderSpeed(); beep('tick'); }
+
+    // ---- Generic wait timer (simulated seconds) ----
+    let WAIT = null;
+    function startWait(title, seconds, onDone) {
+      WAIT = { title, total: seconds, left: seconds, onDone };
+      $('waitTitle').innerText = title; $('waitCard').classList.remove('hidden');
+    }
+    function skipWait() { if (WAIT) WAIT.left = 0; }
+    function cancelWait() { WAIT = null; $('waitCard').classList.add('hidden'); }
+    function tickWait(dtSim) {
+      if (!WAIT) return;
+      WAIT.left -= dtSim;
+      $('waitClock').innerText = WAIT.total >= 3600 ? fmtHMS(WAIT.left) : fmtMS(WAIT.left);
+      $('waitBar').style.width = `${clamp(100 * (1 - WAIT.left / WAIT.total), 0, 100)}%`;
+      if (WAIT.left <= 0) { const w = WAIT; WAIT = null; $('waitCard').classList.add('hidden'); beep('done'); w.onDone && w.onDone(); }
+    }
+    let _lastTs = null;
+    function startLoop(cb) {
+      const f = ts => {
+        if (_lastTs === null) _lastTs = ts;
+        const dtR = Math.min(0.1, Math.max(0, (ts - _lastTs) / 1000)); _lastTs = ts;
+        tickWait(dtR * SPEED);
+        cb && cb(dtR * SPEED, dtR);
+        requestAnimationFrame(f);
+      };
+      requestAnimationFrame(f);
+    }
+
+    // ---- Tabs / modals ----
+    function openModal(id) { $(id).classList.remove('hidden'); }
+    function closeModal(id) { $(id).classList.add('hidden'); }
+    function switchTab(tabId) {
+      const map = { task: ['viewTask', 'tabTask'], experiment: ['viewExperiment', 'tabExperiment'], observation: ['viewObservation', 'tabObservation'] };
+      Object.values(map).forEach(([v, t]) => {
+        $(v).classList.add('hidden');
+        const b = $(t); b.classList.remove('bg-teal-500', 'text-white', 'shadow'); b.classList.add('text-slate-300');
+      });
+      $(map[tabId][0]).classList.remove('hidden');
+      $(map[tabId][1]).classList.add('bg-teal-500', 'text-white', 'shadow');
+      if (tabId === 'observation') renderObservation();
+    }
+
+    // ---- Viva ----
+    function renderQuiz() {
+      $('quizScore').classList.add('hidden');
+      $('quizBody').innerHTML = QUIZ.map((q, i) => `<div class="space-y-1.5" id="qwrap${i}">
+        <p class="font-semibold text-slate-800">${i + 1}. ${q.q}</p>
+        ${q.o.map((o, j) => `<label class="flex items-start gap-2 p-1.5 rounded hover:bg-slate-50 cursor-pointer"><input type="radio" name="q${i}" value="${j}" class="mt-0.5 accent-teal-600"><span>${o}</span></label>`).join('')}
+        <p id="qexp${i}" class="hidden text-[11px] p-2 rounded"></p></div>`).join('');
+    }
+    function evaluateQuestions() {
+      const ans = QUIZ.map((_, i) => document.querySelector(`input[name="q${i}"]:checked`)?.value);
+      if (ans.some(a => a === undefined)) { const s = $('quizScore'); s.className = 'p-2.5 rounded-lg text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200'; s.innerText = `Please answer all ${QUIZ.length} questions before submitting.`; return; }
+      let score = 0;
+      QUIZ.forEach((q, i) => {
+        const ok = +ans[i] === q.a; if (ok) score++;
+        const e = $('qexp' + i); e.classList.remove('hidden');
+        e.className = `text-[11px] p-2 rounded ${ok ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-rose-50 text-rose-800 border border-rose-200'}`;
+        e.innerHTML = `${ok ? '✓ Correct.' : `✗ Correct answer: <b>${q.o[q.a]}</b>.`} ${q.e || ''}`;
+      });
+      const s = $('quizScore'); s.className = `p-2.5 rounded-lg text-xs font-semibold ${score / QUIZ.length >= 0.6 ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-amber-50 text-amber-800 border border-amber-200'}`;
+      s.innerText = `Viva score: ${score}/${QUIZ.length} (${Math.round(score / QUIZ.length * 100)}%)`;
+      beep(score / QUIZ.length >= 0.6 ? 'done' : 'warn');
+      $('quizBody').scrollTop = 0;
+    }
+
+    // ---- Results modal ----
+    function openResultsModal() {
+      const r = buildResults();
+      $('resBody').innerHTML = r.rows.map(([k, v]) => `<div class="flex justify-between gap-3 border-b border-slate-100 pb-1"><span class="text-slate-500">${k}</span><span class="font-semibold text-slate-800 text-right">${v}</span></div>`).join('');
+      $('resExplanation').innerHTML = r.text;
+      openModal('modalResults');
+    }
+    // numeric answer verification (bioassays / unknowns)
+    function verifyNumber(inputId, outId, truth, tolPct, unit, explain) {
+      const v = parseFloat($(inputId).value), o = $(outId);
+      if (!isFinite(v)) { o.className = 'text-xs font-semibold text-amber-700'; o.innerText = 'Enter a number first.'; return; }
+      const err = Math.abs(v - truth) / truth * 100;
+      const ok = err <= tolPct;
+      o.className = `text-xs font-semibold ${ok ? 'text-emerald-700' : 'text-rose-700'}`;
+      o.innerHTML = ok ? `✓ Accepted (${fx(err, 1)}% from the true value of ${fx(truth, 3)} ${unit}). ${explain || ''}` : `✗ ${fx(err, 0)}% away from the true value. Re-check your matching/calculation (accepted within ±${tolPct}%).`;
+      beep(ok ? 'done' : 'warn');
+    }
+
+    // ---- SVG charts ----
+    const PALETTE = { teal: '#7e13b5', indigo: '#4f46e5', rose: '#e11d48', amber: '#d97706', slate: '#475569', emerald: '#059669', sky: '#0284c7', violet: '#7c3aed' };
+    function niceTicks(min, max, n = 5) {
+      if (!(max > min)) { max = min + 1; }
+      const span = max - min, step0 = span / n, mag = Math.pow(10, Math.floor(log10(step0)));
+      const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => span / s <= n) || mag * 10;
+      const out = []; for (let v = Math.ceil(min / step - 1e-9) * step; v <= max + 1e-9; v += step) out.push(+v.toFixed(10));
+      return out;
+    }
+    function chartFrame(svg, o) {
+      svg.innerHTML = '';
+      const W = +(svg.getAttribute('viewBox').split(' ')[2]), H = +(svg.getAttribute('viewBox').split(' ')[3]);
+      const m = { l: 46, r: 12, t: 12, b: 38 };
+      const X = v => m.l + (v - o.xMin) / (o.xMax - o.xMin) * (W - m.l - m.r);
+      const Y = v => H - m.b - (v - o.yMin) / (o.yMax - o.yMin) * (H - m.t - m.b);
+      const yt = o.yTicks || niceTicks(o.yMin, o.yMax, 5);
+      yt.forEach(v => { el('line', { x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), stroke: '#e2e8f0' }, svg); const t = el('text', { x: m.l - 5, y: Y(v) + 3, 'text-anchor': 'end', 'font-size': 9, fill: '#64748b' }, svg); t.textContent = o.yFmt ? o.yFmt(v) : +v.toFixed(3); });
+      const xt = o.xTicks || niceTicks(o.xMin, o.xMax, 6).map(v => [v, o.xFmt ? o.xFmt(v) : +v.toFixed(3)]);
+      xt.forEach(([v, lab]) => { el('line', { x1: X(v), x2: X(v), y1: H - m.b, y2: H - m.b + 4, stroke: '#94a3b8' }, svg); const t = el('text', { x: X(v), y: H - m.b + 14, 'text-anchor': 'middle', 'font-size': 9, fill: '#64748b' }, svg); t.textContent = lab; });
+      el('line', { x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b, stroke: '#475569' }, svg);
+      el('line', { x1: m.l, x2: m.l, y1: m.t, y2: H - m.b, stroke: '#475569' }, svg);
+      if (o.xLabel) { const t = el('text', { x: (m.l + W - m.r) / 2, y: H - 6, 'text-anchor': 'middle', 'font-size': 10, fill: '#334155', 'font-weight': 600 }, svg); t.textContent = o.xLabel; }
+      if (o.yLabel) { const t = el('text', { x: 11, y: (m.t + H - m.b) / 2, 'text-anchor': 'middle', 'font-size': 10, fill: '#334155', 'font-weight': 600, transform: `rotate(-90 11 ${(m.t + H - m.b) / 2})` }, svg); t.textContent = o.yLabel; }
+      return { X, Y, W, H, m };
+    }
+    function emptyChart(svg, msg) {
+      svg.innerHTML = '';
+      const vb = svg.getAttribute('viewBox').split(' ');
+      const t = el('text', { x: vb[2] / 2, y: vb[3] / 2, 'text-anchor': 'middle', 'font-size': 11, fill: '#94a3b8' }, svg); t.textContent = msg || 'No data yet';
+    }
+    // series: [{name, color, pts:[[x,y,err?]], dash, noLine, line:{slope,intercept,x1,x2}}]
+    function lineChart(id, o) {
+      const svg = $(id);
+      const all = o.series.flatMap(s => s.pts);
+      if (!all.length) { emptyChart(svg, o.empty); return; }
+      const xs = all.map(p => p[0]), ys = all.map(p => p[1] + (p[2] || 0));
+      const xMin = o.xMin ?? Math.min(...xs), xMax = o.xMax ?? Math.max(...xs);
+      const pad = (xMax - xMin) * 0.05 || 1;
+      const f = chartFrame(svg, { ...o, xMin: o.xMin ?? xMin - pad, xMax: o.xMax ?? xMax + pad, yMin: o.yMin ?? Math.min(0, ...all.map(p => p[1])), yMax: o.yMax ?? (Math.max(...ys) * 1.12 || 1) });
+      (o.hlines || []).forEach(h => { el('line', { x1: f.m.l, x2: f.W - f.m.r, y1: f.Y(h.y), y2: f.Y(h.y), stroke: h.color || '#94a3b8', 'stroke-dasharray': '4 3' }, svg); if (h.label) { const t = el('text', { x: f.W - f.m.r - 2, y: f.Y(h.y) - 3, 'text-anchor': 'end', 'font-size': 8.5, fill: h.color || '#64748b' }, svg); t.textContent = h.label; } });
+      (o.vlines || []).forEach(h => { el('line', { x1: f.X(h.x), x2: f.X(h.x), y1: f.m.t, y2: f.H - f.m.b, stroke: h.color || '#94a3b8', 'stroke-dasharray': '3 3' }, svg); if (h.label) { const t = el('text', { x: f.X(h.x) + 3, y: f.m.t + 9, 'font-size': 8.5, fill: h.color || '#64748b' }, svg); t.textContent = h.label; } });
+      o.series.forEach(s => {
+        const pts = s.pts.slice().sort((a, b) => a[0] - b[0]);
+        if (s.line) { el('line', { x1: f.X(s.line.x1), y1: f.Y(s.line.slope * s.line.x1 + s.line.intercept), x2: f.X(s.line.x2), y2: f.Y(s.line.slope * s.line.x2 + s.line.intercept), stroke: s.color, 'stroke-width': 1.5, 'stroke-dasharray': '5 3' }, svg); }
+        if (!s.noLine && pts.length > 1) el('polyline', { points: pts.map(p => `${f.X(p[0])},${f.Y(p[1])}`).join(' '), fill: 'none', stroke: s.color, 'stroke-width': 2, 'stroke-dasharray': s.dash || '' }, svg);
+        pts.forEach(p => {
+          if (p[2]) { el('line', { x1: f.X(p[0]), x2: f.X(p[0]), y1: f.Y(p[1] - p[2]), y2: f.Y(p[1] + p[2]), stroke: s.color }, svg); [-1, 1].forEach(k => el('line', { x1: f.X(p[0]) - 3, x2: f.X(p[0]) + 3, y1: f.Y(p[1] + k * p[2]), y2: f.Y(p[1] + k * p[2]), stroke: s.color }, svg)); }
+          el('circle', { cx: f.X(p[0]), cy: f.Y(p[1]), r: 3.2, fill: s.hollow ? '#fff' : s.color, stroke: s.color, 'stroke-width': 1.5 }, svg);
+        });
+      });
+      // legend
+      const named = o.series.filter(s => s.name);
+      named.forEach((s, i) => { const x = f.m.l + 8, y = f.m.t + 8 + i * 12; el('rect', { x, y: y - 6, width: 10, height: 4, fill: s.color }, svg); const t = el('text', { x: x + 14, y: y - 1, 'font-size': 9, fill: '#334155' }, svg); t.textContent = s.name; });
+    }
+    // bars: [{label, v, e, color, note}]
+    function barChart(id, o) {
+      const svg = $(id);
+      const bars = o.bars.filter(b => isFinite(b.v));
+      if (!bars.length) { emptyChart(svg, o.empty); return; }
+      const top = Math.max(...bars.map(b => b.v + (b.e || 0))) * 1.2 || 1;
+      const n = o.bars.length;
+      const f = chartFrame(svg, { ...o, xMin: 0, xMax: n, yMin: o.yMin ?? 0, yMax: o.yMax ?? top, xTicks: [] });
+      const bw = (f.X(1) - f.X(0)) * 0.56;
+      o.bars.forEach((b, i) => {
+        const cx = f.X(i + 0.5);
+        const t = el('text', { x: cx, y: f.H - f.m.b + 13, 'text-anchor': 'middle', 'font-size': 9, fill: '#334155' }, svg); t.textContent = b.label;
+        if (!isFinite(b.v)) return;
+        el('rect', { x: cx - bw / 2, y: f.Y(Math.max(b.v, 0)), width: bw, height: Math.abs(f.Y(0) - f.Y(b.v)), fill: b.color || PALETTE.teal, rx: 2, opacity: .9 }, svg);
+        if (b.e) { el('line', { x1: cx, x2: cx, y1: f.Y(b.v), y2: f.Y(b.v + b.e), stroke: '#0a1f44' }, svg); el('line', { x1: cx - 5, x2: cx + 5, y1: f.Y(b.v + b.e), y2: f.Y(b.v + b.e), stroke: '#0a1f44' }, svg); }
+        if (b.note) { const s = el('text', { x: cx, y: f.Y(b.v + (b.e || 0)) - 4, 'text-anchor': 'middle', 'font-size': 10, 'font-weight': 700, fill: '#0a1f44' }, svg); s.textContent = b.note; }
+      });
+    }
+    // ---- small HTML helpers ----
+    function tableHTML(head, rows, cls = '') {
+      return `<table class="obs-table w-full text-[11px] text-center ${cls}"><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody class="font-mono">${rows.length ? rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${head.length}" class="text-slate-400 py-3 font-sans">No readings yet</td></tr>`}</tbody></table>`;
+    }
+    $('audioToggleBtn') && $('audioToggleBtn').addEventListener('click', () => {
+      soundOn = !soundOn;
+      $('audioToggleBtn').className = `p-2 rounded-lg transition ${soundOn ? 'bg-teal-100 hover:bg-teal-200 text-teal-800' : 'bg-slate-200 text-slate-500'}`;
+      if (soundOn) beep('ok');
+    });
+    window.addEventListener('DOMContentLoaded', () => { renderSpeed(); renderQuiz(); init(); });
+
+  </script>
+  <script>
+    const DOCS = ['Protocol', "Investigator's Brochure", 'Informed Consent Form', 'Case Report Form'];
+    const PH = ['Phase I', 'Phase II', 'Phase III', 'Phase IV'];
+    const CONFIG = {
+      start: 'Work through each part of the planning. The trial and scenarios are fictional.',
+      good: 'Good work. Your plan is consistent with the principles of Good Clinical Practice.', review: 'Review the items outlined in red on the worksheet, then check again.',
+      note: 'This is a teaching exercise based on ICH E6 principles. Real trials must follow the current ICH guideline, national rules and ethics committee requirements.',
+      summary: [],
+      cases: [
+        { tab: 'Documents', title: 'Part 1: match the content to the document', text: 'A fictional sponsor is assembling its trial file. Choose the document where each item belongs.', fields: [
+          { id: 'a', q: 'A summary of the product\'s preclinical and clinical data, for the investigators.', options: DOCS, key: "Investigator's Brochure" },
+          { id: 'b', q: 'The risks and benefits of taking part, in language a participant can understand.', options: DOCS, key: 'Informed Consent Form' },
+          { id: 'c', q: 'The objectives, design, eligibility criteria and statistical methods.', options: DOCS, key: 'Protocol' },
+          { id: 'd', q: 'Each participant\'s visit data, as the protocol requires it to be recorded.', options: DOCS, key: 'Case Report Form' },
+          { id: 'e', q: 'A statement that taking part is voluntary and that a participant may withdraw at any time.', options: DOCS, key: 'Informed Consent Form' }
+        ] },
+        { tab: 'Phases', title: 'Part 2: match the aim to the phase', text: 'Choose the trial phase that best fits each fictional aim.', fields: [
+          { id: 'p1', q: 'First administration to humans, to study safety, tolerability and pharmacokinetics.', options: PH, key: 'Phase I' },
+          { id: 'p2', q: 'A study in a limited number of patients to explore efficacy and find the dose.', options: PH, key: 'Phase II' },
+          { id: 'p3', q: 'A large randomised comparison to confirm efficacy and safety before approval.', options: PH, key: 'Phase III' },
+          { id: 'p4', q: 'A study of rare adverse effects after the medicine is on the market.', options: PH, key: 'Phase IV' }
+        ] },
+        { tab: 'Sample size', title: 'Part 3: calculate the sample size', text: 'A fictional parallel-group trial compares a new antihypertensive with the standard treatment. The primary end-point is change in systolic blood pressure. The standard deviation (σ) is <b>10 mmHg</b>, and the smallest difference worth detecting (Δ) is <b>5 mmHg</b>. Use a two-sided 5% significance level and 80% power, and allow for <b>10% dropout</b>. Round each result up to the next whole participant.', fields: [
+          { id: 'n', q: 'Participants needed per group, before dropout', type: 'number', key: 63, tol: 0, why: '2 × (1.96 + 0.84)² × 10² ÷ 5² = 62.72, which rounds up to 63.' },
+          { id: 'nd', q: 'Participants to enrol per group, after allowing for dropout', type: 'number', key: 70, tol: 0, why: '63 ÷ (1 − 0.10) = 70.' },
+          { id: 'tot', q: 'Total participants to enrol in the trial', type: 'number', key: 140, tol: 0, why: '70 per group × 2 groups = 140.' },
+          { id: 'des', q: 'Which design best controls selection bias in this trial?', options: ['Randomised allocation with concealed assignment', 'The investigator picks the treatment for each patient', 'Patients choose their own group'], key: 'Randomised allocation with concealed assignment' },
+          { id: 'bl', q: 'The end-point is measured by clinic staff. How is assessment bias best reduced?', options: ['Double-blind treatment with matching tablets', 'Telling staff each patient\'s treatment', 'Measuring only the new treatment group'], key: 'Double-blind treatment with matching tablets' }
+        ] },
+        { tab: 'GCP', title: 'Part 4: apply Good Clinical Practice', text: 'Choose the correct action in each fictional situation during the trial.', fields: [
+          { id: 'g1', q: 'A screening blood sample was taken before the participant signed the consent form.', options: ['Acceptable if the result is normal', 'A deviation: consent must come before any study procedure, so document and report it', 'Backdate the consent form'], key: 'A deviation: consent must come before any study procedure, so document and report it', why: 'Consent comes first, and records must never be backdated.' },
+          { id: 'g2', q: 'An investigator learns that a participant has had a serious adverse event.', options: ['Wait until the next routine monitoring visit', 'Report it to the sponsor immediately, as the protocol requires', 'Record it only if the drug is thought to be the cause'], key: 'Report it to the sponsor immediately, as the protocol requires', why: 'Serious adverse events are reported immediately, whether or not a causal link is suspected.' },
+          { id: 'g3', q: 'A wrong value was entered on a paper CRF.', options: ['Erase it and write over it', 'Use correction fluid', 'Strike through with a single line, keeping the original legible, then write, date and initial the correction'], key: 'Strike through with a single line, keeping the original legible, then write, date and initial the correction', why: 'Corrections must be traceable and must not obscure the original entry.' },
+          { id: 'g4', q: 'A participant wants to withdraw from the trial and gives no reason.', options: ['Allow it: no reason is needed and their care is not affected', 'Refuse until the trial ends', 'Require a written reason first'], key: 'Allow it: no reason is needed and their care is not affected', why: 'Participation is voluntary at every stage.' },
+          { id: 'g5', q: 'A treating doctor needs to know a blinded participant\'s treatment to manage a medical emergency.', options: ['Never unblind under any circumstances', 'Unblind that participant using the protocol procedure and document it', 'Unblind the whole trial'], key: 'Unblind that participant using the protocol procedure and document it', why: 'Emergency unblinding is allowed, limited to the participant concerned, and documented.' }
+        ] }
+      ]
+    };
+    const QUIZ = [
+      { q: 'ICH E6 is the guideline on:', o: ['Good Clinical Practice', 'Stability testing', 'Impurities', 'Bioanalytical validation only'], a: 0 },
+      { q: 'The first human dose of a new medicine is given in:', o: ['Phase I', 'Phase II', 'Phase III', 'Phase IV'], a: 0 },
+      { q: 'A large confirmatory trial before marketing is usually:', o: ['Phase I', 'Phase II', 'Phase III', 'Phase IV'], a: 2 },
+      { q: 'Informed consent must be obtained:', o: ['After the first visit', 'Before any study procedure', 'At the end of the trial', 'Only for inpatients'], a: 1 },
+      { q: 'The document giving investigators a summary of product data is the:', o: ['CRF', 'ICF', 'Investigator\'s Brochure', 'Monitoring log'], a: 2 },
+      { q: 'Randomisation mainly reduces:', o: ['Selection bias', 'Drug cost', 'Trial length', 'Sample size'], a: 0 },
+      { q: 'Blinding mainly reduces:', o: ['Assessment and performance bias', 'Dropout', 'The need for consent', 'The need for a protocol'], a: 0 },
+      { q: 'If the standard deviation rises while everything else stays the same, the sample size:', o: ['Falls', 'Rises', 'Stays the same', 'Becomes zero'], a: 1 },
+      { q: 'If the difference to be detected gets smaller, the sample size:', o: ['Falls', 'Rises', 'Stays the same', 'Becomes zero'], a: 1 },
+      { q: 'A participant may leave a trial:', o: ['Only with the sponsor\'s approval', 'At any time, without giving a reason', 'Only after the primary end-point', 'Only for safety reasons'], a: 1 }
+    ];
+    // =====================================================================
+    // XPRISM case worksheet: fictional cases, typed answers, marked on request.
+    // "Check my answers" and the reference answers are switched off in exam mode by bridge.js.
+    // =====================================================================
+    const S = { cur: 0, ans: {}, checked: false };
+    const aKey = (c, f) => c + '.' + f;
+    const esc = v => String(v).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    const allFields = () => CONFIG.cases.flatMap((c, i) => c.fields.map(f => ({ c: i, f })));
+    const given = (c, f) => { const v = S.ans[aKey(c, f.id)]; return v === undefined ? '' : v; };
+    const isRight = (c, f) => { const v = given(c, f); if (v === '') return false; return f.type === 'number' ? isFinite(+v) && Math.abs(+v - f.key) <= (f.tol || 0) : f.accept ? f.accept.includes(v) : v === f.key; };
+    const inExam = () => !!window.MCP_EXAM;
+    const showMarks = () => S.checked && !inExam();
+    const caseStats = i => { const fs = CONFIG.cases[i].fields; return { total: fs.length, done: fs.filter(f => given(i, f) !== '').length, right: fs.filter(f => isRight(i, f)).length }; };
+    const totals = () => CONFIG.cases.reduce((a, _, i) => { const s = caseStats(i); return { total: a.total + s.total, done: a.done + s.done, right: a.right + s.right }; }, { total: 0, done: 0, right: 0 });
+    function fieldHTML(i, f) {
+      const v = given(i, f), cls = showMarks() && v !== '' ? (isRight(i, f) ? 'ok-in' : 'bad-in') : '';
+      const inp = f.type === 'number'
+        ? `<input id="f_${i}_${f.id}" type="number" step="any" class="xb-in ${cls}" value="${esc(v)}" onchange="setAns(${i},'${f.id}',this.value)">${f.unit ? ` <span class="mono">${f.unit}</span>` : ''}`
+        : `<select id="f_${i}_${f.id}" class="xb-in ${cls}" style="width:auto;max-width:100%" onchange="setAns(${i},'${f.id}',this.value)"><option value="">Choose…</option>${f.options.map(o => `<option${o === v ? ' selected' : ''}>${esc(o)}</option>`).join('')}</select>`;
+      const why = showMarks() && f.why && v !== '' && !isRight(i, f) ? `<div style="font-size:11px;color:#9f1239;margin-top:3px">${f.why}</div>` : '';
+      return `<div style="padding:7px 0;border-top:1px solid #e2e8f0"><label for="f_${i}_${f.id}" style="display:block;font-size:12.5px;color:#1e293b;margin-bottom:4px">${f.q}</label>${inp}${why}</div>`;
+    }
+    function renderBench() {
+      const c = CONFIG.cases[S.cur];
+      $('caseTabs').innerHTML = CONFIG.cases.map((x, i) => { const st = caseStats(i); return `<button class="${i === S.cur ? 'on' : ''} ${st.done === st.total ? 'done' : ''}" onclick="goCase(${i})"><span class="n">${i + 1}</span>${x.tab}</button>`; }).join('');
+      $('caseBody').innerHTML = `<h3 style="font-size:15px;font-weight:700;color:#0a1f44">${c.title}</h3><div style="font-size:13px;line-height:1.6;color:#1e293b;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;margin:8px 0 10px">${c.text}</div>${c.groups ? c.groups.map(g => `<div class="xb-h" style="margin-top:12px">${g.t}</div>${c.fields.filter(f => f.g === g.id).map(f => fieldHTML(S.cur, f)).join('')}`).join('') : c.fields.map(f => fieldHTML(S.cur, f)).join('')}
+        <div style="display:flex;justify-content:space-between;margin-top:12px"><button class="xb-btn sec" ${S.cur ? '' : 'disabled'} onclick="goCase(${S.cur - 1})">← Previous</button><button class="xb-btn" ${S.cur < CONFIG.cases.length - 1 ? '' : 'disabled'} onclick="goCase(${S.cur + 1})">Next →</button></div>`;
+      renderSide();
+    }
+    function renderSide() {
+      const t = totals();
+      $('progressBox').innerHTML = `<div class="t">${t.done} of ${t.total} answers entered</div>${CONFIG.cases.map((x, i) => { const s = caseStats(i); return `${i + 1}. ${x.tab}: ${s.done}/${s.total}${showMarks() ? `, ${s.right} correct` : ''}`; }).join('<br>')}`;
+    }
+    function goCase(i) { S.cur = i; renderBench(); }
+    function setAns(c, f, v) { S.ans[aKey(c, f)] = String(v).trim(); renderBench(); renderObservation(); }
+    function submitEvaluation() { S.checked = true; renderBench(); renderObservation(); const t = totals(); showFeedback(`${t.right} of ${t.total} answers are correct. Wrong answers are outlined in red, with a reason.`, t.right < t.total); beep(t.right === t.total ? 'done' : 'ok'); }
+    function runAllInstant() { allFields().forEach(({ c, f }) => { S.ans[aKey(c, f.id)] = String(f.key); }); S.checked = true; renderBench(); renderObservation(); showFeedback('Reference answers loaded. Study them, then restart and work through the cases yourself.'); }
+    function newWorksheet() { S.ans = {}; S.checked = false; S.cur = 0; renderBench(); renderObservation(); showFeedback('Worksheet cleared.'); }
+    function renderObservation() {
+      const heads = ['Case', ...CONFIG.summary.map(s => s.h), 'Answers entered', ...(showMarks() ? ['Correct'] : [])];
+      const rows = CONFIG.cases.map((c, i) => { const st = caseStats(i); return [c.tab, ...CONFIG.summary.map(s => { const f = c.fields.find(x => x.id === (s.pick ? s.pick(c) : s.id)); return f ? (given(i, f) || '—') : '—'; }), `${st.done} / ${st.total}`, ...(showMarks() ? [`${st.right} / ${st.total}`] : [])]; });
+      $('rawBox').innerHTML = tableHTML(heads, rows);
+      const t = totals(), pct = t.total ? t.right / t.total * 100 : 0;
+      if (t.done < t.total) { $('lblInference').innerText = 'Pending'; $('lblInferenceDetail').innerText = `${t.total - t.done} answers still to enter on the worksheet.`; }
+      else if (!showMarks()) { $('lblInference').innerText = 'Worksheet complete'; $('lblInferenceDetail').innerText = inExam() ? 'Your answers are saved with this attempt and marked when you submit.' : 'Press "Check my answers" on the worksheet to see your marks.'; }
+      else { $('lblInference').innerText = `${t.right} of ${t.total} correct (${fx(pct, 0)}%)`; $('lblInferenceDetail').innerHTML = pct >= 80 ? CONFIG.good : CONFIG.review; }
+    }
+    function buildResults() {
+      const t = totals();
+      return { rows: [['Answers entered', `${t.done} / ${t.total}`], ['Answers correct', `${t.right} / ${t.total}`], ['Score', `${fx(t.total ? t.right / t.total * 100 : 0, 0)}%`], ...CONFIG.cases.map((c, i) => { const s = caseStats(i); return [c.tab, `${s.right} / ${s.total}`]; })], text: CONFIG.note };
+    }
+    function init() { renderBench(); renderObservation(); showFeedback(CONFIG.start); }
+  </script>
+  <script src="../assets/js/viva.js"></script>
+</body>
+</html>

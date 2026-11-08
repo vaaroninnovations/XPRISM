@@ -89,7 +89,7 @@ class PublicTests(Base):
         for text in ['Replacement', 'Reduction', 'Refinement', 'Explore our 3Rs commitment', '/accounts/trial/', '/accounts/signup/', '/accounts/login/', '/modules/', '/documentation/']:
             self.assertContains(home, text)
         self.assertContains(home, 'class="expCard', count=6)
-        self.assertContains(self.client.get('/modules/'), 'class="expCard', count=34)
+        self.assertContains(self.client.get('/modules/'), 'class="expCard', count=37)
         docs = self.client.get('/documentation/')
         self.assertContains(docs, 'id="exp-18"')
         self.assertContains(docs, 'Exam mode')
@@ -132,7 +132,7 @@ class PublicTests(Base):
             self.assertContains(r, 'mysteryKey')
 
     def test_modules_page_is_grouped_by_level(self):
-        expected = {no: 'Research' if no in (26, 27) else 'Advanced' if no >= 28 and no != 30 else 'Basic' for no in range(1, 35)}
+        expected = {no: 'Research' if no in (26, 27, 35, 37) else 'Advanced' if no >= 28 and no != 30 else 'Basic' for no in range(1, 38)}
         self.assertEqual(dict(Experiment.objects.values_list('no', 'level')), expected)
         page = self.client.get('/modules/').content.decode()
         positions = [page.index(f'<section class="xh-level levelSection" data-level="{level}">') for level in ('Basic', 'Advanced', 'Research')]
@@ -141,7 +141,14 @@ class PublicTests(Base):
         self.assertLess(page.index('Light-Dark Box'), positions[1])
         self.assertTrue(positions[1] < page.index('Barnes Maze') < positions[2])
         self.assertGreater(page.index('MTT Assay'), positions[2])
-        self.assertEqual(page.count('class="catBtn"'), 2 + 3 + 6)
+        self.assertEqual(page.count('class="catBtn"'), 2 + 3 + 7)
+
+    def test_case_worksheet_modules_open(self):
+        self.login(self.st)
+        for no, title in ((35, 'Naranjo'), (36, 'IAEC'), (37, 'Good Clinical Practice')):
+            e = Experiment.objects.get(no=no)
+            self.assertEqual(e.category, 'Ethics and clinical')
+            self.assertContains(self.client.get(e.url), title)
 
 
 class AuthTests(Base):
@@ -931,7 +938,7 @@ class FreeYearInvitationTests(Base):
         self.invite('a@college.edu')
         msg = mail.outbox[0]
         html = msg.alternatives[0][0]
-        for text in ('The Management and Administration', 'About XPRISM', 'Modules in XPRISM (33)', 'Isolated tissue experiments', 'Aaron Innovations', 'Kolkata, India', 'developed by Dr. Vara Prasad Saka', self.e14.title):
+        for text in ('The Management and Administration', 'About XPRISM', 'Modules in XPRISM (36)', 'Isolated tissue experiments', 'Aaron Innovations', 'Kolkata, India', 'developed by Dr. Vara Prasad Saka', self.e14.title):
             self.assertIn(text, html)
         self.assertNotIn('New Delhi', html)
         self.assertNotIn('Castor Oil', html)
