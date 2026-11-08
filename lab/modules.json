@@ -318,5 +318,29 @@
   "title": "Antioxidant and Oxidative Stress Assays",
   "slug": "40-antioxidant-oxidative-stress-assays",
   "description": "M.Pharm. Tissue homogenates, then MDA, reduced glutathione, SOD and catalase calculated from your own readings."
+ },
+ {
+  "no": 41,
+  "level": "Basic",
+  "cat": "Laboratory foundations",
+  "title": "Introduction to Experimental Pharmacology",
+  "slug": "41-introduction-experimental-pharmacology",
+  "description": "Common laboratory animals, what each instrument measures, gentle handling and good laboratory habits."
+ },
+ {
+  "no": 42,
+  "level": "Basic",
+  "cat": "Laboratory foundations",
+  "title": "Salt Solutions and Organ Bath Setup",
+  "slug": "42-salt-solutions-organ-bath-setup",
+  "description": "Choose and prepare physiological salt solutions, set the bath conditions and mount an isolated tissue."
+ },
+ {
+  "no": 43,
+  "level": "Research",
+  "cat": "In silico",
+  "title": "Molecular Docking and Binding Affinity",
+  "slug": "43-molecular-docking-binding-affinity",
+  "description": "M.Pharm. Plan and validate a docking run, then interpret binding energies for a fictional target."
  }
 ]
