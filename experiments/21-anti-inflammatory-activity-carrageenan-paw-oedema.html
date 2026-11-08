@@ -703,7 +703,7 @@
         const pawC = `rgb(${Math.round(240 - 16 * sw)},${Math.round(160 - 70 * sw)},${Math.round(176 - 70 * sw)})`;
         const tail = mouse ? 'M-30 3 C-48 5 -58 -2 -70 5 C-80 10 -90 8 -96 14' : 'M-30 3 C-44 4 -52 12 -64 10 C-72 9 -76 14 -82 12';
         const earRot = mouse ? -12 : -20, earS = mouse ? 1.5 : 1;
-        return `<g transform="scale(${sc})">
+        return `<g transform="scale(${sc})"><g class="lvBreath">
         <ellipse cx="2" cy="16.5" rx="${mouse ? 40 : 36}" ry="3.6" fill="#000" opacity=".3" filter="url(#aniBlur)"/>
         <path d="${tail}" fill="none" stroke="url(#aniTail)" stroke-width="${mouse ? 3.2 : 2.7}" stroke-linecap="round"/>
         <path d="${tail}" fill="none" stroke="#b97585" stroke-width="${mouse ? 3.2 : 2.7}" stroke-linecap="round" stroke-dasharray=".55 1.5" opacity=".6"/>
@@ -714,14 +714,14 @@
         <path d="M-27 -8 C-20 -14.5 -8 -16.8 3 -16.3 C13 -15.8 21 -13.4 28 -10" fill="none" stroke="#fff" stroke-width="1.5" stroke-opacity=".85" filter="url(#aniSoft)"/>
         <ellipse cx="-15" cy="3" rx="13.5" ry="11.5" fill="#fff" opacity=".28"/><path d="M-27 4 C-26 -4 -20 -9 -13 -9.5" fill="none" stroke="#d8cdc8" stroke-width=".6" opacity=".55"/>
         <ellipse cx="19" cy="2.5" rx="9" ry="9.5" fill="#fff" opacity=".16"/>
-        <g transform="rotate(${earRot} 23 -12) translate(${(23 * (1 - earS)).toFixed(1)} ${(-13 * (1 - earS)).toFixed(1)}) scale(${earS})"><ellipse cx="23" cy="-14" rx="4.8" ry="6.2" fill="#f4eae6" stroke="#e6d9d4" stroke-width=".4"/><ellipse cx="23.2" cy="-13.6" rx="3.5" ry="4.8" fill="url(#aniEar)"/><path d="M23 -9.5 Q23.4 -13 22.2 -17 M23.8 -10 Q25 -13 25.4 -16" fill="none" stroke="#d2728d" stroke-width=".35" opacity=".65"/></g>
-        <ellipse cx="34" cy="-4.8" rx="2.5" ry="2.25" fill="#3a0a14"/><ellipse cx="34" cy="-4.8" rx="2" ry="1.8" fill="url(#aniEye)"/><circle cx="33.2" cy="-5.6" r=".68" fill="#fff"/><circle cx="35" cy="-4" r=".3" fill="#fff" opacity=".6"/><path d="M31.6 -6.4 Q34 -8 36.5 -6.2" fill="none" stroke="#e5d6d1" stroke-width=".55"/>
+        <g class="lvEar"><g transform="rotate(${earRot} 23 -12) translate(${(23 * (1 - earS)).toFixed(1)} ${(-13 * (1 - earS)).toFixed(1)}) scale(${earS})"><ellipse cx="23" cy="-14" rx="4.8" ry="6.2" fill="#f4eae6" stroke="#e6d9d4" stroke-width=".4"/><ellipse cx="23.2" cy="-13.6" rx="3.5" ry="4.8" fill="url(#aniEar)"/><path d="M23 -9.5 Q23.4 -13 22.2 -17 M23.8 -10 Q25 -13 25.4 -16" fill="none" stroke="#d2728d" stroke-width=".35" opacity=".65"/></g></g>
+        <ellipse cx="34" cy="-4.8" rx="2.5" ry="2.25" fill="#3a0a14"/><ellipse cx="34" cy="-4.8" rx="2" ry="1.8" fill="url(#aniEye)"/><circle cx="33.2" cy="-5.6" r=".68" fill="#fff"/><circle cx="35" cy="-4" r=".3" fill="#fff" opacity=".6"/><ellipse class="lvLid" cx="34" cy="-4.8" rx="3" ry="2.8" fill="#efe7e3" opacity="0"/><path d="M31.6 -6.4 Q34 -8 36.5 -6.2" fill="none" stroke="#e5d6d1" stroke-width=".55"/>
         <ellipse cx="44.6" cy="1.6" rx="2" ry="1.55" fill="#e98aa1"/><circle cx="45.4" cy="1.2" r=".5" fill="#8a2d44"/><path d="M43 4.2 Q40 5.6 37.4 5.3" fill="none" stroke="#b49a98" stroke-width=".4"/>
-        ${_whisk(41, 2.6, 1, 1)}
+        <g class="lvWhisk">${_whisk(41, 2.6, 1, 1)}</g>
         <path d="M17 9 Q23 12 22 15.5 L29 16 Q29 12 26 8.5Z" fill="url(#aniPaw)" opacity=".95"/>${_toes(22.5, 15.7, 3, 4.2, 1, 0.25)}
-        <ellipse cx="-13" cy="14.2" rx="${(6.8 + sw * 3.2).toFixed(1)}" ry="${(2.5 + sw * 1.3).toFixed(1)}" fill="${pawC}"/><ellipse cx="-13" cy="13.6" rx="${(5.4 + sw * 3).toFixed(1)}" ry="${(1.3 + sw * .8).toFixed(1)}" fill="#fff" opacity=".22"/>${_toes(-7.5, 15, 4, 4.4, 1, .18)}
+        <g class="lvPaw" data-sw="${sw}"><ellipse cx="-13" cy="14.2" rx="${(6.8 + sw * 3.2).toFixed(1)}" ry="${(2.5 + sw * 1.3).toFixed(1)}" fill="${pawC}"/><ellipse cx="-13" cy="13.6" rx="${(5.4 + sw * 3).toFixed(1)}" ry="${(1.3 + sw * .8).toFixed(1)}" fill="#fff" opacity=".22"/>${_toes(-7.5, 15, 4, 4.4, 1, .18)}</g>
         ${o.ink ? `<line x1="-18" y1="11" x2="-8" y2="11" stroke="#1e3a8a" stroke-width="1.2"/>` : ''}
-        </g>`;
+        </g></g>`;
     }
     // ---- top view (head to +x). o: {kind}
     function animalTopArt(o = {}) {
@@ -1859,6 +1859,69 @@
       startLoop((dt, dtR) => frame(dt, dtR));
       const _sw = switchTab; window.switchTab = function (id) { _sw(id); if (id === 'experiment') { buildScene(); renderNotebook(); } };
     }
+  </script>
+  <script>
+    // =====================================================================
+    // LiveRodent: breathing, blinks, ear and whisker movement for every mouse or rat on screen.
+    // Visual only: nothing here reads or changes a fall-off time, paw volume or any recorded value.
+    // Animals are found afresh each step, so it keeps working when a scene is redrawn.
+    // =====================================================================
+    const LiveRodent = (function (breathHz) {
+      if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return null;
+      const TAU = 2 * Math.PI;
+      // Slots are per animal position: each has its own phase, so animals never move in unison.
+      const slots = [];
+      const slot = i => slots[i] || (slots[i] = { ph: Math.random() * TAU, blinkAt: 2 + Math.random() * 8, blinkEnd: 0, burst: 0, burstAt: 1 + Math.random() * 5, guardAt: 2 + Math.random() * 6, guard: 0 });
+      let clock = 0, last = null, since = 0, slowFor = 0, gap = 16, low = false;
+      function step(dt) {
+        const animals = document.querySelectorAll('.lvBreath');
+        animals.forEach((g, i) => {
+          const s = slot(i), host = g.closest('[data-sed]'), sed = host ? +host.dataset.sed || 0 : 0;
+          // Breathing: 1 + a*sin(2*pi*f*t), scaled about the feet (y = 16) so the paws stay planted.
+          // Sedation lowers both rate (to 65%) and depth (to 70%).
+          if (!low) {
+            const f = breathHz * (1 - .35 * sed), a = .018 * (1 - .3 * sed);
+            g.setAttribute('transform', `translate(0 16) scale(1 ${(1 + a * Math.sin(TAU * f * clock + s.ph)).toFixed(4)}) translate(0 -16)`);
+          }
+          // Blinks every 4 to 12 s, 120 ms long. As sedation deepens the lid droops and stays partly down.
+          if (clock > s.blinkAt) { s.blinkAt = clock + 4 + Math.random() * 8; s.blinkEnd = clock + .12; }
+          const lid = g.querySelector('.lvLid');
+          if (lid) lid.setAttribute('opacity', clock < s.blinkEnd ? '1' : (sed > .5 ? ((sed - .5) * 1.4).toFixed(2) : '0'));
+          // Twitch bursts: envelope b decays by 7% per step on a 9 Hz sine, and sedation suppresses them.
+          if (clock > s.burstAt) { s.burstAt = clock + 2 + Math.random() * 4; s.burst = 1; }
+          s.burst *= .93;
+          const tw = s.burst * Math.sin(TAU * 9 * clock + s.ph) * (1 - sed);
+          const drift = 3 * Math.sin(clock * .9 + s.ph) * (1 - sed);
+          const ear = g.querySelector('.lvEar'), wh = g.querySelector('.lvWhisk');
+          if (ear) ear.setAttribute('transform', `rotate(${(drift + tw * 5).toFixed(2)} 23 -12)`);
+          if (wh) wh.setAttribute('transform', `rotate(${(tw * 4).toFixed(2)} 41 2.6)`);
+          // Guarding: an inflamed paw is briefly lifted every 3 to 8 s, more often seen as swelling grows.
+          const paw = g.querySelector('.lvPaw');
+          if (paw) {
+            const sw = +paw.dataset.sw || 0;
+            if (sw > .25 && clock > s.guardAt) { s.guardAt = clock + 3 + Math.random() * 5 * (1.2 - sw); s.guard = 1; }
+            s.guard *= .9;
+            paw.setAttribute('transform', `translate(0 ${(-3.5 * sw * s.guard).toFixed(2)})`);
+          }
+        });
+      }
+      function frame(ts) {
+        requestAnimationFrame(frame);
+        if (last === null) last = ts;
+        const dt = Math.min(.1, (ts - last) / 1000); last = ts;
+        if (document.hidden) return;
+        // Guardrail for low-spec lab PCs: if frames stay slow for 2 s, stop the breathing (it
+        // repaints the fur filters, the costly part) and run the small movements at 12 fps.
+        gap += (dt * 1000 - gap) * .1;
+        slowFor = gap > 40 ? slowFor + dt : 0;
+        if (slowFor > 2) low = true;
+        clock += dt; since += dt;
+        if (since < (low ? 1 / 12 : 1 / 30)) return;
+        since = 0; step(dt);
+      }
+      requestAnimationFrame(frame);
+      return { get low() { return low; } };
+    })(1.4);   // resting breathing rate in Hz
   </script>
   <script src="../assets/js/viva.js"></script>
 </body>
