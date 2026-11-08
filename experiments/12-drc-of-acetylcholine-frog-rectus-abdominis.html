@@ -340,6 +340,7 @@
     </div>
   </div>
 
+  <script src="../assets/js/animal-art.js"></script>
   <script>
     // =====================================================================
     // XPRISM shared simulation toolkit (tabs, sound, stats, charts, viva)
@@ -1130,15 +1131,6 @@
     function tubeOK(k) { const t = S.tubes[k]; return t.vol >= 5 && t.mixed && Math.abs(tubeConc(k) / TUBE_DEF[k].conc - 1) < 0.03; }
 
     // ================================================================ STATION 2: DISSECTION
-    const FROG_BODY = 'M500 62 C540 62 566 88 570 120 C574 150 590 170 596 200 C606 250 604 320 584 360 C570 385 540 398 500 398 C460 398 430 385 416 360 C396 320 394 250 404 200 C410 170 426 150 430 120 C434 88 460 62 500 62 Z';
-    const FROG_BELLY = 'M500 112 C530 112 552 132 560 160 C574 196 586 250 580 316 C576 354 548 384 500 386 C452 384 424 354 420 316 C414 250 426 196 440 160 C448 132 470 112 500 112 Z';
-    function limb(d, w) { return `<path d="${d}" fill="none" stroke="#3d4a1c" stroke-width="${w + 5}" stroke-linecap="round" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="url(#frogBack)" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="#e8dcb4" stroke-width="${w * 0.5}" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>`; }
-    function fingers(x, y, dir) { return [-40, -10, 18, 44].map((a, i) => { const r = (a + (dir < 0 ? 180 : 0)) * Math.PI / 180, L = 20 + (i === 1 || i === 2 ? 6 : 0); const x2 = x + Math.cos(r) * L * (dir < 0 ? 1 : 1), y2 = y + Math.sin(r) * L; return `<line x1="${x}" y1="${y}" x2="${x2}" y2="${y2}" stroke="#4d5b22" stroke-width="5" stroke-linecap="round"/><circle cx="${x2}" cy="${y2}" r="3" fill="#d6c58f"/>`; }).join(''); }
-    function foot(x, y, dir) {
-      const toes = [-55, -35, -15, 5, 25].map((a, i) => { const r = (90 + a * dir) * Math.PI / 180, L = 38 + i * 6; return [x + Math.cos(r) * L, y + Math.sin(r) * L]; });
-      const web = `M${x} ${y} ` + toes.map(p => `L${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ') + ' Z';
-      return `<path d="${web}" fill="#c9b884" opacity=".75" stroke="#7a6c3a" stroke-width=".8"/>` + toes.map(p => `<line x1="${x}" y1="${y}" x2="${p[0]}" y2="${p[1]}" stroke="#4d5b22" stroke-width="4" stroke-linecap="round"/>`).join('');
-    }
     function sceneDissection() {
       let s = room(520);
       // dissecting tray
@@ -1177,26 +1169,13 @@
       const g = $('frogG'); if (!g) return;
       const F = S.frog, open = F.flaps[0] && F.flaps[1];
       let s = `<ellipse cx="500" cy="300" rx="150" ry="230" fill="#000" opacity=".28" filter="url(#blur3)"/>`;
-      // hind limbs (extended, pinned) and fore limbs
-      s += limb('M455 380 C430 420 410 440 395 470 C388 486 392 496 398 500', 34) + limb('M545 380 C570 420 590 440 605 470 C612 486 608 496 602 500', 34);
-      s += foot(398, 500, 1) + foot(602, 500, -1);
-      s += limb('M438 190 C410 205 385 222 368 246', 20) + limb('M562 190 C590 205 615 222 632 246', 20);
-      s += fingers(366, 250, 1) + fingers(634, 250, -1);
-      // body
-      s += `<path d="${FROG_BODY}" fill="url(#frogBack)" stroke="#2f3a12" stroke-width="2"/>`;
-      s += `<clipPath id="bodyClip"><path d="${FROG_BODY}"/></clipPath><rect x="390" y="60" width="220" height="340" filter="url(#skinF)" clip-path="url(#bodyClip)" opacity=".8"/>`;
-      // dark dorsal blotches visible at the margins and on the limbs
-      [[418, 230, 9, 6], [584, 240, 8, 6], [410, 300, 7, 9], [590, 310, 8, 8], [440, 150, 6, 5], [560, 150, 7, 5], [430, 420, 10, 6], [570, 425, 9, 6], [405, 460, 8, 5], [596, 462, 8, 5], [395, 225, 6, 4], [606, 228, 6, 4]].forEach(([x, y, a, b2]) => s += `<ellipse cx="${x}" cy="${y}" rx="${a}" ry="${b2}" fill="#26300d" opacity=".55"/>`);
+      // belly-up frog, limbs extended for pinning: ../assets/js/animal-art.js
+      s += frogVentralArt('12');
       // eyes at the head margin
       s += `<g class="hot" data-act="eye"><ellipse cx="452" cy="96" rx="15" ry="12" fill="url(#eyeG)" stroke="#1f2a0a"/><ellipse cx="447" cy="91" rx="4" ry="3" fill="#fff" opacity=".6"/></g>
             <ellipse cx="548" cy="96" rx="15" ry="12" fill="url(#eyeG)" stroke="#1f2a0a"/><ellipse cx="543" cy="91" rx="4" ry="3" fill="#fff" opacity=".6"/>`;
       // belly (ventral skin) or opened abdomen
-      if (!open) {
-        s += `<path d="${FROG_BELLY}" fill="url(#belly)"/><clipPath id="bellyClip"><path d="${FROG_BELLY}"/></clipPath><rect x="410" y="110" width="180" height="280" filter="url(#bellyF)" clip-path="url(#bellyClip)"/>`;
-        s += `<path d="M470 120 Q500 135 530 120" fill="none" stroke="#b8a46c" stroke-width="1.2" opacity=".7"/>`;  // jaw line
-        s += [138, 146, 154].map(y => `<path d="M${478 - (y - 138)} ${y} Q500 ${y + 5} ${522 + (y - 138)} ${y}" fill="none" stroke="#c9b88a" stroke-width=".7" opacity=".6"/>`).join('');   // gular folds
-        s += `<ellipse cx="470" cy="230" rx="22" ry="60" fill="#fff" opacity=".16" filter="url(#blur3)"/>`;   // moist sheen
-      } else s += abdomenOpen();
+      if (open) s += abdomenOpen();
       // partially reflected flap
       if (F.flaps[0] && !open) s += `<path d="M500 186 L470 186 Q430 270 470 370 L500 370 Z" fill="#7a2228"/><path d="M470 186 Q400 270 470 370 L452 370 Q380 270 452 186 Z" fill="url(#belly)" stroke="#a8925a"/>`;
       if (F.flaps[1] && !open) s += `<path d="M500 186 L530 186 Q570 270 530 370 L500 370 Z" fill="#7a2228"/><path d="M530 186 Q600 270 530 370 L548 370 Q620 270 548 186 Z" fill="url(#belly)" stroke="#a8925a"/>`;

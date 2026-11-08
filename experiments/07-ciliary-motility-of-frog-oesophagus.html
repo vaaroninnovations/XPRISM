@@ -321,6 +321,7 @@
     </div>
   </div>
 
+  <script src="../assets/js/animal-art.js"></script>
   <script>
     // =====================================================================
     // XPRISM shared simulation toolkit (tabs, sound, stats, charts, viva)
@@ -615,82 +616,7 @@
 
   </script>
   <script>
-    // =====================================================================
-    // Shared realistic rodent art (albino Wistar rat / Swiss albino mouse).
-    // Anatomical silhouettes, strand-textured fur with fuzzy edge, rim light,
-    // veined ears, glossy ruby eyes, whiskers, ringed tail, toed paws.
-    // Side views face +x, top views have the head at +x.  Origin = body centre.
-    // =====================================================================
-    const ANI_DEFS = `
-      <filter id="furStrand" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".55 .08" numOctaves="3" seed="12" result="n"/><feColorMatrix in="n" values="0 0 0 0 .52  0 0 0 0 .46  0 0 0 0 .43  0 0 0 .75 -.2"/><feComposite in2="SourceGraphic" operator="in"/></filter>
-      <filter id="furStrandT" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".12 .6" numOctaves="3" seed="21" result="n"/><feColorMatrix in="n" values="0 0 0 0 .52  0 0 0 0 .46  0 0 0 0 .43  0 0 0 .75 -.2"/><feComposite in2="SourceGraphic" operator="in"/></filter>
-      <filter id="furFuzz" x="-6%" y="-8%" width="112%" height="116%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="3" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
-      <filter id="aniBlur"><feGaussianBlur stdDeviation="1.6"/></filter>
-      <filter id="aniSoft"><feGaussianBlur stdDeviation=".5"/></filter>
-      <linearGradient id="aniBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".4" stop-color="#f7f3f0"/><stop offset=".78" stop-color="#e6ddd9"/><stop offset="1" stop-color="#c9bcb7"/></linearGradient>
-      <linearGradient id="aniBodyT" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#fbf8f6"/><stop offset=".5" stop-color="#f1ebe7"/><stop offset="1" stop-color="#ddd2cd"/></linearGradient>
-      <linearGradient id="aniShade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".6" stop-color="#9a8782" stop-opacity="0"/><stop offset="1" stop-color="#5f4c48" stop-opacity=".38"/></linearGradient>
-      <linearGradient id="aniTail" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#efbdc6"/><stop offset="1" stop-color="#dc98a8"/></linearGradient>
-      <radialGradient id="aniEye" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ff8097"/><stop offset=".5" stop-color="#b3122c"/><stop offset="1" stop-color="#430410"/></radialGradient>
-      <radialGradient id="aniEar" cx=".5" cy=".62" r=".65"><stop offset="0" stop-color="#fcd7df"/><stop offset=".7" stop-color="#f2adbf"/><stop offset="1" stop-color="#e48fa6"/></radialGradient>
-      <linearGradient id="aniPaw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6bcc8"/><stop offset="1" stop-color="#e395a8"/></linearGradient>`;
-
-    const _ANI_SIDE = 'M45 1.5 C42 -2 37 -7 29 -10 C22 -13 14 -16 3 -16.5 C-9 -17 -21 -14.5 -28 -8 C-33 -3 -33 6 -29 11 C-25 15 -17 15.5 -9 15.5 C0 15.5 9 14.5 17 12 C24 10 31 8.5 37 6 C41 4.5 44 3 45 1.5Z';
-    const _ANI_TOP = 'M27 0 C25 -2.4 22 -4.6 18 -5.8 C15 -7 12.5 -8.6 8 -9.4 C1 -10.6 -8 -10.2 -13.5 -7.8 C-18 -5.8 -20.5 -2.8 -20.5 0 C-20.5 2.8 -18 5.8 -13.5 7.8 C-8 10.2 1 10.6 8 9.4 C12.5 8.6 15 7 18 5.8 C22 4.6 25 2.4 27 0Z';
-    const _toes = (x, y, n, len, dx, dy, w = .5) => Array.from({ length: n }, (_, i) => { const a = (i - (n - 1) / 2) * .42; return `<line x1="${x}" y1="${y}" x2="${(x + (dx * Math.cos(a) - dy * Math.sin(a)) * len).toFixed(2)}" y2="${(y + (dx * Math.sin(a) + dy * Math.cos(a)) * len).toFixed(2)}" stroke="#c77a8f" stroke-width="${w}" stroke-linecap="round"/>`; }).join('');
-    const _whisk = (x, y, dir, sc) => [[-9, -14], [-3, -17], [4, -16], [9, -11], [12, -5]].map(([a, b], i) => `<path d="M${x} ${y + (i - 2) * .55 * sc} Q${x + dir * (8 + i) * sc} ${y + (a * .55) * sc} ${x + dir * (19 + i * 1.5) * sc} ${y + b * sc * .8}" fill="none" stroke="#fff" stroke-opacity=".62" stroke-width=".28"/>`).join('');
-
-    // ---- side view. o: {flip, sw (paw swelling 0..1), ink, kind:'rat'|'mouse'}  Returns art only (no marks).
-    function animalSideArt(o = {}) {
-        const mouse = o.kind === 'mouse', sc = mouse ? .47 : 1, sw = o.sw || 0;
-        const pawC = `rgb(${Math.round(240 - 16 * sw)},${Math.round(160 - 70 * sw)},${Math.round(176 - 70 * sw)})`;
-        const tail = mouse ? 'M-30 3 C-48 5 -58 -2 -70 5 C-80 10 -90 8 -96 14' : 'M-30 3 C-44 4 -52 12 -64 10 C-72 9 -76 14 -82 12';
-        const earRot = mouse ? -12 : -20, earS = mouse ? 1.5 : 1;
-        return `<g transform="scale(${sc})">
-        <ellipse cx="2" cy="16.5" rx="${mouse ? 40 : 36}" ry="3.6" fill="#000" opacity=".3" filter="url(#aniBlur)"/>
-        <path d="${tail}" fill="none" stroke="url(#aniTail)" stroke-width="${mouse ? 3.2 : 2.7}" stroke-linecap="round"/>
-        <path d="${tail}" fill="none" stroke="#b97585" stroke-width="${mouse ? 3.2 : 2.7}" stroke-linecap="round" stroke-dasharray=".55 1.5" opacity=".6"/>
-        <g opacity=".85"><path d="M22 10 Q26 14 25 16.6 L31 16.8 Q31 13 28 10Z" fill="#d9a2ae"/><path d="M-20 12 Q-18 16 -16 16.4 L-7 16.6 Q-7 14 -10 12Z" fill="#d9a2ae"/></g>
-        <path d="${_ANI_SIDE}" fill="url(#aniBody)" filter="url(#furFuzz)"/>
-        <path d="${_ANI_SIDE}" fill="#fff" filter="url(#furStrand)" opacity=".85"/>
-        <path d="${_ANI_SIDE}" fill="url(#aniShade)"/>
-        <path d="M-27 -8 C-20 -14.5 -8 -16.8 3 -16.3 C13 -15.8 21 -13.4 28 -10" fill="none" stroke="#fff" stroke-width="1.5" stroke-opacity=".85" filter="url(#aniSoft)"/>
-        <ellipse cx="-15" cy="3" rx="13.5" ry="11.5" fill="#fff" opacity=".28"/><path d="M-27 4 C-26 -4 -20 -9 -13 -9.5" fill="none" stroke="#d8cdc8" stroke-width=".6" opacity=".55"/>
-        <ellipse cx="19" cy="2.5" rx="9" ry="9.5" fill="#fff" opacity=".16"/>
-        <g transform="rotate(${earRot} 23 -12) translate(${(23 * (1 - earS)).toFixed(1)} ${(-13 * (1 - earS)).toFixed(1)}) scale(${earS})"><ellipse cx="23" cy="-14" rx="4.8" ry="6.2" fill="#f4eae6" stroke="#e6d9d4" stroke-width=".4"/><ellipse cx="23.2" cy="-13.6" rx="3.5" ry="4.8" fill="url(#aniEar)"/><path d="M23 -9.5 Q23.4 -13 22.2 -17 M23.8 -10 Q25 -13 25.4 -16" fill="none" stroke="#d2728d" stroke-width=".35" opacity=".65"/></g>
-        <ellipse cx="34" cy="-4.8" rx="2.5" ry="2.25" fill="#3a0a14"/><ellipse cx="34" cy="-4.8" rx="2" ry="1.8" fill="url(#aniEye)"/><circle cx="33.2" cy="-5.6" r=".68" fill="#fff"/><circle cx="35" cy="-4" r=".3" fill="#fff" opacity=".6"/><path d="M31.6 -6.4 Q34 -8 36.5 -6.2" fill="none" stroke="#e5d6d1" stroke-width=".55"/>
-        <ellipse cx="44.6" cy="1.6" rx="2" ry="1.55" fill="#e98aa1"/><circle cx="45.4" cy="1.2" r=".5" fill="#8a2d44"/><path d="M43 4.2 Q40 5.6 37.4 5.3" fill="none" stroke="#b49a98" stroke-width=".4"/>
-        ${_whisk(41, 2.6, 1, 1)}
-        <path d="M17 9 Q23 12 22 15.5 L29 16 Q29 12 26 8.5Z" fill="url(#aniPaw)" opacity=".95"/>${_toes(22.5, 15.7, 3, 4.2, 1, 0.25)}
-        <ellipse cx="-13" cy="14.2" rx="${(6.8 + sw * 3.2).toFixed(1)}" ry="${(2.5 + sw * 1.3).toFixed(1)}" fill="${pawC}"/><ellipse cx="-13" cy="13.6" rx="${(5.4 + sw * 3).toFixed(1)}" ry="${(1.3 + sw * .8).toFixed(1)}" fill="#fff" opacity=".22"/>${_toes(-7.5, 15, 4, 4.4, 1, .18)}
-        ${o.ink ? `<line x1="-18" y1="11" x2="-8" y2="11" stroke="#1e3a8a" stroke-width="1.2"/>` : ''}
-        </g>`;
-    }
-    // ---- top view (head to +x). o: {kind}
-    function animalTopArt(o = {}) {
-        const mouse = o.kind !== 'rat';
-        return `<g transform="scale(.72)">
-        <ellipse cx="0" cy="2.6" rx="24" ry="11" fill="#000" opacity=".26" filter="url(#aniBlur)"/>
-        <path d="M-20 0 C-30 3 -38 -3 -50 2 C-56 5 -60 2 -64 5" fill="none" stroke="url(#aniTail)" stroke-width="2.3" stroke-linecap="round"/>
-        <path d="M-20 0 C-30 3 -38 -3 -50 2 C-56 5 -60 2 -64 5" fill="none" stroke="#b97585" stroke-width="2.3" stroke-linecap="round" stroke-dasharray=".5 1.4" opacity=".6"/>
-        ${[-1, 1].map(s => `<g>
-          <ellipse cx="11" cy="${s * 8.6}" rx="3.3" ry="2" fill="#f1ebe7" stroke="#ddd2cd" stroke-width=".3" transform="rotate(${s * 28} 11 ${s * 8.6})"/>
-          <ellipse cx="13.6" cy="${s * 10.6}" rx="2.2" ry="1.25" fill="url(#aniPaw)" stroke="#d58a9c" stroke-width=".25" transform="rotate(${s * 40} 13.6 ${s * 10.6})"/>
-          <ellipse cx="-9.5" cy="${s * 9.2}" rx="5" ry="3" fill="#f1ebe7" stroke="#ddd2cd" stroke-width=".3" transform="rotate(${s * -18} -9.5 ${s * 9.2})"/>
-          <ellipse cx="-5.4" cy="${s * 11.6}" rx="3.8" ry="1.5" fill="url(#aniPaw)" stroke="#d58a9c" stroke-width=".25" transform="rotate(${s * -14} -5.4 ${s * 11.6})"/>
-          ${_toes(-2.6, s * 11.9, 4, 1.9, .8, s * .2, .3)}${_toes(15.3, s * 11.6, 3, 1.5, .6, s * .7, .3)}
-        </g>`).join('')}
-        <path d="${_ANI_TOP}" fill="url(#aniBodyT)" filter="url(#furFuzz)"/>
-        <path d="${_ANI_TOP}" fill="#fff" filter="url(#furStrandT)" opacity=".85"/>
-        <path d="M-16 0 L16 0" stroke="#d5c9c4" stroke-width=".9" opacity=".35" filter="url(#aniSoft)"/>
-        <ellipse cx="-9" cy="-5.6" rx="8" ry="5" fill="#fff" opacity=".3"/><ellipse cx="-9" cy="5.6" rx="8" ry="5" fill="#fff" opacity=".3"/>
-        <path d="M-18 -4 C-12 -9.4 2 -9.6 9 -8.4" fill="none" stroke="#fff" stroke-width="1.1" stroke-opacity=".7" filter="url(#aniSoft)"/>
-        ${[-1, 1].map(s => `<g><ellipse cx="14.5" cy="${s * 6.4}" rx="3.9" ry="3.3" fill="#f3e9e5" stroke="#e5d8d3" stroke-width=".35"/><ellipse cx="14.7" cy="${s * 6.4}" rx="2.7" ry="2.3" fill="url(#aniEar)"/><path d="M13 ${s * 6.4} Q15 ${s * 6.8} 17 ${s * 6.2}" fill="none" stroke="#d2728d" stroke-width=".3" opacity=".6"/>
-          <ellipse cx="21.4" cy="${s * 3}" rx="1.35" ry="1.2" fill="#3a0a14"/><ellipse cx="21.4" cy="${s * 3}" rx="1.05" ry=".95" fill="url(#aniEye)"/><circle cx="21" cy="${s * 3 - .45}" r=".38" fill="#fff"/></g>`).join('')}
-        <ellipse cx="27" cy="0" rx="1.5" ry="1.3" fill="#e98aa1"/>
-        ${[-1, 1].map(s => [[-12, 5], [-6, 7], [1, 8]].map(([a, b]) => `<path d="M25.5 ${s * 1} Q${31 + b * .3} ${s * (1 + b * .6)} ${34 + b} ${s * (3 + b * 1.5 + a * -.1)}" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width=".26"/>`).join('')).join('')}
-        </g>`;
-    }
+    // Rodent art (ANI_DEFS, animalSideArt, animalTopArt): ../assets/js/animal-art.js
 
     // =====================================================================
     // XPRISM in-vivo bench kit (shared by Exp 21 and Exp 25)
@@ -1130,58 +1056,8 @@
         ${['1  Frog arrives pithed (done by staff).', '2  Pin the four limbs, belly up.', '3  Scissors: cut both mouth angles; forceps lift', '    and remove the lower jaw.', '4  Scissors: slit the oesophagus midline (3 cuts).', '5  Pin the flaps out, mucosa up. Keep it moist!', '6  Mark START and FINISH 20 mm apart.'].map((t, i) => lbl(10, 38 + i * 14, t, { s: 8.4, a: 'start', c: i === 5 ? '#b91c1c' : '#13294f', w: i === 5 ? 700 : 600 })).join('')}</g>`;
       return s;
     }
-    // ---- frog anatomy helpers: a limb is a tapered ribbon along a curve, never a thick line
-    const _frogCurve = (a, b, c, n = 14) => Array.from({ length: n + 1 }, (_, i) => { const t = i / n, u = 1 - t; return [u * u * a[0] + 2 * u * t * b[0] + t * t * c[0], u * u * a[1] + 2 * u * t * b[1] + t * t * c[1]]; });
-    function _frogNormals(p) { return p.map((q, i) => { const a = p[Math.max(0, i - 1)], b = p[Math.min(p.length - 1, i + 1)], dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1; return [-dy / l, dx / l]; }); }
-    function _frogRibbon(p, w0, w1, belly = 0) {
-      const n = _frogNormals(p), w = i => { const t = i / (p.length - 1); return (w0 + (w1 - w0) * t + belly * Math.sin(Math.PI * t)) / 2; };
-      const L = p.map((q, i) => [q[0] + n[i][0] * w(i), q[1] + n[i][1] * w(i)]), R = p.map((q, i) => [q[0] - n[i][0] * w(i), q[1] - n[i][1] * w(i)]).reverse();
-      return 'M' + [...L, ...R].map(q => q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join('L') + 'Z';
-    }
-    function _frogAcross(p, w0, w1, belly, ts, col, sw, op) {
-      const n = _frogNormals(p);
-      return ts.map(t => { const i = Math.round(t * (p.length - 1)), f = i / (p.length - 1), h = (w0 + (w1 - w0) * f + belly * Math.sin(Math.PI * f)) * .3, q = p[i], m = n[i]; return `<path d="M${(q[0] + m[0] * h).toFixed(1)} ${(q[1] + m[1] * h).toFixed(1)}Q${(q[0] + m[0] * h * .1 + (p[Math.min(i + 1, p.length - 1)][0] - q[0]) * .9).toFixed(1)} ${(q[1] + m[1] * h * .1 + (p[Math.min(i + 1, p.length - 1)][1] - q[1]) * .9).toFixed(1)} ${(q[0] - m[0] * h).toFixed(1)} ${(q[1] - m[1] * h).toFixed(1)}" fill="none" stroke="${col}" stroke-width="${sw}" stroke-linecap="round" opacity="${op}"/>`; }).join('');
-    }
-    function _frogFoot(x, y, ang, len, col, web) {
-      const a = [-.42, -.2, 0, .2, .44], l = [.62, .82, 1, 1.18, .86], tips = a.map((d, i) => [x + Math.cos(ang + d) * len * l[i], y + Math.sin(ang + d) * len * l[i]]);
-      return `<path d="M${x.toFixed(1)} ${y.toFixed(1)}L${tips.map(t => t[0].toFixed(1) + ' ' + t[1].toFixed(1)).join('L')}Z" fill="${web}" opacity=".7"/>` + tips.map(t => { const dx = t[0] - x, dy = t[1] - y; return `<path d="${_frogRibbon([[x, y], [x + dx * .5, y + dy * .5], [t[0], t[1]]], 3.6, 1.4)}" fill="${col}"/>`; }).join('');
-    }
-    // ---- the pithed frog, belly up on the wax: pale wet belly, spotted yellow flanks, grey-brown hands and feet
-    const FROG_V_DEFS = `<defs>
-      <radialGradient id="fvBelly" cx=".5" cy=".42" r=".66"><stop offset="0" stop-color="#fbf8ef"/><stop offset=".7" stop-color="#ece6d4"/><stop offset="1" stop-color="#d5cca9"/></radialGradient>
-      <linearGradient id="fvFlank" x1="0" x2="1"><stop offset="0" stop-color="#8f8434"/><stop offset=".2" stop-color="#bfae4e"/><stop offset=".8" stop-color="#bfae4e"/><stop offset="1" stop-color="#8f8434"/></linearGradient>
-      <linearGradient id="fvThigh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7f2e5"/><stop offset=".65" stop-color="#e7dfc8"/><stop offset="1" stop-color="#b9ad80"/></linearGradient>
-      <radialGradient id="fvJaw" cx=".5" cy=".62" r=".7"><stop offset="0" stop-color="#fbf7e8"/><stop offset=".7" stop-color="#ece3b0"/><stop offset="1" stop-color="#c9b95f"/></radialGradient>
-      <linearGradient id="fvRim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6d6a2d"/><stop offset="1" stop-color="#a39a45"/></linearGradient>
-      <filter id="fvWrinkle" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".13 .3" numOctaves="3" seed="4"/><feColorMatrix values="0 0 0 0 .55  0 0 0 0 .5  0 0 0 0 .35  0 0 0 .9 -.36"/><feComposite in2="SourceGraphic" operator="in"/></filter>
-    </defs>`;
-    let _frogV = null;
-    function frogVentral() {
-      if (_frogV) return _frogV;
-      let seed = 31; const rn = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-      const M = (p, s) => s > 0 ? p : p.map(q => [660 - q[0], q[1]]);
-      const spots = (p, w0, w1, belly, n, side) => { const nm = _frogNormals(p); let o = ''; for (let i = 0; i < n; i++) { const k = Math.floor(rn() * p.length), f = k / (p.length - 1), h = ((w0 + (w1 - w0) * f + belly * Math.sin(Math.PI * f)) / 2) * (.72 + rn() * .26) * side; o += `<ellipse cx="${(p[k][0] + nm[k][0] * h).toFixed(1)}" cy="${(p[k][1] + nm[k][1] * h).toFixed(1)}" rx="${(1 + rn() * 2.2).toFixed(1)}" ry="${(.8 + rn() * 1.5).toFixed(1)}" fill="#5a5f2c" opacity="${(.35 + rn() * .35).toFixed(2)}"/>`; } return o; };
-      const hind = s => {
-        const thigh = M(_frogCurve([300, 346], [222, 324], [150, 352]), s), shank = M(_frogCurve([150, 352], [198, 412], [272, 404]), s), foot = M(_frogCurve([272, 404], [212, 416], [152, 386], 8), s), dir = Math.atan2(386 - 412, s > 0 ? -60 : 60);
-        const side = s > 0 ? 1 : -1, end = foot[foot.length - 1];
-        return `<path d="${_frogRibbon(shank, 28, 14, 5)}" fill="url(#fvThigh)"/>${spots(shank, 28, 14, 5, 7, side)}
-          <path d="${_frogRibbon(foot, 15, 8)}" fill="#8a7e74"/><path d="${_frogRibbon(foot, 7, 3)}" fill="#a79a8c" opacity=".7"/>${_frogFoot(end[0], end[1], dir, 30, '#54484a', '#8d8274')}
-          <path d="${_frogRibbon(thigh, 64, 30, 8)}" fill="url(#fvThigh)"/><path d="${_frogRibbon(thigh, 64, 30, 8)}" fill="#fff" filter="url(#fvWrinkle)"/>${spots(thigh, 64, 30, 8, 11, side)}`;
-      };
-      const fore = s => {
-        const arm = M(_frogCurve([268, 208], [214, 232], [196, 200]), s), hand = M(_frogCurve([196, 200], [178, 184], [160, 174], 6), s), dir = s > 0 ? Math.PI * 1.12 : -Math.PI * .12, end = hand[hand.length - 1];
-        return `<path d="${_frogRibbon(arm, 36, 20, 6)}" fill="url(#fvThigh)"/>${spots(arm, 36, 20, 6, 4, s > 0 ? -1 : 1)}<path d="${_frogRibbon(hand, 20, 11)}" fill="#7d7168"/>${_frogFoot(end[0], end[1], dir, 22, '#54484a', '#7d7168')}`;
-      };
-      const flank = 'M262 176 C232 198 218 250 228 306 C238 350 280 374 330 378 C380 374 422 350 432 306 C442 250 428 198 398 176 C368 158 292 158 262 176Z';
-      const belly = 'M268 178 C242 200 230 252 238 304 C248 346 286 370 330 372 C374 370 412 346 422 304 C430 252 418 200 392 178 C364 162 296 162 268 178Z';
-      let fl = ''; for (let i = 0; i < 44; i++) { const s = rn() < .5 ? -1 : 1, y = 190 + rn() * 165, w = 102 + (1 - Math.abs(y - 262) / 120) * 8; fl += `<ellipse cx="${(330 + s * (w - rn() * 12)).toFixed(1)}" cy="${y.toFixed(1)}" rx="${(1.8 + rn() * 3.6).toFixed(1)}" ry="${(1.4 + rn() * 3).toFixed(1)}" fill="#3a4416" opacity="${(.55 + rn() * .4).toFixed(2)}"/>`; }
-      const head = 'M330 40 C372 40 412 78 418 122 C420 148 410 164 396 172 C360 180 300 180 264 172 C250 164 240 148 242 122 C248 78 288 40 330 40Z';
-      const jaw = 'M330 47 C368 47 405 82 411 122 C413 145 404 159 391 166 C358 174 302 174 269 166 C256 159 247 145 249 122 C255 82 292 47 330 47Z';
-      const eye = s => { let d = ''; for (let i = 0; i < 16; i++) d += `<circle cx="${(330 + s * 42 + (rn() - .5) * 26).toFixed(1)}" cy="${(112 + (rn() - .5) * 12).toFixed(1)}" r="${(.5 + rn() * .7).toFixed(1)}" fill="#4d4660" opacity=".7"/>`; return `<ellipse cx="${330 + s * 42}" cy="112" rx="15" ry="7" fill="#a59eb4" opacity=".3"/>${d}`; };
-      return (_frogV = `${FROG_V_DEFS}<g filter="url(#sh2)">${hind(1)}${hind(-1)}${fore(1)}${fore(-1)}<path d="${flank}" fill="url(#fvFlank)"/>${fl}<path d="${belly}" fill="url(#fvBelly)"/><path d="${belly}" fill="#fff" filter="url(#fvWrinkle)"/>
-        <path d="M278 214 C266 252 270 300 292 342" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" opacity=".5"/><path d="M382 214 C394 252 390 300 368 342" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".32"/>
-        <path d="${head}" fill="url(#fvRim)"/><path d="${jaw}" fill="url(#fvJaw)"/><path d="${jaw}" fill="#fff" filter="url(#fvWrinkle)"/>${eye(-1)}${eye(1)}</g>`);
-    }
+    // the pithed frog, belly up on the wax: ../assets/js/animal-art.js
+    const frogVentral = () => `<g filter="url(#sh2)">${frogVentralArt('07')}</g>`;
     function dyn2() {
       if (S.station !== 2) return;
       const F = S.frog, open = F.slit >= 3;
