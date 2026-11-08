@@ -157,5 +157,68 @@
         ${seg(shank, 13, 7.5, 3, 16)}${seg(thigh, 22, 12, 8, 26)}`;
   }
 
-  Object.assign(global, { ANI_DEFS, animalSideArt, animalTopArt, realRabbitHead, realRabbitEye, realGuineaPig, realFrogBody, realFrogLeg, frogVentralArt });
+  // Rendered dissection plates and anatomy references: static/assets/img/frog/.
+  // Bump after replacing a file: nginx caches /assets/ for 30 days.
+  const FROG_VER = 1;
+  const FROG_BASE = new URL('../img/frog/', document.currentScript.src).href;
+  function frogPlateUrl(name) {
+    const url = `${FROG_BASE}${name}.webp?v=${FROG_VER}`;
+    if (!held.has(url)) { const im = new Image(); im.src = url; held.set(url, im); }
+    return url;
+  }
+  // one render of w x h pixels, mapped into the scene by t = {s, x, y}
+  function frogPlate(name, w, h, t, attrs = '') {
+    return `<image href="${frogPlateUrl(name)}" x="${t.x}" y="${t.y}" width="${f2(w * t.s)}" height="${f2(h * t.s)}" preserveAspectRatio="none" decoding="sync" ${attrs}/>`;
+  }
+
+  // Anatomy reference shared by the frog experiments.
+  const ANATOMY = [
+    { tab: 'External', img: 'frog-dorsal-3d', alt: 'Dorsal view of an intact frog', note: 'Dorsal view: moist skin, a pale mid-dorsal stripe, protruding eyes, a tympanum behind each eye and webbed hind feet.' },
+    { tab: 'Body cavity', img: 'frog-internal-anatomy-viscera-3d', alt: 'Frog body cavity opened from the ventral side', note: 'Ventral wall opened: heart, lungs, liver with gall bladder, stomach, coiled intestine, kidney and fat bodies.' },
+    { tab: 'Heart', img: 'frog-heart-in-situ-3d', alt: 'Frog heart in place with the pericardium reflected', note: 'Heart in place with the pericardium reflected: one ventricle, two atria and the branching truncus arteriosus.' }
+  ];
+  let anatomy = null;
+  function buildAnatomy() {
+    const root = document.createElement('div');
+    root.id = 'frogAnatomy';
+    root.style.cssText = 'display:none;position:fixed;inset:0;z-index:60;background:rgba(15,23,42,.8);align-items:center;justify-content:center;padding:16px';
+    root.innerHTML = `<div role="dialog" aria-modal="true" aria-labelledby="faTitle" style="background:#fff;border-radius:16px;width:100%;max-width:56rem;max-height:100%;overflow:auto;padding:20px;box-shadow:0 25px 50px -12px rgba(0,0,0,.5)">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px">
+          <h3 id="faTitle" style="font-size:16px;font-weight:700;color:#1e293b;margin:0">Frog anatomy reference (3D renders)</h3>
+          <button type="button" data-fa="close" aria-label="Close" style="min-width:32px;min-height:32px;border:0;background:none;font-size:18px;color:#64748b;cursor:pointer">✕</button>
+        </div>
+        <div role="tablist" aria-label="Views" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">${ANATOMY.map((a, i) => `<button type="button" role="tab" data-fa="${i}" style="font-size:12px;font-weight:600;padding:6px 12px;border-radius:7px;border:1px solid #cbd5e1;cursor:pointer">${a.tab}</button>`).join('')}</div>
+        <div role="tabpanel"><img data-fa="img" alt="" style="display:block;width:100%;max-height:62vh;object-fit:contain;background:#0b1220;border-radius:10px"><p data-fa="note" style="font-size:12px;line-height:1.5;color:#64748b;margin:10px 0 0;text-align:center"></p></div>
+      </div>`;
+    document.body.appendChild(root);
+    const tabs = [...root.querySelectorAll('[role=tab]')], img = root.querySelector('[data-fa=img]'), note = root.querySelector('[data-fa=note]'), closeBtn = root.querySelector('[data-fa=close]');
+    const box = {
+      root,
+      show(i) {
+        const a = ANATOMY[i];
+        img.src = frogPlateUrl(a.img); img.alt = a.alt; note.textContent = a.note;
+        tabs.forEach((t, n) => { const on = n === i; t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1; t.style.background = on ? '#0a1f44' : '#fff'; t.style.color = on ? '#fff' : '#0a1f44'; });
+      },
+      close() { root.style.display = 'none'; if (box.opener && box.opener.focus) box.opener.focus(); },
+      open() { box.opener = document.activeElement; root.style.display = 'flex'; box.show(0); closeBtn.focus(); }
+    };
+    root.addEventListener('click', e => {
+      if (e.target === root || e.target.closest('[data-fa=close]')) { box.close(); return; }
+      const t = e.target.closest('[role=tab]'); if (t) box.show(+t.dataset.fa);
+    });
+    root.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { box.close(); return; }
+      const tab = e.target.closest('[role=tab]');
+      if (tab && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) { const i = (+tab.dataset.fa + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length; box.show(i); tabs[i].focus(); }
+      if (e.key === 'Tab') {   // keep focus inside the dialog
+        const cur = tabs.find(t => t.tabIndex === 0);
+        if (e.shiftKey && document.activeElement === closeBtn) { e.preventDefault(); cur.focus(); }
+        else if (!e.shiftKey && document.activeElement === cur) { e.preventDefault(); closeBtn.focus(); }
+      }
+    });
+    return box;
+  }
+  function openFrogAnatomy() { (anatomy = anatomy || buildAnatomy()).open(); }
+
+  Object.assign(global, { ANI_DEFS, animalSideArt, animalTopArt, realRabbitHead, realRabbitEye, realGuineaPig, realFrogBody, realFrogLeg, frogVentralArt, frogPlate, frogPlateUrl, openFrogAnatomy });
 })(window);

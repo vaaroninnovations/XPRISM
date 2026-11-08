@@ -45,6 +45,9 @@
     #scene text { pointer-events: none; }
     #scene .hot { cursor: pointer; }
     #scene .hot:hover { filter: drop-shadow(0 0 5px rgba(253,224,71,.95)); }
+    #scene .fplate { transition: opacity .45s ease; }
+    #scene .hring { fill: none; stroke: #fde047; stroke-width: 2; stroke-dasharray: 5 4; opacity: 0; transition: opacity .15s ease; pointer-events: none; }
+    #scene .hot:hover .hring, #scene .pulse .hring { opacity: 1; }
     #scene .pulse { animation: xpulse 1.4s ease-in-out infinite; }
     @keyframes xpulse { 0%,100% { filter: drop-shadow(0 0 2px rgba(56,189,248,.3)); } 50% { filter: drop-shadow(0 0 9px rgba(56,189,248,1)); } }
     .xb-fb { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #0f172a; color: #fff; padding: 8px 14px; font-size: 12px; min-height: 38px; }
@@ -1131,13 +1134,55 @@
     function tubeOK(k) { const t = S.tubes[k]; return t.vol >= 5 && t.mixed && Math.abs(tubeConc(k) / TUBE_DEF[k].conc - 1) < 0.03; }
 
     // ================================================================ STATION 2: DISSECTION
+    // The frog is a stack of rendered plates (../assets/img/frog). The tables below are in each
+    // plate's own pixels and fa() maps them into the scene.
+    const FROG_PX = [1376, 768];
+    const FT = {
+      ventral: { s: .72917, x: -1.67, y: 0 },      // full bleed: the tray and the table it stands on
+      insitu: { s: .79433, x: -46.5, y: -25.4 },   // zoomed to sit inside the render's white border
+      tied: { s: .72917, x: -1.67, y: 0 }
+    };
+    const fa = (k, x, y) => [+(FT[k].x + x * FT[k].s).toFixed(1), +(FT[k].y + y * FT[k].s).toFixed(1)];
+    const fpts = (k, list) => list.map(p => fa(k, p[0], p[1]).join(',')).join(' ');
+    const FROG_EYES = [[613, 100], [760, 100]], FROG_TOES = [[245, 592], [1128, 590]];
+    // each limb's hit zone and the box holding its pins (0, 1 fore; 2, 3 hind)
+    const FROG_LIMBS = [
+      { c: [445, 205], r: 34, box: [395, 122, 135, 170] }, { c: [925, 205], r: 34, box: [845, 122, 130, 178] },
+      { c: [320, 590], r: 40, box: [245, 468, 185, 205] }, { c: [1050, 590], r: 40, box: [940, 452, 190, 228] }
+    ];
+    const CUT = { x: 499, top: 128, bot: 273, need: 125 };   // midline incision in scene units: sternum (top) to pubis (bot)
+    // the two bellies, viewer's left and right of the linea alba; ends are [sternal, pubic]
+    const BELLY = {
+      insitu: {
+        alba: [[740, 277], [630, 455]],
+        L: { mid: [625, 375], ends: [[700, 205], [525, 535]], thread: [[[653, 177], [747, 233]], [[491, 509], [559, 551]]],
+          poly: [[745, 180], [770, 235], [740, 277], [705, 332], [672, 385], [630, 455], [595, 517], [565, 575], [540, 568], [508, 545], [500, 470], [530, 385], [585, 295], [660, 215]] },
+        R: { mid: [745, 430], ends: [[840, 250], [640, 570]], thread: [[[795, 227], [880, 278]], [[600, 549], [680, 591]]],
+          poly: [[845, 220], [885, 280], [890, 315], [820, 410], [765, 515], [710, 560], [620, 590], [580, 580], [595, 517], [630, 455], [672, 385], [705, 332], [740, 277], [770, 235], [790, 222]] }
+      },
+      tied: {
+        alba: [[770, 235], [625, 410]],
+        L: { mid: [620, 340], ends: [[765, 140], [457, 527]],
+          poly: [[735, 112], [795, 120], [815, 172], [770, 235], [720, 290], [675, 345], [625, 410], [565, 490], [525, 540], [490, 570], [445, 552], [430, 500], [450, 470], [475, 430], [520, 350], [580, 260], [635, 205], [705, 160]] },
+        R: { mid: [760, 400], ends: [[901, 200], [582, 582]],
+          poly: [[815, 172], [870, 180], [915, 195], [928, 225], [895, 290], [860, 350], [805, 430], [740, 525], [665, 595], [610, 615], [565, 605], [550, 570], [525, 540], [565, 490], [625, 410], [675, 345], [720, 290], [770, 235]] }
+      }
+    };
+    const frogOpen = F => !!(F.flaps[0] && F.flaps[1]);
+    const frogTied = F => !!(F.belly && F.ties[F.belly][0] && F.ties[F.belly][1]);
+    const hotC = (act, [x, y], r) => `<g class="hot" data-act="${act}"><circle cx="${x}" cy="${y}" r="${r}" fill="#fff" opacity="0"/><circle class="hring" cx="${x}" cy="${y}" r="${r - 2}"/></g>`;
+    const hotR = (act, x, y, w, h) => `<g class="hot" data-act="${act}"><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#fff" opacity="0"/><rect class="hring" x="${x + 1}" y="${y + 1}" width="${w - 2}" height="${h - 2}" rx="7"/></g>`;
+    const hotL = (act, [x1, y1], [x2, y2], w) => `<g class="hot" data-act="${act}"><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#fff" stroke-opacity="0" stroke-width="${w}"/><line class="hring" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/></g>`;
+    const thread = (k, t) => { const [a, b] = t.map(p => fa(k, p[0], p[1])), mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2, xy = `x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"`; return `<line ${xy} stroke="#78716c" stroke-width="3.8" stroke-linecap="round"/><line ${xy} stroke="#fafaf9" stroke-width="2.2" stroke-linecap="round"/><circle cx="${mx}" cy="${my}" r="4.2" fill="#fafaf9" stroke="#78716c" stroke-width=".8"/><path d="M${mx} ${my} q-14 -11 -28 -7" stroke="#fafaf9" stroke-width="1.6" fill="none"/>`; };
+
     function sceneDissection() {
+      const plate = (id, src, k, extra = '') => frogPlate(src, FROG_PX[0], FROG_PX[1], FT[k], `id="${id}" class="fplate" ${extra}`);
       let s = room(520);
-      // dissecting tray
-      s += `<rect x="150" y="30" width="700" height="500" rx="18" fill="url(#steelH)" filter="url(#sh)"/>
-        <rect x="166" y="44" width="668" height="472" rx="12" fill="url(#wax)"/>
-        <rect x="166" y="44" width="668" height="472" rx="12" filter="url(#grain)" opacity=".9"/>
-        ${[[230, 90], [770, 120], [260, 470], [760, 450], [700, 80], [300, 300]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.4" fill="#000" opacity=".5"/>`).join('')}`;
+      s += FROG_LIMBS.map((L, i) => { const [x, y] = fa('ventral', L.box[0], L.box[1]), k = FT.ventral.s; return `<clipPath id="fpLimb${i}"><rect x="${x}" y="${y}" width="${L.box[2] * k}" height="${L.box[3] * k}"/></clipPath>`; }).join('');
+      s += plate('fp_ventral', 'frog-ventral-unpinned-3d', 'ventral');
+      s += FROG_LIMBS.map((L, i) => plate('fp_pin' + i, 'frog-ventral-pinned-3d', 'ventral', `clip-path="url(#fpLimb${i})" style="opacity:0"`)).join('');
+      s += plate('fp_insitu', 'frog-rectus-abdominis-in-situ-3d', 'insitu', 'style="opacity:0"');
+      s += plate('fp_tied', 'frog-rectus-abdominis-prepared-3d', 'tied', 'style="opacity:0"');
       s += `<g id="frogG"></g>`;
       // instrument tray
       s += `<g>
@@ -1160,74 +1205,79 @@
         <ellipse id="dishLiq" cx="929" cy="472" rx="50" ry="24" fill="#cfeaf5" opacity="0"/>
         <ellipse cx="929" cy="466" rx="56" ry="27" fill="none" stroke="#fff" stroke-opacity=".5"/>
         <g id="dishTissue"></g>
-      </g>${lbl(929, 518, 'Petri dish (Ringer)', { c: '#cbd5e1' })}`;
-      s += lbl(184, 66, `Frog no. <tspan id="frogNo">${S.frog.n}</tspan>`, { a: 'start', c: '#e7e5e4', s: 11 }) + lbl(184, 81, 'Rana tigrina • pithed', { a: 'start', c: '#a8a29e', s: 9, w: 500 });
+      </g><rect x="866" y="506" width="126" height="18" rx="9" fill="#0f172a" opacity=".78"/>${lbl(929, 519, 'Petri dish (Ringer)', { c: '#f1f5f9', s: 9.5 })}`;
+      s += `<rect x="14" y="12" width="176" height="42" rx="8" fill="#0f172a" opacity=".78"/>` + lbl(26, 30, `Frog no. <tspan id="frogNo">${S.frog.n}</tspan>`, { a: 'start', c: '#f1f5f9', s: 11 }) + lbl(26, 45, 'Hoplobatrachus tigerinus • pithed', { a: 'start', c: '#cbd5e1', s: 9, w: 500 });
       s += `<g id="cutLayer"></g><rect id="dragPad" x="420" y="150" width="160" height="260" fill="#fff" opacity="0" style="display:none"/>`;
       return s;
     }
+    // Fading a plate in over the one below it: lower plates stay put, so nothing dips through to the room.
+    function setFrogPlates() {
+      const F = S.frog, open = frogOpen(F), show = { fp_insitu: open, fp_tied: open && frogTied(F) };
+      F.pins.forEach((p, i) => { show['fp_pin' + i] = !!p; });
+      Object.entries(show).forEach(([id, on]) => { const e = $(id); if (e) e.style.opacity = on ? 1 : 0; });
+    }
     function drawFrog() {
       const g = $('frogG'); if (!g) return;
-      const F = S.frog, open = F.flaps[0] && F.flaps[1];
-      let s = `<ellipse cx="500" cy="300" rx="150" ry="230" fill="#000" opacity=".28" filter="url(#blur3)"/>`;
-      // belly-up frog, limbs extended for pinning: ../assets/js/animal-art.js
-      s += frogVentralArt('12');
-      // eyes at the head margin
-      s += `<g class="hot" data-act="eye"><ellipse cx="452" cy="96" rx="15" ry="12" fill="url(#eyeG)" stroke="#1f2a0a"/><ellipse cx="447" cy="91" rx="4" ry="3" fill="#fff" opacity=".6"/></g>
-            <ellipse cx="548" cy="96" rx="15" ry="12" fill="url(#eyeG)" stroke="#1f2a0a"/><ellipse cx="543" cy="91" rx="4" ry="3" fill="#fff" opacity=".6"/>`;
-      // belly (ventral skin) or opened abdomen
-      if (open) s += abdomenOpen();
-      // partially reflected flap
-      if (F.flaps[0] && !open) s += `<path d="M500 186 L470 186 Q430 270 470 370 L500 370 Z" fill="#7a2228"/><path d="M470 186 Q400 270 470 370 L452 370 Q380 270 452 186 Z" fill="url(#belly)" stroke="#a8925a"/>`;
-      if (F.flaps[1] && !open) s += `<path d="M500 186 L530 186 Q570 270 530 370 L500 370 Z" fill="#7a2228"/><path d="M530 186 Q600 270 530 370 L548 370 Q620 270 548 186 Z" fill="url(#belly)" stroke="#a8925a"/>`;
-      // incision line
-      if (F.cutPath.length && !open) s += F.cutPath.map(([a, b]) => `<line x1="500" x2="500" y1="${a}" y2="${b}" stroke="#7f1d1d" stroke-width="2.4" stroke-linecap="round"/>`).join('');
-      if (F.lifted && !F.cut) s += `<path d="M490 370 Q500 358 510 370" fill="#e6d6aa" stroke="#a8925a"/><path d="M492 352 L500 368 L508 352" fill="none" stroke="#9ca3af" stroke-width="2.5"/>`;
-      // pins
-      const pinAt = [[372, 236], [628, 236], [406, 512], [594, 512]];
-      F.pins.forEach((p, i) => { if (p) s += pin(...pinAt[i], ['#dc2626', '#2563eb', '#16a34a', '#eab308'][i]); });
-      if (open) [[440, 210], [560, 210], [440, 350], [560, 350]].forEach(([x, y], i) => s += pin(x + (x < 500 ? -22 : 22), y, '#e5e7eb'));
-      // hit zones
-      s += `<rect class="hot" data-act="toe" x="384" y="500" width="34" height="50" fill="#fff" opacity="0"/>`;
-      if (F.tool === 'pins') pinAt.forEach((p, i) => { if (!F.pins[i]) s += `<circle class="hot" data-act="pin:${i}" cx="${p[0]}" cy="${p[1]}" r="18" fill="#fff" opacity="0"/>`; });
-      if (!F.cut) s += `<rect class="hot" data-act="lift" x="482" y="352" width="36" height="30" fill="#fff" opacity="0"/>`;
-      if (F.cut >= 1 && !open) { s += `<rect class="hot" data-act="flap:0" x="430" y="200" width="66" height="160" fill="#fff" opacity="0"/><rect class="hot" data-act="flap:1" x="504" y="200" width="66" height="160" fill="#fff" opacity="0"/>`; }
+      const F = S.frog, open = frogOpen(F);
+      setFrogPlates();
+      let s = open ? abdomenOpen() : skinOverlay();
+      if (!open) {
+        s += FROG_EYES.map(p => hotC('eye', fa('ventral', p[0], p[1]), 15)).join('');
+        s += FROG_TOES.map(p => hotC('toe', fa('ventral', p[0], p[1]), 30)).join('');
+        if (F.tool === 'pins') FROG_LIMBS.forEach((L, i) => { if (!F.pins[i]) s += hotC('pin:' + i, fa('ventral', L.c[0], L.c[1]), L.r); });
+        if (!F.cut) s += hotR('lift', CUT.x - 23, CUT.bot - 19, 46, 32);
+        if (F.cut >= 1) { if (!F.flaps[0]) s += hotR('flap:0', CUT.x - 58, CUT.top + 6, 52, CUT.bot - CUT.top - 12); if (!F.flaps[1]) s += hotR('flap:1', CUT.x + 6, CUT.top + 6, 52, CUT.bot - CUT.top - 12); }
+      }
       g.innerHTML = s;
       const dish = $('dishLiq'); if (dish) dish.setAttribute('opacity', ringerReady() ? .7 : 0);
       const dt = $('dishTissue'); if (dt) dt.innerHTML = F.inDish ? `<path d="M904 470 Q929 462 954 470 Q929 480 904 470 Z" fill="url(#muscle)" stroke="#7c1820"/><line x1="904" y1="470" x2="886" y2="462" stroke="#f5f5f4" stroke-width="1.4"/><line x1="954" y1="470" x2="972" y2="462" stroke="#f5f5f4" stroke-width="1.4"/>` : '';
       $('frogNo') && ($('frogNo').textContent = F.n);
       const th = $('toolHalo'); if (th) { const yy = { forceps: 72, scissors: 140, pins: 208, thread: 276 }[F.tool]; th.innerHTML = yy ? `<rect x="876" y="${yy}" width="106" height="64" rx="7" fill="none" stroke="#f59e0b" stroke-width="2.5"/>` : ''; }
     }
-    function pin(x, y, c) { return `<g filter="url(#sh2)"><line x1="${x}" y1="${y}" x2="${x + 4}" y2="${y - 22}" stroke="#d1d5db" stroke-width="1.6"/><circle cx="${x + 4}" cy="${y - 23}" r="4.5" fill="${c}"/><circle cx="${x + 3}" cy="${y - 24.5}" r="1.4" fill="#fff" opacity=".7"/></g>`; }
-    function bellyPath(side, lift) {
-      const x0 = side === 'L' ? 472 : 503, x1 = side === 'L' ? 497 : 528, dy = lift ? -4 : 0;
-      return `M${x0 + 4} ${190 + dy} Q${(x0 + x1) / 2} ${184 + dy} ${x1} ${190 + dy} L${x1} ${368 + dy} Q${(x0 + x1) / 2} ${376 + dy} ${x0 + 3} ${368 + dy} Q${x0 - 3} ${280 + dy} ${x0 + 4} ${190 + dy} Z`;
+    // the intact belly: tented skin, the midline cut and any flap already folded back
+    function skinOverlay() {
+      const F = S.frog, mid = (CUT.top + CUT.bot) / 2; let s = '';
+      [0, 1].forEach(i => {
+        if (!F.flaps[i]) return;
+        const sgn = i ? 1 : -1, gape = `M${CUT.x} ${CUT.top} Q${CUT.x + sgn * 64} ${mid} ${CUT.x} ${CUT.bot} Z`;
+        s += `<clipPath id="fpGape${i}"><path d="${gape}"/></clipPath>${frogPlate('frog-rectus-abdominis-in-situ-3d', FROG_PX[0], FROG_PX[1], { s: .35, x: CUT.x - 241.5, y: CUT.top - 61.3 }, `clip-path="url(#fpGape${i})"`)}`;
+        s += `<path d="M${CUT.x} ${CUT.top} Q${CUT.x + sgn * 86} ${mid} ${CUT.x} ${CUT.bot} Q${CUT.x + sgn * 66} ${mid} ${CUT.x} ${CUT.top} Z" fill="#ded5ae" stroke="#9f8d58" stroke-width="1"/>`;
+      });
+      if (F.cutPath.length) s += F.cutPath.map(([a, b]) => `<line x1="${CUT.x}" x2="${CUT.x}" y1="${a}" y2="${b}" stroke="#7f1d1d" stroke-width="2.4" stroke-linecap="round"/>`).join('');
+      if (F.lifted && !F.cut) {
+        s += `<g transform="translate(0 -99)"><path d="M490 370 Q500 358 510 370" fill="#e6d6aa" stroke="#a8925a"/><path d="M492 352 L500 368 L508 352" fill="none" stroke="#9ca3af" stroke-width="2.5"/></g>`;
+        if (F.tool === 'scissors' && HINTS) s += `<line x1="${CUT.x}" x2="${CUT.x}" y1="${CUT.top}" y2="${CUT.bot}" stroke="#fde047" stroke-width="1.6" stroke-dasharray="5 5" pointer-events="none"/>`;
+      }
+      return s;
     }
     function abdomenOpen() {
-      const F = S.frog; let s = '';
-      // reflected skin flaps pinned out
-      s += `<path d="M470 150 Q392 270 452 392 L420 392 Q360 270 440 150 Z" fill="url(#belly)" stroke="#a8925a"/><path d="M530 150 Q608 270 548 392 L580 392 Q640 270 560 150 Z" fill="url(#belly)" stroke="#a8925a"/>`;
-      s += `<path d="M470 150 Q440 270 452 392 L548 392 Q560 270 530 150 Z" fill="#8c2a2e"/>`;               // obliques / body wall
-      s += `<path d="M470 150 Q440 270 452 392 L548 392 Q560 270 530 150 Z" filter="url(#musF)" opacity=".8"/>`;
-      s += `<path d="M478 170 Q500 160 522 170 L522 186 L478 186 Z" fill="#e8e1d0" opacity=".85"/>`;         // xiphisternum
+      const F = S.frog, k = frogTied(F) ? 'tied' : 'insitu', T = BELLY[k]; let s = '';
       ['L', 'R'].forEach(side => {
-        if (F.free && F.belly === side) return;
-        const ruined = F.ruined[side];
-        s += `<path d="${bellyPath(side)}" fill="${ruined ? '#5b1218' : 'url(#muscle)'}" stroke="#6b1219" stroke-width="1"/>`;
-        if (!ruined) [228, 268, 310].forEach(y => s += `<path d="M${side === 'L' ? 473 : 504} ${y} Q${side === 'L' ? 485 : 516} ${y + 3} ${side === 'L' ? 497 : 528} ${y}" stroke="#f1e6d6" stroke-width="2.2" fill="none" opacity=".85"/>`);
-        else s += `<text x="${side === 'L' ? 485 : 516}" y="285" font-size="7" fill="#fecaca" text-anchor="middle" transform="rotate(-90 ${side === 'L' ? 485 : 516} 285)">retracted</text>`;
-        const t = F.ties[side];
-        if (t[0]) s += `<path d="M${side === 'L' ? 470 : 501} 194 L${side === 'L' ? 499 : 530} 194" stroke="#fafaf9" stroke-width="2.6"/><path d="M${side === 'L' ? 485 : 516} 194 l-4 -18" stroke="#fafaf9" stroke-width="1.4" fill="none"/>`;
-        if (t[1]) s += `<path d="M${side === 'L' ? 470 : 501} 364 L${side === 'L' ? 499 : 530} 364" stroke="#fafaf9" stroke-width="2.6"/><path d="M${side === 'L' ? 485 : 516} 364 l-4 22" stroke="#fafaf9" stroke-width="1.4" fill="none"/>`;
-        s += `<rect class="hot" data-act="end:${side}0" x="${side === 'L' ? 468 : 500}" y="182" width="32" height="22" fill="#fff" opacity="0"/><rect class="hot" data-act="end:${side}1" x="${side === 'L' ? 468 : 500}" y="354" width="32" height="22" fill="#fff" opacity="0"/>`;
+        const B = T[side], [cx, cy] = fa(k, B.mid[0], B.mid[1]);
+        if (F.ruined[side]) s += `<polygon points="${fpts(k, B.poly)}" fill="#1c0507" opacity=".62" filter="url(#blur3)"/><rect x="${cx - 32}" y="${cy - 11}" width="64" height="16" rx="8" fill="#450a0a" opacity=".85"/>${lbl(cx, cy + 1, 'retracted', { s: 9.5, c: '#fecaca', w: 700 })}`;
+        if (k === 'insitu') B.thread.forEach((t, end) => { if (F.ties[side][end]) s += thread(k, t); });
       });
-      s += `<line x1="500" y1="186" x2="500" y2="372" stroke="#f5efe2" stroke-width="3"/>`;   // linea alba
-      s += `<rect class="hot" data-act="alba" x="494" y="220" width="12" height="120" fill="#fff" opacity="0"/>`;
-      if (F.cuts[0]) s += `<line x1="466" y1="176" x2="534" y2="176" stroke="#450a0a" stroke-width="1.5" stroke-dasharray="3 2"/>`;
-      if (F.cuts[1]) s += `<line x1="466" y1="382" x2="534" y2="382" stroke="#450a0a" stroke-width="1.5" stroke-dasharray="3 2"/>`;
-      if (F.free && !F.inDish && F.belly) {
-        s += `<g class="hot" data-act="muscle" filter="url(#sh)" transform="translate(${F.belly === 'L' ? -60 : 60} 0)"><path d="${bellyPath(F.belly, true)}" fill="url(#muscle)" stroke="#6b1219"/>${[228, 268, 310].map(y => `<path d="M${F.belly === 'L' ? 473 : 504} ${y - 4} Q${F.belly === 'L' ? 485 : 516} ${y - 1} ${F.belly === 'L' ? 497 : 528} ${y - 4}" stroke="#f1e6d6" stroke-width="2" fill="none"/>`).join('')}
-          <path d="M${F.belly === 'L' ? 485 : 516} 186 l-4 -22 M${F.belly === 'L' ? 485 : 516} 368 l-4 24" stroke="#fafaf9" stroke-width="1.5"/></g>`;
-        s += `<path d="${bellyPath(F.belly)}" fill="#3f0d10" opacity=".9"/>`;
+      if (k === 'tied' && !F.free) {
+        const B = T[F.belly], [cx, cy] = fa(k, B.mid[0], B.mid[1]);
+        s += `<rect x="${cx - 32}" y="${cy - 10}" width="64" height="16" rx="8" fill="#0f172a" opacity=".72"/>${lbl(cx, cy + 2, 'this belly', { s: 9.5, c: '#fef3c7', w: 700 })}`;
+        // scissor cuts, just outside each knot
+        B.ends.forEach((c, end) => {
+          if (!F.cuts[end]) return;
+          const out = end ? [-.55, .83] : [.55, -.83], [ax, ay] = fa(k, c[0] + out[0] * 24 - 35, c[1] + out[1] * 24 - 23), [bx, by] = fa(k, c[0] + out[0] * 24 + 35, c[1] + out[1] * 24 + 23);
+          s += `<line x1="${ax}" y1="${ay}" x2="${bx}" y2="${by}" stroke="#450a0a" stroke-width="2" stroke-dasharray="3 2"/>`;
+        });
+        if (F.cuts[2]) { const [a, b] = T.alba.map(p => fa(k, p[0], p[1])); s += `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#450a0a" stroke-width="2" stroke-dasharray="3 2"/>`; }
+      }
+      if (F.free && F.belly) {
+        const B = T[F.belly], pts = fpts(k, B.poly);
+        s += `<polygon points="${pts}" fill="#1c0507" opacity=".62" filter="url(#blur3)"/>`;
+        if (!F.inDish) {
+          const [dx, dy] = F.belly === 'L' ? [-100, -44] : [92, 40];
+          s += `<clipPath id="fpMuscle"><polygon points="${pts}"/></clipPath><g class="hot" data-act="muscle" filter="url(#sh)" transform="translate(${dx} ${dy})">${frogPlate('frog-rectus-abdominis-prepared-3d', FROG_PX[0], FROG_PX[1], FT.tied, 'clip-path="url(#fpMuscle)"')}</g>`;
+        }
+      } else {
+        ['L', 'R'].forEach(side => T[side].ends.forEach((c, end) => { s += hotC(`end:${side}${end}`, fa(k, c[0], c[1]), 22); }));
+        s += hotL('alba', fa(k, T.alba[0][0], T.alba[0][1]), fa(k, T.alba[1][0], T.alba[1][1]), 20);
       }
       return s;
     }
@@ -1283,25 +1333,25 @@
       if (S.station !== 2) return;
       const F = S.frog; if (F.cut || F.tool !== 'scissors') return;
       const p = svgPoint($('scene'), e);
-      if (Math.abs(p.x - 500) > 26 || p.y < 170 || p.y > 390) return;
+      if (Math.abs(p.x - CUT.x) > 26 || p.y < CUT.top - 14 || p.y > CUT.bot + 18) return;
       if (!F.lifted) { say('Lift the skin with the forceps first, or you will cut straight into the muscle.', true); return; }
       _drag = { y: p.y }; e.preventDefault();
     }
     function dissectMove(e) {
       if (!_drag) return;
       const p = svgPoint($('scene'), e), F = S.frog;
-      if (Math.abs(p.x - 500) > 30) { say('Keep the cut in the midline.', true); _drag = null; return; }
-      const a = Math.max(188, Math.min(_drag.y, p.y)), b = Math.min(372, Math.max(_drag.y, p.y));
+      if (Math.abs(p.x - CUT.x) > 30) { say('Keep the cut in the midline.', true); _drag = null; return; }
+      const a = Math.max(CUT.top, Math.min(_drag.y, p.y)), b = Math.min(CUT.bot, Math.max(_drag.y, p.y));
       F.cutPath.push([a, b]); _drag.y = p.y;
       // coverage
       const segs = F.cutPath.slice().sort((u, v) => u[0] - v[0]); let cov = 0, cur = null;
       segs.forEach(([u, v]) => { if (!cur) cur = [u, v]; else if (u <= cur[1]) cur[1] = Math.max(cur[1], v); else { cov += cur[1] - cur[0]; cur = [u, v]; } });
       if (cur) cov += cur[1] - cur[0];
-      if (cov > 160) { F.cut = 1; _drag = null; beep('ok'); say('Midline skin incision made from pubis to sternum. Reflect each skin flap with the forceps.'); refreshChecklist(); }
+      if (cov > CUT.need) { F.cut = 1; _drag = null; beep('ok'); say('Midline skin incision made from pubis to sternum. Reflect each skin flap with the forceps.'); refreshChecklist(); }
       drawFrog();
     }
     function dissectUp() { _drag = null; }
-    function newFrog() { const n = S.frog.n + 1; S.frog = Object.assign(freshState().frog, { n }); say(`Frog no. ${n} brought from the animal house (Reduction: try to succeed with this one).`); drawFrog(); renderCtx(); refreshChecklist(); }
+    function newFrog() { const n = S.frog.n + 1; S.frog = Object.assign(freshState().frog, { n }); say(`Frog no. ${n} issued (Reduction: each new frog is another animal used, so try to succeed with this one).`); drawFrog(); renderCtx(); refreshChecklist(); }
     // ================================================================ STATION 3: ORGAN BATH & KYMOGRAPH
     const BX = 330, BW = 80, BTOP = 250, BBOT = 440;           // bath geometry
     const levelY = L => BBOT - 4 - L * 7.2;                      // 25 mL → y 256
@@ -1734,6 +1784,7 @@
         h = `<b>In hand:</b> ${F.tool ? { forceps: 'forceps', scissors: 'fine scissors', pins: 'dissecting pins', thread: 'cotton thread' }[F.tool] : 'nothing (pick an instrument)'}
           <p style="color:#64748b;margin-top:6px">${F.tool === 'scissors' && F.lifted && !F.cut ? 'Press and <b>drag</b> along the midline from the pubis up to the sternum.' : 'Click the frog where the instrument should act.'}</p>
           <p style="margin-top:6px">Frogs used: <b>${F.n}</b>${F.ruined.L && F.ruined.R ? '' : ''}</p>
+          <div class="row"><button class="xb-btn sec" onclick="openFrogAnatomy()">Frog anatomy reference</button></div>
           ${F.ruined.L && F.ruined.R ? `<div class="row"><button class="xb-btn warn" onclick="newFrog()">Take a new frog</button></div>` : ''}`;
       } else {
         t = 'Organ bath & kymograph';

@@ -45,6 +45,9 @@
     #scene text { pointer-events: none; }
     #scene .hot { cursor: pointer; }
     #scene .hot:hover { filter: drop-shadow(0 0 5px rgba(253,224,71,.95)); }
+    #scene .fplate { transition: opacity .45s ease; }
+    #scene .hring { fill: none; stroke: #fde047; stroke-width: 2; stroke-dasharray: 5 4; opacity: 0; transition: opacity .15s ease; pointer-events: none; }
+    #scene .hot:hover .hring, #scene .pulse .hring { opacity: 1; }
     #scene .pulse { animation: xpulse 1.4s ease-in-out infinite; }
     @keyframes xpulse { 0%,100% { filter: drop-shadow(0 0 2px rgba(56,189,248,.3)); } 50% { filter: drop-shadow(0 0 9px rgba(56,189,248,1)); } }
     .xb-fb { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #0f172a; color: #fff; padding: 8px 14px; font-size: 12px; min-height: 38px; }
@@ -173,7 +176,7 @@
         <div class="grid md:grid-cols-2 gap-4">
           <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
             <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Requirements</h4>
-            <ul class="text-xs text-slate-600 space-y-1 list-disc pl-4"><li>Frog (Rana tigrina), pithed by trained staff (brain and spinal cord destroyed) as approved by the IAEC / CCSEA</li><li>Dissection board, pins, scissors, forceps, frog Ringer solution, dropper</li><li>Poppy seeds, stop-watch, scale (marks 20 mm apart)</li><li>Acetylcholine 100 &micro;g/mL, physostigmine 1 mg/mL, atropine sulphate 1 mg/mL</li></ul>
+            <ul class="text-xs text-slate-600 space-y-1 list-disc pl-4"><li>Frog (<i>Hoplobatrachus tigerinus</i>, formerly <i>Rana tigrina</i>), pithed by trained staff (brain and spinal cord destroyed) as approved by the IAEC / CCSEA</li><li>Dissection board, pins, scissors, forceps, frog Ringer solution, dropper</li><li>Poppy seeds, stop-watch, scale (marks 20 mm apart)</li><li>Acetylcholine 100 &micro;g/mL, physostigmine 1 mg/mL, atropine sulphate 1 mg/mL</li></ul>
           </div>
           <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
             <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Procedure</h4>
@@ -1032,8 +1035,23 @@
   <script>
     // ================================================================ STATION 2: frog preparation (pinned, jaw removed, oesophagus opened, marked)
     // The frog arrives already pithed by trained staff (IAEC / CCSEA); everything drawn here is neutral anatomy.
-    const LIMB_PIN = [[142, 170], [520, 170], [138, 380], [524, 380]], FLAP_PIN = [[262, 214], [398, 214], [262, 324], [398, 324]];
-    const pinArt = (x, y, c = '#facc15') => `<g filter="url(#sh2)"><line x1="${x}" y1="${y}" x2="${x + 4}" y2="${y - 24}" stroke="url(#steel)" stroke-width="1.8"/><circle cx="${x + 4}" cy="${y - 25}" r="4.6" fill="${c}" stroke="#a16207" stroke-width=".6"/><circle cx="${x + 2.8}" cy="${y - 26.4}" r="1.4" fill="#fff" opacity=".8"/></g>`;
+    // The frog is a stack of rendered plates (../assets/img/frog). The tables below are in each
+    // plate's own pixels; va() maps the pinned-frog render and oa() the opened-oesophagus render into the scene.
+    const VE = { s: .55, x: -47.3, y: 16 }, OE = { s: .48333, x: 40, y: 10.5 };
+    const va = (x, y) => [+(VE.x + x * VE.s).toFixed(1), +(VE.y + y * VE.s).toFixed(1)], oa = (x, y) => [+(OE.x + x * OE.s).toFixed(1), +(OE.y + y * OE.s).toFixed(1)];
+    const ptsOf = (f, list) => list.map(p => f(p[0], p[1]).join(',')).join(' ');
+    const LIMB_PIN = [[445, 205], [925, 205], [320, 590], [1050, 590]].map(p => va(p[0], p[1])), FLAP_PIN = [[345, 345], [865, 345], [325, 470], [880, 470]].map(p => oa(p[0], p[1]));
+    const LIMB_BOX = [[395, 122, 135, 170], [845, 122, 130, 178], [245, 468, 185, 205], [940, 452, 190, 228]];
+    // the real pins of each flap in the full render: shaft ends, head first
+    const FLAP_SHAFTS = [[[369, 219, 405, 320], [301, 312, 365, 418]], [[857, 225, 815, 329], [927, 309, 860, 417]], [[296, 417, 350, 488], [275, 500, 368, 512]], [[916, 421, 858, 492], [925, 501, 838, 511]]];
+    const TRAY_EDGE = [[358, 66], [625, 66], [640, 50], [680, 36], [725, 50], [745, 66], [1000, 66], [1198, 672], [1150, 752], [215, 752], [168, 670]];
+    const FLAP_EDGE = [[495, 228], [440, 262], [410, 305], [375, 365], [345, 440], [338, 470], [365, 520], [420, 590], [480, 660], [540, 715], [600, 775], [660, 715], [720, 655], [780, 590], [830, 525], [875, 480], [868, 435], [845, 375], [815, 320], [770, 275], [715, 240], [690, 225], [640, 290], [600, 302], [560, 290], [530, 240]];
+    const MOUTH_EDGE = [[600, 58], [560, 68], [520, 100], [490, 140], [470, 190], [462, 228], [500, 236], [520, 262], [545, 292], [600, 304], [655, 292], [680, 262], [700, 236], [738, 228], [730, 190], [710, 140], [680, 100], [640, 68]];
+    const MARK_START = [[377, 379], [420, 375], [470, 379], [500, 384], [545, 391], [575, 406], [620, 406], [650, 394], [695, 384], [740, 377], [800, 373], [840, 384]];
+    const MARK_FINISH = [[362, 472], [425, 469], [470, 475], [530, 479], [572, 496], [620, 496], [670, 479], [735, 470], [800, 468], [843, 479]], MARK_PX_MM = 4.65;
+    const MOUTH_ANGLE = [va(596, 150), va(770, 150)], SLIT = { x: va(686, 0)[0], y0: va(0, 200)[1], y1: va(0, 380)[1] };
+    const hotC = (act, x, y, r) => `<g class="hot" data-act="${act}"><circle cx="${x}" cy="${y}" r="${r}" fill="#fde047" opacity=".001"/><circle class="hring" cx="${x}" cy="${y}" r="${r - 2}"/></g>`;
+    const frogTag = (x, y, t) => { const w = t.length * 5.2 + 12; return `<g pointer-events="none"><rect x="${x - w / 2}" y="${y - 10}" width="${w}" height="15" rx="7.5" fill="#0f172a" opacity=".72"/>${lbl(x, y + 1, t, { s: 8.5, c: '#fef3c7', w: 700 })}</g>`; };
     function limbPath(d, w) { return `<path d="${d}" fill="none" stroke="#2f3a12" stroke-width="${w + 4}" stroke-linecap="round" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="url(#frogSkin)" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="#efe6bf" stroke-width="${w * .42}" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/><path d="${d}" fill="none" stroke="url(#skinTex)" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" opacity=".35" filter="url(#skinF)"/>`; }
     function toes(x, y, ang, n) { return Array.from({ length: n }, (_, i) => { const a = (ang + (i - (n - 1) / 2) * 24) * Math.PI / 180, L = 26; return `<line x1="${x}" y1="${y}" x2="${(x + Math.cos(a) * L).toFixed(1)}" y2="${(y + Math.sin(a) * L).toFixed(1)}" stroke="#4d5b22" stroke-width="5" stroke-linecap="round"/><circle cx="${(x + Math.cos(a) * L).toFixed(1)}" cy="${(y + Math.sin(a) * L).toFixed(1)}" r="3" fill="#dcd0a0"/>`; }).join(''); }
     function sceneFrog() {
@@ -1044,6 +1062,18 @@
         <filter id="waxF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".05 .7" numOctaves="3" seed="2"/><feColorMatrix values="0 0 0 0 .3  0 0 0 0 .3  0 0 0 0 .32  0 0 0 .5 0"/></filter>
         <filter id="wetF" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".03 .05" numOctaves="2" seed="9" result="n"/><feSpecularLighting in="n" surfaceScale="4" specularConstant=".9" specularExponent="22" lighting-color="#fff" result="sp"><fePointLight x="200" y="40" z="80"/></feSpecularLighting><feComposite in="sp" in2="SourceGraphic" operator="in"/></filter></defs>`;
       s += `<g filter="url(#sh)"><rect x="40" y="26" width="580" height="402" rx="10" fill="#1d2430" stroke="#4b5563" stroke-width="3"/><rect x="40" y="26" width="580" height="402" rx="10" fill="#0f141c" opacity=".45"/><rect x="40" y="26" width="580" height="402" rx="10" filter="url(#waxF)"/></g>${lbl(330, 446, 'Dissection board (black wax)', { c: '#cbd5e1', s: 9 })}`;
+      // The stacked plates. Layers only ever fade in over the one below them.
+      const vPlate = (id, src, extra = '') => frogPlate(src, 1376, 768, VE, `id="${id}" class="fplate" ${extra}`);
+      const oPlate = (id, src, extra = '') => frogPlate(src, 1200, 896, OE, `id="${id}" class="fplate" ${extra}`);
+      const quad = ([x1, y1, x2, y2], w = 8) => { const a = oa(x1, y1), b = oa(x2, y2), L = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1, nx = -(b[1] - a[1]) / L * w * OE.s, ny = (b[0] - a[0]) / L * w * OE.s, ex = (b[0] - a[0]) / L * 7, ey = (b[1] - a[1]) / L * 7; return `<polygon points="${a[0] - ex + nx},${a[1] - ey + ny} ${b[0] + nx},${b[1] + ny} ${b[0] - nx},${b[1] - ny} ${a[0] - ex - nx},${a[1] - ey - ny}"/>`; };
+      s += `<defs><clipPath id="fpBoard"><rect x="40" y="26" width="580" height="402" rx="10"/></clipPath><clipPath id="fpTray"><polygon points="${ptsOf(va, TRAY_EDGE)}"/></clipPath><clipPath id="fpFlap"><polygon points="${ptsOf(oa, FLAP_EDGE)}"/></clipPath>
+        ${LIMB_BOX.map(([x, y, w, h], i) => { const [X, Y] = va(x, y); return `<clipPath id="fpLimb${i}"><rect x="${X}" y="${Y}" width="${w * VE.s}" height="${h * VE.s}"/></clipPath>`; }).join('')}
+        ${FLAP_SHAFTS.map((list, i) => `<clipPath id="fpFlapPin${i}">${list.map(q => quad(q)).join('')}</clipPath>`).join('')}
+        <filter id="fpFeather" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="5"/></filter>
+        <mask id="fpMouth" maskUnits="userSpaceOnUse" x="0" y="0" width="1200" height="896"><polygon points="${MOUTH_EDGE.map(p => p.join(',')).join(' ')}" fill="#fff" filter="url(#fpFeather)"/></mask></defs>`;
+      s += `<g clip-path="url(#fpBoard)"><g clip-path="url(#fpTray)">${vPlate('fp_ventral', 'frog-ventral-unpinned-3d')}${LIMB_BOX.map((_, i) => vPlate('fp_pin' + i, 'frog-ventral-pinned-3d', `clip-path="url(#fpLimb${i})" style="opacity:0"`)).join('')}</g>
+        <g id="fp_mouth" class="fplate" style="opacity:0"><g transform="translate(${VE.x} ${VE.y}) scale(${VE.s}) translate(273.4 9) scale(.681 .603)">${frogPlate('frog-oesophagus-unmarked-3d', 1200, 896, { s: 1, x: 0, y: 0 }, 'mask="url(#fpMouth)"')}</g></g>
+        ${oPlate('fp_oe', 'frog-oesophagus-unmarked-3d', 'style="opacity:0"')}${FLAP_SHAFTS.map((_, i) => oPlate('fp_fpin' + i, 'frog-oesophagus-ciliary-dissection-3d', `clip-path="url(#fpFlapPin${i})" style="opacity:0"`)).join('')}</g>`;
       s += `<g id="frogG"></g><g id="pinG"></g>`;
       // tools
       s += `<g class="hot" data-act="tool:scis" id="scisT" filter="url(#sh2)"><path d="M0 6 L74 2 L77 6 L0 11 Z" fill="url(#steel)"/><path d="M0 16 L74 10 L77 6 L0 6 Z" fill="url(#steelH)"/><ellipse cx="-10" cy="1" rx="10" ry="7" fill="none" stroke="#1f2937" stroke-width="4"/><ellipse cx="-10" cy="18" rx="10" ry="7" fill="none" stroke="#1f2937" stroke-width="4"/><circle cx="9" cy="9" r="2.3" fill="#475569"/></g>`;
@@ -1056,40 +1086,45 @@
         ${['1  Frog arrives pithed (done by staff).', '2  Pin the four limbs, belly up.', '3  Scissors: cut both mouth angles; forceps lift', '    and remove the lower jaw.', '4  Scissors: slit the oesophagus midline (3 cuts).', '5  Pin the flaps out, mucosa up. Keep it moist!', '6  Mark START and FINISH 20 mm apart.'].map((t, i) => lbl(10, 38 + i * 14, t, { s: 8.4, a: 'start', c: i === 5 ? '#b91c1c' : '#13294f', w: i === 5 ? 700 : 600 })).join('')}</g>`;
       return s;
     }
-    // the pithed frog, belly up on the wax: ../assets/js/animal-art.js
-    const frogVentral = () => `<g filter="url(#sh2)">${frogVentralArt('07')}</g>`;
+    function setFrogPlates() {
+      const F = S.frog, open = F.slit >= 3, show = { fp_mouth: !!F.jaw, fp_oe: open };
+      F.pins.forEach((p, i) => { show['fp_pin' + i] = !!p; });
+      F.flaps.forEach((p, i) => { show['fp_fpin' + i] = open && !!p; });
+      Object.entries(show).forEach(([id, on]) => { const e = $(id); if (e) e.style.opacity = on ? 1 : 0; });
+    }
+    function markArt(d) {
+      const line = (list, dy) => `<polyline points="${ptsOf(oa, list)}" transform="translate(0 ${dy})" fill="none" stroke="#86198f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>`;
+      const dy = (d - 20) * MARK_PX_MM * OE.s, [sx, sy] = oa(600, 406), fy = oa(0, 496)[1] + dy;
+      return `<g clip-path="url(#fpFlap)">${line(MARK_START, 0)}${line(MARK_FINISH, dy)}</g>${frogTag(sx, sy - 10, 'START')}${frogTag(sx, fy + 14, 'FINISH')}`;
+    }
     function dyn2() {
       if (S.station !== 2) return;
       const F = S.frog, open = F.slit >= 3;
+      setFrogPlates();
       let h = '';
-      h += frogVentral();
-      if (F.jaw) {
-        h += `<path d="M262 118 C 290 100, 370 100, 398 118 L 392 168 C 362 178, 298 178, 268 168 Z" fill="url(#mucG)" stroke="#8b3a3a" stroke-width="1.6"/><path d="M300 140 C 318 132, 342 132, 360 140 C 352 156, 308 156, 300 140Z" fill="#d86a73"/><path d="M308 108 C 322 114, 338 114, 352 108" stroke="#fde8e4" stroke-width="2" fill="none" opacity=".7"/><ellipse cx="330" cy="122" rx="30" ry="6" fill="#fff" opacity=".22"/>`;
-        h += lbl(330, 180, 'pharynx', { s: 7.5, c: '#fde68a' });
-      } else h += `<path d="M258 124 l14 3 M402 124 l-14 3" stroke="#6b6a30" stroke-width="1.6" fill="none" stroke-linecap="round"/>${F.cutL ? '<path d="M262 124 L246 112" stroke="#3b0d12" stroke-width="3.5" stroke-linecap="round"/>' : ''}${F.cutR ? '<path d="M398 124 L414 112" stroke="#3b0d12" stroke-width="3.5" stroke-linecap="round"/>' : ''}`;
-      // oesophagus
-      const y0 = 178, y1 = 340;
-      if (F.jaw && !open) {
-        h += `<path d="M310 ${y0} L350 ${y0} L350 ${y1} L310 ${y1} Z" fill="url(#mucG)" stroke="#8b3a3a" stroke-width="1.6"/><path d="M310 ${y0} L350 ${y0} L350 ${y1} L310 ${y1} Z" fill="#fff" filter="url(#wetF)" opacity=".5"/>`;
-        for (let i = 0; i < F.slit; i++) h += `<line x1="330" y1="${y0 + i * 54}" x2="330" y2="${y0 + (i + 1) * 54}" stroke="#4a0f14" stroke-width="2.4"/>`;
-        h += `<ellipse cx="330" cy="${y1 + 18}" rx="42" ry="22" fill="#e9b8a5" stroke="#9c5a4a" stroke-width="1.4"/>${lbl(330, y1 + 46, 'stomach', { s: 7.5, c: '#fde68a' })}`;
-      } else if (open) {
-        h += `<ellipse cx="330" cy="${y1 + 20}" rx="52" ry="24" fill="#e9b8a5" stroke="#9c5a4a" stroke-width="1.4"/>${lbl(330, y1 + 50, 'stomach', { s: 7.5, c: '#fde68a' })}`;
-        const xl = F.flaps[0] || F.flaps[2] ? 262 : 300, xr = F.flaps[1] || F.flaps[3] ? 398 : 360;
-        h += `<path d="M310 ${y0} L350 ${y0} L${xr} 214 L${xr} 324 L350 ${y1} L310 ${y1} L${xl} 324 L${xl} 214 Z" fill="url(#mucG)" stroke="#8b3a3a" stroke-width="1.6"/>`;
-        for (let i = 0; i < 14; i++) h += `<path d="M${xl + 6} ${200 + i * 9.5} q ${(xr - xl) / 2 - 6} ${i % 2 ? 5 : -5} ${xr - xl - 12} 0" stroke="#c35a63" stroke-width="1.1" fill="none" opacity=".6"/>`;
-        h += `<path d="M310 ${y0} L350 ${y0} L${xr} 214 L${xr} 324 L350 ${y1} L310 ${y1} L${xl} 324 L${xl} 214 Z" fill="#fff" filter="url(#wetF)" opacity="${.25 + .5 * F.wet}"/>`;
-        h += lbl(330, 282, F.wet < 0.4 ? 'DRY: moisten!' : 'mucosa', { s: 8, c: F.wet < 0.4 ? '#fef08a' : '#fff0ee', w: 700 });
+      if (!F.jaw) {
+        [F.cutL, F.cutR].forEach((done, i) => { const [x, y] = MOUTH_ANGLE[i], s = i ? 1 : -1; if (done) h += `<path d="M${x} ${y} l${s * 15} -11" stroke="#3b0d12" stroke-width="3.2" stroke-linecap="round"/>`; });
+      } else if (!open) {
+        const [px, py] = va(686, 64), seg = (SLIT.y1 - SLIT.y0) / 3;
+        h += frogTag(px, py - 8, 'pharynx');
+        for (let i = 0; i < F.slit; i++) { const a = SLIT.y0 + i * seg, b = a + seg, m = (a + b) / 2; h += `<path d="M${SLIT.x} ${a} Q${SLIT.x + 3.4} ${m} ${SLIT.x} ${b} Q${SLIT.x - 3.4} ${m} ${SLIT.x} ${a} Z" fill="#b5525c" stroke="#4a0f14" stroke-width="1.2"/>`; }
+      } else {
+        // the flaps dull as they dry
+        h += `<polygon points="${ptsOf(oa, FLAP_EDGE)}" fill="#7a5a4c" opacity="${Math.max(0, (1 - F.wet) * .5).toFixed(2)}" pointer-events="none"/>`;
+        const [x, y] = oa(600, 690); h += frogTag(x, y, F.wet < 0.4 ? 'DRY: moisten!' : 'mucosa');
       }
       // hot spots
-      if (!F.jaw) { h += `<g class="hot" data-act="cut:L"><circle cx="258" cy="124" r="13" fill="#fde047" opacity=".001"/></g><g class="hot" data-act="cut:R"><circle cx="402" cy="124" r="13" fill="#fde047" opacity=".001"/></g><g class="hot" data-act="jaw"><ellipse cx="330" cy="150" rx="46" ry="16" fill="#fde047" opacity=".001"/></g>`; }
-      if (F.jaw && !open) [0, 1, 2].forEach(i => h += `<g class="hot" data-act="slit:${i}"><rect x="300" y="${y0 + i * 54}" width="60" height="54" fill="#fde047" opacity=".001"/></g>`);
-      LIMB_PIN.forEach(([x, y], i) => { if (!F.pins[i]) h += `<g class="hot" data-act="pin:${i}"><circle cx="${x}" cy="${y}" r="18" fill="#fde047" opacity=".001"/><circle cx="${x}" cy="${y}" r="3" fill="#94a3b8" opacity=".5"/></g>`; });
-      if (open) FLAP_PIN.forEach(([x, y], i) => { if (!F.flaps[i]) h += `<g class="hot" data-act="fp:${i}"><circle cx="${x + 20 * (i % 2 ? -1 : 1) * 0}" cy="${y}" r="16" fill="#fde047" opacity=".001"/><circle cx="${x}" cy="${y}" r="2.6" fill="#e5e7eb" opacity=".6"/></g>`; });
+      if (!F.jaw) {
+        h += hotC('cut:L', MOUTH_ANGLE[0][0], MOUTH_ANGLE[0][1], 14) + hotC('cut:R', MOUTH_ANGLE[1][0], MOUTH_ANGLE[1][1], 14);
+        const [jx, jy] = va(684, 112);
+        h += `<g class="hot" data-act="jaw"><ellipse cx="${jx}" cy="${jy}" rx="38" ry="24" fill="#fde047" opacity=".001"/><ellipse class="hring" cx="${jx}" cy="${jy}" rx="36" ry="22"/></g>`;
+      }
+      if (F.jaw && !open) [0, 1, 2].forEach(i => { const seg = (SLIT.y1 - SLIT.y0) / 3, y = SLIT.y0 + i * seg; h += `<g class="hot" data-act="slit:${i}"><rect x="${SLIT.x - 26}" y="${y}" width="52" height="${seg}" fill="#fde047" opacity=".001"/><rect class="hring" x="${SLIT.x - 25}" y="${y + 1}" width="50" height="${seg - 2}" rx="6"/></g>`; });
+      LIMB_PIN.forEach(([x, y], i) => { if (!F.pins[i]) h += hotC('pin:' + i, x, y, 24); });
+      if (open) FLAP_PIN.forEach(([x, y], i) => { if (!F.flaps[i]) h += hotC('fp:' + i, x, y, 18); });
       $('frogG').innerHTML = h;
-      $('pinG').innerHTML = LIMB_PIN.map(([x, y], i) => F.pins[i] ? pinArt(x, y) : '').join('') + (open ? FLAP_PIN.map(([x, y], i) => F.flaps[i] ? pinArt(x, y, '#38bdf8') : '').join('') : '') +
-        (F.marks[0] ? `<line x1="268" x2="392" y1="236" y2="236" stroke="#7e13b5" stroke-width="3" stroke-dasharray="6 3"/>${lbl(330, 230, 'START', { s: 8, c: '#e9d5ff', w: 800 })}<line x1="268" x2="392" y1="${236 + (F.dist || 20) * 4.4}" y2="${236 + (F.dist || 20) * 4.4}" stroke="#fb7185" stroke-width="3" stroke-dasharray="6 3"/>${lbl(330, 252 + (F.dist || 20) * 4.4, 'FINISH', { s: 8, c: '#fecdd3', w: 800 })}` : '');
-      const t = S.frog.tool; $('scisT').setAttribute('transform', t === 'scis' ? 'translate(468 150) rotate(-24)' : 'translate(640 236)'); $('forcT').setAttribute('transform', t === 'forc' ? 'translate(470 200) rotate(-12)' : 'translate(600 276)');
+      $('pinG').innerHTML = F.marks[0] ? markArt(F.dist || 20) : '';
+      const t = S.frog.tool; $('scisT').setAttribute('transform', t === 'scis' ? 'translate(524 268) rotate(-24)' : 'translate(640 236)'); $('forcT').setAttribute('transform', t === 'forc' ? 'translate(516 214) rotate(-12)' : 'translate(600 276)');
       $('toolLbl').innerHTML = lbl(676, 226, t === 'scis' ? 'scissors in hand' : 'Fine scissors', { c: t === 'scis' ? '#fde68a' : '#cbd5e1', s: 9 }) + lbl(640, 300, t === 'forc' ? 'forceps in hand' : 'Forceps', { c: t === 'forc' ? '#fde68a' : '#cbd5e1', s: 9 });
     }
     function need(tool) { if (S.frog.tool !== tool) { say(`Pick up the ${tool === 'scis' ? 'scissors' : 'forceps'} first.`, true); return false; } return true; }
@@ -1279,7 +1314,7 @@
       } else if (S.station === 2) {
         t = 'Frog preparation';
         const o = F.slit >= 3 && F.flaps.every(Boolean);
-        h = `<p style="color:#64748b">Frog no. ${F.n}, pithed by trained staff. Tool in hand: <b>${F.tool === 'scis' ? 'scissors' : F.tool === 'forc' ? 'forceps' : 'none'}</b>. Mucosa wetness: <b>${F.wet > 0.6 ? 'moist' : F.wet > 0.35 ? 'drying' : 'DRY'}</b>.</p>`;
+        h = `<p style="color:#64748b">Frog no. ${F.n}, pithed by trained staff. Tool in hand: <b>${F.tool === 'scis' ? 'scissors' : F.tool === 'forc' ? 'forceps' : 'none'}</b>. Mucosa wetness: <b>${F.wet > 0.6 ? 'moist' : F.wet > 0.35 ? 'drying' : 'DRY'}</b>.</p><div class="row">${btn('Frog anatomy reference', 'openFrogAnatomy()', 'sec')}</div>`;
         if (o) h += `<div class="row">Distance between marks <input id="inDist" class="xb-in" style="width:64px" placeholder="mm"> mm</div><div class="row">${btn(F.marks[0] ? 'Re-mark' : 'Mark START & FINISH', 'setMarks()')}</div>`;
       } else {
         t = 'Ciliary transport';
