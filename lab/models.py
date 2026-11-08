@@ -100,7 +100,7 @@ CATEGORIES = [('In-vivo', 'In-vivo simulations', 'Behavioural, anticonvulsant, a
               ('Bioassay', 'Bioassay experiments', 'Histamine bioassays, three-point and four-point designs, and pA2 estimation'),
               ('Molecular biology', 'Molecular biology experiments', 'RNA and DNA isolation, cDNA synthesis, PCR analysis and gel electrophoresis'),
               ('Cell culture', 'Cell culture experiments', 'Cultured cell handling, 96-well plate assays, cell viability and IC50'),
-              ('Neurobehavioural', 'Neurobehavioural experiments (M.Pharm)', 'Learning, memory and anxiety mazes: Y-maze, radial arm maze, light-dark box, water maze and Barnes maze')]
+              ('Neurobehavioural', 'Neurobehavioural experiments (M.Pharm)', 'Learning, memory, anxiety, avoidance and antidepressant tests: Y-maze, radial arm maze, light-dark box, water maze, Barnes maze, pole climbing and forced swim')]
 
 
 class Experiment(models.Model):

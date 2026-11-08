@@ -1,0 +1,1839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exp 33: Pole Climbing: Conditioned Avoidance Response • XPRISM</title>
+  <meta name="description" content="Cook's pole climbing test in rats: conditioned avoidance and escape responses, with chlorpromazine as the standard and a test drug.">
+  <meta name="theme-color" content="#0a1f44">
+  <meta name="color-scheme" content="light">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
+  <link rel="stylesheet" href="../assets/css/tailwind.css">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <script src="../assets/js/tone.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    :root { color-scheme: light; }
+    input, select, textarea { background-color: #ffffff; color: #0f172a; -webkit-text-fill-color: #0f172a; caret-color: #0f172a; color-scheme: light; opacity: 1; }
+    input::placeholder { color: #94a3b8; -webkit-text-fill-color: #94a3b8; }
+    input:disabled, select:disabled { background-color: #f1f5f9; color: #64748b; -webkit-text-fill-color: #64748b; }
+    input:focus, select:focus { outline: 2px solid #7e13b5; outline-offset: 1px; }
+    body { font-family: 'Inter', sans-serif; background: #f1f5f9; color: #0a1f44; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .seg { font-family: 'DSEG7', 'JetBrains Mono', monospace; }
+    .obs-table th, .obs-table td { padding: 4px 6px; border-bottom: 1px solid #e2e8f0; }
+    .obs-table thead th { background: #f8fafc; color: #475569; font-weight: 600; }
+    .scroll-thin::-webkit-scrollbar { height: 8px; width: 8px; }
+    .scroll-thin::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+
+    /* ---------- bench layout (self-contained styles) ---------- */
+    .xb-wrap { display: flex; gap: 14px; flex: 1; align-items: flex-start; }
+    .xb-wrap.hidden { display: none; }
+    .xb-main { flex: 1; min-width: 0; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+    .xb-side { width: 340px; flex-shrink: 0; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; max-height: calc(100vh - 150px); }
+    @media (max-width: 1100px) { .xb-wrap { flex-direction: column; } .xb-side { width: 100%; max-height: none; } }
+    .xb-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
+    .xb-st { display: flex; gap: 4px; }
+    .xb-st button { font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; color: #334155; cursor: pointer; }
+    .xb-st button.on { background: #0a1f44; color: #fff; border-color: #0a1f44; }
+    .xb-st button .n { display: inline-block; width: 18px; height: 18px; line-height: 18px; text-align: center; border-radius: 50%; background: #e2e8f0; color: #334155; font-size: 10px; margin-right: 5px; }
+    .xb-st button.on .n { background: #f59e0b; color: #111; }
+    .xb-st button.done .n { background: #10b981; color: #fff; }
+    .xb-scene { position: relative; background: #2a3442; }
+    #scene { display: block; width: 100%; height: auto; touch-action: none; user-select: none; -webkit-user-select: none; }
+    #scene text { pointer-events: none; }
+    #scene .hot { cursor: pointer; }
+    #scene .hot:hover { filter: drop-shadow(0 0 5px rgba(253,224,71,.95)); }
+    #scene .pulse { animation: xpulse 1.4s ease-in-out infinite; }
+    @keyframes xpulse { 0%,100% { filter: drop-shadow(0 0 2px rgba(56,189,248,.3)); } 50% { filter: drop-shadow(0 0 9px rgba(56,189,248,1)); } }
+    .xb-fb { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #0f172a; color: #fff; padding: 8px 14px; font-size: 12px; min-height: 38px; }
+    .xb-fb b { color: #fde68a; }
+    .xb-card { border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; }
+    .xb-h { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #475569; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .xb-now { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 10px; padding: 10px; font-size: 12px; color: #78350f; line-height: 1.45; }
+    .xb-now .t { font-weight: 700; color: #92400e; font-size: 12.5px; margin-bottom: 3px; }
+    .xb-ctx { font-size: 12px; color: #1e293b; line-height: 1.45; }
+    .xb-ctx .row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
+    .xb-in { width: 92px; border: 1px solid #94a3b8; border-radius: 6px; padding: 4px 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+    .xb-btn { font-size: 12px; font-weight: 600; padding: 6px 10px; border-radius: 7px; border: 1px solid transparent; cursor: pointer; background: #0a1f44; color: #fff; }
+    .xb-btn:hover { filter: brightness(1.15); }
+    .xb-btn.sec { background: #fff; color: #0a1f44; border-color: #cbd5e1; }
+    .xb-btn.warn { background: #b91c1c; }
+    .xb-btn:disabled { opacity: .45; cursor: not-allowed; }
+    .xb-steps { list-style: none; margin: 0; padding: 0; font-size: 11.5px; }
+    .xb-steps li { display: flex; gap: 6px; padding: 3px 0; color: #94a3b8; }
+    .xb-steps li.done { color: #047857; }
+    .xb-steps li.cur { color: #92400e; font-weight: 700; }
+    .xb-steps li .k { width: 16px; flex-shrink: 0; text-align: center; }
+    .xb-steps .grp { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: #64748b; font-weight: 700; padding-top: 6px; }
+    .xb-tbl { width: 100%; border-collapse: collapse; font-size: 11px; }
+    .xb-tbl th { background: #f1f5f9; color: #475569; font-weight: 600; padding: 3px; text-align: center; }
+    .xb-tbl td { border-top: 1px solid #e2e8f0; padding: 3px; text-align: center; font-family: 'JetBrains Mono', monospace; }
+    .xb-tbl input { width: 58px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 3px; font-family: 'JetBrains Mono', monospace; font-size: 11px; text-align: center; }
+    .ok-in { border-color: #10b981 !important; background-color: #ecfdf5 !important; color: #065f46 !important; -webkit-text-fill-color: #065f46 !important; font-weight: 700; }
+    .bad-in { border-color: #e11d48 !important; background-color: #fff1f2 !important; color: #9f1239 !important; -webkit-text-fill-color: #9f1239 !important; font-weight: 700; }
+    .flag { display: inline-block; font-size: 9.5px; padding: 0 4px; border-radius: 4px; background: #fee2e2; color: #9f1239; margin: 1px; font-family: Inter, sans-serif; }
+    .xb-speed button { font-size: 11px; font-family: 'JetBrains Mono', monospace; font-weight: 700; padding: 2px 7px; border-radius: 5px; border: 0; background: transparent; color: #475569; cursor: pointer; }
+    .xb-speed { display: flex; border: 1px solid #cbd5e1; border-radius: 7px; background: #fff; padding: 2px; }
+    .xb-strip { background: #1b1b1b; border-top: 1px solid #000; position: relative; }
+    .xb-strip-h { display: flex; justify-content: space-between; color: #a3a3a3; font-size: 10.5px; padding: 5px 10px 0; text-transform: uppercase; letter-spacing: .06em; font-weight: 700; }
+    #kymoStrip { overflow-x: auto; }
+    .xb-man summary { cursor: pointer; font-size: 11px; font-weight: 700; color: #334155; text-transform: uppercase; letter-spacing: .06em; }
+    .xb-man table { width: 100%; font-size: 11px; border-collapse: collapse; margin-top: 6px; }
+    .xb-man td { border-top: 1px solid #e2e8f0; padding: 2px 4px; }
+    .xb-pl { width: 100%; }
+    .tgl { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #475569; }
+    .obs-in { width: 64px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; text-align: center; }
+    @media print {
+      header, #subHeader, #viewTask, #viewExperiment, .no-print { display: none !important; }
+      #viewObservation { display: flex !important; box-shadow: none; border: none; }
+    }
+    .xb-nbk { padding: 10px 12px; background: #fff; border-top: 1px solid #e2e8f0; }
+    .xb-calc { font-size: 12px; color: #1e293b; margin-bottom: 8px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .xb-tbl input { width: 54px; }
+    .xb-bar select.xb-in { font-family: Inter, sans-serif; font-size: 12px; padding: 3px 6px; }
+    .xb-ctx .mono { font-family: 'JetBrains Mono', monospace; }
+    .xb-st button { padding: 6px 9px; }
+    .seqcell { max-width: 150px; overflow-wrap: anywhere; font-size: 9.5px; text-align: left !important; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-100 overflow-x-hidden">
+
+  <!-- TOP BRANDING BAR (XPRISM Header) -->
+  <header class="site-header bg-white border-b border-slate-200 px-4 md:px-6 py-2 flex items-center justify-between gap-3 shadow-sm shrink-0">
+    <div class="flex items-center gap-3 min-w-0">
+    <a href="../index.html" title="Back to Lab Home" class="shrink-0"><img src="../assets/img/xprism-lockup.png" alt="XPRISM" class="h-11 w-auto" width="146" height="49"></a>
+      <div class="min-w-0 border-l border-slate-200 pl-3">
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="text-[10px] uppercase font-bold bg-teal-50 text-teal-700 px-2 py-0.5 rounded-full border border-teal-200 font-display tracking-wide">Virtual Lab</span>
+        <span class="text-[10px] uppercase font-bold bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded-full border border-indigo-200 font-display tracking-wide">M.Pharm</span>
+        <a href="../index.html" class="text-[11px] font-semibold text-teal-700 hover:underline">← All experiments</a>
+      </div>
+      <p class="text-xs text-slate-500">Aaron Innovations • Experimental Pharmacology Research &amp; Interactive Student Module</p>
+    </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="hidden md:block text-right">
+        <div class="text-xs font-semibold text-slate-800 flex items-center justify-end space-x-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Dr. Vara Prasad Saka</span>
+        </div>
+        <div class="text-[11px] text-slate-500 font-mono">ID: 8019152501 • Dept. of Pharmacology</div>
+      </div>
+      <div class="flex items-center gap-2 border-l pl-4 border-slate-200">
+        <a class="site-nav-btn" href="32-barnes-maze-spatial-memory.html" title="Previous: Exp #32 Barnes Maze: Spatial Learning and Memory">‹</a><a class="site-nav-btn" href="34-forced-swim-test-antidepressant.html" title="Next: Exp #34 Forced Swim Test: Antidepressant Activity">›</a>
+        <button id="audioToggleBtn" class="p-2 rounded-lg bg-teal-100 hover:bg-teal-200 text-teal-800 transition" title="Toggle sound feedback" aria-label="Toggle sound feedback">
+          <svg id="soundIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+        </button>
+        <span class="hidden sm:inline bg-indigo-100 text-indigo-800 text-xs px-2.5 py-1 rounded-md font-medium border border-indigo-200 whitespace-nowrap">Exp #33</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- SUB-HEADER / VIEW TABS -->
+
+  <div id="subHeader" class="site-subheader bg-slate-800 text-white px-4 md:px-6 py-2 flex flex-wrap items-center justify-between gap-3 shadow shrink-0">
+    <div class="text-sm font-semibold tracking-wide flex items-center space-x-2 min-w-0">
+      <span class="text-teal-400 font-mono text-xs px-1.5 py-0.5 rounded bg-teal-950/80 border border-teal-500/40 shrink-0">MODULE 33</span>
+      <span>Examination 33: To Study Drug Effects on Conditioned Avoidance Using Cook's Pole Climbing Apparatus</span>
+    </div>
+    <div class="flex items-center space-x-1.5 bg-slate-900/80 p-1 rounded-lg border border-slate-700" role="tablist">
+      <button id="tabTask" onclick="switchTab('task')" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white transition">Task Description</button>
+      <button id="tabExperiment" onclick="switchTab('experiment')" class="px-3.5 py-1.5 rounded-md text-xs font-semibold bg-teal-500 text-white shadow transition">Experiment Bench</button>
+      <button id="tabObservation" onclick="switchTab('observation')" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white transition">Observation Sheet &amp; Graphs</button>
+    </div>
+  </div>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-5 flex flex-col min-h-0">
+
+    <!-- TAB 1: TASK DESCRIPTION -->
+    <div id="viewTask" class="hidden flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between overflow-y-auto">
+      <div class="max-w-5xl space-y-6">
+        <div class="border-b pb-4">
+          <div class="inline-block px-2.5 py-1 rounded bg-teal-50 text-teal-800 text-xs font-bold font-mono mb-2">EXPERIMENT OBJECTIVE</div>
+          <h2 class="text-xl font-bold text-slate-900">Pole Climbing Test of the Conditioned Avoidance Response</h2>
+          <p class="text-sm text-slate-600 mt-2 leading-relaxed">A trained rat learns that a buzzer warns of a shock through the grid floor, and climbs a pole during the buzzer to avoid it. This is the <strong>conditioned avoidance response (CAR)</strong>. A rat that climbs only after the shock begins shows an <strong>escape response</strong>. Antipsychotics block avoidance at doses that spare escape. Sedatives and motor-impairing doses tend to block both, so the test separates the two actions.</p>
+          <p class="text-sm text-slate-600 mt-2 leading-relaxed">You do every step yourself: mark, weigh and randomise 18 trained rats; confirm that each still meets the avoidance criterion; prepare chlorpromazine and the test drug; dose each rat; run a 5-trial session 60 minutes later, pressing the key when the rat reaches the pole; and analyse by one-way ANOVA and Dunnett's test.</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-4">
+          <div class="p-4 rounded-xl bg-sky-50/70 border border-sky-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-sky-500 text-white flex items-center justify-center font-bold text-sm shadow">1</div>
+            <h3 class="text-sm font-bold text-sky-950">Principle</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">The method follows Cook and Weidley (1957). The buzzer is the conditioned stimulus (CS) and the shock is the unconditioned stimulus (UCS). Selective loss of avoidance with escape intact is the classic screening profile of an antipsychotic. It is linked to dopamine D2 blockade in the mesolimbic system.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-amber-50/70 border border-amber-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center font-bold text-sm shadow">2</div>
+            <h3 class="text-sm font-bold text-amber-950">Measures</h3>
+            <p class="text-xs text-slate-600 leading-relaxed"><b>CAR:</b> climbs during the 10 s buzzer. <b>Escape:</b> climbs during the shock. <b>No response:</b> stays on the grid until the 30 s cut-off. <b>Latency:</b> time from buzzer onset to the pole.</p>
+            <p class="text-xs text-slate-600 leading-relaxed font-mono">% CAR = CAR trials ÷ 5 × 100</p>
+          </div>
+          <div class="p-4 rounded-xl bg-emerald-50/70 border border-emerald-100 space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center font-bold text-sm shadow">3</div>
+            <h3 class="text-sm font-bold text-emerald-950">Design and statistics</h3>
+            <p class="text-xs text-slate-600 leading-relaxed"><b>I:</b> vehicle. <b>II:</b> standard, chlorpromazine 10 mg/kg. <b>III:</b> test drug. Use one-way ANOVA followed by Dunnett's test against Group I. Scores out of 5 are counts, so a research report would normally add a non-parametric test such as Kruskal-Wallis.</p>
+          </div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Requirements</h4>
+            <ul class="text-xs text-slate-600 space-y-1 list-disc pl-4"><li>Trained Wistar albino rats 180–250 g, 6 per group (18 in all)</li><li>Normal saline, chlorpromazine 10 mg/kg</li><li>Test drugs: haloperidol 0.5 mg/kg, phenobarbitone 60 mg/kg, diazepam 5 mg/kg, imipramine 15 mg/kg (all i.p., 2 mL/kg)</li><li>Cook's pole climbing apparatus: grid-floor chamber, central pole, buzzer and shock source; 70% ethanol, balances, 1 mL syringes</li></ul>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Procedure</h4>
+            <ol class="text-xs text-slate-600 space-y-1 list-decimal pl-4"><li>Mark, weigh and randomise. Set the grid to the lowest shock that drives reliable climbing.</li><li>Run a 5-trial baseline. A rat needs at least 4 CAR; retrain any that falls short.</li><li>Prepare the solutions and inject i.p. about 8 minutes apart, because each rat is tested 60 minutes after its own injection.</li><li>Place the rat on the grid and press START TEST. Press RAT ON POLE as soon as all four paws leave the grid.</li><li>Clean the chamber with 70% ethanol between rats, then analyse CAR and escape together.</li></ol>
+          </div>
+        </div>
+      </div>
+      <div class="pt-6 border-t flex justify-end mt-6">
+        <button onclick="switchTab('experiment')" class="px-6 py-2.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-semibold text-sm shadow flex items-center space-x-2 transition">
+          <span>Go to Experiment Stage</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 2: EXPERIMENT BENCH -->
+    <div id="viewExperiment" class="xb-wrap">
+      <div class="xb-main">
+        <div class="xb-bar">
+          <div class="xb-st" id="stationBtns">
+            <button data-s="1" onclick="goStation(1)"><span class="n">1</span>Animal house</button>
+            <button data-s="2" onclick="goStation(2)"><span class="n">2</span>Solutions</button>
+            <button data-s="3" onclick="goStation(3)"><span class="n">3</span>Dosing</button>
+            <button data-s="4" onclick="goStation(4)"><span class="n">4</span>Pole chamber</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <label style="font-size:11px;color:#64748b;font-weight:700">Test drug</label>
+            <select id="drugSelect" onchange="onDrugSelectChange()" class="xb-in" style="width:auto"></select>
+            <span id="drugBadge" class="mono" style="font-size:11px;padding:1px 8px;border-radius:5px;background:#e0e7ff;color:#3730a3;font-weight:700"></span>
+            <span style="font-size:11px;color:#64748b;font-weight:600">Lab time</span>
+            <span id="labClock" class="mono" style="font-size:12px;font-weight:700;color:#0a1f44">09:00</span>
+            <div class="xb-speed" id="speedBtns" title="Time runs faster; you still do every step"></div>
+          </div>
+        </div>
+        <div class="xb-scene">
+          <svg id="scene" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet"></svg>
+        </div>
+        <div class="xb-fb" id="actionFeedback">
+          <div style="display:flex;align-items:center;gap:8px"><span id="feedbackIcon" style="color:#2dd4bf;font-weight:700">ℹ</span><span id="feedbackText">Ready.</span></div>
+          <span id="phaseIndicator" class="mono" style="font-size:11px;color:#94a3b8"></span>
+        </div>
+        <div class="xb-nbk">
+          <div class="xb-h"><span>Lab notebook: type every reading yourself (green = matches the apparatus, red = check again)</span></div>
+          <div id="nbCalc" class="xb-calc"></div>
+          <div style="max-height:300px;overflow:auto" class="scroll-thin">
+            <table class="xb-tbl"><thead><tr><th>Rat</th><th>Grp</th><th>Wt (g)</th><th>Dose (mL)</th><th>Baseline CAR (/5)</th><th>Min after dose</th><th>CAR (/5)</th><th>Escape (/5)</th><th>No response (/5)</th><th>Mean latency (s)</th><th>% CAR</th><th>Technique flags</th></tr></thead><tbody id="nbBody"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <aside class="xb-side">
+        <div class="xb-now" id="nowBox"></div>
+        <div class="xb-card"><div class="xb-h"><span id="ctxTitle">Bench</span></div><div class="xb-ctx" id="ctx"></div></div>
+        <div class="xb-card">
+          <div class="xb-h"><span>Protocol checklist</span><label class="tgl"><input type="checkbox" id="hintToggle" checked onchange="HINTS=this.checked;refreshHints()"> highlight next</label></div>
+          <ul class="xb-steps scroll-thin" id="checklist" style="max-height:300px;overflow-y:auto"></ul>
+        </div>
+        <details class="xb-card xb-man">
+          <summary>Lab manual: quick reference</summary>
+          <table>
+            <tr><td>Rats</td><td class="mono">180–250 g, trained, n = 6 per group</td></tr>
+            <tr><td>Dose volume</td><td class="mono">2 mL/kg i.p.</td></tr>
+            <tr><td>Wait</td><td class="mono">60 min after i.p.</td></tr>
+            <tr><td>CS</td><td class="mono">buzzer, 10 s</td></tr>
+            <tr><td>UCS</td><td class="mono">buzzer + grid shock, up to 30 s</td></tr>
+            <tr><td>Shock level</td><td class="mono">0.8 mA in this practical</td></tr>
+            <tr><td>Trials</td><td class="mono">5 per session, 60 s apart</td></tr>
+            <tr><td>Criterion</td><td class="mono">at least 4 of 5 CAR before dosing</td></tr>
+            <tr><td>CAR</td><td class="mono">climbs during the buzzer alone</td></tr>
+            <tr><td>Escape</td><td class="mono">climbs after the shock begins</td></tr>
+            <tr><td>Between rats</td><td class="mono">70% ethanol, wipe dry</td></tr>
+          </table>
+        </details>
+        <div style="padding-top:2px;display:flex;flex-direction:column;gap:6px">
+          <button class="xb-btn sec" onclick="processAll()">Assistant processes this station</button>
+          <button class="xb-btn" style="background:#4f46e5" onclick="runAllInstant()">⚡ Run the complete experiment</button>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="xb-btn sec" onclick="switchTab('observation')">Observation sheet →</button>
+            <button class="xb-btn sec" onclick="if(confirm('Discard everything and start the practical again from the beginning?')) newExperiment()">Restart practical</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- TAB 3: OBSERVATION SHEET -->
+    <div id="viewObservation" class="hidden flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between overflow-y-auto">
+      <div class="space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b pb-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Observation Table: Pole Climbing (5 trials per session)</h2>
+            <p class="text-xs text-slate-500">Vehicle, chlorpromazine 10 mg/kg or test drug i.p. 60 min before the session • n = 6 per group • values come from your notebook</p>
+          </div>
+          <div class="flex items-center space-x-3 no-print">
+            <button onclick="renderObservation()" class="px-3.5 py-1.5 rounded-lg bg-teal-50 border border-teal-300 hover:bg-teal-100 text-teal-800 text-xs font-semibold transition">Refresh from notebook</button>
+          </div>
+        </div>
+        <div class="border border-slate-200 rounded-xl overflow-x-auto shadow-sm" id="rawBox"></div>
+        <div class="border border-slate-200 rounded-xl overflow-x-auto shadow-sm" id="sumBox"></div>
+        <div class="grid lg:grid-cols-2 gap-4">
+          <div class="border border-slate-200 rounded-xl p-3 shadow-sm"><div class="text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">Conditioned avoidance (CAR out of 5, mean ± SEM)</div><svg id="chartCA" viewBox="0 0 640 240" class="w-full"></svg></div>
+          <div class="border border-slate-200 rounded-xl p-3 shadow-sm"><div class="text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">No response (out of 5, mean ± SEM)</div><svg id="chartNR" viewBox="0 0 640 240" class="w-full"></svg></div>
+          <div class="border border-slate-200 rounded-xl p-3 shadow-sm"><div class="text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">Escape responses (out of 5, mean ± SEM)</div><svg id="chartER" viewBox="0 0 640 240" class="w-full"></svg></div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+            <div class="text-[10px] text-slate-500 uppercase font-semibold font-mono">Inference</div>
+            <div id="lblInference" class="text-sm font-bold text-slate-800">Pending</div>
+            <p id="lblInferenceDetail" class="text-[11px] text-slate-600 leading-relaxed">Test all rats and complete the notebook to obtain the results.</p>
+          </div>
+        </div>
+        <div class="p-4 rounded-xl border border-teal-200 bg-teal-50/50 flex flex-wrap items-center justify-between gap-4 no-print">
+          <div class="space-y-1">
+            <h3 class="text-sm font-bold text-slate-800">Mystery Drug Diagnosis (Exam Deduction)</h3>
+            <p class="text-xs text-slate-600">Choose "Unknown Mystery Drug" as the test drug, complete all three groups, then identify the compound from its avoidance and escape profile. Your choice is marked in Results &amp; Summary.</p>
+          </div>
+          <select id="unknownDrugDeduction" class="bg-white border border-slate-300 text-slate-800 text-xs rounded-lg px-3 py-2 font-medium shadow-sm focus:ring-2 focus:ring-teal-500"></select>
+        </div>
+      </div>
+      <div class="pt-6 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 mt-6 no-print">
+        <div class="text-xs text-slate-500 font-mono">XPRISM • Pole Climbing Practical Evaluation</div>
+        <div class="flex items-center space-x-3">
+          <button onclick="openModal('modalQuestions')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow transition">Answer Viva Questions</button>
+          <button onclick="openResultsModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow transition">Results &amp; Summary</button>
+          <button onclick="window.print()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg shadow transition">Print Report</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer no-print border-t border-slate-200 bg-white shrink-0">
+    <div class="max-w-7xl mx-auto px-6 py-3 text-xs text-slate-500 font-mono flex justify-between flex-wrap gap-2">
+      <span>XPRISM • Exp #33 • © 2026 Aaron Innovations • Dr. Vara Prasad Saka</span>
+      <span>Simulations are teaching aids that reduce animal use, in line with CCSEA 3Rs guidance. • <a href="../index.html" class="text-teal-700 hover:underline">All experiments</a></span>
+    </div>
+  </footer>
+
+  <!-- MODAL: VIVA -->
+  <div id="modalQuestions" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-base font-bold text-slate-800">Pole Climbing: Viva-Voce</h3>
+        <button onclick="closeModal('modalQuestions')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+      <div id="quizScore" class="hidden p-2.5 rounded-lg text-xs font-semibold"></div>
+      <div id="quizBody" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2 text-xs text-slate-700"></div>
+      <div class="pt-3 border-t flex justify-end space-x-2">
+        <button onclick="renderQuiz()" class="px-4 py-2 border rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">Reset</button>
+        <button onclick="evaluateQuestions()" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-lg shadow">Submit Answers</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: RESULTS -->
+  <div id="modalResults" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-base font-bold text-slate-800">Laboratory Results Summary</h3>
+        <button onclick="closeModal('modalResults')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+      </div>
+      <div id="resBody" class="space-y-2 text-xs"></div>
+      <div id="resExplanation" class="p-3 rounded-lg bg-teal-50 border border-teal-200 text-teal-900 leading-relaxed text-[11px]"></div>
+      <div class="pt-3 border-t flex justify-end">
+        <button onclick="closeModal('modalResults')" class="px-6 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg shadow">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =====================================================================
+    // XPRISM shared simulation toolkit (tabs, sound, stats, charts, viva)
+    // =====================================================================
+    const $ = id => document.getElementById(id);
+    const svgNS = "http://www.w3.org/2000/svg";
+    function el(tag, attrs = {}, parent) {
+      const e = document.createElementNS(svgNS, tag);
+      for (const k in attrs) e.setAttribute(k, attrs[k]);
+      if (parent) parent.appendChild(e);
+      return e;
+    }
+    function svgPoint(svg, evt) {
+      const pt = svg.createSVGPoint();
+      const src = evt.touches ? evt.touches[0] : evt;
+      pt.x = src.clientX; pt.y = src.clientY;
+      return pt.matrixTransform(svg.getScreenCTM().inverse());
+    }
+    function gauss() {
+      let u = 0, v = 0;
+      while (u === 0) u = Math.random();
+      while (v === 0) v = Math.random();
+      return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    }
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+    const shuffle = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+    const mean = a => a.length ? a.reduce((s, x) => s + x, 0) / a.length : NaN;
+    const sd = a => { if (a.length < 2) return 0; const m = mean(a); return Math.sqrt(a.reduce((s, x) => s + (x - m) ** 2, 0) / (a.length - 1)); };
+    const sem = a => a.length < 2 ? 0 : sd(a) / Math.sqrt(a.length);
+    const fx = (v, d = 1) => (v === null || v === undefined || !isFinite(v)) ? '—' : (+v).toFixed(d);
+    const fmtMS = s => { s = Math.max(0, Math.round(s)); return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
+    const fmtHMS = s => { s = Math.max(0, Math.round(s)); const h = Math.floor(s / 3600); return `${h}:${String(Math.floor(s % 3600 / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
+    const log10 = Math.log10;
+
+    // ---- t-distribution (two-tailed p) via regularised incomplete beta ----
+    function betacf(a, b, x) {
+      let qab = a + b, qap = a + 1, qam = a - 1, c = 1, d = 1 - qab * x / qap;
+      if (Math.abs(d) < 1e-30) d = 1e-30; d = 1 / d; let h = d;
+      for (let m = 1; m <= 200; m++) {
+        const m2 = 2 * m; let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+        d = 1 + aa * d; if (Math.abs(d) < 1e-30) d = 1e-30; c = 1 + aa / c; if (Math.abs(c) < 1e-30) c = 1e-30; d = 1 / d; h *= d * c;
+        aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+        d = 1 + aa * d; if (Math.abs(d) < 1e-30) d = 1e-30; c = 1 + aa / c; if (Math.abs(c) < 1e-30) c = 1e-30; d = 1 / d;
+        const del = d * c; h *= del; if (Math.abs(del - 1) < 3e-7) break;
+      }
+      return h;
+    }
+    function gammaln(x) {
+      const c = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5];
+      let y = x, t = x + 5.5; t -= (x + 0.5) * Math.log(t); let s = 1.000000000190015;
+      for (let j = 0; j < 6; j++) s += c[j] / ++y;
+      return -t + Math.log(2.5066282746310005 * s / x);
+    }
+    function betai(a, b, x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      const bt = Math.exp(gammaln(a + b) - gammaln(a) - gammaln(b) + a * Math.log(x) + b * Math.log(1 - x));
+      return x < (a + 1) / (a + b + 2) ? bt * betacf(a, b, x) / a : 1 - bt * betacf(b, a, 1 - x) / b;
+    }
+    function tTest(a, b) { // unpaired Student's t (pooled variance)
+      if (a.length < 2 || b.length < 2) return { t: NaN, df: NaN, p: NaN };
+      const df = a.length + b.length - 2;
+      const sp2 = ((a.length - 1) * sd(a) ** 2 + (b.length - 1) * sd(b) ** 2) / df;
+      const se = Math.sqrt(sp2 * (1 / a.length + 1 / b.length));
+      const t = se === 0 ? (mean(a) === mean(b) ? 0 : 99) : (mean(a) - mean(b)) / se;
+      return { t, df, p: betai(df / 2, 0.5, df / (df + t * t)) };
+    }
+    const pLabel = p => !isFinite(p) ? '—' : p < 0.001 ? 'p < 0.001' : p < 0.01 ? 'p < 0.01' : p < 0.05 ? 'p < 0.05' : 'p > 0.05 (ns)';
+    const stars = p => !isFinite(p) ? '' : p < 0.001 ? '***' : p < 0.01 ? '**' : p < 0.05 ? '*' : 'ns';
+    function linreg(xs, ys) {
+      const n = xs.length; if (n < 2) return null;
+      const mx = mean(xs), my = mean(ys);
+      let sxy = 0, sxx = 0, syy = 0;
+      for (let i = 0; i < n; i++) { sxy += (xs[i] - mx) * (ys[i] - my); sxx += (xs[i] - mx) ** 2; syy += (ys[i] - my) ** 2; }
+      const slope = sxy / sxx, intercept = my - slope * mx;
+      return { slope, intercept, r2: syy === 0 ? 1 : (sxy * sxy) / (sxx * syy) };
+    }
+    // log-linear interpolation of the dose giving response `target` on an ascending curve [[dose, resp], ...]
+    function interpDose(pts, target) {
+      const s = pts.filter(p => p[0] > 0).slice().sort((a, b) => a[0] - b[0]);
+      for (let i = 0; i < s.length - 1; i++) {
+        const [d1, r1] = s[i], [d2, r2] = s[i + 1];
+        if ((r1 <= target && r2 >= target) && r2 !== r1) {
+          const f = (target - r1) / (r2 - r1);
+          return Math.pow(10, log10(d1) + f * (log10(d2) - log10(d1)));
+        }
+      }
+      return NaN;
+    }
+
+    // ---- Sound ----
+    let soundOn = true, synth = null;
+    function beep(type = 'click') {
+      if (!soundOn || typeof Tone === 'undefined') return;
+      try {
+        if (!synth) { Tone.start(); synth = new Tone.PolySynth(Tone.Synth).toDestination(); synth.volume.value = -16; }
+        const n = { click: 'C6', ok: 'E5', warn: 'A3', done: 'G5', tick: 'C7', low: 'E3' }[type] || 'C6';
+        synth.triggerAttackRelease(n, type === 'done' ? '8n' : '32n');
+      } catch (e) { /* audio optional */ }
+    }
+
+    // ---- Feedback / stepper ----
+    function showFeedback(msg, isAlert = false) {
+      $('feedbackText').innerHTML = msg;
+      const icon = $('feedbackIcon');
+      icon.innerText = isAlert ? "⚠️" : "ℹ";
+      icon.className = isAlert ? "text-amber-400 font-bold" : "text-teal-400 font-bold";
+      if (isAlert) beep('warn');
+    }
+    function setPhase(t) { $('phaseIndicator').innerText = t || ''; }
+    function renderSteps(steps) {
+      let active = steps.findIndex(s => !s.done);
+      $('stepper').innerHTML = steps.map((s, i) => {
+        const cls = s.done ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : i === active ? 'bg-amber-50 text-amber-800 border-amber-300 ring-1 ring-amber-200' : 'bg-slate-50 text-slate-400 border-slate-200';
+        return `<span class="px-2 py-1 rounded-md border ${cls}">${s.done ? '✓' : (i + 1)} ${s.t}</span>`;
+      }).join('');
+    }
+
+    // ---- Speed ----
+    let SPEED = 1, SPEEDS = [1, 5, 20, 60];
+    function renderSpeed() {
+      $('speedBtns').innerHTML = SPEEDS.map(s => `<button onclick="setSpeed(${s})" class="px-2 py-0.5 text-[11px] rounded font-mono font-semibold ${s === SPEED ? 'bg-teal-600 text-white' : 'text-slate-600 hover:bg-slate-100'}">${s}×</button>`).join('');
+    }
+    function setSpeed(s) { SPEED = s; renderSpeed(); beep('tick'); }
+
+    // ---- Generic wait timer (simulated seconds) ----
+    let WAIT = null;
+    function startWait(title, seconds, onDone) {
+      WAIT = { title, total: seconds, left: seconds, onDone };
+      $('waitTitle').innerText = title; $('waitCard').classList.remove('hidden');
+    }
+    function skipWait() { if (WAIT) WAIT.left = 0; }
+    function cancelWait() { WAIT = null; $('waitCard').classList.add('hidden'); }
+    function tickWait(dtSim) {
+      if (!WAIT) return;
+      WAIT.left -= dtSim;
+      $('waitClock').innerText = WAIT.total >= 3600 ? fmtHMS(WAIT.left) : fmtMS(WAIT.left);
+      $('waitBar').style.width = `${clamp(100 * (1 - WAIT.left / WAIT.total), 0, 100)}%`;
+      if (WAIT.left <= 0) { const w = WAIT; WAIT = null; $('waitCard').classList.add('hidden'); beep('done'); w.onDone && w.onDone(); }
+    }
+    let _lastTs = null;
+    function startLoop(cb) {
+      const f = ts => {
+        if (_lastTs === null) _lastTs = ts;
+        const dtR = Math.min(0.1, Math.max(0, (ts - _lastTs) / 1000)); _lastTs = ts;
+        tickWait(dtR * SPEED);
+        cb && cb(dtR * SPEED, dtR);
+        requestAnimationFrame(f);
+      };
+      requestAnimationFrame(f);
+    }
+
+    // ---- Tabs / modals ----
+    function openModal(id) { $(id).classList.remove('hidden'); }
+    function closeModal(id) { $(id).classList.add('hidden'); }
+    function switchTab(tabId) {
+      const map = { task: ['viewTask', 'tabTask'], experiment: ['viewExperiment', 'tabExperiment'], observation: ['viewObservation', 'tabObservation'] };
+      Object.values(map).forEach(([v, t]) => {
+        $(v).classList.add('hidden');
+        const b = $(t); b.classList.remove('bg-teal-500', 'text-white', 'shadow'); b.classList.add('text-slate-300');
+      });
+      $(map[tabId][0]).classList.remove('hidden');
+      $(map[tabId][1]).classList.add('bg-teal-500', 'text-white', 'shadow');
+      if (tabId === 'observation') renderObservation();
+    }
+
+    // ---- Viva ----
+    function renderQuiz() {
+      $('quizScore').classList.add('hidden');
+      $('quizBody').innerHTML = QUIZ.map((q, i) => `<div class="space-y-1.5" id="qwrap${i}">
+        <p class="font-semibold text-slate-800">${i + 1}. ${q.q}</p>
+        ${q.o.map((o, j) => `<label class="flex items-start gap-2 p-1.5 rounded hover:bg-slate-50 cursor-pointer"><input type="radio" name="q${i}" value="${j}" class="mt-0.5 accent-teal-600"><span>${o}</span></label>`).join('')}
+        <p id="qexp${i}" class="hidden text-[11px] p-2 rounded"></p></div>`).join('');
+    }
+    function evaluateQuestions() {
+      const ans = QUIZ.map((_, i) => document.querySelector(`input[name="q${i}"]:checked`)?.value);
+      if (ans.some(a => a === undefined)) { const s = $('quizScore'); s.className = 'p-2.5 rounded-lg text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200'; s.innerText = `Please answer all ${QUIZ.length} questions before submitting.`; return; }
+      let score = 0;
+      QUIZ.forEach((q, i) => {
+        const ok = +ans[i] === q.a; if (ok) score++;
+        const e = $('qexp' + i); e.classList.remove('hidden');
+        e.className = `text-[11px] p-2 rounded ${ok ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-rose-50 text-rose-800 border border-rose-200'}`;
+        e.innerHTML = `${ok ? '✓ Correct.' : `✗ Correct answer: <b>${q.o[q.a]}</b>.`} ${q.e || ''}`;
+      });
+      const s = $('quizScore'); s.className = `p-2.5 rounded-lg text-xs font-semibold ${score / QUIZ.length >= 0.6 ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-amber-50 text-amber-800 border border-amber-200'}`;
+      s.innerText = `Viva score: ${score}/${QUIZ.length} (${Math.round(score / QUIZ.length * 100)}%)`;
+      beep(score / QUIZ.length >= 0.6 ? 'done' : 'warn');
+      $('quizBody').scrollTop = 0;
+    }
+
+    // ---- Results modal ----
+    function openResultsModal() {
+      const r = buildResults();
+      $('resBody').innerHTML = r.rows.map(([k, v]) => `<div class="flex justify-between gap-3 border-b border-slate-100 pb-1"><span class="text-slate-500">${k}</span><span class="font-semibold text-slate-800 text-right">${v}</span></div>`).join('');
+      $('resExplanation').innerHTML = r.text;
+      openModal('modalResults');
+    }
+    // numeric answer verification (bioassays / unknowns)
+    function verifyNumber(inputId, outId, truth, tolPct, unit, explain) {
+      const v = parseFloat($(inputId).value), o = $(outId);
+      if (!isFinite(v)) { o.className = 'text-xs font-semibold text-amber-700'; o.innerText = 'Enter a number first.'; return; }
+      const err = Math.abs(v - truth) / truth * 100;
+      const ok = err <= tolPct;
+      o.className = `text-xs font-semibold ${ok ? 'text-emerald-700' : 'text-rose-700'}`;
+      o.innerHTML = ok ? `✓ Accepted (${fx(err, 1)}% from the true value of ${fx(truth, 3)} ${unit}). ${explain || ''}` : `✗ ${fx(err, 0)}% away from the true value. Re-check your matching/calculation (accepted within ±${tolPct}%).`;
+      beep(ok ? 'done' : 'warn');
+    }
+
+    // ---- SVG charts ----
+    const PALETTE = { teal: '#7e13b5', indigo: '#4f46e5', rose: '#e11d48', amber: '#d97706', slate: '#475569', emerald: '#059669', sky: '#0284c7', violet: '#7c3aed' };
+    function niceTicks(min, max, n = 5) {
+      if (!(max > min)) { max = min + 1; }
+      const span = max - min, step0 = span / n, mag = Math.pow(10, Math.floor(log10(step0)));
+      const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => span / s <= n) || mag * 10;
+      const out = []; for (let v = Math.ceil(min / step - 1e-9) * step; v <= max + 1e-9; v += step) out.push(+v.toFixed(10));
+      return out;
+    }
+    function chartFrame(svg, o) {
+      svg.innerHTML = '';
+      const W = +(svg.getAttribute('viewBox').split(' ')[2]), H = +(svg.getAttribute('viewBox').split(' ')[3]);
+      const m = { l: 46, r: 12, t: 12, b: 38 };
+      const X = v => m.l + (v - o.xMin) / (o.xMax - o.xMin) * (W - m.l - m.r);
+      const Y = v => H - m.b - (v - o.yMin) / (o.yMax - o.yMin) * (H - m.t - m.b);
+      const yt = o.yTicks || niceTicks(o.yMin, o.yMax, 5);
+      yt.forEach(v => { el('line', { x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), stroke: '#e2e8f0' }, svg); const t = el('text', { x: m.l - 5, y: Y(v) + 3, 'text-anchor': 'end', 'font-size': 9, fill: '#64748b' }, svg); t.textContent = o.yFmt ? o.yFmt(v) : +v.toFixed(3); });
+      const xt = o.xTicks || niceTicks(o.xMin, o.xMax, 6).map(v => [v, o.xFmt ? o.xFmt(v) : +v.toFixed(3)]);
+      xt.forEach(([v, lab]) => { el('line', { x1: X(v), x2: X(v), y1: H - m.b, y2: H - m.b + 4, stroke: '#94a3b8' }, svg); const t = el('text', { x: X(v), y: H - m.b + 14, 'text-anchor': 'middle', 'font-size': 9, fill: '#64748b' }, svg); t.textContent = lab; });
+      el('line', { x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b, stroke: '#475569' }, svg);
+      el('line', { x1: m.l, x2: m.l, y1: m.t, y2: H - m.b, stroke: '#475569' }, svg);
+      if (o.xLabel) { const t = el('text', { x: (m.l + W - m.r) / 2, y: H - 6, 'text-anchor': 'middle', 'font-size': 10, fill: '#334155', 'font-weight': 600 }, svg); t.textContent = o.xLabel; }
+      if (o.yLabel) { const t = el('text', { x: 11, y: (m.t + H - m.b) / 2, 'text-anchor': 'middle', 'font-size': 10, fill: '#334155', 'font-weight': 600, transform: `rotate(-90 11 ${(m.t + H - m.b) / 2})` }, svg); t.textContent = o.yLabel; }
+      return { X, Y, W, H, m };
+    }
+    function emptyChart(svg, msg) {
+      svg.innerHTML = '';
+      const vb = svg.getAttribute('viewBox').split(' ');
+      const t = el('text', { x: vb[2] / 2, y: vb[3] / 2, 'text-anchor': 'middle', 'font-size': 11, fill: '#94a3b8' }, svg); t.textContent = msg || 'No data yet';
+    }
+    // series: [{name, color, pts:[[x,y,err?]], dash, noLine, line:{slope,intercept,x1,x2}}]
+    function lineChart(id, o) {
+      const svg = $(id);
+      const all = o.series.flatMap(s => s.pts);
+      if (!all.length) { emptyChart(svg, o.empty); return; }
+      const xs = all.map(p => p[0]), ys = all.map(p => p[1] + (p[2] || 0));
+      const xMin = o.xMin ?? Math.min(...xs), xMax = o.xMax ?? Math.max(...xs);
+      const pad = (xMax - xMin) * 0.05 || 1;
+      const f = chartFrame(svg, { ...o, xMin: o.xMin ?? xMin - pad, xMax: o.xMax ?? xMax + pad, yMin: o.yMin ?? Math.min(0, ...all.map(p => p[1])), yMax: o.yMax ?? (Math.max(...ys) * 1.12 || 1) });
+      (o.hlines || []).forEach(h => { el('line', { x1: f.m.l, x2: f.W - f.m.r, y1: f.Y(h.y), y2: f.Y(h.y), stroke: h.color || '#94a3b8', 'stroke-dasharray': '4 3' }, svg); if (h.label) { const t = el('text', { x: f.W - f.m.r - 2, y: f.Y(h.y) - 3, 'text-anchor': 'end', 'font-size': 8.5, fill: h.color || '#64748b' }, svg); t.textContent = h.label; } });
+      (o.vlines || []).forEach(h => { el('line', { x1: f.X(h.x), x2: f.X(h.x), y1: f.m.t, y2: f.H - f.m.b, stroke: h.color || '#94a3b8', 'stroke-dasharray': '3 3' }, svg); if (h.label) { const t = el('text', { x: f.X(h.x) + 3, y: f.m.t + 9, 'font-size': 8.5, fill: h.color || '#64748b' }, svg); t.textContent = h.label; } });
+      o.series.forEach(s => {
+        const pts = s.pts.slice().sort((a, b) => a[0] - b[0]);
+        if (s.line) { el('line', { x1: f.X(s.line.x1), y1: f.Y(s.line.slope * s.line.x1 + s.line.intercept), x2: f.X(s.line.x2), y2: f.Y(s.line.slope * s.line.x2 + s.line.intercept), stroke: s.color, 'stroke-width': 1.5, 'stroke-dasharray': '5 3' }, svg); }
+        if (!s.noLine && pts.length > 1) el('polyline', { points: pts.map(p => `${f.X(p[0])},${f.Y(p[1])}`).join(' '), fill: 'none', stroke: s.color, 'stroke-width': 2, 'stroke-dasharray': s.dash || '' }, svg);
+        pts.forEach(p => {
+          if (p[2]) { el('line', { x1: f.X(p[0]), x2: f.X(p[0]), y1: f.Y(p[1] - p[2]), y2: f.Y(p[1] + p[2]), stroke: s.color }, svg); [-1, 1].forEach(k => el('line', { x1: f.X(p[0]) - 3, x2: f.X(p[0]) + 3, y1: f.Y(p[1] + k * p[2]), y2: f.Y(p[1] + k * p[2]), stroke: s.color }, svg)); }
+          el('circle', { cx: f.X(p[0]), cy: f.Y(p[1]), r: 3.2, fill: s.hollow ? '#fff' : s.color, stroke: s.color, 'stroke-width': 1.5 }, svg);
+        });
+      });
+      // legend
+      const named = o.series.filter(s => s.name);
+      named.forEach((s, i) => { const x = f.m.l + 8, y = f.m.t + 8 + i * 12; el('rect', { x, y: y - 6, width: 10, height: 4, fill: s.color }, svg); const t = el('text', { x: x + 14, y: y - 1, 'font-size': 9, fill: '#334155' }, svg); t.textContent = s.name; });
+    }
+    // bars: [{label, v, e, color, note}]
+    function barChart(id, o) {
+      const svg = $(id);
+      const bars = o.bars.filter(b => isFinite(b.v));
+      if (!bars.length) { emptyChart(svg, o.empty); return; }
+      const top = Math.max(...bars.map(b => b.v + (b.e || 0))) * 1.2 || 1;
+      const n = o.bars.length;
+      const f = chartFrame(svg, { ...o, xMin: 0, xMax: n, yMin: o.yMin ?? 0, yMax: o.yMax ?? top, xTicks: [] });
+      const bw = (f.X(1) - f.X(0)) * 0.56;
+      o.bars.forEach((b, i) => {
+        const cx = f.X(i + 0.5);
+        const t = el('text', { x: cx, y: f.H - f.m.b + 13, 'text-anchor': 'middle', 'font-size': 9, fill: '#334155' }, svg); t.textContent = b.label;
+        if (!isFinite(b.v)) return;
+        el('rect', { x: cx - bw / 2, y: f.Y(Math.max(b.v, 0)), width: bw, height: Math.abs(f.Y(0) - f.Y(b.v)), fill: b.color || PALETTE.teal, rx: 2, opacity: .9 }, svg);
+        if (b.e) { el('line', { x1: cx, x2: cx, y1: f.Y(b.v), y2: f.Y(b.v + b.e), stroke: '#0a1f44' }, svg); el('line', { x1: cx - 5, x2: cx + 5, y1: f.Y(b.v + b.e), y2: f.Y(b.v + b.e), stroke: '#0a1f44' }, svg); }
+        if (b.note) { const s = el('text', { x: cx, y: f.Y(b.v + (b.e || 0)) - 4, 'text-anchor': 'middle', 'font-size': 10, 'font-weight': 700, fill: '#0a1f44' }, svg); s.textContent = b.note; }
+      });
+    }
+    // ---- small HTML helpers ----
+    function tableHTML(head, rows, cls = '') {
+      return `<table class="obs-table w-full text-[11px] text-center ${cls}"><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody class="font-mono">${rows.length ? rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${head.length}" class="text-slate-400 py-3 font-sans">No readings yet</td></tr>`}</tbody></table>`;
+    }
+    $('audioToggleBtn') && $('audioToggleBtn').addEventListener('click', () => {
+      soundOn = !soundOn;
+      $('audioToggleBtn').className = `p-2 rounded-lg transition ${soundOn ? 'bg-teal-100 hover:bg-teal-200 text-teal-800' : 'bg-slate-200 text-slate-500'}`;
+      if (soundOn) beep('ok');
+    });
+    window.addEventListener('DOMContentLoaded', () => { renderSpeed(); renderQuiz(); init(); });
+
+  </script>
+  <script>
+    // =====================================================================
+    // Shared realistic rodent art (albino Wistar rat / Swiss albino mouse).
+    // Anatomical silhouettes, strand-textured fur with fuzzy edge, rim light,
+    // veined ears, glossy ruby eyes, whiskers, ringed tail, toed paws.
+    // Side views face +x, top views have the head at +x.  Origin = body centre.
+    // =====================================================================
+    const ANI_DEFS = `
+      <filter id="furStrand" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".55 .08" numOctaves="3" seed="12" result="n"/><feColorMatrix in="n" values="0 0 0 0 .52  0 0 0 0 .46  0 0 0 0 .43  0 0 0 .75 -.2"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+      <filter id="furStrandT" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".12 .6" numOctaves="3" seed="21" result="n"/><feColorMatrix in="n" values="0 0 0 0 .52  0 0 0 0 .46  0 0 0 0 .43  0 0 0 .75 -.2"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+      <filter id="furFuzz" x="-6%" y="-8%" width="112%" height="116%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="3" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+      <filter id="aniBlur"><feGaussianBlur stdDeviation="1.6"/></filter>
+      <filter id="aniSoft"><feGaussianBlur stdDeviation=".5"/></filter>
+      <linearGradient id="aniBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".4" stop-color="#f7f3f0"/><stop offset=".78" stop-color="#e6ddd9"/><stop offset="1" stop-color="#c9bcb7"/></linearGradient>
+      <linearGradient id="aniBodyT" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#fbf8f6"/><stop offset=".5" stop-color="#f1ebe7"/><stop offset="1" stop-color="#ddd2cd"/></linearGradient>
+      <linearGradient id="aniShade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".6" stop-color="#9a8782" stop-opacity="0"/><stop offset="1" stop-color="#5f4c48" stop-opacity=".38"/></linearGradient>
+      <linearGradient id="aniTail" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#efbdc6"/><stop offset="1" stop-color="#dc98a8"/></linearGradient>
+      <radialGradient id="aniEye" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ff8097"/><stop offset=".5" stop-color="#b3122c"/><stop offset="1" stop-color="#430410"/></radialGradient>
+      <radialGradient id="aniEar" cx=".5" cy=".62" r=".65"><stop offset="0" stop-color="#fcd7df"/><stop offset=".7" stop-color="#f2adbf"/><stop offset="1" stop-color="#e48fa6"/></radialGradient>
+      <linearGradient id="aniPaw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6bcc8"/><stop offset="1" stop-color="#e395a8"/></linearGradient>`;
+
+    const _ANI_SIDE = 'M45 1.5 C42 -2 37 -7 29 -10 C22 -13 14 -16 3 -16.5 C-9 -17 -21 -14.5 -28 -8 C-33 -3 -33 6 -29 11 C-25 15 -17 15.5 -9 15.5 C0 15.5 9 14.5 17 12 C24 10 31 8.5 37 6 C41 4.5 44 3 45 1.5Z';
+    const _ANI_TOP = 'M27 0 C25 -2.4 22 -4.6 18 -5.8 C15 -7 12.5 -8.6 8 -9.4 C1 -10.6 -8 -10.2 -13.5 -7.8 C-18 -5.8 -20.5 -2.8 -20.5 0 C-20.5 2.8 -18 5.8 -13.5 7.8 C-8 10.2 1 10.6 8 9.4 C12.5 8.6 15 7 18 5.8 C22 4.6 25 2.4 27 0Z';
+    const _toes = (x, y, n, len, dx, dy, w = .5) => Array.from({ length: n }, (_, i) => { const a = (i - (n - 1) / 2) * .42; return `<line x1="${x}" y1="${y}" x2="${(x + (dx * Math.cos(a) - dy * Math.sin(a)) * len).toFixed(2)}" y2="${(y + (dx * Math.sin(a) + dy * Math.cos(a)) * len).toFixed(2)}" stroke="#c77a8f" stroke-width="${w}" stroke-linecap="round"/>`; }).join('');
+    const _whisk = (x, y, dir, sc) => [[-9, -14], [-3, -17], [4, -16], [9, -11], [12, -5]].map(([a, b], i) => `<path d="M${x} ${y + (i - 2) * .55 * sc} Q${x + dir * (8 + i) * sc} ${y + (a * .55) * sc} ${x + dir * (19 + i * 1.5) * sc} ${y + b * sc * .8}" fill="none" stroke="#fff" stroke-opacity=".62" stroke-width=".28"/>`).join('');
+
+    // ---- side view. o: {flip, sw (paw swelling 0..1), ink, kind:'rat'|'mouse'}  Returns art only (no marks).
+    function animalSideArt(o = {}) {
+        const mouse = o.kind === 'mouse', sc = mouse ? .47 : 1, sw = o.sw || 0;
+        const pawC = `rgb(${Math.round(240 - 16 * sw)},${Math.round(160 - 70 * sw)},${Math.round(176 - 70 * sw)})`;
+        const tail = mouse ? 'M-30 3 C-48 5 -58 -2 -70 5 C-80 10 -90 8 -96 14' : 'M-30 3 C-44 4 -52 12 -64 10 C-72 9 -76 14 -82 12';
+        const earRot = mouse ? -12 : -20, earS = mouse ? 1.5 : 1;
+        return `<g transform="scale(${sc})">
+        <ellipse cx="2" cy="16.5" rx="${mouse ? 40 : 36}" ry="3.6" fill="#000" opacity=".3" filter="url(#aniBlur)"/>
+        <path d="${tail}" fill="none" stroke="url(#aniTail)" stroke-width="${mouse ? 3.2 : 2.7}" stroke-linecap="round"/>
+        <path d="${tail}" fill="none" stroke="#b97585" stroke-width="${mouse ? 3.2 : 2.7}" stroke-linecap="round" stroke-dasharray=".55 1.5" opacity=".6"/>
+        <g opacity=".85"><path d="M22 10 Q26 14 25 16.6 L31 16.8 Q31 13 28 10Z" fill="#d9a2ae"/><path d="M-20 12 Q-18 16 -16 16.4 L-7 16.6 Q-7 14 -10 12Z" fill="#d9a2ae"/></g>
+        <path d="${_ANI_SIDE}" fill="url(#aniBody)" filter="url(#furFuzz)"/>
+        <path d="${_ANI_SIDE}" fill="#fff" filter="url(#furStrand)" opacity=".85"/>
+        <path d="${_ANI_SIDE}" fill="url(#aniShade)"/>
+        <path d="M-27 -8 C-20 -14.5 -8 -16.8 3 -16.3 C13 -15.8 21 -13.4 28 -10" fill="none" stroke="#fff" stroke-width="1.5" stroke-opacity=".85" filter="url(#aniSoft)"/>
+        <ellipse cx="-15" cy="3" rx="13.5" ry="11.5" fill="#fff" opacity=".28"/><path d="M-27 4 C-26 -4 -20 -9 -13 -9.5" fill="none" stroke="#d8cdc8" stroke-width=".6" opacity=".55"/>
+        <ellipse cx="19" cy="2.5" rx="9" ry="9.5" fill="#fff" opacity=".16"/>
+        <g transform="rotate(${earRot} 23 -12) translate(${(23 * (1 - earS)).toFixed(1)} ${(-13 * (1 - earS)).toFixed(1)}) scale(${earS})"><ellipse cx="23" cy="-14" rx="4.8" ry="6.2" fill="#f4eae6" stroke="#e6d9d4" stroke-width=".4"/><ellipse cx="23.2" cy="-13.6" rx="3.5" ry="4.8" fill="url(#aniEar)"/><path d="M23 -9.5 Q23.4 -13 22.2 -17 M23.8 -10 Q25 -13 25.4 -16" fill="none" stroke="#d2728d" stroke-width=".35" opacity=".65"/></g>
+        <ellipse cx="34" cy="-4.8" rx="2.5" ry="2.25" fill="#3a0a14"/><ellipse cx="34" cy="-4.8" rx="2" ry="1.8" fill="url(#aniEye)"/><circle cx="33.2" cy="-5.6" r=".68" fill="#fff"/><circle cx="35" cy="-4" r=".3" fill="#fff" opacity=".6"/><path d="M31.6 -6.4 Q34 -8 36.5 -6.2" fill="none" stroke="#e5d6d1" stroke-width=".55"/>
+        <ellipse cx="44.6" cy="1.6" rx="2" ry="1.55" fill="#e98aa1"/><circle cx="45.4" cy="1.2" r=".5" fill="#8a2d44"/><path d="M43 4.2 Q40 5.6 37.4 5.3" fill="none" stroke="#b49a98" stroke-width=".4"/>
+        ${_whisk(41, 2.6, 1, 1)}
+        <path d="M17 9 Q23 12 22 15.5 L29 16 Q29 12 26 8.5Z" fill="url(#aniPaw)" opacity=".95"/>${_toes(22.5, 15.7, 3, 4.2, 1, 0.25)}
+        <ellipse cx="-13" cy="14.2" rx="${(6.8 + sw * 3.2).toFixed(1)}" ry="${(2.5 + sw * 1.3).toFixed(1)}" fill="${pawC}"/><ellipse cx="-13" cy="13.6" rx="${(5.4 + sw * 3).toFixed(1)}" ry="${(1.3 + sw * .8).toFixed(1)}" fill="#fff" opacity=".22"/>${_toes(-7.5, 15, 4, 4.4, 1, .18)}
+        ${o.ink ? `<line x1="-18" y1="11" x2="-8" y2="11" stroke="#1e3a8a" stroke-width="1.2"/>` : ''}
+        </g>`;
+    }
+    // ---- top view (head to +x). o: {kind}
+    function animalTopArt(o = {}) {
+        const mouse = o.kind !== 'rat';
+        return `<g transform="scale(.72)">
+        <ellipse cx="0" cy="2.6" rx="24" ry="11" fill="#000" opacity=".26" filter="url(#aniBlur)"/>
+        <path d="M-20 0 C-30 3 -38 -3 -50 2 C-56 5 -60 2 -64 5" fill="none" stroke="url(#aniTail)" stroke-width="2.3" stroke-linecap="round"/>
+        <path d="M-20 0 C-30 3 -38 -3 -50 2 C-56 5 -60 2 -64 5" fill="none" stroke="#b97585" stroke-width="2.3" stroke-linecap="round" stroke-dasharray=".5 1.4" opacity=".6"/>
+        ${[-1, 1].map(s => `<g>
+          <ellipse cx="11" cy="${s * 8.6}" rx="3.3" ry="2" fill="#f1ebe7" stroke="#ddd2cd" stroke-width=".3" transform="rotate(${s * 28} 11 ${s * 8.6})"/>
+          <ellipse cx="13.6" cy="${s * 10.6}" rx="2.2" ry="1.25" fill="url(#aniPaw)" stroke="#d58a9c" stroke-width=".25" transform="rotate(${s * 40} 13.6 ${s * 10.6})"/>
+          <ellipse cx="-9.5" cy="${s * 9.2}" rx="5" ry="3" fill="#f1ebe7" stroke="#ddd2cd" stroke-width=".3" transform="rotate(${s * -18} -9.5 ${s * 9.2})"/>
+          <ellipse cx="-5.4" cy="${s * 11.6}" rx="3.8" ry="1.5" fill="url(#aniPaw)" stroke="#d58a9c" stroke-width=".25" transform="rotate(${s * -14} -5.4 ${s * 11.6})"/>
+          ${_toes(-2.6, s * 11.9, 4, 1.9, .8, s * .2, .3)}${_toes(15.3, s * 11.6, 3, 1.5, .6, s * .7, .3)}
+        </g>`).join('')}
+        <path d="${_ANI_TOP}" fill="url(#aniBodyT)" filter="url(#furFuzz)"/>
+        <path d="${_ANI_TOP}" fill="#fff" filter="url(#furStrandT)" opacity=".85"/>
+        <path d="M-16 0 L16 0" stroke="#d5c9c4" stroke-width=".9" opacity=".35" filter="url(#aniSoft)"/>
+        <ellipse cx="-9" cy="-5.6" rx="8" ry="5" fill="#fff" opacity=".3"/><ellipse cx="-9" cy="5.6" rx="8" ry="5" fill="#fff" opacity=".3"/>
+        <path d="M-18 -4 C-12 -9.4 2 -9.6 9 -8.4" fill="none" stroke="#fff" stroke-width="1.1" stroke-opacity=".7" filter="url(#aniSoft)"/>
+        ${[-1, 1].map(s => `<g><ellipse cx="14.5" cy="${s * 6.4}" rx="3.9" ry="3.3" fill="#f3e9e5" stroke="#e5d8d3" stroke-width=".35"/><ellipse cx="14.7" cy="${s * 6.4}" rx="2.7" ry="2.3" fill="url(#aniEar)"/><path d="M13 ${s * 6.4} Q15 ${s * 6.8} 17 ${s * 6.2}" fill="none" stroke="#d2728d" stroke-width=".3" opacity=".6"/>
+          <ellipse cx="21.4" cy="${s * 3}" rx="1.35" ry="1.2" fill="#3a0a14"/><ellipse cx="21.4" cy="${s * 3}" rx="1.05" ry=".95" fill="url(#aniEye)"/><circle cx="21" cy="${s * 3 - .45}" r=".38" fill="#fff"/></g>`).join('')}
+        <ellipse cx="27" cy="0" rx="1.5" ry="1.3" fill="#e98aa1"/>
+        ${[-1, 1].map(s => [[-12, 5], [-6, 7], [1, 8]].map(([a, b]) => `<path d="M25.5 ${s * 1} Q${31 + b * .3} ${s * (1 + b * .6)} ${34 + b} ${s * (3 + b * 1.5 + a * -.1)}" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width=".26"/>`).join('')).join('')}
+        </g>`;
+    }
+
+    // =====================================================================
+    // XPRISM in-vivo bench kit (shared by Exp 21 and Exp 25)
+    // realistic SVG art: room, cages, animals, balances, bottles, syringes;
+    // station switching, click routing, checklist + hint engine
+    // =====================================================================
+    let HINTS = true;
+    SPEEDS = [1, 5, 20, 60];
+    function say(msg, alert) { showFeedback(msg, alert); }
+    function once(key, msg, alert) { if (S.warned[key]) return; S.warned[key] = 1; say(msg, alert); }
+    const R2 = v => Math.round(v * 100) / 100;
+    const lbl = (x, y, t, o = {}) => `<text x="${x}" y="${y}" font-size="${o.s || 10}" fill="${o.c || '#1e293b'}" text-anchor="${o.a || 'middle'}" font-weight="${o.w || 600}" font-family="${o.f || 'Inter, sans-serif'}"${o.extra || ''}>${t}</text>`;
+    const tag = (x, y, t, c = '#0f172a') => `<g><rect x="${x - t.length * 3.1 - 6}" y="${y - 11}" width="${t.length * 6.2 + 12}" height="16" rx="4" fill="${c}" opacity=".82"/>${lbl(x, y + 1, t, { c: '#fff', s: 10 })}</g>`;
+    const clockStr = t => { const m = Math.floor(9 * 60 + t / 60); return `${String(Math.floor(m / 60) % 24).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`; };
+
+    const DEFS = `<defs>
+      <filter id="sh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="3" dy="5" stdDeviation="4" flood-color="#000" flood-opacity=".42"/></filter>
+      <filter id="sh2" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="1" dy="2" stdDeviation="1.5" flood-color="#000" flood-opacity=".5"/></filter>
+      <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+      <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="7" result="n"/><feColorMatrix in="n" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .07 0"/></filter>
+      <filter id="furF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 .55  0 0 0 0 .5  0 0 0 0 .48  0 0 0 .22 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+      <filter id="beddingF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".35" numOctaves="3" seed="12"/><feColorMatrix values="0 0 0 0 .45  0 0 0 0 .3  0 0 0 0 .1  0 0 0 .55 0"/></filter>
+      <filter id="paperF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".5" numOctaves="2" seed="21"/><feColorMatrix values="0 0 0 0 .7  0 0 0 0 .7  0 0 0 0 .65  0 0 0 .12 0"/></filter>
+      <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#26313d"/><stop offset="1" stop-color="#1c252f"/></linearGradient>
+      <radialGradient id="spot" cx=".5" cy=".35" r=".7"><stop offset="0" stop-color="#5b6b7c" stop-opacity=".45"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+      <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2d3946"/><stop offset="1" stop-color="#27323e"/></linearGradient>
+      <linearGradient id="bench" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a4048"/><stop offset=".06" stop-color="#23272d"/><stop offset="1" stop-color="#16191d"/></linearGradient>
+      <linearGradient id="steel" x1="0" x2="1"><stop offset="0" stop-color="#6b7280"/><stop offset=".35" stop-color="#f3f4f6"/><stop offset=".55" stop-color="#d1d5db"/><stop offset="1" stop-color="#4b5563"/></linearGradient>
+      <linearGradient id="steelH" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9ca3af"/><stop offset=".4" stop-color="#f9fafb"/><stop offset="1" stop-color="#6b7280"/></linearGradient>
+      <linearGradient id="glass" x1="0" x2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".7"/><stop offset=".12" stop-color="#ffffff" stop-opacity=".22"/><stop offset=".5" stop-color="#e0f2fe" stop-opacity=".14"/><stop offset=".85" stop-color="#ffffff" stop-opacity=".3"/><stop offset="1" stop-color="#bae6fd" stop-opacity=".65"/></linearGradient>
+      <linearGradient id="glassEdge" x1="0" x2="1"><stop offset="0" stop-color="#f8fafc"/><stop offset=".5" stop-color="#e2e8f0" stop-opacity=".75"/><stop offset="1" stop-color="#f8fafc"/></linearGradient>
+      <linearGradient id="liquid" x1="0" x2="1"><stop offset="0" stop-color="#60a5fa" stop-opacity=".8"/><stop offset=".5" stop-color="#bfdbfe" stop-opacity=".7"/><stop offset="1" stop-color="#3b82f6" stop-opacity=".85"/></linearGradient>
+      <linearGradient id="milk" x1="0" x2="1"><stop offset="0" stop-color="#e2e8f0"/><stop offset=".5" stop-color="#ffffff"/><stop offset="1" stop-color="#cbd5e1"/></linearGradient>
+      <linearGradient id="oil" x1="0" x2="1"><stop offset="0" stop-color="#ca8a04" stop-opacity=".85"/><stop offset=".5" stop-color="#fde68a" stop-opacity=".85"/><stop offset="1" stop-color="#a16207" stop-opacity=".9"/></linearGradient>
+      <linearGradient id="amber" x1="0" x2="1"><stop offset="0" stop-color="#3b1d06"/><stop offset=".3" stop-color="#9a5a17"/><stop offset=".5" stop-color="#b8752a"/><stop offset="1" stop-color="#3b1d06"/></linearGradient>
+      <linearGradient id="hdpe" x1="0" x2="1"><stop offset="0" stop-color="#cbd5e1"/><stop offset=".4" stop-color="#f8fafc"/><stop offset="1" stop-color="#94a3b8"/></linearGradient>
+      <linearGradient id="plasticW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f8fafc"/><stop offset="1" stop-color="#cbd5e1"/></linearGradient>
+      <linearGradient id="cabFront" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1f5f9"/><stop offset="1" stop-color="#a3b1c2"/></linearGradient>
+      <radialGradient id="lcd" cx=".5" cy=".5" r=".8"><stop offset="0" stop-color="#c7d9b4"/><stop offset="1" stop-color="#9fb58a"/></radialGradient>
+      <radialGradient id="contactShadow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#000" stop-opacity="0.6"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+      <linearGradient id="cageTub" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2e8f0" stop-opacity="0.32"/><stop offset="1" stop-color="#cbd5e1" stop-opacity="0.6"/></linearGradient>
+      <linearGradient id="bedding" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9d3a6"/><stop offset="1" stop-color="#c9a76b"/></linearGradient>
+      <radialGradient id="furGrad" cx="0.42" cy="0.32" r="0.78"><stop offset="0" stop-color="#ffffff"/><stop offset="0.6" stop-color="#f6f3f1"/><stop offset="1" stop-color="#d8d0cc"/></radialGradient>
+      <linearGradient id="bellyShade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.65" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#6b5a58" stop-opacity="0.25"/></linearGradient>
+      <radialGradient id="earGrad" cx="0.5" cy="0.55" r="0.6"><stop offset="0" stop-color="#f9d0d9"/><stop offset="0.7" stop-color="#f1adbf"/><stop offset="1" stop-color="#e293a8"/></radialGradient>
+      <radialGradient id="eyeGrad" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#ff5d77"/><stop offset="0.55" stop-color="#c0142f"/><stop offset="1" stop-color="#5c0614"/></radialGradient>
+      <linearGradient id="glove" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a5b4fc"/><stop offset="0.55" stop-color="#7c83e6"/><stop offset="1" stop-color="#5b5fc7"/></linearGradient>
+      <linearGradient id="sleeve" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f8fafc"/><stop offset="1" stop-color="#cbd5e1"/></linearGradient>
+      <radialGradient id="btnYellow" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#fde047"/><stop offset="1" stop-color="#ca8a04"/></radialGradient>
+      <linearGradient id="fluid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7dd3fc" stop-opacity="0.6"/><stop offset="1" stop-color="#0284c7" stop-opacity="0.75"/></linearGradient>
+      <linearGradient id="cellGlass" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#bae6fd" stop-opacity="0.55"/><stop offset="0.12" stop-color="#ffffff" stop-opacity="0.55"/><stop offset="0.25" stop-color="#e0f2fe" stop-opacity="0.08"/><stop offset="0.8" stop-color="#e0f2fe" stop-opacity="0.08"/><stop offset="0.9" stop-color="#ffffff" stop-opacity="0.35"/><stop offset="1" stop-color="#7dd3fc" stop-opacity="0.55"/></linearGradient>
+      <linearGradient id="wood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a16207"/><stop offset="1" stop-color="#713f12"/></linearGradient>
+    ${ANI_DEFS}</defs>`;
+
+    function room(benchY = 430) {
+      let tiles = '';
+      for (let y = 0; y < benchY; y += 38) for (let x = (y / 38) % 2 ? -26 : 0; x < 1000; x += 52) tiles += `<rect x="${x}" y="${y}" width="51" height="37" fill="url(#tile)" stroke="#1a222b" stroke-width="1"/>`;
+      return `<rect width="1000" height="560" fill="url(#wall)"/>${tiles}<rect width="1000" height="${benchY}" fill="url(#spot)"/>
+        <rect y="${benchY - 6}" width="1000" height="8" fill="#5b636d"/>
+        <rect y="${benchY}" width="1000" height="${560 - benchY}" fill="url(#bench)"/>
+        <rect y="${benchY}" width="1000" height="${560 - benchY}" filter="url(#grain)" opacity=".7"/>
+        <rect y="${benchY + 2}" width="1000" height="2" fill="#fff" opacity=".08"/>`;
+    }
+    // wall clock showing lab time (hands updated per frame)
+    function wallClock(x, y, r = 34) {
+      return `<g transform="translate(${x} ${y})" filter="url(#sh)"><circle r="${r}" fill="#f8fafc" stroke="#111827" stroke-width="4"/>
+        ${Array.from({ length: 12 }, (_, i) => `<line x1="0" y1="${-r + 5}" x2="0" y2="${i % 3 ? -r + 9 : -r + 12}" stroke="#1f2937" stroke-width="${i % 3 ? 1.2 : 2.4}" transform="rotate(${i * 30})"/>`).join('')}
+        <line class="ckH" x1="0" y1="3" x2="0" y2="${-r * 0.5}" stroke="#111827" stroke-width="3.2" stroke-linecap="round"/>
+        <line class="ckM" x1="0" y1="4" x2="0" y2="${-r * 0.78}" stroke="#111827" stroke-width="2.2" stroke-linecap="round"/>
+        <circle r="2.6" fill="#dc2626"/></g>`;
+    }
+    function updClocks() {
+      const m = 9 * 60 + S.t / 60;
+      document.querySelectorAll('#scene .ckM').forEach(e => e.setAttribute('transform', `rotate(${(m % 60) * 6})`));
+      document.querySelectorAll('#scene .ckH').forEach(e => e.setAttribute('transform', `rotate(${(m / 60 % 12) * 30})`));
+    }
+
+    // ------------------------------------------------ animals
+    // picric acid code → spots (rat side coordinates, facing right)
+    const MARK_POS = { head: [32, -9], neck: [18, -12], back: [0, -14], rump: [-20, -10], tail: [-34, -2] };
+    const MARK_CODE = [[], ['head'], ['neck'], ['back'], ['rump'], ['tail'], ['head', 'back'], ['head', 'rump'], ['head', 'tail'], ['neck', 'back'], ['neck', 'rump'], ['back', 'tail'], ['head', 'neck', 'back'],
+      ['neck', 'tail'], ['rump', 'tail'], ['head', 'neck'], ['back', 'rump'], ['head', 'neck', 'tail'], ['neck', 'back', 'rump']];
+    const markText = id => id ? MARK_CODE[id].join(' + ') : 'unmarked';
+    // side-view rat in a cage. o: {id, marks, ink, paw (0..1 swelling), flip, sel}
+    function ratSide(o = {}) {
+      const spots = o.id ? MARK_CODE[o.id].map(p => `<ellipse cx="${MARK_POS[p][0]}" cy="${MARK_POS[p][1] * .86}" rx="6.5" ry="4" fill="#facc15" opacity=".82"/>`).join('') : '';
+      return `<g transform="scale(${o.flip ? -1 : 1} 1)">${animalSideArt({ kind: 'rat', sw: o.paw || 0, ink: o.ink })}${spots}</g>
+        ${o.sel ? `<ellipse cx="0" cy="2" rx="44" ry="22" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="4 3"/>` : ''}
+        ${o.id ? `<rect x="-11" y="-30" width="22" height="11" rx="2" fill="${o.tagc || '#fff'}" stroke="#94a3b8" stroke-width="0.5"/><text x="0" y="-21.8" text-anchor="middle" font-family="JetBrains Mono" font-size="7" font-weight="800" fill="#0f172a">R${o.id}</text>` : ''}`;
+    }
+    // side-view mouse (facing right) with picric spots
+    function mouseSide(o = {}) {
+      const spots = o.id ? MARK_CODE[o.id].map(p => `<ellipse cx="${MARK_POS[p][0] * 0.5}" cy="${MARK_POS[p][1] * 0.5}" rx="3.4" ry="2.2" fill="#facc15" opacity=".85"/>`).join('') : '';
+      return `<g transform="scale(${o.flip ? -1 : 1} 1)">${animalSideArt({ kind: 'mouse' })}${spots}</g>
+        ${o.sel ? `<ellipse cx="0" cy="0" rx="26" ry="14" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-dasharray="3 2"/>` : ''}
+        ${o.id ? `<rect x="-9" y="-21" width="18" height="9" rx="2" fill="${o.tagc || '#fff'}" stroke="#94a3b8" stroke-width="0.5"/><text x="0" y="-14.3" text-anchor="middle" font-family="JetBrains Mono" font-size="6" font-weight="800" fill="#0f172a">${o.code || 'M' + o.id}</text>` : ''}`;
+    }
+    // top-view mouse (head to the right)
+    function mouseTop(o = {}) {
+      const spots = o.id ? MARK_CODE[o.id].map(p => { const X = { head: 16, neck: 9, back: 0, rump: -8, tail: -14 }[p]; return `<ellipse cx="${X}" cy="0" rx="3.4" ry="4.4" fill="#facc15" opacity=".82"/>`; }).join('') : '';
+      return `<g>${animalTopArt({ kind: 'mouse' })}${spots}</g>`;
+    }
+    // side-view cage (polycarbonate tub, steel lid). inner = SVG drawn inside (coordinates relative to cage)
+    function cageSide(x, y, w, h, act, title, sub, inner, o = {}) {
+      let bars = ''; for (let bx = 2; bx < w; bx += 7) bars += `<line x1="${bx}" y1="3" x2="${bx}" y2="13" stroke="#9ca3af" stroke-width="1.2"/>`;
+      return `<g transform="translate(${x} ${y})" ${act ? `class="hot" data-act="${act}"` : ''}>
+        <ellipse cx="${w / 2}" cy="${h + 4}" rx="${w / 2 + 10}" ry="8" fill="url(#contactShadow)"/>
+        <polygon points="0,12 ${w},12 ${w - 8},${h} 8,${h}" fill="#0b1220" opacity=".35"/>
+        <polygon points="12,${h - 22} ${w - 12},${h - 22} ${w - 8},${h} 8,${h}" fill="url(#bedding)"/>
+        <polygon points="12,${h - 22} ${w - 12},${h - 22} ${w - 8},${h} 8,${h}" filter="url(#beddingF)"/>
+        ${o.food ? `<path d="M12 14 L60 14 L52 52 L20 52 Z" fill="#6b7280" opacity=".8" stroke="#374151"/>${Array.from({ length: 12 }, (_, i) => `<ellipse cx="${22 + (i % 4) * 9}" cy="${22 + Math.floor(i / 4) * 9}" rx="5" ry="3.4" fill="#a16207" stroke="#713f12" stroke-width=".5"/>`).join('')}` : ''}
+        ${inner || ''}
+        <polygon points="0,12 ${w},12 ${w - 8},${h} 8,${h}" fill="url(#cageTub)" stroke="#cbd5e1" stroke-width="1.2" pointer-events="none"/>
+        <line x1="6" y1="16" x2="12" y2="${h - 4}" stroke="#fff" stroke-width="2.5" opacity=".35" pointer-events="none"/>
+        <rect x="-6" y="2" width="${w + 12}" height="12" rx="3" fill="url(#steelH)" stroke="#6b7280" stroke-width="0.8"/>${bars}
+        ${title ? `<rect x="${w - 96}" y="18" width="88" height="28" rx="2" fill="#fef3c7" stroke="#d97706" stroke-width="0.8"/>${lbl(w - 52, 29, title, { s: 7.5, w: 800, c: '#7c2d12' })}${lbl(w - 52, 40, sub || '', { s: 6.5, c: '#451a03', w: 600, f: 'JetBrains Mono' })}` : ''}
+      </g>`;
+    }
+    // top-loading animal balance with a plastic container. display text id = dispId
+    function animalBalance(x, y, dispId, act = 'balance') {
+      return `<g class="hot" data-act="${act}" filter="url(#sh)">
+        <rect x="${x}" y="${y + 40}" width="170" height="60" rx="8" fill="url(#plasticW)" stroke="#94a3b8"/>
+        <rect x="${x + 10}" y="${y + 70}" width="150" height="24" rx="4" fill="#1f2937"/>
+        <rect x="${x + 18}" y="${y + 74}" width="84" height="16" rx="2" fill="url(#lcd)"/>
+        <text id="${dispId}" x="${x + 96}" y="${y + 87}" font-size="12" text-anchor="end" fill="#1f2d14" font-family="DSEG7, JetBrains Mono, monospace">0.0</text>
+        <text x="${x + 106}" y="${y + 87}" font-size="7.5" fill="#cbd5e1" font-weight="700">g</text>
+        <circle cx="${x + 128}" cy="${y + 82}" r="6" fill="#dc2626"/><text x="${x + 128}" y="${y + 84.5}" font-size="4.6" fill="#fff" text-anchor="middle" font-weight="700">TARE</text>
+        <circle cx="${x + 146}" cy="${y + 82}" r="6" fill="#475569"/><text x="${x + 146}" y="${y + 84.5}" font-size="5" fill="#fff" text-anchor="middle" font-weight="700">ON</text>
+        <rect x="${x + 25}" y="${y + 34}" width="120" height="8" rx="2" fill="url(#steelH)"/>
+        <path d="M${x + 38} ${y - 26} L${x + 132} ${y - 26} L${x + 126} ${y + 34} L${x + 44} ${y + 34} Z" fill="url(#cageTub)" stroke="#e2e8f0" stroke-width="1.4"/>
+        <line x1="${x + 46}" y1="${y - 20}" x2="${x + 50}" y2="${y + 30}" stroke="#fff" stroke-width="2.5" opacity=".4"/>
+        ${lbl(x + 85, y + 62, 'Animal balance  max 600 g  d = 0.1 g', { s: 6.5, c: '#475569' })}
+      </g>`;
+    }
+    // analytical balance with draft shield
+    function anaBalance(x, y, dispId, act = 'abal') {
+      return `<g class="hot" data-act="${act}" filter="url(#sh)">
+        <rect x="${x}" y="${y + 70}" width="200" height="66" rx="8" fill="url(#plasticW)" stroke="#94a3b8"/>
+        <rect x="${x + 12}" y="${y + 104}" width="176" height="26" rx="4" fill="#1f2937"/>
+        <rect x="${x + 20}" y="${y + 108}" width="104" height="18" rx="2" fill="url(#lcd)"/>
+        <text id="${dispId}" x="${x + 118}" y="${y + 122.5}" font-size="13" text-anchor="end" fill="#1f2d14" font-family="DSEG7, JetBrains Mono, monospace">0.0000</text>
+        <text x="${x + 128}" y="${y + 122}" font-size="8" fill="#cbd5e1" font-weight="700">g</text>
+        <circle cx="${x + 152}" cy="${y + 117}" r="7" fill="#dc2626"/><text x="${x + 152}" y="${y + 119.5}" font-size="5" fill="#fff" text-anchor="middle" font-weight="700">TARE</text>
+        <circle cx="${x + 172}" cy="${y + 117}" r="7" fill="#475569"/><text x="${x + 172}" y="${y + 119.5}" font-size="5.5" fill="#fff" text-anchor="middle" font-weight="700">ON</text>
+        <rect x="${x + 22}" y="${y - 20}" width="156" height="92" fill="url(#glass)" stroke="url(#glassEdge)" stroke-width="2"/>
+        <rect x="${x + 18}" y="${y - 26}" width="164" height="8" rx="2" fill="url(#steelH)"/>
+        <ellipse cx="${x + 100}" cy="${y + 66}" rx="40" ry="4" fill="#d1d5db" stroke="#9ca3af"/>
+        <g id="${dispId}Boat"></g>
+        ${lbl(x + 100, y + 96, 'Analytical balance  d = 0.1 mg', { s: 7, c: '#475569' })}
+      </g>`;
+    }
+    // reagent bottle: o {act, title, sub, cap, kind:'hdpe'|'amber'|'glass', liq, level(0..1), w, h}
+    function bottle(x, y, o) {
+      const w = o.w || 56, h = o.h || 92, lv = clamp(o.level ?? 0.7, 0, 1);
+      const body = o.kind === 'amber' ? 'url(#amber)' : o.kind === 'glass' ? 'url(#glass)' : 'url(#hdpe)';
+      return `<g ${o.act ? `class="hot" data-act="${o.act}"` : ''} filter="url(#sh)">
+        <rect x="${x + w * 0.28}" y="${y - 16}" width="${w * 0.44}" height="14" rx="2" fill="${o.cap || '#1d4ed8'}"/>
+        <rect x="${x + w * 0.32}" y="${y - 4}" width="${w * 0.36}" height="8" fill="#e5e7eb"/>
+        ${o.liq ? `<rect x="${x + 3}" y="${y + 4 + (h - 8) * (1 - lv)}" width="${w - 6}" height="${(h - 8) * lv}" rx="4" fill="${o.liq}"/>` : ''}
+        <rect x="${x}" y="${y + 2}" width="${w}" height="${h}" rx="9" fill="${body}" stroke="${o.kind === 'amber' ? '#3b1d06' : '#cbd5e1'}" opacity="${o.kind === 'glass' ? 1 : 0.96}"/>
+        <rect x="${x + 4}" y="${y + h * 0.36}" width="${w - 8}" height="${h * 0.42}" rx="2" fill="#fff" stroke="#cbd5e1"/>
+        <rect x="${x + 4}" y="${y + h * 0.36}" width="${w - 8}" height="7" fill="${o.cap || '#1d4ed8'}"/>
+        ${lbl(x + w / 2, y + h * 0.36 + h * 0.2, o.title, { s: o.ts || 7.4, w: 800, c: '#0f172a' })}
+        ${lbl(x + w / 2, y + h * 0.36 + h * 0.31, o.sub || '', { s: o.ss || 5.6, c: '#334155', w: 600 })}
+        <rect x="${x + 5}" y="${y + 8}" width="5" height="${h - 14}" rx="2.5" fill="#fff" opacity=".35"/>
+      </g>`;
+    }
+    // syringe lying horizontally. o {act, cap mL, fill mL, needle:'gavage'|'26G'|'feed', col, len}
+    function syringeArt(x, y, o) {
+      const L = o.len || 120, f = clamp((o.fill || 0) / o.cap, 0, 1);
+      const needle = o.needle === 'gavage' || o.needle === 'feed'
+        ? `<path d="M${x + L + 8} ${y} q ${o.needle === 'gavage' ? 34 : 24} 0 ${o.needle === 'gavage' ? 52 : 36} ${o.needle === 'gavage' ? 14 : 9}" stroke="url(#steel)" stroke-width="${o.needle === 'gavage' ? 3 : 2.2}" fill="none"/><circle cx="${x + L + 8 + (o.needle === 'gavage' ? 52 : 36)}" cy="${y + (o.needle === 'gavage' ? 14 : 9)}" r="${o.needle === 'gavage' ? 3.6 : 2.6}" fill="#e5e7eb" stroke="#6b7280"/>`
+        : `<line x1="${x + L + 8}" y1="${y}" x2="${x + L + 46}" y2="${y}" stroke="#d1d5db" stroke-width="1.1"/><rect x="${x + L + 2}" y="${y - 3}" width="8" height="6" fill="#f97316"/>`;
+      let ticks = ''; for (let i = 0; i <= 10; i++) ticks += `<line x1="${x + 8 + i * (L - 12) / 10}" y1="${y - 7}" x2="${x + 8 + i * (L - 12) / 10}" y2="${y - (i % 5 ? 4 : 2)}" stroke="#334155" stroke-width=".6"/>`;
+      return `<g ${o.act ? `class="hot" data-act="${o.act}"` : ''} filter="url(#sh2)">
+        <rect x="${x + 4 + (L - 12) * (1 - f) - L}" y="${y - 1.8}" width="${L}" height="3.6" fill="#e2e8f0" stroke="#94a3b8" stroke-width=".5"/>
+        <rect x="${x + 4 + (L - 12) * (1 - f) - L - 6}" y="${y - 9}" width="6" height="18" rx="1.5" fill="#e2e8f0" stroke="#94a3b8"/>
+        <rect x="${x}" y="${y - 8}" width="${L}" height="16" rx="3" fill="url(#glass)" stroke="#cbd5e1" stroke-width="1.2"/>
+        ${f > 0 ? `<rect x="${x + L - 4 - (L - 12) * f}" y="${y - 6}" width="${(L - 12) * f}" height="12" fill="${o.col || '#bfdbfe'}" opacity=".9"/>` : ''}
+        <rect x="${x + 4 + (L - 12) * (1 - f)}" y="${y - 7}" width="5" height="14" fill="#1f2937"/>
+        ${ticks}<rect x="${x + L}" y="${y - 3}" width="8" height="6" fill="#cbd5e1"/>${needle}
+        <rect x="${x - 6}" y="${y - 11}" width="6" height="22" rx="2" fill="#f1f5f9" stroke="#94a3b8"/>
+      </g>`;
+    }
+    // gloved hand (for held-animal views)
+    function handMarkup() {
+      const f = (y, len) => `<path d="M 26 ${y} C 14 ${y - 2}, -6 ${y - 1}, ${-len} ${y + 3}" stroke="url(#glove)" stroke-width="9.5" stroke-linecap="round" fill="none"/>`;
+      return `<path d="M 34 -60 L 200 -214 L 244 -168 L 66 -20 Z" fill="url(#sleeve)" stroke="#94a3b8"/>
+        <path d="M 34 -60 L 66 -20 L 76 -30 L 44 -70 Z" fill="#a5b4fc" stroke="#6366f1" stroke-width="0.6"/>
+        <path d="M 10 -44 C 22 -60, 52 -58, 62 -38 C 70 -20, 58 4, 38 12 C 22 18, 8 10, 6 -6 Z" fill="url(#glove)" stroke="#4c51b8" stroke-width="0.8"/>
+        ${f(-34, 24)}${f(-22, 27)}${f(-10, 26)}${f(2, 22)}
+        <path d="M 30 -44 C 22 -56, 10 -60, 0 -58" stroke="url(#glove)" stroke-width="10" stroke-linecap="round" fill="none"/>`;
+    }
+
+    // ------------------------------------------------ stations, click routing, checklist + hints
+    function goStation(n) {
+      S.station = n;
+      document.querySelectorAll('#stationBtns button').forEach(b => b.classList.toggle('on', +b.dataset.s === n));
+      buildScene(); renderCtx(); refreshChecklist(true);
+    }
+    function onSceneClick(e) {
+      const t = e.target.closest('[data-act]'); if (!t) return;
+      const [a, arg0] = t.dataset.act.split(':');
+      const arg = arg0 !== undefined && /^-?\d+$/.test(arg0) ? +arg0 : arg0;
+      act(a, arg);
+    }
+    function currentStep() { return STEPS.find(s => !s.opt && !s.done()); }
+    function refreshChecklist() {
+      const ul = $('checklist'); if (!ul) return;
+      const cur = currentStep(); let g = '', h = '';
+      STEPS.forEach(s => { if (s.g !== g) { g = s.g; h += `<li class="grp">${g}</li>`; } const d = s.done(); h += `<li class="${d ? 'done' : s === cur ? 'cur' : ''}"><span class="k">${d ? '✓' : s === cur ? '▸' : s.opt ? '○' : '·'}</span><span>${typeof s.t === 'function' ? s.t() : s.t}</span></li>`; });
+      if (ul._h !== h) { ul.innerHTML = h; ul._h = h; }
+      const nb = $('nowBox');
+      const nh = cur ? `<div class="t">Next: ${typeof cur.t === 'function' ? cur.t() : cur.t}${cur.st && cur.st !== S.station ? ` <span style="font-weight:600;color:#b45309">(station ${cur.st})</span>` : ''}</div>${typeof cur.how === 'function' ? cur.how() : cur.how}` : `<div class="t">Practical complete</div>Open the observation sheet, finish the calculations, answer the viva and submit.`;
+      if (nb._h !== nh) { nb.innerHTML = nh; nb._h = nh; }
+      document.querySelectorAll('#stationBtns button').forEach(b => { const st = +b.dataset.s; b.classList.toggle('done', STEPS.filter(x => x.st === st && !x.opt).every(x => x.done())); });
+      refreshHints();
+    }
+    let _hintKey = '';
+    function refreshHints() {
+      const cur = currentStep();
+      const want = HINTS && cur && cur.st === S.station ? (cur.tg() || []) : [];
+      const key = S.station + '|' + want.join(',') + '|' + document.querySelectorAll('#scene [data-act]').length + '|' + (S._sceneV || 0);
+      if (key === _hintKey && document.querySelector('#scene .pulse')) return;
+      _hintKey = key;
+      document.querySelectorAll('#scene .pulse').forEach(e => e.classList.remove('pulse'));
+      want.forEach(a => document.querySelectorAll(`#scene [data-act="${a}"]`).forEach(e => e.classList.add('pulse')));
+    }
+    // group statistics vs a control group. groups: [{key,label,vals:[]}]
+    function groupStats(groups, ctrlKey) {
+      const ctrl = groups.find(g => g.key === ctrlKey);
+      return groups.map(g => { const t = (ctrl && g.key !== ctrlKey && g.vals.length > 1 && ctrl.vals.length > 1) ? tTest(g.vals, ctrl.vals) : null; return { ...g, n: g.vals.length, m: mean(g.vals), sd: sd(g.vals), se: sem(g.vals), t, p: t ? t.p : NaN }; });
+    }
+    // a number typed by the student, checked against the truth: returns class
+    function chk(v, truth, tol) { if (v === '' || v === undefined || v === null || !isFinite(+v) || truth === null || truth === undefined || !isFinite(truth)) return ''; return Math.abs(+v - truth) <= tol ? 'ok-in' : 'bad-in'; }
+  </script>
+  <script>
+    // =====================================================================
+    // EXP 33: pole climbing (rats). Vehicle, chlorpromazine standard, test drug.
+    // car: chance of avoiding during the buzzer; esc: chance of escaping once shocked; slow: latency factor.
+    // =====================================================================
+    const PROFILES = {
+      vehicle: { name: 'Vehicle (normal saline, 2 mL/kg i.p.)', short: 'Vehicle', car: 0.95, esc: 0.99, slow: 1 },
+      chlorpromazine: { name: 'Chlorpromazine (10 mg/kg i.p.)', short: 'Chlorpromazine', mgkg: 10, car: 0.14, esc: 0.94, slow: 1.5,
+        desc: 'Phenothiazine antipsychotic, D2 antagonist. Avoidance falls while escape is kept, the classic antipsychotic profile.' },
+      haloperidol: { name: 'Haloperidol (0.5 mg/kg i.p.)', short: 'Haloperidol', mgkg: 0.5, car: 0.1, esc: 0.92, slow: 1.5,
+        desc: 'Butyrophenone antipsychotic, potent D2 antagonist. A selective block of avoidance, close to chlorpromazine, at a much lower dose.' },
+      phenobarbitone: { name: 'Phenobarbitone (60 mg/kg i.p.)', short: 'Phenobarbitone', mgkg: 60, car: 0.08, esc: 0.2, slow: 2.6,
+        desc: 'Barbiturate, enhances GABA-A receptor function. Sedation and ataxia remove avoidance and escape together, so this is not a selective effect.' },
+      diazepam: { name: 'Diazepam (5 mg/kg i.p.)', short: 'Diazepam', mgkg: 5, car: 0.55, esc: 0.9, slow: 1.7,
+        desc: 'Benzodiazepine. Avoidance falls only partly and the rats are slower, an effect that is not specific to antipsychotic action.' },
+      imipramine: { name: 'Imipramine (15 mg/kg i.p.)', short: 'Imipramine', mgkg: 15, car: 0.92, esc: 0.98, slow: 1.1,
+        desc: 'Tricyclic antidepressant. At this dose it leaves avoidance and escape close to vehicle, so a drug need not be an antipsychotic to look safe in other tests.' }
+    };
+    const TEST_KEYS = ['haloperidol', 'phenobarbitone', 'diazepam', 'imipramine'];
+    const mysteryKey = TEST_KEYS[Math.floor(Math.random() * TEST_KEYS.length)];
+    const SEL = { drug: 'haloperidol' };
+    const drugKey = () => SEL.drug === 'unknown' ? mysteryKey : SEL.drug;
+    const DRUGS = { haloperidol: ['Haloperidol', 'HALOPERIDOL', 'USP • 1 g', '#0f766e', 25], phenobarbitone: ['Phenobarbitone sodium', 'PHENOBARB.', 'IP • 25 g', '#b45309', 10], diazepam: ['Diazepam', 'DIAZEPAM', 'USP • 5 g', '#475569', 10], imipramine: ['Imipramine HCl', 'IMIPRAMINE', 'USP • 10 g', '#be123c', 10] };
+    const CFG = {
+      sp: 'rat', Sp: 'Rat', abbr: 'R', N: 18, per: 6, gkeys: ['I', 'II', 'III'], gname: { I: 'I: VEHICLE', II: 'II: STANDARD', III: 'III: TEST' },
+      wtDec: 1, wtMean: 215, wtSd: 14, wtLo: 182, wtHi: 248, sensSd: 0.18, wtRange: '180–250 g', beaker: 150.0, vkg: 2, syrCap: 1, nInj: 1, testAt: 60, window: [50, 80],
+      groups: [{ key: 'I', label: 'Group I: vehicle', short: 'Vehicle', color: PALETTE.slate }, { key: 'II', label: 'Group II: chlorpromazine (standard)', short: 'Chlorpromazine', color: PALETTE.indigo }, { key: 'III', label: 'Group III: test drug', short: 'Test drug', color: PALETTE.teal }],
+      plan: g => g === 'I' ? ['sal'] : g === 'II' ? ['std'] : ['tst'],
+      sols() {
+        const k = drugKey(), P = PROFILES[k], D = DRUGS[k], unk = SEL.drug === 'unknown';
+        return [{ k: 'std', name: 'Chlorpromazine', abbr: 'CPZ', jar: 'CHLORPROM.', jarSub: 'HCl • 10 g', cap: '#7c3aed', mgkg: 10, conc: 5, flaskMl: 10, key: 'chlorpromazine' },
+          { k: 'tst', name: unk ? 'Drug X' : D[0], abbr: unk ? 'Drug X' : D[0].split(' ')[0], jar: D[1], jarSub: D[2], cap: D[3], mgkg: P.mgkg, conc: P.mgkg / 2, flaskMl: D[4], premade: unk, key: k }];
+      },
+      extra: i => ({ pre: null, run: null, nb: { wt: '', d1: '', preCar: '', car: '', er: '', nr: '', lat: '', pct: '' } }),
+      stateExtra: () => ({ boli: [], trial: null, lux: '0.2', clean: true, wet: 0, notes: { car: { I: '', II: '', III: '' }, er: { I: '', II: '', III: '' }, nr: { I: '', II: '', III: '' } } }),
+      injLabel: 'Vehicle, chlorpromazine or test drug i.p.', injHow: 'Group I saline, Group II chlorpromazine, Group III test drug, 2 mL/kg. Syringe → bottle → volume → rat → i.p., right lower quadrant → Administer. Stagger the rats about 8 min apart: each is tested 60 min after its own injection.',
+      afterDose: m => `Session due at ${clockStr(m.inj[0].t + 3600)} (60 min).`,
+      dueCells: m => m.inj[0] ? [clockStr(m.inj[0].t + 3600), m.run ? 'tested' : (S.t >= m.inj[0].t + 3000 ? 'DUE' : 'wait')] : ['—', '—'],
+      injSummary: m => m.inj.length ? 'dosed ' + clockStr(m.inj[0].t) : 'not dosed yet'
+    };
+  </script>
+  <script>
+    // =====================================================================
+    // Shared practical engine for Exp 10 and Exp 11 (rodent behavioural pharmacology):
+    // animal house (pick, mark, weigh, randomise), solution bench, dosing bench.
+    // Every step is done by the student; the model only reacts to technique.
+    // Needs CFG (per-experiment config) defined before this script.
+    // =====================================================================
+    let S;
+    const GNAME = g => CFG.gname[g];
+    const handM = () => S.hand === null ? null : S.mice[S.hand];
+    const inGroup = g => S.mice.filter(m => m.group === g);
+    const placed = () => S.mice.filter(m => m.group);
+    const minsSince = t => (S.t - t) / 60;
+    const SIDE = o => CFG.sp === 'rat' ? ratSide(o) : mouseSide(o);
+    const SOL = k => S.sol[k];
+    const SD = () => CFG.sols();
+    const SDK = k => SD().find(d => d.k === k);
+    const srcName = s => s === 'sal' ? 'Normal saline' : (SDK(s) ? SDK(s).name : s);
+    const ROUTES = { ip: 'Intraperitoneal (i.p.)', sc: 'Subcutaneous (s.c.)', po: 'Oral gavage (p.o.)', im: 'Intramuscular (i.m.)' };
+    const SITES = { rlq: 'right lower quadrant', llq: 'left lower quadrant', up: 'upper abdomen / midline' };
+    function freshAnimal(i) {
+      return Object.assign({ uid: i, wt: +clamp(CFG.wtMean + gauss() * CFG.wtSd, CFG.wtLo, CFG.wtHi).toFixed(CFG.wtDec), sens: Math.exp(gauss() * CFG.sensSd),
+        id: null, weighed: false, wtShown: null, lot: null, group: null, loc: 'stock', flags: [], inj: [], nb: { wt: '', d1: '', d2: '' } }, CFG.extra(i));
+    }
+    function freshState() {
+      const lots = shuffle([].concat(...CFG.gkeys.map(k => Array(CFG.per).fill(k))));
+      const sol = {}, calc = {};
+      SD().forEach(d => { sol[d.k] = d.premade ? { mg: 0, inFl: false, vol: 100, labelled: true, conc: d.conc, left: 1e4, made: 0 } : { mg: 0, inFl: false, vol: 0, labelled: false, conc: 0, left: 0, made: 0 }; calc[d.k] = { conc: '', mg: '' }; });
+      return Object.assign({
+        t: 0, station: 1, mice: Array.from({ length: CFG.N }, (_, i) => freshAnimal(i)), hand: null, handPos: 'towel', lots, nextId: 1, balOn: false, balTared: false,
+        abal: { boat: false, tared: false, mg: 0, what: null }, sol, calc, syr: { vol: 0, src: null }, syrSel: false, sel: null, warned: {}, notes: {}, _sceneV: 0
+      }, CFG.stateExtra ? CFG.stateExtra() : {});
+    }
+    // ------------------------------------------------ STATION 1: animal house
+    const ST = { x: 10, y: 300, w: 330, h: 128 }, GC = { I: { x: 366, y: 168, w: 182, h: 122 }, II: { x: 556, y: 168, w: 182, h: 122 }, III: { x: 746, y: 168, w: 182, h: 122 } };
+    const GSP = [[34, 96], [88, 98], [142, 96], [58, 112], [112, 114], [160, 112]];
+    const STP = i => [38 + (i % 6) * 48 + Math.floor(i / 6) * 14, 74 + Math.floor(i / 6) * 22];
+    const AS1 = () => CFG.sp === 'rat' ? 0.5 : 1.0;
+    function sceneAnimals() {
+      let s = room(430) + wallClock(946, 62);
+      s += `<g transform="translate(20 18)" filter="url(#sh)"><rect width="332" height="196" fill="#fffdf6"/><circle cx="166" cy="8" r="4" fill="#dc2626"/>
+        ${lbl(166, 28, 'IDENTIFICATION & RANDOMISATION', { s: 11, w: 800, c: '#0a1f44' })}
+        ${lbl(12, 44, `Picric acid code (${CFG.abbr}1 to ${CFG.abbr}${CFG.N}):`, { s: 8.6, a: 'start', c: '#13294f', w: 700 })}
+        ${Array.from({ length: CFG.N }, (_, k) => lbl(12 + Math.floor(k / 6) * 106, 58 + (k % 6) * 12.5, `${CFG.abbr}${k + 1}: ${markText(k + 1)}`, { s: 6.2, a: 'start', c: '#1e293b', w: 500, f: 'JetBrains Mono' })).join('')}
+        ${lbl(12, 146, `• ${CFG.sp === 'rat' ? 'Wistar albino rats' : 'Swiss albino mice'}, ${CFG.wtRange}`, { s: 8.4, a: 'start', c: '#b91c1c', w: 700 })}
+        ${lbl(12, 160, `• Weigh each ${CFG.sp}; draw a lot: ${CFG.per} to each of ${CFG.gkeys.length} groups`, { s: 8.4, a: 'start', c: '#13294f' })}
+        ${lbl(12, 174, '• Handle gently; tare the balance container first', { s: 8.4, a: 'start', c: '#13294f' })}
+        ${lbl(12, 188, '• Approved by IAEC (CCSEA); n = 6 per group', { s: 8.4, a: 'start', c: '#13294f' })}</g>`;
+      s += `<rect x="356" y="290" width="584" height="10" fill="url(#steelH)" filter="url(#sh2)"/><rect x="372" y="300" width="6" height="22" fill="#6b7280"/><rect x="920" y="300" width="6" height="22" fill="#6b7280"/>`;
+      s += `<g id="hcG"></g><g id="stockG"></g>`;
+      s += `<g class="hot" data-act="towel"><path d="M392 436 L522 436 L536 474 L378 474 Z" fill="#e0f2fe" stroke="#93c5fd"/><path d="M398 448 L530 448" stroke="#bfdbfe" stroke-width="2"/><path d="M388 462 L532 462" stroke="#bfdbfe" stroke-width="2"/></g>${lbl(456, 490, 'Handling towel', { c: '#cbd5e1', s: 9 })}`;
+      s += bottle(556, 336, { act: 'picric', title: 'PICRIC ACID', sub: 'sat. aqueous', cap: '#a16207', kind: 'glass', liq: '#facc15', level: 0.65, w: 46, h: 80, ts: 6, ss: 5 });
+      s += `<g class="hot" data-act="picric"><rect x="532" y="414" width="64" height="5" rx="2.5" fill="url(#wood)" transform="rotate(-12 564 416)"/><path d="M594 404 l10 -3 l2 6 l-10 3z" fill="#facc15"/></g>${lbl(578, 450, 'Picric acid', { c: '#cbd5e1', s: 9 })}`;
+      s += animalBalance(640, 336, 'balDisp');
+      s += `<g id="balM"></g>${lbl(724, 450, 'Animal balance', { c: '#cbd5e1', s: 9 })}`;
+      s += `<g class="hot" data-act="lots" filter="url(#sh)"><path d="M830 344 L912 344 L908 428 L834 428 Z" fill="url(#glass)" stroke="url(#glassEdge)" stroke-width="2"/><rect x="826" y="334" width="90" height="12" rx="3" fill="#475569"/>
+        <g id="lotChits"></g><rect x="842" y="358" width="58" height="26" rx="2" fill="#fff" opacity=".9"/>${lbl(871, 369, 'LOTS', { s: 9, w: 800, c: '#0f172a' })}${lbl(871, 379, `${CFG.per} of each group`, { s: 6.3, c: '#334155' })}</g>${lbl(871, 450, 'Lot jar (randomise)', { c: '#cbd5e1', s: 9 })}`;
+      return s + `<g id="lotShow"></g>`;
+    }
+    const balReading = m => m.wt + (S.balTared ? 0 : CFG.beaker);
+    function dyn1() {
+      if (S.station !== 1) return;
+      const hm = handM(), k = AS1();
+      const stock = S.mice.filter(m => m.loc === 'stock');
+      let h = cageSide(ST.x, ST.y, ST.w, ST.h, 'stock', 'STOCK CAGE', `${stock.length} ${CFG.sp}s`, stock.map((m, j) => { const [x, y] = STP(j); return `<g transform="translate(${x} ${y}) scale(${k})">${SIDE({ flip: m.uid % 2, id: m.id })}</g>`; }).join(''));
+      if (hm && S.handPos !== 'bal') h += `<g transform="translate(456 440) scale(${CFG.sp === 'rat' ? 1.5 : 1.9})">${SIDE({ id: hm.id })}</g>`;
+      $('stockG').innerHTML = h;
+      $('hcG').innerHTML = CFG.gkeys.map(g => { const c = GC[g], ms = inGroup(g); return cageSide(c.x, c.y, c.w, c.h, 'cage' + g, GNAME(g), `${ms.length}/${CFG.per}`, ms.map((m, i) => { const [x, y] = GSP[i]; return `<g transform="translate(${x} ${y}) scale(${k})">${SIDE({ flip: i % 2, id: m.id })}</g>`; }).join('')); }).join('');
+      $('balM').innerHTML = hm && S.handPos === 'bal' ? `<g transform="translate(725 ${CFG.sp === 'rat' ? 328 : 332}) scale(${CFG.sp === 'rat' ? 1 : 1.7})">${SIDE({ id: hm.id, flip: 1 })}</g>` : '';
+      $('balDisp').textContent = S.balOn ? (hm && S.handPos === 'bal' ? fx(balReading(hm), 1) : S.balTared ? '0.0' : fx(CFG.beaker, 1)) : '';
+      $('lotChits').innerHTML = S.lots.map((l, i) => `<rect x="${838 + (i % 6) * 11}" y="${416 - Math.floor(i / 6) * 8}" width="10" height="6" rx="1" fill="#fefce8" stroke="#ca8a04" stroke-width=".5" transform="rotate(${(i * 37) % 30 - 15} ${843 + (i % 6) * 11} ${419 - Math.floor(i / 6) * 8})"/>`).join('');
+      $('lotShow').innerHTML = hm && hm.lot ? `<g filter="url(#sh2)"><rect x="822" y="296" width="98" height="34" rx="3" fill="#fefce8" stroke="#ca8a04"/>${lbl(871, 310, 'LOT DRAWN', { s: 6.5, c: '#78350f' })}${lbl(871, 325, GNAME(hm.lot), { s: 10, w: 900, c: '#7c2d12' })}</g>` : '';
+    }
+    function act1(a) {
+      const hm = handM(), P = CFG.abbr;
+      if (a === 'stock') {
+        if (hm) { if (hm.group) return; hm.loc = 'stock'; S.hand = null; say(`${CFG.Sp} returned to the stock cage.`); return; }
+        const left = S.mice.filter(m => m.loc === 'stock');
+        if (!left.length) { say('The stock cage is empty.'); return; }
+        const m = pick(left); m.loc = 'hand'; S.hand = m.uid; S.handPos = 'towel'; S.t += 15; beep('click');
+        say(`${CFG.Sp} lifted from the stock cage${CFG.sp === 'rat' ? ' (support the body, hold at the base of the tail)' : ' (by the base of the tail, supported on the hand)'}${m.id ? ` (${P}${m.id})` : ''}. ${m.id ? '' : 'Mark it with picric acid.'}`);
+      } else if (a === 'towel') { if (hm) S.handPos = 'towel'; }
+      else if (a === 'picric') {
+        if (!hm) { say(`Pick a ${CFG.sp} first.`, true); return; }
+        if (hm.id) { say(`Already marked ${P}${hm.id} (${markText(hm.id)}).`); return; }
+        if (S.nextId > CFG.N) { say(`All ${CFG.N} picric acid codes are used.`, true); return; }
+        hm.id = S.nextId++; S.t += 30; beep('ok'); say(`Picric acid applied: <b>${P}${hm.id}</b> = ${markText(hm.id)}. Now weigh it.`);
+      } else if (a === 'balance') {
+        if (!S.balOn) { S.balOn = true; S.balTared = false; beep('tick'); say(`Balance ON; the empty container reads ${fx(CFG.beaker, 1)} g. Click it again with empty hands to TARE.`); }
+        else if (!hm) { S.balTared = true; beep('tick'); say('Tared: 0.0 g.'); }
+        else if (S.handPos === 'bal') { S.handPos = 'towel'; }
+        else { S.handPos = 'bal'; hm.weighed = true; hm.wtShown = +balReading(hm).toFixed(1); S.t += 30; beep('click'); if (!S.balTared) hm.flags.push('weighed without tare'); say(`${hm.id ? P + hm.id : CFG.Sp}: balance reads <b>${fx(hm.wtShown, 1)} g</b>. Write it in the notebook.`, !S.balTared); }
+      } else if (a === 'lots') {
+        if (!hm) { say(`Pick a ${CFG.sp} first.`, true); return; }
+        if (hm.lot) { say(`Lot already drawn: ${GNAME(hm.lot)}.`); return; }
+        hm.lot = S.lots.pop(); S.t += 10; beep('tick'); say(`Lot drawn: <b>${GNAME(hm.lot)}</b>. Put the ${CFG.sp} in that holding cage.`);
+      } else if (/^cage(I|II|III)$/.test(a)) {
+        const g = a.slice(4);
+        if (!hm) { say(`Pick a ${CFG.sp} first.`, true); return; }
+        if (!hm.id) { say(`Mark the ${CFG.sp} with picric acid first.`, true); return; }
+        if (inGroup(g).length >= CFG.per) { say(`That group already has ${CFG.per} animals.`, true); return; }
+        if (hm.lot !== g) { hm.flags.push('not randomised'); if (!hm.lot) { const li = S.lots.indexOf(g); if (li >= 0) S.lots.splice(li, 1); } }
+        if (!hm.weighed) hm.flags.push('not weighed');
+        say(`${P}${hm.id} placed in the Group ${g} cage.${hm.lot !== g ? ' ⚠ Not the group on its lot: allocation is not random.' : ''}${hm.weighed ? '' : ' ⚠ Not weighed.'}`, hm.lot !== g || !hm.weighed);
+        hm.group = g; hm.loc = g; S.hand = null; S.t += 10; beep('ok');
+      }
+    }
+  </script>
+  <script>
+    // ------------------------------------------------ STATION 2: solution bench
+    const FLX2 = i => 480 + i * 122;
+    const prep = () => SD().filter(d => !d.premade);
+    function sceneSolutions() {
+      const defs = SD();
+      let s = room(430) + wallClock(946, 62);
+      s += `<rect x="20" y="186" width="660" height="12" fill="url(#steelH)" filter="url(#sh2)"/><rect x="30" y="198" width="6" height="26" fill="#6b7280"/><rect x="664" y="198" width="6" height="26" fill="#6b7280"/>`;
+      defs.forEach((d, i) => {
+        s += d.premade
+          ? bottle(36 + i * 104, 88, { act: 'coded', title: 'DRUG X', sub: 'coded soln • store', cap: '#7c3aed', kind: 'glass', liq: 'url(#liquid)', level: .8, w: 66, ts: 8, ss: 5 })
+          : bottle(36 + i * 104, 88, { act: 'jar:' + d.k, title: d.jar, sub: d.jarSub, cap: d.cap, kind: 'amber', w: 66, ts: d.jar.length > 9 ? 5.8 : 6.8, ss: 5 });
+      });
+      s += bottle(36 + defs.length * 104, 76, { act: 'saline', title: '0.9% NaCl', sub: 'sterile • 500 mL', cap: '#16a34a', kind: 'glass', liq: 'url(#liquid)', level: .8, w: 66, h: 104 });
+      s += anaBalance(24, 286, 'abalDisp');
+      prep().forEach((d, i) => {
+        const x = FLX2(i), fv = d.flaskMl;
+        s += `<g class="hot" data-act="fl:${d.k}"><ellipse cx="${x}" cy="428" rx="42" ry="6" fill="#000" opacity=".35"/>
+          <clipPath id="flc${d.k}"><path d="M${x - 6} 250 L${x + 6} 250 L${x + 6} 354 Q${x + 40} 364 ${x + 40} 394 Q${x + 40} 428 ${x} 428 Q${x - 40} 428 ${x - 40} 394 Q${x - 40} 364 ${x - 6} 354 Z"/></clipPath>
+          <g clip-path="url(#flc${d.k})"><rect id="flLiq${d.k}" x="${x - 42}" y="428" width="84" height="0" fill="url(#liquid)"/></g>
+          <path d="M${x - 6} 250 L${x + 6} 250 L${x + 6} 354 Q${x + 40} 364 ${x + 40} 394 Q${x + 40} 428 ${x} 428 Q${x - 40} 428 ${x - 40} 394 Q${x - 40} 364 ${x - 6} 354 Z" fill="url(#glass)" stroke="url(#glassEdge)" stroke-width="2"/>
+          <rect x="${x - 8}" y="240" width="16" height="12" rx="2" fill="#e2e8f0" stroke="#94a3b8"/><line x1="${x - 6}" x2="${x + 6}" y1="290" y2="290" stroke="#fde68a" stroke-width="1.5"/>
+          ${lbl(x, 406, fv + ' mL', { s: 9, w: 800, c: '#0f172a' })}<g id="flTag${d.k}"></g></g>${lbl(x, 450, 'Flask: ' + d.abbr, { c: '#cbd5e1', s: 9 })}`;
+      });
+      s += `<g transform="translate(700 20)" filter="url(#sh)"><rect width="290" height="${70 + defs.length * 36}" fill="#fffdf6"/>${lbl(145, 22, 'DOSE CALCULATION', { s: 11, w: 800, c: '#0a1f44' })}
+        ${lbl(12, 42, `Injection volume: ${CFG.vkg} mL/kg i.p. for every solution`, { s: 8.8, a: 'start', c: '#13294f', w: 700 })}
+        ${defs.map((d, i) => lbl(12, 60 + i * 18, `${d.name} ${d.mgkg} mg/kg` + (d.premade ? ' (coded; supplied)' : ` → ${d.flaskMl} mL flask`), { s: 8.8, a: 'start', c: '#13294f' })).join('')}
+        ${lbl(12, 62 + defs.length * 18, 'Conc. (mg/mL) = dose (mg/kg) ÷ volume (mL/kg)', { s: 8.8, a: 'start', c: '#b91c1c', w: 700 })}
+        ${lbl(12, 80 + defs.length * 18, 'Mass to weigh (mg) = conc. × flask volume', { s: 8.8, a: 'start', c: '#b91c1c', w: 700 })}
+        ${lbl(12, 98 + defs.length * 18, `Dose vol./${CFG.sp} = ${CFG.vkg} mL/kg × wt (kg)`, { s: 8.8, a: 'start', c: '#b91c1c', w: 700 })}</g>`;
+      return s;
+    }
+    function dyn2() {
+      if (S.station !== 2) return;
+      const A = S.abal;
+      $('abalDisp').textContent = !A.boat ? '0.0000' : (A.tared ? A.mg / 1000 : 0.3521 + A.mg / 1000).toFixed(4);
+      $('abalDispBoat').innerHTML = A.boat ? `<path d="M100 348 l48 0 l-6 9 l-36 0z" fill="#e2e8f0" stroke="#94a3b8"/>${A.mg ? `<ellipse cx="124" cy="348" rx="${Math.min(14, 3 + A.mg / 8)}" ry="2.8" fill="#fefce8"/>` : ''}` : '';
+      prep().forEach((d, i) => {
+        const F = SOL(d.k), x = FLX2(i), y = F.vol ? (F.labelled ? 428 - 138 * F.left / F.vol : 290) : F.inFl ? 424 : 428;
+        const l = $('flLiq' + d.k); l.setAttribute('y', y); l.setAttribute('height', 428 - y);
+        $('flTag' + d.k).innerHTML = F.labelled ? `<rect x="${x - 30}" y="364" width="60" height="26" fill="#fff" stroke="#ca8a04"/>${lbl(x, 375, d.abbr.toUpperCase(), { s: 5.8, w: 800 })}${lbl(x, 386, fx(F.conc, 3) + ' mg/mL', { s: 6, c: '#b91c1c', w: 700 })}` : '';
+      });
+    }
+    function act2(a, arg) {
+      const A = S.abal;
+      if (a === 'abal') {
+        if (!A.boat) { A.boat = true; A.tared = false; A.mg = 0; A.what = null; beep('tick'); say('Weighing boat placed (0.3521 g). Click again to TARE.'); }
+        else if (!A.tared) { A.tared = true; beep('tick'); say('Tared: 0.0000 g. Click the jar you want to weigh from.'); }
+        else say(A.mg ? `Boat holds ${fx(A.mg, 2)} mg of ${srcName(A.what)}. Tip it into its flask.` : 'Choose a jar.');
+      } else if (a === 'jar') {
+        if (!A.boat || !A.tared) { say('Place a weighing boat on the analytical balance and TARE first.', true); return; }
+        if (A.mg && A.what !== arg) { say('The boat already holds another powder. Tip it out first.', true); return; }
+        S.sel = { kind: 'weigh', what: arg }; say(`Enter the mass of ${srcName(arg)} to weigh (mg).`);
+      } else if (a === 'fl') {
+        const F = SOL(arg);
+        if (F.labelled) { S.sel = { kind: 'flDone', k: arg }; return; }
+        if (A.mg) {
+          if (A.what !== arg) { say(`That flask is for ${srcName(arg)}. Use the correct vessel.`, true); return; }
+          F.mg += A.mg; F.inFl = true; A.mg = 0; A.boat = false; S.t += 30; beep('ok'); say(`${fx(F.mg, 2)} mg tipped into the flask and rinsed in with saline.`);
+        }
+        if (F.inFl) S.sel = { kind: 'fl', k: arg }; else say('The flask is empty.');
+      } else if (a === 'coded') say('Drug X is a ready-made coded solution from the store, prepared at the standard dose for the volume per kg shown. Do not weigh it; dose with it at the dosing bench.');
+      else if (a === 'saline') say('Saline is added in the flask make-up step and used as the vehicle at the dosing bench.');
+    }
+    function weighPowder() {
+      const v = parseFloat($('inMg').value), w = S.sel.what;
+      if (!(v > 0) || v > 3000) { say('Enter a mass in mg (e.g. 5.0).', true); return; }
+      S.abal.mg = +(v * (1 + (Math.random() - 0.5) * 0.004) + (Math.random() - 0.5) * 0.08).toFixed(2); S.abal.what = w; S.t += 90; beep('click');
+      say(`Balance reads ${(S.abal.mg / 1000).toFixed(4)} g. Tip it into the ${srcName(w)} flask.`);
+      S.sel = null; renderCtx(); drawDyn();
+    }
+    function makeUp(k) {
+      const F = SOL(k), d = SDK(k);
+      F.vol = d.flaskMl; F.conc = F.mg / d.flaskMl; F.left = F.vol; F.labelled = true; F.made = S.t; S.t += 120; beep('done');
+      const off = Math.abs(F.conc / d.conc - 1);
+      say(`Made up to the ${d.flaskMl} mL mark with saline, inverted 10 times and labelled: <b>${fx(F.conc, 3)} mg/mL</b>${off > 0.1 ? ` ⚠ (${fx(d.conc, 3)} mg/mL intended)` : ''}.`, off > 0.1);
+      S.sel = null; renderCtx(); drawDyn(); refreshChecklist();
+    }
+    function newBatch(k) { S.sol[k] = { mg: 0, inFl: false, vol: 0, labelled: false, conc: 0, left: 0, made: 0 }; S.sel = null; say('Flask emptied and washed. Prepare a fresh batch.'); renderCtx(); drawDyn(); refreshChecklist(); }
+    function solReady(d) { return d.premade || SOL(d.k).labelled; }
+  </script>
+  <script>
+    // ------------------------------------------------ STATION 3: dosing bench
+    const HC3 = { I: { x: 14, y: 150 }, II: { x: 226, y: 150 }, III: { x: 438, y: 150 } }, HCW = 196, HCH = 124;
+    function sceneDosing() {
+      let s = room(430) + wallClock(590, 62, 32);
+      s += `<g id="holdG"></g>`;
+      s += `<g transform="translate(640 16)" filter="url(#sh)"><rect width="350" height="276" rx="4" fill="#f8fafc" stroke="#94a3b8" stroke-width="3"/><g id="board"></g></g>`;
+      s += `<path d="M20 440 L160 440 L172 476 L8 476 Z" fill="#e0f2fe" stroke="#93c5fd"/><path d="M14 456 L166 456" stroke="#bfdbfe" stroke-width="2"/><g id="handG"></g>${lbl(90, 494, 'Handling towel', { c: '#cbd5e1', s: 9 })}`;
+      s += `<g id="btlG"></g>`;
+      s += `<path d="M 640 456 L 980 456 L 988 540 L 632 540 Z" fill="url(#steelH)" opacity=".85" filter="url(#sh)"/><g id="syrG"></g>${lbl(810, 553, 'Dosing tray', { c: '#cbd5e1', s: 9 })}`;
+      return s;
+    }
+    const tagCol = m => CFG.tagCol ? CFG.tagCol(m) : (m.inj.length >= CFG.nInj ? '#e0e7ff' : m.inj.length ? '#fef3c7' : '#fff');
+    function dyn3() {
+      if (S.station !== 3) return;
+      const k = CFG.sp === 'rat' ? 0.66 : 1.2;
+      $('holdG').innerHTML = CFG.gkeys.map(g => { const ms = inGroup(g).filter(m => m.loc === g), p = HC3[g]; return cageSide(p.x, p.y, HCW, HCH, null, GNAME(g), `${ms.length} ${CFG.sp}s`,
+        ms.map((m, i) => `<g class="hot" data-act="m:${m.uid}" transform="translate(${34 + (i % 3) * 56 + Math.floor(i / 3) * 14} ${HCH - 28 + Math.floor(i / 3) * 4 - (Math.floor(i / 3) ? 0 : 16)}) scale(${k})">${SIDE({ flip: i % 2, id: m.id, sel: S.hand === m.uid, tagc: tagCol(m) })}</g>`).join('')); }).join('');
+      const hm = handM();
+      $('handG').innerHTML = hm ? `<g transform="translate(92 448) scale(${CFG.sp === 'rat' ? 1.5 : 2.4})">${SIDE({ id: hm.id, tagc: tagCol(hm) })}</g>` : '';
+      const sy = S.syr, defs = SD();
+      $('syrG').innerHTML = `${syringeArt(690, 496, { act: 'syr', cap: CFG.syrCap, fill: sy.vol, needle: '26G', col: sy.src === 'sal' ? '#dbeafe' : sy.src ? '#fde68a' : '', len: 130 })}${lbl(790, 520, `${CFG.syrCap} mL syringe + 26 G needle${sy.vol ? ' • ' + fx(sy.vol, 2) + ' mL' : ''}`, { s: 7.5, c: '#0f172a' })}
+        ${S.syrSel ? `<rect x="634" y="480" width="290" height="32" rx="5" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="5 3"/>` : ''}`;
+      let b = bottle(300, 340, { act: 'b:sal', title: '0.9% NaCl', sub: 'vehicle', cap: '#16a34a', kind: 'glass', liq: 'url(#liquid)', level: .7, w: 50, h: 84, ts: 6.2 });
+      defs.forEach((d, i) => {
+        if (!solReady(d)) return;
+        const F = SOL(d.k), conc = d.premade ? d.conc : F.conc, lv = d.premade ? 0.8 : F.left / F.vol;
+        b += bottle(358 + i * 58, 340, { act: 'b:' + d.k, title: d.abbr.toUpperCase().slice(0, 11), sub: fx(conc, 3) + ' mg/mL', cap: d.cap, kind: 'glass', liq: 'url(#liquid)', level: clamp(lv, .05, 1), w: 50, h: 84, ts: 4.6 });
+      });
+      $('btlG').innerHTML = b;
+      board();
+    }
+    function board() {
+      const X = [10, 50, 84, 140, 196, 256];
+      let h = lbl(175, 15, 'TIMING SHEET', { s: 8.4, w: 800, c: '#0a1f44' }) + ['Animal', 'Grp', 'Inj. 1', 'Inj. 2', 'Next due', 'Status'].map((t, i) => lbl(X[i], 30, t, { s: 7.4, a: 'start', c: '#475569', w: 700 })).join('');
+      placed().sort((a, b) => a.id - b.id).forEach((m, i) => {
+        const cells = [`${CFG.abbr}${m.id}`, m.group, m.inj[0] ? clockStr(m.inj[0].t) : '--:--', CFG.nInj > 1 ? (m.inj[1] ? clockStr(m.inj[1].t) : '--:--') : '—', ...CFG.dueCells(m)];
+        cells.forEach((t, j) => h += lbl(X[j], 43 + i * 12.6, t, { s: 7.4, a: 'start', c: /DUE/.test(t) ? '#dc2626' : '#1e293b', f: 'JetBrains Mono', w: /DUE/.test(t) ? 800 : 600 }));
+      });
+      $('board').innerHTML = h;
+    }
+    function act3(a, arg) {
+      const hm = handM();
+      if (a === 'm') {
+        if (CFG.canPick && !CFG.canPick(S.mice[arg])) return;
+        S.hand = S.hand === arg ? null : arg; S.sel = null; beep('tick'); if (S.hand !== null) { const m = handM(); say(`${CFG.abbr}${m.id} (${GNAME(m.group)}, ${fx(m.wtShown || 0, 1)} g) in hand.`); }
+      } else if (a === 'syr') { S.syrSel = !S.syrSel; S.sel = null; beep('tick'); }
+      else if (a === 'b') {
+        if (!S.syrSel) { say('Pick up the syringe first.', true); return; }
+        S.sel = { kind: 'draw', src: arg }; say(`Draw ${srcName(arg)}: enter the volume.`);
+      }
+    }
+    function drawUp() {
+      const sy = S.syr, src = S.sel.src, v = parseFloat($('inDraw').value);
+      if (!(v > 0)) { say('Enter a volume in mL.', true); return; }
+      if (v > CFG.syrCap) { say(`This syringe holds ${CFG.syrCap} mL.`, true); return; }
+      if (sy.vol > 0 && sy.src !== src) { say('Expel the old contents first.', true); return; }
+      const F = src === 'sal' ? null : SOL(src);
+      if (F && F.left < v) { say(`Only ${fx(F.left, 2)} mL left. Prepare a fresh batch.`, true); return; }
+      if (F) F.left = +(F.left - v).toFixed(3);
+      sy.vol = +(sy.vol + v).toFixed(3); sy.src = src; S.sel = null; S.t += 15; beep('click');
+      say(`${fx(v, 2)} mL ${srcName(src)} drawn up.${S.hand === null ? ' Now pick the animal.' : ''}`); renderCtx(); drawDyn();
+    }
+    function expel() { S.syr.vol = 0; S.syr.src = null; say('Syringe emptied into the waste.'); renderCtx(); drawDyn(); }
+    function administer() {
+      const m = handM(), sy = S.syr, route = $('inRoute').value, site = $('inSite') ? $('inSite').value : 'rlq';
+      if (!m || !sy.vol) { say(`Hold ${CFG.sp === 'rat' ? 'a rat' : 'a mouse'} and a loaded syringe first.`, true); return; }
+      if (!route) { say('Choose the route.', true); return; }
+      if (m.inj.length >= CFG.nInj) { say(`${CFG.abbr}${m.id} has had all its injections.`, true); return; }
+      const wkg = m.wt / 1000, fl = [], want = CFG.plan(m.group)[m.inj.length], d = SDK(sy.src);
+      const mg = d ? sy.vol * (d.premade ? d.conc : SOL(d.k).conc) : 0;
+      if (want !== sy.src) fl.push(`${srcName(sy.src).toLowerCase()} given (${srcName(want).toLowerCase()} intended)`);
+      if (d) { const r = mg / wkg / d.mgkg; if (Math.abs(r - 1) > 0.1) fl.push(`dose ${fx(mg / wkg, 2)} mg/kg (${d.mgkg} intended)`); }
+      else if (Math.abs(sy.vol / wkg / CFG.vkg - 1) > 0.2) fl.push(`vehicle ${fx(sy.vol / wkg, 1)} mL/kg (${CFG.vkg} intended)`);
+      if (route !== 'ip') fl.push(`route ${route === 'po' ? 'oral' : route} (i.p. intended)`);
+      if (route === 'ip' && site !== 'rlq') fl.push(`i.p. site: ${SITES[site]} (right lower quadrant intended)`);
+      if (CFG.checkInj) CFG.checkInj(m, sy, fl);
+      m.inj.push({ src: sy.src, vol: sy.vol, route, site, t: S.t, mgkg: mg / wkg, flags: fl });
+      say(`${CFG.abbr}${m.id}: ${fx(sy.vol, 2)} mL ${srcName(sy.src)} ${ROUTES[route]} at ${clockStr(S.t)}.${fl.length ? ' ⚠ ' + fl.join(', ') + '.' : ''}${m.inj.length < CFG.nInj ? (CFG.spacedInj ? ' Back in its cage until the next injection is due.' : ' Keep the animal in hand for its next injection.') : ' ' + CFG.afterDose(m)}`, fl.length > 0);
+      sy.vol = 0; sy.src = null; S.t += 40; beep('ok'); if (m.inj.length >= CFG.nInj || CFG.spacedInj) { S.hand = null; if (CFG.onDosed) CFG.onDosed(m); }
+      renderCtx(); drawDyn(); renderNotebook(); refreshChecklist();
+    }
+    // ------------------------------------------------ context panel (station 1-3; 4 is per experiment)
+    const btn = (t, f, c = '') => `<button class="xb-btn ${c}" onclick="${f}">${t}</button>`;
+    function renderCtx() {
+      const c = $('ctx'); let t = 'Bench', h = '';
+      const hm = handM(), sel = S.sel, P = CFG.abbr;
+      if (S.station === 1) {
+        t = 'Animal house';
+        h = hm ? `<b>In hand:</b> ${hm.id ? `${P}${hm.id} <span class="mono">(${markText(hm.id)})</span>` : `unmarked ${CFG.sp}`}<br>Weighed: ${hm.weighed ? fx(hm.wtShown, 1) + ' g' : '—'} • Lot: ${hm.lot ? GNAME(hm.lot) : '—'}<div class="row">${btn('Back to the stock cage', "act('stock')", 'sec')}</div>`
+          : `<p style="color:#64748b">Lift animals from the stock cage. Switch the balance on and tare the empty container first.</p><p class="mono" style="font-size:11px">${CFG.gkeys.map(g => `${g} ${inGroup(g).length}/${CFG.per}`).join(' • ')}</p>`;
+      } else if (S.station === 2) {
+        t = 'Preparation bench';
+        if (sel && sel.kind === 'weigh') h = `<b>Weigh ${srcName(sel.what)}</b><div class="row">Mass <input id="inMg" class="xb-in" placeholder="mg"> mg ${btn('Weigh out', 'weighPowder()')}</div>`;
+        else if (sel && sel.kind === 'fl') h = `<b>${SDK(sel.k).flaskMl} mL flask:</b> ${fx(SOL(sel.k).mg, 2)} mg ${srcName(sel.k)}<div class="row">${btn('Dissolve, make up to the mark with saline & label', `makeUp('${sel.k}')`)}</div>`;
+        else if (sel && sel.kind === 'flDone') h = `<b>${srcName(sel.k)}</b> ${fx(SOL(sel.k).conc, 3)} mg/mL • ${fx(SOL(sel.k).left, 2)} mL left<div class="row">${btn('Discard & prepare again', `newBatch('${sel.k}')`, 'sec')}</div>`;
+        else h = `<p style="color:#64748b">Boat on the analytical balance → TARE → weigh the mass you calculated → tip into the flask → saline to the mark and label.</p>`;
+      } else if (S.station === 3) {
+        t = 'Dosing bench';
+        const sy = S.syr;
+        if (sel && sel.kind === 'draw') h = `<b>Draw ${srcName(sel.src)}</b><div class="row">Volume <input id="inDraw" class="xb-in" style="width:70px" placeholder="mL"> mL ${btn('Draw up', 'drawUp()')}</div>`;
+        else if (hm) {
+          h = `<b>${P}${hm.id}</b> • ${GNAME(hm.group)} • ${fx(hm.wtShown || hm.wt, 1)} g<br><span class="mono" style="font-size:11px">${CFG.injSummary(hm)}</span>
+            ${sy.vol ? `<div class="row">Give ${fx(sy.vol, 2)} mL ${srcName(sy.src)} by <select id="inRoute" class="xb-in" style="width:auto"><option value="">route…</option>${Object.entries(ROUTES).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select></div>
+            <div class="row">Site <select id="inSite" class="xb-in" style="width:auto">${Object.entries(SITES).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select> ${btn('Administer', 'administer()')}</div>` : '<p style="color:#64748b;margin-top:4px">Pick up the syringe, draw the dose from the right bottle, then give it.</p>'}`;
+        } else h = `<p style="color:#64748b">Click an animal in a holding cage to pick it up; the syringe is on the tray. Clock ${clockStr(S.t)}.</p>`;
+        if (sy.vol) h += `<div class="row">${btn('Expel syringe contents', 'expel()', 'sec')}</div>`;
+      } else { const r = ctx4(); t = r[0]; h = r[1]; }
+      $('ctxTitle').textContent = t; c.innerHTML = h;
+    }
+    function act(a, arg) {
+      if (S.station === 1) act1(a); else if (S.station === 2) act2(a, arg); else if (S.station === 3) act3(a, arg); else act4(a, arg);
+      renderCtx(); drawDyn(); refreshChecklist(); renderNotebook();
+    }
+    function buildScene() { $('scene').innerHTML = DEFS + (S.station === 1 ? sceneAnimals() : S.station === 2 ? sceneSolutions() : S.station === 3 ? sceneDosing() : sceneApp()); drawDyn(); }
+    function drawDyn() { S._sceneV++; dyn1(); dyn2(); dyn3(); dyn4(); updClocks(); refreshHints(); }
+    function nbSet(uid, f, v) { S.mice[uid].nb[f] = v.trim(); renderNotebook(); renderObservation(); refreshChecklist(); }
+    function calcSet(k, f, v) { S.calc[k][f] = v.trim(); renderNotebook(); refreshChecklist(); }
+    const idealMl = m => { const w = m.wtShown; return w ? CFG.vkg * w / 1000 : NaN; };
+    const nbv = (m, f) => { const v = parseFloat(m.nb[f]); return isFinite(v) ? v : NaN; };
+    const tolMl = m => Math.max(0.006, idealMl(m) * 0.03);
+    function allFlags(m) { return [...new Set([...m.flags, ...m.inj.flatMap(i => i.flags), ...(CFG.moreFlags ? CFG.moreFlags(m) : [])])]; }
+    function calcCells() { return prep().map(d => `${d.abbr} <input class="obs-in ${chk(S.calc[d.k].conc, d.conc, d.conc * 0.01)}" value="${S.calc[d.k].conc}" onchange="calcSet('${d.k}','conc',this.value)"> mg/mL, weigh <input class="obs-in ${chk(S.calc[d.k].mg, d.conc * d.flaskMl, d.conc * d.flaskMl * 0.01)}" value="${S.calc[d.k].mg}" onchange="calcSet('${d.k}','mg',this.value)"> mg`).join(' • '); }
+    const calcOk = () => prep().every(d => chk(S.calc[d.k].conc, d.conc, d.conc * 0.01) === 'ok-in' && chk(S.calc[d.k].mg, d.conc * d.flaskMl, d.conc * d.flaskMl * 0.01) === 'ok-in');
+    function frame(dt, dtR) {
+      if (CFG.tick) dt = CFG.tick(dt, dtR);
+      S.t += dt;
+      $('labClock').textContent = clockStr(S.t) + ' (' + fmtHMS(S.t) + ')';
+      frame.n = (frame.n || 0) + 1;
+      if (frame.n % 15 === 0) { updClocks(); refreshChecklist(); }
+      if (S.station === 4 && typeof anim4 === 'function') anim4();
+      if (frame.n % 30 === 0) { if (S.station === 3) { dyn3(); refreshHints(); } }
+    }
+  </script>
+  <script>
+    // ------------------------------------------------ shared checklist steps (stations 1-3)
+    const allN = f => placed().length === CFG.N && placed().every(f);
+    const nOkA = f => placed().filter(f).length;
+    function injTargets() {
+      const hm = handM(), m = hm || placed().slice().sort((a, b) => a.inj.length - b.inj.length || a.id - b.id).find(x => x.inj.length < CFG.nInj);
+      if (!m) return [];
+      if (!hm) return ['m:' + m.uid];
+      if (m.inj.length >= CFG.nInj) return [];
+      if (!S.syrSel) return ['syr'];
+      if (!S.syr.vol) return ['b:' + CFG.plan(m.group)[m.inj.length]];
+      return [];
+    }
+    function commonSteps() {
+      const P = CFG.abbr, st = [
+        { g: 'Animal house', st: 1, t: 'Balance ON and tared', done: () => !!S.balTared, how: 'Click the balance to switch it on, then click it again (empty hands) to tare the container.', tg: () => ['balance'] },
+        { g: 'Animal house', st: 1, t: () => `Mark, weigh & randomise ${CFG.N} ${CFG.sp}s (${placed().length}/${CFG.N})`, done: () => CFG.gkeys.every(g => inGroup(g).length === CFG.per),
+          how: 'Stock cage → picric acid → balance → lot jar → the holding cage named on the lot.',
+          tg: () => { const m = handM(); if (!m) return ['stock']; if (!m.id) return ['picric']; if (!m.weighed) return ['balance']; if (!m.lot) return ['lots']; return ['cage' + m.lot]; } },
+        { g: 'Animal house', st: 1, t: 'Body weights in the notebook', done: () => allN(m => chk(m.nb.wt, m.wtShown, 0.05) === 'ok-in'), how: 'Type each balance reading in the Wt column.', tg: () => [] },
+      ];
+      if (CFG.sols().some(d => !d.premade)) st.push({ g: 'Solutions', st: 2, t: 'Concentrations & masses calculated', done: () => calcOk(), how: `Notebook: conc. (mg/mL) = dose (mg/kg) ÷ ${CFG.vkg} mL/kg; mass to weigh (mg) = conc. × flask volume.`, tg: () => [] });
+      CFG.sols().forEach(d => { if (!d.premade) st.push({ g: 'Solutions', st: 2, t: `${d.name} ${fx(d.conc, 3)} mg/mL, ${d.flaskMl} mL`, done: () => SOL(d.k).labelled,
+        how: `Boat on the analytical balance → TARE → weigh ${fx(d.conc * d.flaskMl, 2)} mg → tip into the ${d.abbr} flask → saline to ${d.flaskMl} mL and label.`,
+        tg: () => { const A = S.abal, F = SOL(d.k); if (F.inFl) return ['fl:' + d.k]; if (A.mg && A.what === d.k) return ['fl:' + d.k]; if (!A.boat || !A.tared) return ['abal']; return ['jar:' + d.k]; } }); });
+      st.push({ g: 'Dosing', st: 3, t: 'Dose volume of each animal in the notebook', done: () => allN(m => chk(m.nb.d1, idealMl(m), tolMl(m)) === 'ok-in'), how: `Volume (mL) = ${CFG.vkg} mL/kg × body weight (kg), for every injection.`, tg: () => [] });
+      st.push({ g: 'Dosing', st: 3, t: () => `${CFG.injLabel} (${nOkA(m => m.inj.length >= CFG.nInj)}/${CFG.N})`, done: () => allN(m => m.inj.length >= CFG.nInj), how: CFG.injHow, tg: injTargets });
+      return st;
+    }
+  </script>
+  <script>
+    // =====================================================================
+    // XPRISM neurobehaviour kit (Exp 28 to 32): three-group designs, one-way
+    // ANOVA with Dunnett's test, drug effect model, trial life cycle, assistant.
+    // Every number comes from the student's own animals and technique.
+    // =====================================================================
+    const rnd1 = x => Math.round(x * 10) / 10;
+    function fP(F, d1, d2) { return !isFinite(F) ? 0 : F <= 0 ? 1 : betai(d2 / 2, d1 / 2, d2 / (d2 + d1 * F)); }
+    function anova1(gs) {
+      const all = gs.flatMap(g => g.vals), N = all.length, k = gs.length;
+      if (N <= k || gs.some(g => g.vals.length < 2)) return null;
+      const gm = mean(all); let ssb = 0, ssw = 0;
+      gs.forEach(g => { const m = mean(g.vals); ssb += g.vals.length * (m - gm) ** 2; g.vals.forEach(v => ssw += (v - m) ** 2); });
+      const df1 = k - 1, df2 = N - k, msw = ssw / df2, F = msw > 0 ? (ssb / df1) / msw : Infinity;
+      return { F, df1, df2, msw, p: fP(F, df1, df2) };
+    }
+    // critical values of Dunnett's two-sided test for two treatments against one control [df, 5%, 1%]
+    const DUNNETT = [[5, 3.03, 4.63], [6, 2.86, 4.21], [7, 2.75, 3.95], [8, 2.67, 3.77], [9, 2.61, 3.63], [10, 2.57, 3.53], [12, 2.50, 3.39], [15, 2.44, 3.25], [20, 2.38, 3.13], [30, 2.32, 3.02], [60, 2.27, 2.90], [1e9, 2.21, 2.79]];
+    function dunnett(gs, ctrlIdx) {
+      const a = anova1(gs); if (!a) return gs.map(() => null);
+      const row = DUNNETT.slice().reverse().find(r => r[0] <= a.df2) || DUNNETT[0], c = gs[ctrlIdx];
+      return gs.map((g, i) => {
+        if (i === ctrlIdx) return null;
+        const se = Math.sqrt(a.msw * (1 / g.vals.length + 1 / c.vals.length)), q = se > 0 ? Math.abs(mean(g.vals) - mean(c.vals)) / se : (mean(g.vals) === mean(c.vals) ? 0 : 99);
+        return { q, label: q >= row[2] ? 'p < 0.01' : q >= row[1] ? 'p < 0.05' : 'p > 0.05 (ns)', star: q >= row[2] ? '**' : q >= row[1] ? '*' : 'ns' };
+      });
+    }
+    // two-way repeated-measures ANOVA: groups [{rows: [[day values] per animal]}]
+    function rmAnova(gs) {
+      const gr = gs.filter(g => g.rows.length >= 2); if (gr.length !== gs.length) return null;
+      const D = gr[0].rows[0].length, n = gr.reduce((s, g) => s + g.rows.length, 0), k = gr.length, all = gr.flatMap(g => g.rows.flat()), gm = mean(all);
+      if (all.some(v => !isFinite(v)) || D < 2) return null;
+      let ssG = 0, ssS = 0, ssD = 0, ssGD = 0, ssT = 0;
+      all.forEach(v => ssT += (v - gm) ** 2);
+      for (let d = 0; d < D; d++) ssD += n * (mean(gr.flatMap(g => g.rows.map(r => r[d]))) - gm) ** 2;
+      gr.forEach(g => {
+        const gMean = mean(g.rows.flat());
+        ssG += g.rows.length * D * (gMean - gm) ** 2;
+        g.rows.forEach(r => ssS += D * (mean(r) - gMean) ** 2);
+        for (let d = 0; d < D; d++) ssGD += g.rows.length * (mean(g.rows.map(r => r[d])) - gMean - mean(gr.flatMap(x => x.rows.map(r => r[d]))) + gm) ** 2;
+      });
+      const ssE = ssT - ssG - ssS - ssD - ssGD, dfG = k - 1, dfS = n - k, dfD = D - 1, dfGD = dfG * dfD, dfE = dfS * dfD, msE = ssE / dfE;
+      const fG = (ssG / dfG) / (ssS / dfS), fD = (ssD / dfD) / msE, fGD = (ssGD / dfGD) / msE;
+      return { group: { F: fG, df1: dfG, df2: dfS, p: fP(fG, dfG, dfS) }, day: { F: fD, df1: dfD, df2: dfE, p: fP(fD, dfD, dfE) }, inter: { F: fGD, df1: dfGD, df2: dfE, p: fP(fGD, dfGD, dfE) } };
+    }
+    const fText = a => a ? `F(${a.df1}, ${a.df2}) = ${fx(a.F, 2)}, ${pLabel(a.p)}` : '—';
+
+    // ---- drug effect at the moment of the test. Doses, routes and timing typed by the student all count.
+    const TAU = { ip: 7, sc: 14, im: 10, po: 22 };
+    function pkW(inj, mgkgRef, tNow, fade) {
+      if (!inj || !(inj.mgkg > 0)) return 0;
+      const r = inj.mgkg / mgkgRef; let w = r <= 1 ? Math.pow(r, 0.8) : 1 + 0.12 * Math.log(r);
+      const dt = (tNow - inj.t) / 60; w *= 1 - Math.exp(-Math.max(0, dt) / (TAU[inj.route] || 7));
+      if (dt > fade) w *= Math.exp(-(dt - fade) / 90);
+      if (inj.route === 'po') w *= 0.7;
+      return clamp(w, 0, 1.25);
+    }
+    function effects(m, tNow) {
+      let sco = 0, drug = 0, P = null, key = 'vehicle';
+      m.inj.forEach(i => {
+        if (i.src === 'sco') sco = Math.max(sco, pkW(i, CFG.scoMgkg, tNow, 130));
+        else if (i.src !== 'sal') { const d = SDK(i.src); key = d.key; P = PROFILES[key]; drug = Math.max(drug, pkW(i, d.mgkg, tNow, 150)); }
+      });
+      let cog = 1 - 0.8 * Math.min(1, sco);                             // scopolamine: central muscarinic block
+      if (P && P.rescue) cog += P.rescue * Math.min(1, drug) * (1 - cog);
+      if (P && P.cog) cog += P.cog * Math.min(1, drug);
+      const act = (1 + 0.18 * Math.min(1, sco)) * (P && P.act ? 1 + (P.act - 1) * Math.min(1, drug) : 1);
+      return { cog: clamp(cog, 0.02, 1.05) , act, sco, drug, key, P };
+    }
+    // ---- animal variability: stable traits per animal
+    const cogOf = (m, E) => clamp(E.cog * Math.exp(gauss() * 0.06) * (m.sens > 1 ? 1 : 0.97 + 0.03 * m.sens), 0.02, 1.08);
+
+    // ---- common state helpers
+    const GROUPS = () => CFG.groups;
+    const gNo = g => CFG.gkeys.indexOf(g);
+    function statsOf(fn, ctrlKey, pool) {
+      const list = pool || placed();
+      const gs = GROUPS().map(g => ({ key: g.key, label: g.short, color: g.color, vals: list.filter(m => m.group === g.key).map(fn).filter(isFinite) }));
+      gs.forEach(g => { g.n = g.vals.length; g.m = mean(g.vals); g.se = sem(g.vals); });
+      const ci = gs.findIndex(g => g.key === ctrlKey), an = anova1(gs), du = dunnett(gs, ci);
+      gs.forEach((g, i) => g.d = du[i]);
+      return { gs, an };
+    }
+    function noteSet(f, g, v) { if (g) S.notes[f][g] = v.trim(); else S.notes[f] = v.trim(); renderObservation(); refreshChecklist(); }
+    const noteOk = (f, g, truth, tol) => isFinite(truth) && chk(S.notes[f] && g ? S.notes[f][g] : S.notes[f], truth, tol) === 'ok-in';
+    const noteIn = (f, g, truth, tol) => `<input id="${f}${g || ''}" class="obs-in ${isFinite(truth) ? chk(g ? S.notes[f][g] : S.notes[f], truth, tol) : ''}" value="${g ? S.notes[f][g] : S.notes[f]}" onchange="noteSet('${f}',${g ? `'${g}'` : 'null'},this.value)">`;
+    const barsOf = (st, ctrlKey) => st.gs.map(g => ({ label: g.label, v: g.n ? g.m : NaN, e: g.se, color: g.color, note: g.d ? g.d.star : '' }));
+    const flagsHTML = m => allFlags(m).map(f => `<span class="flag">${f}</span>`).join('') || '—';
+
+    // ---- scene furniture shared by the five apparatus stations
+    const led = (x, y, w, h) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="url(#lcd)" stroke="#1f2937"/>`;
+    const mzKey = (x, y, w, act, t, c, sub, h = 38) => `<g class="hot" data-act="${act}"><rect id="k_${act.replace(/:/g, '_')}" x="${x}" y="${y}" width="${w}" height="${h}" rx="7" fill="${c}" stroke="#0f172a" stroke-width="1.5"/><rect x="${x + 2}" y="${y + 2}" width="${w - 4}" height="${Math.min(11, h / 3)}" rx="5" fill="#fff" opacity=".18"/>${lbl(x + w / 2, y + h * .52, t, { s: 10, w: 800, c: '#fff' })}${sub ? lbl(x + w / 2, y + h * .84, sub, { s: 7, c: '#e5e7eb', f: 'JetBrains Mono' }) : ''}</g>`;
+    const KIT_DEFS = `<defs>
+        <linearGradient id="mzFloor" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#667284"/><stop offset="1" stop-color="#4d586a"/></linearGradient>
+        <linearGradient id="mzWallFace" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7f8a99"/><stop offset="1" stop-color="#4b5563"/></linearGradient>
+        <radialGradient id="camVig" cx=".5" cy=".5" r=".75"><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></radialGradient>
+        <linearGradient id="ledBox" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b3340"/><stop offset="1" stop-color="#151a22"/></linearGradient></defs>`;
+    const camBack = () => `${KIT_DEFS}<rect width="1000" height="560" fill="#0f141a"/><rect x="20" y="14" width="640" height="532" rx="6" fill="#1a2027"/><rect x="20" y="14" width="640" height="532" rx="6" filter="url(#grain)"/>`;
+    const camFront = t => `<rect x="20" y="14" width="640" height="532" rx="6" fill="url(#camVig)" pointer-events="none"/><g font-family="JetBrains Mono, monospace" font-size="9.5" fill="#e2e8f0" opacity=".85"><circle cx="40" cy="34" r="4" fill="#ef4444" id="recDot"/><text x="50" y="37">${t}</text><text id="osdLux" x="640" y="37" text-anchor="end"></text><text id="osdT" x="640" y="534" text-anchor="end">00:00</text></g>`;
+    const timerPanel = lab => `<g transform="translate(668 16)" filter="url(#sh)"><rect width="316" height="94" rx="8" fill="url(#ledBox)" stroke="#4b5563"/><rect x="12" y="12" width="168" height="56" rx="4" fill="#050505"/>
+        <text x="172" y="58" text-anchor="end" class="seg" font-size="40" fill="#ef4444" opacity=".09">88:88</text><text id="tmDisp" x="172" y="58" text-anchor="end" class="seg" font-size="40" fill="#ef4444" filter="url(#glow)">00:00</text>
+        ${lbl(96, 82, lab, { s: 7.5, c: '#9ca3af', f: 'JetBrains Mono' })}
+        <g class="hot" data-act="start"><rect x="196" y="16" width="108" height="34" rx="8" fill="#16a34a" stroke="#14532d"/><rect x="198" y="18" width="104" height="10" rx="5" fill="#fff" opacity=".2"/>${lbl(250, 38, 'START TEST', { s: 11, w: 800, c: '#fff' })}</g>
+        <circle id="tmLamp" cx="212" cy="72" r="5" fill="#374151"/>${lbl(262, 76, 'RUN', { s: 8, c: '#9ca3af', f: 'JetBrains Mono' })}</g>`;
+    const envPanel = (title, levels, unit) => `<g transform="translate(668 308)" filter="url(#sh)"><rect width="316" height="72" rx="8" fill="url(#ledBox)" stroke="#4b5563"/>${lbl(58, 16, title, { s: 8, c: '#9ca3af', f: 'JetBrains Mono' })}
+        ${levels.map((l, i) => `<g class="hot" data-act="lux:${l}"><rect id="luxB${l}" x="${12 + i * 52}" y="26" width="46" height="30" rx="6" fill="#374151" stroke="#0f172a"/>${lbl(35 + i * 52, 45, l + ' ' + unit, { s: 9, w: 800, c: '#fff' })}</g>`).join('')}
+        <g class="hot" data-act="spray"><path d="M188 58 L188 36 Q188 30 194 30 L204 30 L204 22 L216 22 L222 28 L206 28 L206 58 Z" fill="url(#glass)" stroke="url(#glassEdge)"/><rect x="190" y="38" width="14" height="20" fill="#e2e8f0" opacity=".85"/><rect x="190" y="47" width="14" height="6" fill="#16a34a"/>${lbl(197, 70, '70% EtOH', { s: 7, c: '#cbd5e1' })}</g>
+        <g class="hot" data-act="wipe"><ellipse cx="262" cy="42" rx="26" ry="14" fill="#f8fafc" stroke="#cbd5e1"/><ellipse cx="262" cy="42" rx="9" ry="5" fill="#a8a29e"/><path d="M236 42 q0 -8 6 -12" stroke="#e2e8f0" fill="none"/>${lbl(262, 70, 'paper towel', { s: 7, c: '#cbd5e1' })}</g></g>`;
+    const HC4 = { I: { x: 668, y: 392 }, II: { x: 776, y: 392 }, III: { x: 884, y: 392 } };
+    function holdCages4(tagFn) {
+      const k = CFG.sp === 'rat' ? 0.34 : 0.62;
+      return CFG.gkeys.map(g => {
+        const ms = inGroup(g).filter(m => m.loc === g), p = HC4[g];
+        return cageSide(p.x, p.y, 102, 134, null, '', '', ms.map((m, i) => `<g class="hot" data-act="m:${m.uid}" transform="translate(${20 + (i % 3) * 30} ${74 + Math.floor(i / 3) * 30}) scale(${k + (CFG.sp === 'rat' ? 0.1 : .2)})">${SIDE({ flip: i % 2, id: m.id, sel: S.hand === m.uid, tagc: tagFn(m) })}</g>`).join('')) + lbl(p.x + 51, p.y + 150, g === 'I' ? CFG.gname.I : g === 'II' ? CFG.gname.II : CFG.gname.III, { s: 7, c: '#cbd5e1', w: 700 });
+      }).join('');
+    }
+    // ---- trial life cycle: place → START → run → remove → clean. MOD comes from the module script.
+    const MOD = {};
+    CFG.canPick = m => {
+      if (S.station === 3) { if (CFG.needsBefore3 && !CFG.needsBefore3()) return false; if (m.inj.length === 1 && CFG.nInj > 1 && minsSince(m.inj[0].t) < 10) once('gap', `Give the second injection about ${CFG.gapMin} min after the first. The timing sheet shows when it is due.`); return true; }
+      if (S.station !== 4) return true;
+      if (S.trial) { say(`${CFG.Sp === 'Rat' ? 'A rat' : 'A mouse'} is on the apparatus. Finish and remove it first.`, true); return false; }
+      if (m.inj.length < CFG.nInj) { say(`That ${CFG.sp} has not had all its injections.`, true); return false; }
+      if (MOD.canPick) return MOD.canPick(m);
+      if (m.run) { say(`Each ${CFG.sp} is tested only once.`, true); return false; }
+      return true;
+    };
+    CFG.moreFlags = m => m.run ? m.run.flags : [];
+    CFG.tick = (dt, dtR) => {
+      const T = S.trial; if (!T || T.state !== 'run') return dt;
+      if (dt > dtR * 20) dt = dtR * 20;
+      let left = Math.min(dt, MOD.testS(T) - T.M.t), ended = false;
+      while (left > 1e-9 && !ended) { const h = Math.min(0.1, left); MOD.step(T.M, h, T); if (MOD.recTick) MOD.recTick(T, h); left -= h; ended = MOD.ended ? MOD.ended(T.M) : false; }
+      if (ended || T.M.t >= MOD.testS(T) - 1e-6) { T.state = 'done'; finishRun(T, false); beep('done'); say(MOD.doneMsg ? MOD.doneMsg(T) : 'Time is up. Note the readings, then remove the animal.'); renderCtx(); refreshChecklist(); }
+      return dt;
+    };
+    function finishRun(T, aborted) {
+      const m = S.mice[T.uid];
+      if (MOD.onFinish) { MOD.onFinish(T, aborted); renderNotebook(); return; }
+      m.run = { res: MOD.result(T.M), rec: T.rec, t: rnd1(T.M.t), dt: T.dt, flags: T.flags.slice(), invalid: aborted };
+      if (aborted) m.run.flags.push(`test stopped at ${fx(T.M.t, 0)} s (${MOD.testS(T)} s intended)`);
+      renderNotebook();
+    }
+    function removeAnimal() {
+      const T = S.trial; if (!T) return;
+      if (T.state === 'run') { finishRun(T, true); say(`${CFG.Sp} removed early: the run is incomplete.`, true); }
+      else if (T.state === 'placed') say(`${CFG.Sp} lifted off without a test.`);
+      const m = S.mice[T.uid];
+      if (T.state !== 'placed') { S.clean = false; if (MOD.afterRemove) MOD.afterRemove(T); }
+      m.loc = m.group; S.hand = null; S.trial = null; S.t += 20; beep('ok'); renderCtx(); drawDyn(); renderNotebook(); refreshChecklist();
+    }
+    function act4(a, arg) {
+      const T = S.trial, hm = handM();
+      if (a === 'm') act3(a, arg);
+      else if (a === 'lux') {
+        if (T && T.state === 'run') { say('Do not change the conditions during a test.', true); return; }
+        S.lux = arg; beep('tick'); if (MOD.onLux) MOD.onLux(arg); else say(`Room light set to ${arg} lux.`);
+      } else if (a === 'spray') { if (T) { say('Remove the animal first.', true); return; } S.wet = 1; beep('click'); say('Sprayed with 70% ethanol. Wipe it with the paper towel.'); }
+      else if (a === 'wipe') {
+        if (T) { say('Remove the animal first.', true); return; }
+        if (S.wet) { S.clean = true; S.wet = 0; S.boli = []; S.t += 40; beep('ok'); say('Wiped clean and dry: boli and odour cues removed.'); }
+        else { S.boli = []; S.t += 20; say('Wiped dry only: the odour of the last animal remains. Spray 70% ethanol first.', true); }
+      } else if (a === 'place') {
+        if (T) return;
+        if (!hm) { say(`Pick up a dosed ${CFG.sp} from its holding cage first.`, true); return; }
+        if (MOD.prePlace && !MOD.prePlace(hm)) return;
+        const flags = [], ref = hm.inj[hm.inj.length - 1], dt = minsSince(ref.t), w = CFG.window || [25, 40];
+        if (!MOD.noWindow && (dt < w[0] || dt > w[1])) flags.push(`tested ${fx(dt, 0)} min after the last injection (${CFG.testAt} intended)`);
+        if (!S.clean) flags.push('apparatus not cleaned after the last animal');
+        const out = MOD.place(hm, flags);
+        S.trial = Object.assign({ uid: hm.uid, state: 'placed', M: out.M, rec: MOD.freshRec ? MOD.freshRec() : {}, flags, dt: rnd1(dt) }, out.extra || {});
+        S.t += 10; beep('click'); say(`${out.msg || 'Placed.'} Press START TEST when you release it.${flags.length ? ' ⚠ ' + flags.join(', ') + '.' : ''}`, flags.length > 0);
+      } else if (a === 'start') {
+        if (!T) { say(`Place ${CFG.sp === 'rat' ? 'a rat' : 'a mouse'} on the apparatus first.`, true); return; }
+        if (T.state !== 'placed') return;
+        T.state = 'run'; beep('ok'); say(MOD.startMsg ? MOD.startMsg(T) : 'Test running.');
+      } else if (a === 'remove') removeAnimal();
+      else if (MOD.act) MOD.act(a, arg);
+    }
+    function dyn4() {
+      if (S.station !== 4) return;
+      if ($('cageG4')) $('cageG4').innerHTML = holdCages4(m => MOD.tagc ? MOD.tagc(m) : m.run ? '#d1d5db' : m.inj.length >= CFG.nInj ? '#e0e7ff' : '#fff');
+      if ($('osdLux') && S.lux) $('osdLux').textContent = S.lux + (MOD.unit || ' lux');
+      (MOD.levels || []).forEach(l => { const b = $('luxB' + l); if (b) b.setAttribute('fill', S.lux === l ? '#d97706' : '#374151'); });
+      if (MOD.dyn) MOD.dyn();
+      anim4();
+    }
+    function anim4() {
+      if (S.station !== 4) return;
+      const T = S.trial;
+      if (MOD.draw) MOD.draw(T);
+      if ($('tmDisp')) { const full = T ? MOD.testS(T) : MOD.testS(null), rem = T && T.state === 'run' ? Math.max(0, full - T.M.t) : T && T.state === 'done' ? 0 : full; $('tmDisp').textContent = fmtMS(Math.ceil(rem)); }
+      if ($('tmLamp')) $('tmLamp').setAttribute('fill', T && T.state === 'run' ? '#22c55e' : T && T.state === 'done' ? '#ef4444' : '#374151');
+      if ($('osdT')) $('osdT').textContent = T && T.state !== 'placed' ? fmtMS(T.M.t) : '00:00';
+      if ($('recDot')) $('recDot').setAttribute('opacity', T && T.state === 'run' && Math.floor(S.t * 2) % 2 ? 0.2 : 1);
+      if (MOD.anim) MOD.anim(T);
+    }
+    window.addEventListener('keydown', e => {
+      if (!S || S.station !== 4 || /INPUT|SELECT|TEXTAREA/.test((e.target || {}).tagName || '')) return;
+      if (S.trial && S.trial.state === 'run' && MOD.key && MOD.key(e.key.toLowerCase())) { e.preventDefault(); drawDyn(); }
+    });
+
+    // ---- assistant: finishes stations for tutors and practice. Switched off in exam mode by bridge.js.
+    function assistAnimals() {
+      S.balOn = S.balTared = true;
+      S.mice.forEach(m => {
+        if (m.group) { if (!m.nb.wt) m.nb.wt = fx(m.wtShown, 1); return; }
+        if (!m.id) m.id = S.nextId++;
+        m.weighed = true; m.wtShown = m.wt;
+        if (!m.lot) m.lot = S.lots.pop() || CFG.gkeys.find(g => inGroup(g).length < CFG.per);
+        m.group = inGroup(m.lot).length < CFG.per ? m.lot : CFG.gkeys.find(g => inGroup(g).length < CFG.per);
+        m.lot = m.group; m.loc = m.group; m.nb.wt = fx(m.wtShown, 1); if (MOD.assistAnimal) MOD.assistAnimal(m);
+      });
+      S.hand = null; S.t += 600;
+    }
+    function assistSolutions() {
+      prep().forEach(d => { if (!S.sol[d.k].labelled) S.sol[d.k] = { mg: d.conc * d.flaskMl, inFl: false, vol: d.flaskMl, labelled: true, conc: d.conc, left: d.flaskMl, made: S.t }; S.calc[d.k] = { conc: String(d.conc), mg: String(+(d.conc * d.flaskMl).toFixed(3)) }; });
+      S.t += 300;
+    }
+    function assistDosing() {
+      for (let round = 0; round < CFG.nInj; round++) {
+        placed().sort((a, b) => a.id - b.id).forEach(m => {
+          if (!m.nb.d1) m.nb.d1 = fx(idealMl(m), 3);
+          if (m.inj.length > round) return;
+          const src = CFG.plan(m.group)[round], d = SDK(src), vol = idealMl(m);
+          m.inj.push({ src, vol, route: 'ip', site: 'rlq', t: S.t, mgkg: d ? d.mgkg : 0, flags: [] }); S.t += 60;
+        });
+        if (round < CFG.nInj - 1) S.t += Math.max(0, (CFG.gapMin * 60) - CFG.N * 60);
+      }
+      S.hand = null; S.syrSel = false; S.syr = { vol: 0, src: null }; S.sel = null;
+      S.t += (CFG.testAt * 60) - (MOD.assistWait || 0);
+    }
+    function processAll() {
+      if (S.station === 1) assistAnimals(); else if (S.station === 2) assistSolutions(); else if (S.station === 3) { if (!placed().length) assistAnimals(); if (CFG.sols().some(d => !d.premade && !S.sol[d.k].labelled)) assistSolutions(); if (MOD.beforeDose) MOD.beforeDose(); assistDosing(); }
+      else if (MOD.assist) MOD.assist();
+      renderCtx(); drawDyn(); renderNotebook(); renderObservation(); refreshChecklist(); say('The assistant has finished this station. Check the notebook.');
+    }
+    function fillAll() { S.trial = null; assistAnimals(); assistSolutions(); if (MOD.beforeDose) MOD.beforeDose(); assistDosing(); MOD.assist(); if (MOD.fillNotes) MOD.fillNotes(); }
+    function runAllInstant() { fillAll(); goStation(4); renderNotebook(); renderObservation(); refreshChecklist(); say('Complete experiment run by the assistant. Study the sheet, then repeat it yourself.'); }
+    function loadReferenceDataset() { S = freshState(); fillAll(); goStation(4); renderNotebook(); renderObservation(); refreshChecklist(); say('Reference dataset loaded.'); }
+    function newExperiment() { S = freshState(); goStation(1); renderNotebook(); renderObservation(); refreshChecklist(); say(`New batch: ${CFG.N} ${CFG.sp === 'rat' ? 'rats' : 'mice'} are in the stock cage. Switch on the balance and tare it first.`); }
+    function onDrugSelectChange() {
+      const v = $('drugSelect').value;
+      if (S && placed().length && !confirm('Changing the test drug restarts the practical. Continue?')) { $('drugSelect').value = SEL.drug; return; }
+      SEL.drug = v; $('drugBadge').textContent = v === 'unknown' ? 'Drug X (coded)' : PROFILES[v].short; newExperiment();
+    }
+    function init() {
+      S = freshState();
+      $('drugSelect').innerHTML = TEST_KEYS.map(k => `<option value="${k}">${PROFILES[k].name}</option>`).join('') + '<option value="unknown">Unknown Mystery Drug (Exam Diagnosis)</option>';
+      $('unknownDrugDeduction').innerHTML = `<option value="">-- Choose deduced compound --</option>` + TEST_KEYS.map(k => `<option value="${k}">${PROFILES[k].name}</option>`).join('');
+      $('unknownDrugDeduction').addEventListener('change', refreshChecklist);
+      $('drugBadge').textContent = PROFILES[SEL.drug].short;
+      $('scene').addEventListener('pointerdown', e => { if (e.button === 0) onSceneClick(e); });
+      goStation(1); renderNotebook(); refreshChecklist();
+      say(`${CFG.N} ${CFG.sp === 'rat' ? 'rats' : 'mice'} are in the stock cage. Switch on the balance and tare it first.`);
+      startLoop((dt, dtR) => frame(dt, dtR));
+      const _sw = switchTab; window.switchTab = function (id) { _sw(id); if (id === 'experiment') { buildScene(); renderNotebook(); } };
+    }
+  </script>
+  <script>
+    // ================================================================ STATION 4: Cook's pole climbing chamber (front view)
+    const CS_S = 10, SHOCK_S = 30, ITI_S = 60, SETTLE_S = 30, NTR = 5, CRIT = 4, OK_MA = '0.8', SESSION_S = SETTLE_S + NTR * (CS_S + SHOCK_S) + (NTR - 1) * ITI_S;
+    const CH = { x: 130, y: 90, w: 360, h: 390, floor: 462, pole: 310 };
+    MOD.levels = ['0.2', OK_MA, '2.0'];
+    MOD.unit = ' mA';
+    MOD.noWindow = false;
+    MOD.testS = () => SESSION_S;
+    MOD.onLux = l => say(l === OK_MA ? `Grid set to ${OK_MA} mA: the lowest level that drives reliable climbing in this colony.` : l < OK_MA ? `${l} mA: too weak to motivate the rat, so even trained rats stop avoiding.` : `${l} mA: more than the task needs. Strong shock causes freezing and needless distress (Refinement), and the rats climb less.`, l !== OK_MA);
+    const baselineOK = m => !!(m.pre && !m.pre.invalid && m.pre.res.car >= CRIT);
+    CFG.needsBefore3 = () => {
+      if (placed().length === CFG.N && placed().every(baselineOK)) return true;
+      say(`Dose only after every rat has met the baseline criterion (${CRIT} of ${NTR} CAR) at the pole chamber.`, true); return false;
+    };
+    const _kitCanPick = CFG.canPick;
+    CFG.canPick = m => (S.station === 4 && !S.trial && !m.inj.length && !baselineOK(m)) ? true : _kitCanPick(m);
+    CFG.moreFlags = m => [...(m.pre ? m.pre.flags : []), ...(m.run ? m.run.flags : [])];
+    function sceneApp() {
+      let s = camBack(), bars = '';
+      for (let x = CH.x + 10; x < CH.x + CH.w; x += 15) bars += `<line x1="${x}" y1="${CH.floor}" x2="${x}" y2="${CH.floor + 14}" />`;
+      s += `<defs><linearGradient id="poleWood" x1="0" x2="1"><stop offset="0" stop-color="#7c4a1a"/><stop offset=".45" stop-color="#d6a366"/><stop offset="1" stop-color="#6b3f15"/></linearGradient></defs>`;
+      s += `<rect x="${CH.x}" y="${CH.y}" width="${CH.w}" height="${CH.h}" fill="#303946"/><rect x="${CH.x}" y="${CH.y}" width="${CH.w}" height="${CH.h}" filter="url(#grain)"/>`;
+      s += `<rect x="${CH.pole - 9}" y="${CH.y + 6}" width="18" height="${CH.floor - CH.y - 6}" fill="url(#poleWood)" stroke="#3f2508"/>`;
+      s += `<g id="gridBars" stroke="#cbd5e1" stroke-width="3">${bars}</g><rect x="${CH.x}" y="${CH.floor + 14}" width="${CH.w}" height="${CH.y + CH.h - CH.floor - 14}" fill="#111827"/><g id="boliG"></g>`;
+      s += `<g id="sparkG" style="display:none" stroke="#fde047" stroke-width="2" fill="none">${[170, 240, 390, 450].map(x => `<path d="M${x} ${CH.floor - 2} l6 -9 l-5 0 l7 -11"/>`).join('')}</g>`;
+      s += `<g id="mzMouse" style="display:none"><g id="mzMouseIn"></g></g>`;
+      s += `<rect x="${CH.x}" y="${CH.y}" width="${CH.w}" height="${CH.h}" fill="url(#glass)" opacity=".28" pointer-events="none"/><rect x="${CH.x}" y="${CH.y}" width="${CH.w}" height="${CH.h}" fill="none" stroke="#94a3b8" stroke-width="5"/>`;
+      s += `<rect x="${CH.x - 10}" y="${CH.y - 18}" width="${CH.w + 20}" height="20" rx="3" fill="url(#steelH)" stroke="#475569"/>`;
+      s += `<g transform="translate(${CH.x + 36} ${CH.y - 42})"><rect width="72" height="26" rx="5" fill="#111827" stroke="#64748b"/><circle id="bzLamp" cx="15" cy="13" r="6" fill="#374151"/>${lbl(45, 17, 'BUZZER', { s: 9, c: '#e5e7eb', f: 'JetBrains Mono' })}<g id="bzWaves" style="display:none" stroke="#fbbf24" fill="none" stroke-width="2"><path d="M80 7 q7 6 0 12"/><path d="M88 2 q12 11 0 22"/></g></g>`;
+      s += `<g transform="translate(${CH.x + 220} ${CH.y - 42})"><rect width="104" height="26" rx="5" fill="#111827" stroke="#64748b"/><circle id="shLamp" cx="15" cy="13" r="6" fill="#374151"/>${lbl(60, 17, 'GRID SHOCK', { s: 9, c: '#e5e7eb', f: 'JetBrains Mono' })}</g>`;
+      s += `<g class="hot" data-act="place"><rect x="${CH.x + 12}" y="${CH.floor - 92}" width="150" height="90" fill="#fff" opacity="0"/></g>`;
+      s += camFront('CAM 1 · POLE CHAMBER · front view');
+      s += timerPanel('PHASE TIMER: buzzer, then shock');
+      s += `<g transform="translate(668 120)" filter="url(#sh)"><rect width="316" height="178" rx="8" fill="url(#ledBox)" stroke="#4b5563"/>${lbl(158, 16, 'RESPONSE RECORDER  (four paws off the grid)', { s: 8, c: '#9ca3af', f: 'JetBrains Mono' })}
+        ${led(10, 24, 296, 46)}<g font-family="DSEG7, JetBrains Mono, monospace" font-size="14" fill="#1f2d14"><text x="18" y="44" id="rTrial">TRIAL 0/5</text><text x="156" y="44" id="rLat">LAT --.-</text><text x="18" y="63" id="rCar">CAR 0</text><text x="112" y="63" id="rEsc">ESC 0</text><text x="206" y="63" id="rNr">NR 0</text></g>
+        ${mzKey(10, 80, 296, 'rec:P', 'RAT ON POLE', '#047857', 'key P: stops the buzzer and the shock', 86)}</g>`;
+      s += envPanel('GRID SHOCK LEVEL', MOD.levels, 'mA') + `<g id="cageG4"></g>`;
+      return s;
+    }
+    // ---- behaviour
+    MOD.place = (m, flags) => {
+      if (S.lux !== OK_MA) flags.push(`grid shock ${S.lux} mA (${OK_MA} intended)`);
+      const pre = !m.inj.length, E = pre ? null : effects(m, S.t), V = PROFILES.vehicle, P = (E && E.P) || V, w = E ? Math.min(1.1, E.drug) : 0, mix = f => V[f] + (P[f] - V[f]) * w;
+      let pCar = mix('car') * Math.pow(m.sens, -0.25), pEsc = mix('esc');
+      if (S.lux < OK_MA) { pCar *= 0.5; pEsc *= 0.6; } else if (S.lux > OK_MA) { pCar *= 0.75; pEsc *= 0.75; }
+      const M = { kind: pre ? 'pre' : 'post', pCar: clamp(pCar, 0.01, 0.99), pEsc: clamp(pEsc, 0.01, 0.995), slow: mix('slow'), t: 0, pt: 0, phase: 'settle', n: 0, on: false, res: null, tr: null, log: [], done: false };
+      return { M, msg: `${CFG.abbr}${m.id} placed on the grid for its ${pre ? 'baseline' : 'post-dose'} session.`, extra: { c: 0 } };
+    };
+    function nextTrial(M) {
+      M.n++; M.phase = 'cs'; M.pt = 0; M.on = false; M.res = null;
+      const resp = Math.random() < M.pCar ? 'CAR' : Math.random() < M.pEsc ? 'ER' : 'NR';
+      M.tr = { resp, at: resp === 'CAR' ? clamp((1 - Math.log(1 - Math.random()) * 2) * M.slow, 1, CS_S - 0.3) : resp === 'ER' ? clamp(rnd(1, 5) * M.slow, 0.6, SHOCK_S - 1) : null };
+      if (!M.quiet) beep('low');
+    }
+    function endTrial(M, T) {
+      if (!M.res) M.log.push({ type: 'NR', lat: null });
+      if (T && T.rec.log.length < M.n) T.rec.log.push({ type: 'NR', lat: null });
+      if (M.n >= NTR) { M.done = true; M.phase = 'end'; } else { M.phase = 'iti'; M.pt = 0; }
+    }
+    function climbNow(M, type, lat) { M.on = true; M.res = { type, lat: rnd1(lat) }; M.log.push(M.res); }
+    MOD.step = (M, dt, T) => {
+      M.t += dt; M.pt += dt;
+      if (M.phase === 'settle') { if (M.pt >= SETTLE_S) nextTrial(M); }
+      else if (M.phase === 'cs') {
+        if (!M.on && M.tr.resp === 'CAR' && M.pt >= M.tr.at) climbNow(M, 'CAR', M.pt);
+        if (M.pt >= CS_S) { M.phase = 'shock'; M.pt = 0; if (!M.quiet && !M.on) beep('warn'); }
+      } else if (M.phase === 'shock') {
+        if (!M.on && M.tr.resp === 'ER' && M.pt >= M.tr.at) climbNow(M, 'ER', CS_S + M.pt);
+        if (M.pt >= SHOCK_S) endTrial(M, T);
+      } else if (M.phase === 'iti') {
+        if (M.on && M.pt >= 5) M.on = false;
+        if (M.pt >= ITI_S) nextTrial(M);
+      }
+    };
+    MOD.ended = M => M.done;
+    const countOf = (log, t) => log.filter(x => x.type === t).length;
+    const latOf = log => { const l = log.filter(x => x.lat !== null).map(x => x.lat); return l.length ? rnd1(mean(l)) : NaN; };
+    MOD.result = M => ({ car: countOf(M.log, 'CAR'), er: countOf(M.log, 'ER'), nr: countOf(M.log, 'NR'), lat: latOf(M.log) });
+    MOD.freshRec = () => ({ log: [] });
+    MOD.startMsg = () => `Session running: ${NTR} trials. Watch the rat and press RAT ON POLE as soon as all four paws leave the grid.`;
+    MOD.doneMsg = T => T.M.kind === 'pre' ? 'Baseline finished. Copy the CAR score into the notebook and remove the rat.' : 'Session finished. Copy the recorder into the notebook and remove the rat.';
+    MOD.onFinish = (T, aborted) => {
+      const m = S.mice[T.uid], run = { res: MOD.result(T.M), rec: T.rec, t: rnd1(T.M.t), dt: T.dt, flags: T.flags.slice(), invalid: aborted };
+      if (aborted) run.flags.push(`session stopped at trial ${T.M.n} of ${NTR}`);
+      if (T.M.kind === 'pre') m.pre = run; else m.run = run;
+    };
+    MOD.key = k => { if (k !== 'p') return false; act4('rec', 'P'); return true; };
+    MOD.act = (a) => {
+      if (a !== 'rec') return;
+      const T = S.trial; if (!T || T.state !== 'run') { say('The recorder only works while a session is running.', true); return; }
+      const M = T.M;
+      if (M.phase !== 'cs' && M.phase !== 'shock') { say('No trial is running: wait for the buzzer.'); return; }
+      if (!M.on) { const f = 'pressed RAT ON POLE with the rat still on the grid'; if (!T.flags.includes(f)) T.flags.push(f); say('The rat is still on the grid. Press only when all four paws have left it.', true); return; }
+      T.rec.log.push({ type: M.phase === 'cs' ? 'CAR' : 'ER', lat: rnd1((M.phase === 'cs' ? 0 : CS_S) + M.pt) }); beep('tick');
+      say(`Trial ${M.n}: recorded as ${M.phase === 'cs' ? 'CAR (during the buzzer)' : 'escape (after the shock began)'}.`);
+      endTrial(M, T);
+    };
+    MOD.afterRemove = () => { for (let i = 0, n = 1 + Math.floor(Math.random() * 3); i < n; i++) S.boli.push({ x: CH.x + rnd(20, CH.w - 20), y: CH.floor + 10, r: Math.random() * 180 }); };
+    MOD.tagc = m => m.run ? '#d1d5db' : m.inj.length ? '#e0e7ff' : baselineOK(m) ? '#d1fae5' : m.pre ? '#fee2e2' : '#fff';
+    MOD.dyn = () => { $('boliG').innerHTML = S.boli.map(b => `<ellipse cx="${b.x}" cy="${b.y}" rx="5" ry="2.6" fill="#1c1208" transform="rotate(${b.r} ${b.x} ${b.y})"/>`).join(''); };
+    MOD.draw = T => {
+      const g = $('mzMouse'); if (!g) return;
+      if (!T) { g.style.display = 'none'; g.removeAttribute('data-on'); return; }
+      const M = T.M; g.style.display = '';
+      if (!g.dataset.on) { $('mzMouseIn').innerHTML = animalSideArt({ kind: 'rat' }); g.dataset.on = '1'; }
+      T.c += ((M.on ? 1 : 0) - T.c) * 0.14;
+      const c = T.c, shocked = M.phase === 'shock' && !M.on && T.state === 'run', j = shocked ? rnd(-2.5, 2.5) : 0;
+      const x = 205 + (CH.pole - 22 - 205) * c + j, y = (CH.floor - 32) + (262 - CH.floor + 32) * c + (shocked ? rnd(-3, 1) : 0), rot = -84 * c;
+      g.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${rot.toFixed(1)}) scale(1.7)`);
+    };
+    MOD.anim = T => {
+      if (!$('rTrial')) return;
+      const M = T && T.M, R = T ? T.rec.log : [], bz = !!(M && T.state === 'run' && (M.phase === 'cs' || M.phase === 'shock')), sh = !!(M && T.state === 'run' && M.phase === 'shock');
+      $('bzLamp').setAttribute('fill', bz ? '#fbbf24' : '#374151'); $('bzWaves').style.display = bz ? '' : 'none';
+      $('shLamp').setAttribute('fill', sh ? '#ef4444' : '#374151'); $('sparkG').style.display = sh && Math.floor(S.t * 2) % 2 ? '' : 'none';
+      $('gridBars').setAttribute('stroke', sh ? '#fde047' : '#cbd5e1');
+      const lat = latOf(R);
+      $('rTrial').textContent = `TRIAL ${M ? M.n : 0}/${NTR}`; $('rLat').textContent = 'LAT ' + (isFinite(lat) ? lat.toFixed(1).padStart(4, '0') : '--.-');
+      $('rCar').textContent = 'CAR ' + countOf(R, 'CAR'); $('rEsc').textContent = 'ESC ' + countOf(R, 'ER'); $('rNr').textContent = 'NR ' + countOf(R, 'NR');
+      if (M && T.state === 'run' && $('ctxLive')) $('ctxLive').textContent = `trial ${M.n} of ${NTR}: ${PHASE[M.phase]}`;
+      if (M && T.state === 'run' && $('tmDisp')) { const left = M.phase === 'settle' ? SETTLE_S - M.pt : M.phase === 'cs' ? CS_S - M.pt : M.phase === 'shock' ? SHOCK_S - M.pt : ITI_S - M.pt; $('tmDisp').textContent = fmtMS(Math.ceil(left)); }
+    };
+    const PHASE = { settle: 'settling on the grid', cs: 'buzzer on', shock: 'buzzer and shock', iti: 'between trials', end: 'finished' };
+    function startBaseline(hm) {
+      const flags = []; if (!S.clean) flags.push('apparatus not cleaned after the last animal');
+      const out = MOD.place(hm, flags);
+      S.trial = Object.assign({ uid: hm.uid, state: 'placed', M: out.M, rec: MOD.freshRec(), flags, dt: null }, out.extra);
+      S.t += 10; beep('click'); say(`${out.msg} Press START TEST when you release it.${flags.length ? ' ⚠ ' + flags.join(', ') + '.' : ''}`, flags.length > 0);
+    }
+    MOD.prePlace = hm => { if (hm.inj.length) return true; startBaseline(hm); return false; };
+    function ctx4() {
+      const T = S.trial, hm = handM(); let h = `<p class="mono" style="font-size:11px">Grid ${S.lux} mA • chamber ${S.clean ? 'clean' : '<b style="color:#b91c1c">used (odour)</b>'}</p>`;
+      if (T) {
+        const m = S.mice[T.uid];
+        h += `<b>${CFG.abbr}${m.id} in the chamber</b> • ${T.M.kind === 'pre' ? 'baseline' : 'post-dose'} • ${T.state === 'placed' ? 'waiting: press START TEST' : T.state === 'run' ? `<span id="ctxLive">trial ${T.M.n} of ${NTR}: ${PHASE[T.M.phase]}</span>` : 'finished'}<div class="row">${btn(T.state === 'done' ? 'Remove rat, return to cage' : 'Lift rat out', "act('remove')", T.state === 'done' ? '' : 'warn')}</div><p style="color:#64748b;margin-top:4px">Key P: rat on pole. Clicks count only once all four paws have left the grid.</p>`;
+      } else if (hm) {
+        h += `<b>${CFG.abbr}${hm.id}</b> in hand (${hm.inj.length ? fx(minsSince(hm.inj[0].t), 0) + ' min after dosing' : 'baseline session'}).<div class="row">${btn('Place on the grid', "act('place')")}</div>`;
+      } else if (S.wet) h += `<p style="color:#64748b">Chamber is wet with ethanol: wipe it with the paper towel.</p>`;
+      else h += `<p style="color:#64748b">Set the shock level and clean the chamber, then click a rat in its holding cage. Tags: white, no baseline; green, criterion met; red, retrain; blue, dosed; grey, finished.</p>`;
+      return ['Pole climbing chamber', h];
+    }
+    // ---- assistant
+    function simSession(m) { const M = MOD.place(m, []).M; M.quiet = true; while (!M.done) MOD.step(M, 0.1); return { res: MOD.result(M), rec: {}, t: rnd1(M.t), dt: null, flags: [], invalid: false }; }
+    function assistBaselines() {
+      S.lux = OK_MA; S.clean = true; S.trial = null; S.hand = null;
+      placed().forEach(m => {
+        if (!m.inj.length) { for (let i = 0; i < 8 && !baselineOK(m); i++) m.pre = simSession(m); if (!baselineOK(m)) { m.pre.res.car = CRIT; m.pre.res.nr = 0; m.pre.res.er = NTR - CRIT; } }
+        if (m.pre) m.nb.preCar = String(m.pre.res.car);
+      });
+    }
+    MOD.beforeDose = assistBaselines;
+    MOD.assist = () => {
+      assistBaselines();
+      placed().sort((a, b) => a.id - b.id).forEach(m => {
+        if (!m.inj.length) return;
+        const saved = S.t;
+        if (!m.run || m.run.invalid) { S.t = m.inj[0].t + 3600; m.run = simSession(m); m.run.dt = 60; S.t = saved; }
+        const r = m.run.res;
+        m.nb.car = String(r.car); m.nb.er = String(r.er); m.nb.nr = String(r.nr); m.nb.lat = isFinite(r.lat) ? String(r.lat) : ''; m.nb.pct = fx(pct(m), 0);
+      });
+    };
+    MOD.fillNotes = () => { const A = analysis(); CFG.groups.forEach((g, k) => { ['car', 'er', 'nr'].forEach(f => { S.notes[f][g.key] = fx(A[f].gs[k].m, 2); }); }); };
+    // ================================================================ notebook + checklist
+    const pct = m => { const v = nbv(m, 'car'); return isFinite(v) ? v / NTR * 100 : NaN; };
+    const cellOk = (m, f) => { const r = m.run && m.run.res; if (!r || m.run.invalid) return ''; if (f === 'lat') return isFinite(r.lat) ? chk(m.nb.lat, r.lat, Math.max(1.5, r.lat * 0.25)) : ''; return chk(m.nb[f], r[f], 1); };
+    const preCell = m => (m.pre && !m.pre.invalid) ? chk(m.nb.preCar, m.pre.res.car, 1) : '';
+    function renderNotebook() {
+      $('nbCalc').innerHTML = calcCells() + ` • Dose volume = ${CFG.vkg} mL/kg × wt (kg) • % CAR = CAR ÷ ${NTR} × 100`;
+      const rows = S.mice.filter(m => m.id).sort((a, b) => a.id - b.id), inp = (m, f, cls) => `<input class="${cls}" value="${m.nb[f] || ''}" onchange="nbSet(${m.uid},'${f}',this.value)">`;
+      $('nbBody').innerHTML = rows.length ? rows.map(m => { const fl = allFlags(m); return `<tr${fl.length ? ' style="background:#fff7ed"' : ''}><td><b>R${m.id}</b></td><td>${m.group || '—'}</td><td>${inp(m, 'wt', chk(m.nb.wt, m.wtShown, 0.05))}</td><td>${inp(m, 'd1', chk(m.nb.d1, idealMl(m), tolMl(m)))}</td><td>${inp(m, 'preCar', preCell(m))}</td><td class="mono">${m.run && m.run.dt !== null ? fx(m.run.dt, 0) : '—'}</td>
+        <td>${inp(m, 'car', cellOk(m, 'car'))}</td><td>${inp(m, 'er', cellOk(m, 'er'))}</td><td>${inp(m, 'nr', cellOk(m, 'nr'))}</td><td>${inp(m, 'lat', cellOk(m, 'lat'))}</td><td>${inp(m, 'pct', chk(m.nb.pct, pct(m), 0.6))}</td><td style="text-align:left">${fl.map(f => `<span class="flag">${f}</span>`).join('')}</td></tr>`; }).join('') : `<tr><td colspan="12" style="color:#94a3b8;font-family:Inter">Mark rats in the animal house to start your notebook.</td></tr>`;
+    }
+    const tested = () => placed().filter(m => m.run && !m.run.invalid);
+    const rawOk = m => m.run && !m.run.invalid && ['car', 'er', 'nr'].every(f => cellOk(m, f) === 'ok-in') && cellOk(m, 'lat') !== 'bad-in' && (!isFinite(m.run.res.lat) || cellOk(m, 'lat') === 'ok-in');
+    const nextBase = () => placed().filter(m => !baselineOK(m)).sort((a, b) => a.id - b.id)[0];
+    const nextTest = () => placed().filter(m => m.inj.length && !m.run).sort((a, b) => a.inj[0].t - b.inj[0].t)[0];
+    function sessionTargets(next) {
+      const T = S.trial; if (T) return T.state === 'placed' ? ['start'] : T.state === 'run' ? (T.M.on ? ['rec:P'] : []) : [];
+      if (!S.clean) return S.wet ? ['wipe'] : ['spray']; if (handM()) return []; const n = next(); return n ? ['m:' + n.uid] : [];
+    }
+    const _common = commonSteps(), _house = _common.filter(s => s.g === 'Animal house'), _rest = _common.filter(s => s.g !== 'Animal house');
+    const STEPS = [..._house,
+      { g: 'Baseline', st: 4, t: `Grid shock at ${OK_MA} mA`, done: () => S.lux === OK_MA, how: `Click ${OK_MA} mA, the lowest level that drives reliable climbing.`, tg: () => ['lux:' + OK_MA] },
+      { g: 'Baseline', st: 4, t: () => `Baseline: at least ${CRIT} of ${NTR} CAR (${nOkA(baselineOK)}/${CFG.N})`, done: () => allN(baselineOK), how: 'Pick a rat → place it on the grid → START TEST → press RAT ON POLE at each climb → remove it → spray and wipe. Repeat a rat that misses the criterion: this retrains it.', tg: () => sessionTargets(nextBase) },
+      { g: 'Baseline', st: 4, t: 'Baseline CAR in the notebook', done: () => allN(m => preCell(m) === 'ok-in'), how: 'Type each baseline CAR score in the notebook.', tg: () => [] },
+      ..._rest,
+      { g: 'Test', st: 4, t: () => `5-trial session of each rat, 60 min after dosing (${nOkA(m => m.run)}/${CFG.N})`, done: () => allN(m => m.run), how: 'Pick a dosed rat → place it on the grid → START TEST → press RAT ON POLE at each climb → at the end remove it → spray and wipe the chamber.', tg: () => sessionTargets(nextTest) },
+      { g: 'Test', st: 4, t: 'CAR, escape, no response and latency in the notebook', done: () => allN(rawOk), how: 'Copy the recorder after each rat. Leave latency empty if the rat never climbed.', tg: () => [] },
+      { g: 'Analysis', st: 0, t: '% CAR of every rat', done: () => allN(m => chk(m.nb.pct, pct(m), 0.6) === 'ok-in'), how: `% CAR = CAR ÷ ${NTR} × 100.`, tg: () => [] },
+      { g: 'Analysis', st: 0, t: 'Group means, ANOVA and Dunnett', done: () => analysisOk(), how: 'Open the Observation Sheet and enter the group means.', tg: () => [] },
+      { g: 'Analysis', st: 0, t: 'Identify Drug X', opt: true, done: () => !!$('unknownDrugDeduction').value, how: 'Only if you chose "Unknown Mystery Drug": decide the compound from its profile.', tg: () => [] }
+    ];
+    function analysis() { const P = tested(); return { car: statsOf(m => nbv(m, 'car'), 'I', P), er: statsOf(m => nbv(m, 'er'), 'I', P), nr: statsOf(m => nbv(m, 'nr'), 'I', P) }; }
+    function analysisOk() { const A = analysis(); if (A.car.gs.some(g => g.n < 5)) return false; return CFG.groups.every((g, k) => ['car', 'er', 'nr'].every(f => noteOk(f, g.key, A[f].gs[k].m, 0.1))); }
+    function renderObservation() {
+      const A = analysis();
+      $('rawBox').innerHTML = tableHTML(['Rat', 'Group', 'Wt (g)', 'Baseline CAR', 'CAR', 'Escape', 'No response', 'Latency (s)', '% CAR', 'Technique flags'], placed().sort((a, b) => a.id - b.id).map(m => [`R${m.id}`, m.group, m.nb.wt || '—', m.nb.preCar || '—', m.nb.car || '—', m.nb.er || '—', m.nb.nr || '—', m.nb.lat || '—', isFinite(pct(m)) ? fx(pct(m), 0) : '—', flagsHTML(m)]));
+      const cell = (st, k) => st.gs[k].n ? `${fx(st.gs[k].m, 2)} ± ${fx(st.gs[k].se, 2)}` : '—', vs = (st, k) => st.gs[k].d ? st.gs[k].d.label : '—';
+      $('sumBox').innerHTML = `<table class="obs-table w-full text-[11px] text-center"><thead><tr><th>Group</th><th>n</th><th>CAR (/5)</th><th>Mean (your calc.)</th><th>vs I</th><th>Escape (/5)</th><th>Mean (your calc.)</th><th>vs I</th><th>No response (/5)</th><th>Mean (your calc.)</th><th>vs I</th></tr></thead><tbody class="font-mono">${CFG.groups.map((g, k) => `<tr><td style="text-align:left">${g.short}</td><td>${A.car.gs[k].n}</td><td>${cell(A.car, k)}</td><td>${noteIn('car', g.key, A.car.gs[k].m, 0.1)}</td><td>${vs(A.car, k)}</td><td>${cell(A.er, k)}</td><td>${noteIn('er', g.key, A.er.gs[k].m, 0.1)}</td><td>${vs(A.er, k)}</td><td>${cell(A.nr, k)}</td><td>${noteIn('nr', g.key, A.nr.gs[k].m, 0.1)}</td><td>${vs(A.nr, k)}</td></tr>`).join('')}
+        <tr><td colspan="11" style="text-align:left;padding:6px">One-way ANOVA: CAR ${fText(A.car.an)} • escape ${fText(A.er.an)} • no response ${fText(A.nr.an)}. Dunnett's test against vehicle.</td></tr></tbody></table>`;
+      barChart('chartCA', { bars: barsOf(A.car), yLabel: 'CAR trials', yMax: 6, empty: 'Enter your data in the notebook' });
+      barChart('chartNR', { bars: barsOf(A.nr), yLabel: 'Trials', yMax: 6, empty: 'Enter your data in the notebook' });
+      barChart('chartER', { bars: barsOf(A.er), yLabel: 'Escape trials', yMax: 6, empty: 'Enter your data in the notebook' });
+      const [c, st, d] = A.car.gs;
+      if (!(c.n >= 2 && st.n >= 2 && d.n >= 2)) { $('lblInference').innerText = 'Pending'; $('lblInferenceDetail').innerText = 'Test all rats and complete the notebook to obtain the results.'; return; }
+      const valid = st.d && st.d.star !== 'ns' && st.m < c.m, carDown = d.d && d.d.star !== 'ns' && d.m < c.m, nr = A.nr.gs[2], nrUp = nr.d && nr.d.star !== 'ns' && nr.m >= 1.5 && nr.m > A.nr.gs[0].m, P = PROFILES[drugKey()];
+      $('lblInference').innerText = !valid ? 'Standard failed: the run did not detect chlorpromazine' : !carDown ? 'No significant loss of avoidance' : nrUp ? 'Avoidance and escape both lost: sedation or motor impairment' : d.m > st.m + 1 ? 'Partial loss of avoidance: much weaker than the standard' : 'Selective block of avoidance: antipsychotic-like';
+      $('lblInferenceDetail').innerHTML = `CAR out of 5: vehicle ${fx(c.m, 2)}, chlorpromazine ${fx(st.m, 2)} (${st.d ? st.d.label : '—'}), test ${fx(d.m, 2)} (${d.d ? d.d.label : '—'}). No response, test vs vehicle: ${fx(nr.m, 2)} vs ${fx(A.nr.gs[0].m, 2)} (${nr.d ? nr.d.label : '—'}). A rat that loses avoidance but still escapes can move and feel the shock.${SEL.drug === 'unknown' ? '' : ' ' + P.desc}`;
+    }
+    function buildResults() {
+      const A = analysis(), cells = tested().flatMap(m => ['car', 'er', 'nr', 'lat'].map(f => cellOk(m, f))).filter(Boolean), P = PROFILES[drugKey()], ch = $('unknownDrugDeduction').value;
+      const rows = [...CFG.groups.map((g, k) => [g.short + ' CAR (/5)', A.car.gs[k].n ? `${fx(A.car.gs[k].m, 2)} ± ${fx(A.car.gs[k].se, 2)}${A.car.gs[k].d ? ' (' + A.car.gs[k].d.label + ')' : ''}` : '—']), ['ANOVA, CAR', fText(A.car.an)], ['No response (I / II / III)', A.nr.gs.every(g => g.n) ? A.nr.gs.map(g => fx(g.m, 2)).join(' / ') : '—'], ['Notebook readings correct', `${cells.filter(x => x === 'ok-in').length} / ${cells.length}`], ['Rats with a technique fault', placed().filter(m => allFlags(m).length).length]];
+      if (SEL.drug === 'unknown') rows.push(['Drug X deduced', ch ? (ch === mysteryKey ? 'correct' : 'incorrect') : 'not answered']);
+      return { rows, text: SEL.drug === 'unknown' ? (ch ? `${ch === mysteryKey ? 'CORRECT DIAGNOSIS. ' : 'INCORRECT. '}The mystery drug was ${PROFILES[mysteryKey].name}. ${PROFILES[mysteryKey].desc}` : 'Choose your deduced compound in the observation sheet.') : `${P.name}: ${P.desc} Read avoidance and escape together: if chlorpromazine fails, the test run itself is in doubt.` };
+    }
+    const QUIZ = [
+      { q: 'In the pole climbing test, the buzzer acts as the:', o: ['Unconditioned stimulus', 'Conditioned stimulus', 'Unconditioned response', 'Reward'], a: 1 },
+      { q: 'A conditioned avoidance response is recorded when the rat climbs:', o: ['During the buzzer, before the shock', 'Only after the shock begins', 'After the cut-off', 'Between trials'], a: 0 },
+      { q: 'A rat that climbs only after the shock begins shows:', o: ['Avoidance', 'An escape response', 'Catalepsy', 'Habituation'], a: 1 },
+      { q: 'The classic profile of an antipsychotic in this test is:', o: ['Avoidance and escape both increased', 'Avoidance blocked, escape preserved', 'Escape blocked, avoidance preserved', 'No change in either'], a: 1 },
+      { q: 'This action of antipsychotics is mainly linked to blockade of:', o: ['Dopamine D2 receptors', 'Nicotinic receptors', 'H2 receptors', 'Beta-1 receptors'], a: 0 },
+      { q: 'A hypnotic dose of phenobarbitone most likely causes:', o: ['Selective loss of avoidance', 'Loss of both avoidance and escape', 'Faster climbing', 'More avoidance'], a: 1 },
+      { q: 'Why is the escape response measured as well as avoidance?', o: ['It separates a selective effect from sedation or motor impairment', 'It sets the drug dose', 'It measures body weight', 'It replaces the standard group'], a: 0 },
+      { q: 'Why is a baseline session run before dosing?', o: ['To warm the grid', 'To confirm that each rat has learned the task', 'To remove the need for a vehicle group', 'To measure the drug level'], a: 1 },
+      { q: 'A rat scores 2 CAR in 5 trials. Its % CAR is:', o: ['20%', '40%', '50%', '80%'], a: 1 },
+      { q: 'Why use the lowest shock that drives reliable climbing?', o: ['Refinement: it limits distress, and strong shock can cause freezing', 'It makes the buzzer louder', 'It shortens the dosing interval', 'It increases body weight'], a: 0 },
+      { q: 'Group II receives chlorpromazine because:', o: ['It is the vehicle', 'It shows that the run can detect a known active drug', 'It trains the rats', 'It reverses the test drug'], a: 1 },
+      { q: 'Scores out of 5 are counts. A suitable non-parametric test across three groups is:', o: ['Kruskal-Wallis', 'Paired t-test', 'Linear regression', 'Schild plot'], a: 0 }
+    ];
+  </script>
+  <script src="../assets/js/viva.js"></script>
+</body>
+</html>

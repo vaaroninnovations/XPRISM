@@ -89,7 +89,7 @@ class PublicTests(Base):
         for text in ['Replacement', 'Reduction', 'Refinement', 'Explore our 3Rs commitment', '/accounts/trial/', '/accounts/signup/', '/accounts/login/', '/modules/', '/documentation/']:
             self.assertContains(home, text)
         self.assertContains(home, 'class="expCard', count=6)
-        self.assertContains(self.client.get('/modules/'), 'class="expCard', count=32)
+        self.assertContains(self.client.get('/modules/'), 'class="expCard', count=34)
         docs = self.client.get('/documentation/')
         self.assertContains(docs, 'id="exp-18"')
         self.assertContains(docs, 'Exam mode')
@@ -120,10 +120,10 @@ class PublicTests(Base):
 
     def test_maze_modules_are_catalogued_and_mark_the_unknown(self):
         modules = self.client.get('/modules/')
-        self.assertContains(modules, 'xh-tag-neuro', count=5)
+        self.assertContains(modules, 'xh-tag-neuro', count=7)
         self.assertContains(modules, 'Neurobehavioural experiments (M.Pharm)')
         self.login(self.st)
-        for no, title in ((28, 'Y-Maze'), (29, 'Radial Arm Maze'), (30, 'Light-Dark Box'), (31, 'Morris Water Maze'), (32, 'Barnes Maze')):
+        for no, title in ((28, 'Y-Maze'), (29, 'Radial Arm Maze'), (30, 'Light-Dark Box'), (31, 'Morris Water Maze'), (32, 'Barnes Maze'), (33, 'Pole Climbing'), (34, 'Forced Swim Test')):
             e = Experiment.objects.get(no=no)
             self.assertEqual(e.category, 'Neurobehavioural')
             r = self.client.get(e.url)
@@ -919,7 +919,7 @@ class FreeYearInvitationTests(Base):
         self.invite('a@college.edu')
         msg = mail.outbox[0]
         html = msg.alternatives[0][0]
-        for text in ('The Management and Administration', 'About XPRISM', 'Modules in XPRISM (31)', 'Isolated tissue experiments', 'Aaron Innovations', 'Kolkata, India', 'developed by Dr. Vara Prasad Saka', self.e14.title):
+        for text in ('The Management and Administration', 'About XPRISM', 'Modules in XPRISM (33)', 'Isolated tissue experiments', 'Aaron Innovations', 'Kolkata, India', 'developed by Dr. Vara Prasad Saka', self.e14.title):
             self.assertIn(text, html)
         self.assertNotIn('New Delhi', html)
         self.assertNotIn('Castor Oil', html)
