@@ -1,7 +1,10 @@
 import datetime
 import io
 import json
+import os
 import re
+import tempfile
+from pathlib import Path
 from unittest import mock
 
 from django.conf import settings
@@ -13,6 +16,7 @@ from django.utils import timezone
 
 from .free_year import one_month_after
 from .models import Assignment, Attempt, AuditLog, Batch, College, ConsentRecord, ContactRequest, DataRequest, Enrollment, Experiment, FreeYearApplication, FreeYearInvitation, Role, TrialVisit, User
+from .storage import VersionedStaticFilesStorage
 from .views_auth import anonymise_user
 
 PW = 'Str0ng!Passw0rd'
@@ -1185,6 +1189,45 @@ class ContactTests(Base):
         self.send(message='<script>alert(1)</script>')
         self.login(self.sa)
         self.assertNotContains(self.client.get('/platform/contact/'), '<script>alert(1)</script>')
+
+
+class AssetVersionTests(Base):
+    """Long-cached assets must get a new URL when the file changes."""
+
+    def setUp(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        self.root = Path(tmp.name)
+        (self.root / 'css').mkdir()
+        (self.root / 'js').mkdir()
+        for name in ('css/theme.css', 'js/bridge.js', 'js/viva.js'):
+            (self.root / name).write_text('x')
+        over = override_settings(STATIC_ROOT=self.root)
+        over.enable()
+        self.addCleanup(over.disable)
+
+    def stamp(self, name):
+        return int((self.root / name).stat().st_mtime)
+
+    def test_app_pages_version_their_stylesheet(self):
+        self.assertContains(self.client.get('/contact/'), f'/assets/css/theme.css?v={self.stamp("css/theme.css")}"')
+
+    def test_url_changes_when_the_file_changes(self):
+        s = VersionedStaticFilesStorage(location=self.root, base_url='/assets/')
+        before = s.url('css/theme.css')
+        os.utime(self.root / 'css/theme.css', (2000000000, 2000000000))
+        self.assertNotEqual(before, s.url('css/theme.css'))
+        self.assertEqual(s.url('css/theme.css'), '/assets/css/theme.css?v=2000000000')
+
+    def test_missing_file_keeps_a_plain_url(self):
+        s = VersionedStaticFilesStorage(location=self.root, base_url='/assets/')
+        self.assertEqual(s.url('css/none.css'), '/assets/css/none.css')
+
+    def test_experiment_pages_version_their_scripts_and_styles(self):
+        self.login(self.fac)
+        r = self.client.get(self.e14.url)
+        self.assertContains(r, f'/assets/js/bridge.js?v={self.stamp("js/bridge.js")}"')
+        self.assertContains(r, f'/assets/css/theme.css?v={self.stamp("css/theme.css")}"')
 
 
 class SiteTagTests(Base):
