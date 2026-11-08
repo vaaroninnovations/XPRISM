@@ -233,11 +233,11 @@
  },
  {
   "no": 30,
-  "level": "Advanced",
+  "level": "Basic",
   "cat": "Neurobehavioural",
   "title": "Light-Dark Box: Anxiolytic Activity",
   "slug": "30-light-dark-box-anxiety",
-  "description": "M.Pharm. Time in the light, transitions and latency against vehicle and diazepam, with the lamp set by the student."
+  "description": "Time in the light, transitions and latency against vehicle and diazepam, with the lamp set by the student."
  },
  {
   "no": 31,

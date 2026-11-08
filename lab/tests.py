@@ -121,7 +121,7 @@ class PublicTests(Base):
     def test_maze_modules_are_catalogued_and_mark_the_unknown(self):
         modules = self.client.get('/modules/')
         self.assertContains(modules, 'xh-tag-neuro', count=7)
-        self.assertContains(modules, 'Neurobehavioural experiments (M.Pharm)')
+        self.assertContains(modules, 'Neurobehavioural experiments')
         self.login(self.st)
         for no, title in ((28, 'Y-Maze'), (29, 'Radial Arm Maze'), (30, 'Light-Dark Box'), (31, 'Morris Water Maze'), (32, 'Barnes Maze'), (33, 'Pole Climbing'), (34, 'Forced Swim Test')):
             e = Experiment.objects.get(no=no)
@@ -132,12 +132,13 @@ class PublicTests(Base):
             self.assertContains(r, 'mysteryKey')
 
     def test_modules_page_is_grouped_by_level(self):
-        expected = {no: 'Research' if no in (26, 27) else 'Advanced' if no >= 28 else 'Basic' for no in range(1, 35)}
+        expected = {no: 'Research' if no in (26, 27) else 'Advanced' if no >= 28 and no != 30 else 'Basic' for no in range(1, 35)}
         self.assertEqual(dict(Experiment.objects.values_list('no', 'level')), expected)
         page = self.client.get('/modules/').content.decode()
         positions = [page.index(f'<section class="xh-level levelSection" data-level="{level}">') for level in ('Basic', 'Advanced', 'Research')]
         self.assertEqual(positions, sorted(positions))
         self.assertLess(page.index('Histamine Bioassay: Matching Method'), positions[1])
+        self.assertLess(page.index('Light-Dark Box'), positions[1])
         self.assertTrue(positions[1] < page.index('Barnes Maze') < positions[2])
         self.assertGreater(page.index('MTT Assay'), positions[2])
         self.assertEqual(page.count('class="catBtn"'), 2 + 3 + 6)
