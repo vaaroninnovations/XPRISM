@@ -10,7 +10,7 @@ const ok = (name, cond, extra = '') => { results.push([cond ? 'PASS' : 'FAIL', n
   const browser = await chromium.launch();
   const external = [];
   async function newCtx() {
-    const ctx = await browser.newContext({ viewport: { width: 1440, height: 950 }, acceptDownloads: true }); await ctx.addInitScript(() => { try { localStorage.setItem('xprism-cookies', 'essential'); } catch (e) { } });
+    const ctx = await browser.newContext({ viewport: { width: 1440, height: 950 }, acceptDownloads: true }); await ctx.addInitScript(() => { try { localStorage.setItem('xprism-cookies', 'essential'); localStorage.setItem('xprism-free-year-seen', String(Date.now())); } catch (e) { } });
     await ctx.route('**/*', r => { const u = r.request().url(); if (u.startsWith(BASE) || u.startsWith('data:') || u.startsWith('blob:')) return r.continue(); external.push(u); return r.abort(); });
     const p = await ctx.newPage();
     p.errors = [];
