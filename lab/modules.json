@@ -222,5 +222,19 @@
   "title": "Barnes Maze: Spatial Learning and Memory",
   "slug": "32-barnes-maze-spatial-memory",
   "description": "M.Pharm. Habituation, four days of escape training, primary latency and errors, search strategy and a probe trial."
+ },
+ {
+  "no": 33,
+  "cat": "Neurobehavioural",
+  "title": "Pole Climbing: Conditioned Avoidance Response",
+  "slug": "33-pole-climbing-conditioned-avoidance",
+  "description": "M.Pharm. Cook's pole climbing test in trained rats: avoidance and escape after chlorpromazine and a test drug, separating antipsychotic action from sedation."
+ },
+ {
+  "no": 34,
+  "cat": "Neurobehavioural",
+  "title": "Forced Swim Test: Antidepressant Activity",
+  "slug": "34-forced-swim-test-antidepressant",
+  "description": "M.Pharm. Immobility, swimming and climbing in the last 4 minutes of a 6-minute swim, with imipramine, a test drug and a locomotor check for false positives."
  }
 ]

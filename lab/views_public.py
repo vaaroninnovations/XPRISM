@@ -161,6 +161,8 @@ EXP_PROBES = {
     30: ('#unknownDrugDeduction', 'mysteryKey', 'choice', 0),
     31: ('#unknownDrugDeduction', 'mysteryKey', 'choice', 0),
     32: ('#unknownDrugDeduction', 'mysteryKey', 'choice', 0),
+    33: ('#unknownDrugDeduction', 'mysteryKey', 'choice', 0),
+    34: ('#unknownDrugDeduction', 'mysteryKey', 'choice', 0),
 }
 
 FACULTY_BLOCK = re.compile(r'<div class="hidden md:block text-right">\s*<div class="text-xs font-semibold text-slate-800 flex items-center justify-end space-x-1\.5">.*?Dept\. of Pharmacology</div>\s*</div>', re.S)
