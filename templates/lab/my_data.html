@@ -20,7 +20,7 @@
   </div>
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-3">
     <h2 class="text-sm font-bold text-slate-800">Correction or deletion</h2>
-    <form method="post" class="space-y-2">{% csrf_token %}{% for f in form %}<div><label class="block text-[11px] font-semibold text-slate-600">{{ f.label }}</label>{{ f }}{% if f.help_text %}<p class="text-[10px] text-slate-400">{{ f.help_text }}</p>{% endif %}</div>{% endfor %}<button class="w-full py-2 rounded-lg bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold">Send request</button></form>
+    <form method="post" class="space-y-2">{% csrf_token %}{% for f in form %}<div><label for="{{ f.id_for_label }}" class="block text-[11px] font-semibold text-slate-600">{{ f.label }}</label>{{ f }}{% if f.help_text %}<p class="text-[10px] text-slate-400">{{ f.help_text }}</p>{% endif %}</div>{% endfor %}<button class="w-full py-2 rounded-lg bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold">Send request</button></form>
     <p class="text-[11px] text-slate-500">Requests go to your college admin ({{ COLLEGE.grievance_officer|default:LEGAL.grievance_officer }}), who must respond within 30 days. Deleting your account erases your name, roll number, e-mail and submissions; your college may keep de-identified marks.</p>
     {% if requests %}<h3 class="text-xs font-bold text-slate-700 pt-2">Your requests</h3><ul class="text-[11px] space-y-1">{% for r in requests %}<li>{{ r.created_at|date:"d M Y" }} • {{ r.get_kind_display }} • <b>{{ r.get_status_display }}</b>{% if r.resolution_note %}: {{ r.resolution_note }}{% endif %}</li>{% endfor %}</ul>{% endif %}
   </div>

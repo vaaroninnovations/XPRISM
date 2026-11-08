@@ -10,7 +10,7 @@
 </div>
 <div class="grid lg:grid-cols-3 gap-4">
   <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm p-5 overflow-x-auto">
-    <form class="mb-3 flex gap-2"><input type="hidden" name="role" value="{{ role }}"><input name="q" value="{{ q }}" placeholder="Search name, username, roll no…" class="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs"><button class="px-3 py-1.5 rounded-lg bg-slate-800 text-white text-xs">Search</button></form>
+    <form class="mb-3 flex gap-2"><input type="hidden" name="role" value="{{ role }}"><input name="q" value="{{ q }}" aria-label="Search people" placeholder="Search name, username, roll no…" class="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs"><button class="px-3 py-1.5 rounded-lg bg-slate-800 text-white text-xs">Search</button></form>
     <table class="obs-table w-full text-xs text-left"><thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Status</th><th>Last sign-in</th><th></th></tr></thead><tbody>
     {% for u in page %}<tr><td>{{ u.display_name }}{% if u.roll_no %} <span class="mono text-slate-400">{{ u.roll_no }}</span>{% endif %}</td><td class="mono">{{ u.username }}</td><td>{{ u.get_role_display }}</td>
       <td>{% if u.is_active %}<span class="text-emerald-700">active</span>{% else %}<span class="text-slate-400">inactive</span>{% endif %}{% if u.locked_until and u.locked_until > now %} <span class="text-rose-700">locked</span>{% endif %}</td><td>{{ u.last_login|date:"d M H:i"|default:"never" }}</td>
@@ -27,7 +27,7 @@
     <h2 class="text-sm font-bold text-slate-800 mb-2">Add staff account</h2>
     <p class="text-[11px] text-slate-500 mb-3">Students are added by faculty from their batch page (CSV upload or class code).</p>
     <form method="post" class="space-y-2" novalidate>{% csrf_token %}
-      {% for f in form %}<div><label class="block text-[11px] font-semibold text-slate-600">{{ f.label }}</label>{{ f }}{% if f.help_text %}<p class="text-[10px] text-slate-400">{{ f.help_text }}</p>{% endif %}{% for e in f.errors %}<p class="text-[11px] text-rose-700">{{ e }}</p>{% endfor %}</div>{% endfor %}
+      {% for f in form %}<div><label for="{{ f.id_for_label }}" class="block text-[11px] font-semibold text-slate-600">{{ f.label }}</label>{{ f }}{% if f.help_text %}<p class="text-[10px] text-slate-400">{{ f.help_text }}</p>{% endif %}{% for e in f.errors %}<p class="text-[11px] text-rose-700">{{ e }}</p>{% endfor %}</div>{% endfor %}
       <button class="w-full py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold">Create account</button>
     </form>
   </div>

@@ -452,3 +452,70 @@ button.xh-authcta { cursor: pointer; border: 0; }
 /* free-year application pop-up */
 .free-year-modal { width: calc(100% - 24px); max-height: 92vh; overflow: hidden auto; }
 .free-year-modal::backdrop { background: rgba(10, 31, 68, .7); backdrop-filter: blur(4px); }
+
+/* ================================================================ XPRISM design tokens and app-page refinements.
+   Scoped to .xp-app (pages built on base.html), so the experiment benches are never affected. */
+:root {
+  --xp-ink: #0a1f44; --xp-body: #334155; --xp-muted: #566478; --xp-line: #e2e8f0; --xp-surface: #fff; --xp-canvas: #f1f5f9; --xp-tint: #faf3fe;
+  --xp-ok: #047857; --xp-warn: #b45309; --xp-bad: #be123c;
+  --xp-s1: 4px; --xp-s2: 8px; --xp-s3: 12px; --xp-s4: 16px; --xp-s5: 24px; --xp-s6: 32px;
+  --xp-t-xs: 12px; --xp-t-sm: 13px; --xp-t-md: 14px; --xp-t-lg: 16px; --xp-t-xl: 20px;
+  --xp-r-sm: 8px; --xp-r-md: 12px; --xp-ease: cubic-bezier(.2, .7, .3, 1);
+}
+.xp-skip { position: fixed; top: -60px; left: 12px; z-index: 100; padding: 10px 16px; border-radius: var(--xp-r-sm); background: var(--xp-navy); color: #fff; font-size: var(--xp-t-md); font-weight: 600; transition: top .15s var(--xp-ease); }
+.xp-skip:focus { top: 10px; }
+.xp-app main:focus { outline: none; }
+.xp-app textarea:focus-visible, .xp-app summary:focus-visible, .xp-app [tabindex="0"]:focus-visible { outline: 2px solid #9b33d9; outline-offset: 2px; }
+/* readable small print and contrast on the page background */
+.xp-app .text-\[10px\] { font-size: 11px; }
+.xp-app .text-\[11px\] { font-size: 12px; }
+.xp-app .text-slate-500, .xp-app .text-slate-400 { color: var(--xp-muted); }
+.xp-app ::placeholder { color: #64748b; }
+/* press feedback */
+.xp-app main button:not(:disabled), .xh-authcta { transition: transform .12s var(--xp-ease), filter .12s var(--xp-ease), background-color .12s; }
+.xp-app main button:not(:disabled):active, .xh-authcta:active { transform: translateY(1px) scale(.985); }
+/* working state on a submitted button */
+.xp-busy { position: relative; pointer-events: none; color: transparent !important; }
+.xp-busy::after { content: ''; position: absolute; left: 50%; top: 50%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; border: 2px solid rgba(255,255,255,.45); border-top-color: #fff; animation: xp-spin .7s linear infinite; }
+.bg-white.xp-busy::after, .border.xp-busy::after { border-color: rgba(126,19,181,.25); border-top-color: var(--xp-purple); }
+@keyframes xp-spin { to { transform: rotate(360deg); } }
+/* wide tables show that there is more to the side */
+.xp-scroll { overflow-x: auto; background: linear-gradient(90deg, #fff 30%, rgba(255,255,255,0)) 0 0 / 28px 100% no-repeat local, linear-gradient(270deg, #fff 30%, rgba(255,255,255,0)) 100% 0 / 28px 100% no-repeat local, radial-gradient(at 0 50%, rgba(8,25,59,.16), transparent 70%) 0 0 / 12px 100% no-repeat scroll, radial-gradient(at 100% 50%, rgba(8,25,59,.16), transparent 70%) 100% 0 / 12px 100% no-repeat scroll; }
+.xp-scroll table thead th, .xp-scroll .obs-table tbody tr:hover td { background-color: rgba(248,250,252,.8); }
+/* empty states */
+.xp-empty { padding: var(--xp-s5); border: 1px dashed #cbd5e1; border-radius: var(--xp-r-md); background: var(--xp-surface); text-align: center; font-size: var(--xp-t-sm); color: var(--xp-muted); }
+.xp-empty b { display: block; margin-bottom: 2px; font-size: var(--xp-t-md); font-weight: 600; color: var(--xp-ink); }
+.xp-empty-flat { border: 0; background: transparent; padding: var(--xp-s4); }
+@media (max-width: 639px) {
+  /* signed-in header: name and Sign out, with nothing colliding with the logo */
+  .xp-who { min-width: 0; max-width: 110px; }
+  .xp-who > div:first-child > span:last-child { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .xp-who > div:last-child { display: none; }
+  .xp-who + form .xh-authcta { padding: 8px 12px; }
+  /* comfortable touch targets */
+  .xp-app .site-subheader a, .xp-app .site-subheader button { display: inline-flex; align-items: center; min-height: 40px; }
+  .xp-app .site-footer a, .xp-app .site-footer button { display: inline-flex; align-items: center; min-height: 36px; }
+  .xp-app .xh-drop-panel a { min-height: 40px; }
+  .xp-app main a[class*="px-"][class*="rounded"], .xp-app main button[class*="px-"] { min-height: 40px; display: inline-flex; align-items: center; justify-content: center; }
+  .xp-app main input:not([type=checkbox]):not([type=radio]):not([type=hidden]), .xp-app main select { min-height: 40px; }
+  .xp-app main p, .xp-app main li, .xp-app main summary { overflow-wrap: anywhere; }
+  .xp-app main .grid > * { min-width: 0; }
+  .xp-app .xp-scroll th { white-space: nowrap; }
+  .xp-app .xp-scroll td { min-width: 76px; }
+  /* module list: compact rows instead of a very long page */
+  .xp-app .catSection .xh-card, .xp-app .xh-featured .xh-card { flex-direction: row; }
+  .xp-app .catSection .xh-thumb, .xp-app .xh-featured .xh-thumb { flex: 0 0 104px; aspect-ratio: auto; border-bottom: 0; border-right: 1px solid #eef0f5; }
+  .xp-app .catSection .xh-card-body, .xp-app .xh-featured .xh-card-body { padding: 10px 12px; min-width: 0; }
+  .xp-app .catSection .xh-card p, .xp-app .xh-featured .xh-card p { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .xp-app .catSection .xh-card h3, .xp-app .xh-featured .xh-card h3 { margin-top: 6px; }
+  /* filters scroll sideways rather than filling the screen */
+  .xp-app .xh-filterbar { padding: 8px; gap: 8px; }
+  .xp-app .xh-filtergroups { width: 100%; }
+  .xp-app .xh-filters { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .xp-app .xh-filters::-webkit-scrollbar { display: none; }
+  .xp-app .catBtn { flex: none; min-height: 36px; }
+  .xp-app #search { width: 100%; min-height: 40px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .xp-app *, .xp-app *::before, .xp-app *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
