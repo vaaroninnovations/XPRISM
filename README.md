@@ -9,7 +9,7 @@ Created by **Dr. Vara Prasad Saka**, Aaron Innovations • drvaraprasadsaka@gmai
 
 ## Role-based platform
 
-The 34 pharmacology simulations wrapped in a web application. It adds accounts and roles, classes
+The 37 pharmacology simulations wrapped in a web application. It adds accounts and roles, classes
 (batches), assignments with automatic marking, exam mode, grading and marks export, plus
 data-protection features: consent, data download, deletion requests and an audit log. The Privacy
 Policy, Terms of Service and Conditions of Use are built in.
@@ -197,7 +197,7 @@ browser, so server load is light.
 config/            Django settings (all deployment values come from .env)
 lab/               models, roles/permissions, views, forms, management commands, tests
 templates/         pages for every role, sign-in/consent, legal texts
-experiments/       the 34 simulation pages (served through the app)
+experiments/       the 37 simulation pages (served through the app)
 static/assets/     Tailwind CSS (compiled), fonts, Tone.js, bridge.js (submission/exam), viva.js
 deploy/            setup.sh, update.sh, nginx + systemd configs, env.example, backup.sh
 tests/             browser end-to-end tests (Playwright) used before release
@@ -215,7 +215,7 @@ tests/             browser end-to-end tests (Playwright) used before release
   journey: visitor → super admin → college admin → faculty → students (practical + exam) →
   class-code sign-up → grading → export → lab assistant → deletion request → audit. No JavaScript
   errors, and **zero requests to external sites**.
-- **All 34 experiments** opened through the app: practice-mode capture works and exam-mode shortcuts
+- **All 37 experiments** opened through the app: practice-mode capture works and exam-mode shortcuts
   are hidden on every one.
 
 To rebuild the CSS after editing templates:

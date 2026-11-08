@@ -270,5 +270,29 @@
   "title": "Forced Swim Test: Antidepressant Activity",
   "slug": "34-forced-swim-test-antidepressant",
   "description": "M.Pharm. Immobility, swimming and climbing in the last 4 minutes of a 6-minute swim, with imipramine, a test drug and a locomotor check for false positives."
+ },
+ {
+  "no": 35,
+  "level": "Research",
+  "cat": "Ethics and clinical",
+  "title": "Pharmacovigilance: ADR Reporting and Causality",
+  "slug": "35-pharmacovigilance-adr-naranjo",
+  "description": "M.Pharm. Fictional cases: complete a suspected ADR report, judge seriousness and assess causality with the Naranjo algorithm."
+ },
+ {
+  "no": 36,
+  "level": "Advanced",
+  "cat": "Ethics and clinical",
+  "title": "Animal Ethics: IAEC Protocol Review",
+  "slug": "36-animal-ethics-iaec-protocol",
+  "description": "M.Pharm. Apply the 3Rs, justify group sizes with the resource equation, check a housing plan and decide on fictional IAEC proposals."
+ },
+ {
+  "no": 37,
+  "level": "Research",
+  "cat": "Ethics and clinical",
+  "title": "Clinical Trial Protocol Design",
+  "slug": "37-clinical-trial-protocol-design",
+  "description": "M.Pharm. Essential documents, trial phases, sample size, randomisation, blinding and Good Clinical Practice scenarios."
  }
 ]
