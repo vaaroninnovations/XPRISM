@@ -224,3 +224,4 @@ To rebuild the CSS after editing templates:
 The images in `static/assets/img/modules/` are screenshots of the simulations, one per module
 (`<slug>.jpg`) plus the three `hero-*.jpg` shown on the home page. Add a new module's image there too.
 `tools/module-thumbs/` re-shoots them from the running site (`shoot.js`, then `make.py`) when the art changes.
+Exp 35–43 have no lab scene, so their images are drawn in `illustrations.html` and rendered by `draw.js`.

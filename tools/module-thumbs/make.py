@@ -1,4 +1,4 @@
-# Crops the shoot.js captures to the card shape (16:10) and writes the module JPEGs.
+# Crops the shoot.js and draw.js captures to the card shape (16:10) and writes the module JPEGs.
 # Usage: python make.py <rawdir> [outdir]   (outdir defaults to static/assets/img/modules)
 import glob, json, os, sys
 from pathlib import Path
@@ -21,7 +21,8 @@ C = {
     '26': (0, 0, None), '27': (0, 0, None), '28': (0, 0, None), '29': (0, 0, None), '30': (0, 0, None),
     '31': (0, 0, None), '32': (0, 0, None), '33': (0, 0, None), '34': (0, 0, None),
 }
-TEXT = (0, 0, .60)  # question-and-answer modules: the top left of the working panel
+for n in range(35, 44):  # drawn at the card shape by draw.js
+    C[str(n)] = (0, 0, None)
 HEROES = {'hero-rota-rod': '04', 'hero-plus-maze': '11', 'hero-dose-response': '12'}
 
 
@@ -44,7 +45,7 @@ os.makedirs(OUT, exist_ok=True)
 slugs = {f'{m["no"]:02d}': m['slug'] for m in json.load(open(ROOT / 'lab/modules.json', encoding='utf-8'))}
 for n, slug in slugs.items():
     im = Image.open(f'{RAW}/{n}.png').convert('RGB')
-    crop(im, C.get(n, TEXT)).resize(CARD, Image.LANCZOS).save(f'{OUT}/{slug}.jpg', quality=82, optimize=True, progressive=True)
+    crop(im, C[n]).resize(CARD, Image.LANCZOS).save(f'{OUT}/{slug}.jpg', quality=82, optimize=True, progressive=True)
 for name, n in HEROES.items():
     im = Image.open(f'{RAW}/{n}.png').convert('RGB')
     crop(im, C[n]).resize(HERO, Image.LANCZOS).save(f'{OUT}/{name}.jpg', quality=85, optimize=True, progressive=True)
