@@ -1,0 +1,303 @@
+<!doctype html>
+<!-- Card art for the question-and-answer modules (Exp 35-43), which have no lab scene to photograph.
+     Open with ?n=35 to see one; draw.js screenshots them all. Values shown come from each module. -->
+<meta charset="utf-8">
+<title>XPRISM card art</title>
+<link rel="stylesheet" href="../../static/assets/css/theme.css">
+<style>html,body{margin:0;background:#000}#stage svg{display:block;width:800px;height:500px}</style>
+<script src="../../static/assets/js/lab-bench.js"></script>
+<script src="../../static/assets/js/animal-art.js"></script>
+<div id="stage"></div>
+<script>
+const f1 = v => Math.round(v * 10) / 10;
+const T = (x, y, t, o = {}) => `<text x="${x}" y="${y}" font-family="${o.f || 'Inter'}" font-size="${o.s || 24}" font-weight="${o.w || 600}" fill="${o.c || '#0f172a'}" text-anchor="${o.a || 'middle'}"${o.ls ? ` letter-spacing="${o.ls}"` : ''}${o.tr ? ` transform="${o.tr}"` : ''}>${t}</text>`;
+const MONO = 'JetBrains Mono', SEG = 'DSEG7';
+
+const DEFS = `<defs>${LAB_DEFS}${typeof ANI_DEFS === 'function' ? ANI_DEFS() : ANI_DEFS}
+  <filter id="sh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="4" dy="7" stdDeviation="6" flood-color="#000" flood-opacity=".45"/></filter>
+  <filter id="sh2" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="1" dy="3" stdDeviation="2" flood-color="#000" flood-opacity=".5"/></filter>
+  <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <filter id="realBlur"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="labFeather" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="12"/></filter>
+  <filter id="big" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="16"/></filter>
+  <linearGradient id="whiteCase" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f8fafc"/><stop offset="1" stop-color="#b8c4d2"/></linearGradient>
+  <linearGradient id="darkCase" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#475569"/><stop offset="1" stop-color="#1e293b"/></linearGradient>
+  <linearGradient id="panelG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e7edf4"/></linearGradient>
+  <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#eef2f7"/></linearGradient>
+  <linearGradient id="hdpe" x1="0" x2="1"><stop offset="0" stop-color="#b6c2d0"/><stop offset=".35" stop-color="#f8fafc"/><stop offset=".7" stop-color="#e2e8f0"/><stop offset="1" stop-color="#8d9aab"/></linearGradient>
+  <linearGradient id="amberG" x1="0" x2="1"><stop offset="0" stop-color="#3b1d06"/><stop offset=".3" stop-color="#9a5a17"/><stop offset=".5" stop-color="#b87425"/><stop offset="1" stop-color="#3b1d06"/></linearGradient>
+  <linearGradient id="clearG" x1="0" x2="1"><stop offset="0" stop-color="#bae6fd" stop-opacity=".55"/><stop offset=".3" stop-color="#fff" stop-opacity=".28"/><stop offset=".7" stop-color="#e0f2fe" stop-opacity=".2"/><stop offset="1" stop-color="#7dd3fc" stop-opacity=".55"/></linearGradient>
+  <linearGradient id="board" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8a6a43"/><stop offset="1" stop-color="#5c4326"/></linearGradient>
+  <linearGradient id="tray" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2e8f0" stop-opacity=".3"/><stop offset="1" stop-color="#94a3b8" stop-opacity=".22"/></linearGradient>
+  <linearGradient id="bed" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9d3a6"/><stop offset="1" stop-color="#b8935a"/></linearGradient>
+  <linearGradient id="foil" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f1f5f9"/><stop offset=".5" stop-color="#94a3b8"/><stop offset="1" stop-color="#e2e8f0"/></linearGradient>
+  <radialGradient id="wellSh" cx=".5" cy=".42" r=".6"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".26"/></radialGradient>
+  <radialGradient id="pocket" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#5eead4" stop-opacity=".5"/><stop offset=".7" stop-color="#22d3ee" stop-opacity=".2"/><stop offset="1" stop-color="#22d3ee" stop-opacity="0"/></radialGradient>
+  <pattern id="lightTile" width="74" height="52" patternUnits="userSpaceOnUse"><rect width="73" height="51" fill="#f1f5f9" stroke="#d3dce6" stroke-width="1.2"/></pattern>
+</defs>`;
+
+const svg = inner => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 625">${DEFS}${inner}</svg>`;
+const room = (y = 505) => `<rect width="1000" height="${y}" fill="url(#wall)"/><rect width="1000" height="${y}" fill="url(#labTile)"/><rect width="1000" height="${y}" fill="url(#spot)"/><rect y="${y + 3}" width="1000" height="${622 - y}" fill="url(#bench)"/><rect y="${y - 3}" width="1000" height="6" fill="url(#labBevel)"/>`;
+const shade = (x, y, r) => `<ellipse cx="${x}" cy="${y + 2}" rx="${r}" ry="${Math.max(5, r * .12)}" fill="#000" opacity=".55" filter="url(#labSoft)"/>`;
+
+// x = centre, y = base
+function bottle(x, y, w, h, o = {}) {
+  const t = y - h, n = w * .44, cap = h * .13, sh = h * .15;
+  const d = `M${x - w / 2 + 9} ${y} L${x + w / 2 - 9} ${y} Q${x + w / 2} ${y} ${x + w / 2} ${y - 9} L${x + w / 2} ${t + cap + sh + 16} Q${x + w / 2} ${t + cap + sh} ${x + n / 2} ${t + cap + sh * .35} L${x + n / 2} ${t + cap} L${x - n / 2} ${t + cap} L${x - n / 2} ${t + cap + sh * .35} Q${x - w / 2} ${t + cap + sh} ${x - w / 2} ${t + cap + sh + 16} L${x - w / 2} ${y - 9} Q${x - w / 2} ${y} ${x - w / 2 + 9} ${y} Z`;
+  const lw = w * .86, lh = o.lh || h * .4, ly = y - h * .1 - lh;
+  const ls = (o.sub ? [T(x, ly + lh * .46, o.lab, { s: o.s || w * .26, w: 800, c: o.lc || '#0f172a' }), T(x, ly + lh * .82, o.sub, { s: (o.s || w * .26) * .68, w: 600, c: '#475569' })] : [T(x, ly + lh * .64, o.lab || '', { s: o.s || w * .26, w: 800, c: o.lc || '#0f172a' })]).join('');
+  return `<g filter="url(#sh2)"><path d="${d}" fill="${o.fill || 'url(#hdpe)'}" stroke="#475569" stroke-width="1"/>${o.liq ? `<path d="M${x - w / 2 + 4} ${y - 4} L${x + w / 2 - 4} ${y - 4} L${x + w / 2 - 4} ${t + cap + sh + 24} L${x - w / 2 + 4} ${t + cap + sh + 24} Z" fill="${o.liq}"/>` : ''}<rect x="${x - n / 2 - 5}" y="${t}" width="${n + 10}" height="${cap + 2}" rx="4" fill="${o.cap || '#334155'}" stroke="#0f172a" stroke-opacity=".5"/><rect x="${x - n / 2 - 5}" y="${t + 4}" width="${n + 10}" height="3" fill="#fff" opacity=".22"/>
+    <rect x="${x - lw / 2}" y="${ly}" width="${lw}" height="${lh}" rx="3" fill="url(#paper)" stroke="#94a3b8" stroke-width=".8"/>${o.band ? `<rect x="${x - lw / 2}" y="${ly}" width="${lw}" height="7" fill="${o.band}"/>` : ''}${ls}
+    <rect x="${x - w / 2 + 7}" y="${t + cap + sh + 20}" width="${w * .1}" height="${h * .62}" rx="4" fill="#fff" opacity=".28"/></g>`;
+}
+
+// x = centre. layers bottom-up as [fraction of height reached, colour]
+let clipN = 0;
+function tube(x, top, base, w, layers, cap) {
+  const h = base - top, id = 'c' + (++clipN), d = `M${x - w / 2} ${top} L${x - w / 2} ${base - w / 2} A${w / 2} ${w / 2} 0 0 0 ${x + w / 2} ${base - w / 2} L${x + w / 2} ${top} Z`;
+  let prev = 0, g = '';
+  layers.forEach(([to, c]) => { g += `<rect x="${x - w}" y="${base - h * to}" width="${w * 2}" height="${h * (to - prev) + 1}" fill="${c}"/>`; prev = to; });
+  const lvl = base - h * prev;
+  return `<clipPath id="${id}"><path d="${d}"/></clipPath><g clip-path="url(#${id})">${g}<ellipse cx="${x}" cy="${lvl}" rx="${w / 2}" ry="4" fill="#fff" opacity=".4"/><rect x="${x + w * .2}" y="${top}" width="${w * .3}" height="${h}" fill="#000" opacity=".1"/></g><path d="${d}" fill="url(#clearG)" stroke="#dbeafe" stroke-opacity=".9" stroke-width="1.6"/><rect x="${x - w * .32}" y="${top + 16}" width="${w * .14}" height="${h - 50}" rx="3" fill="#fff" opacity=".42"/>${cap ? `<rect x="${x - w / 2 - 4}" y="${top - 26}" width="${w + 8}" height="34" rx="5" fill="${cap}" stroke="#000" stroke-opacity=".3"/><rect x="${x - w / 2 - 4}" y="${top - 21}" width="${w + 8}" height="5" fill="#fff" opacity=".32"/>` : ''}`;
+}
+
+// Steel rack around the tubes: draws the tubes between its back and front rails
+function rack(x0, x1, top, base, tubes) {
+  return `${shade((x0 + x1) / 2, base + 12, (x1 - x0) / 2)}<rect x="${x0}" y="${top}" width="${x1 - x0}" height="12" rx="3" fill="url(#steelH)" opacity=".55"/><rect x="${x0 + 6}" y="${top}" width="9" height="${base - top + 14}" fill="url(#steel)"/><rect x="${x1 - 15}" y="${top}" width="9" height="${base - top + 14}" fill="url(#steel)"/>${tubes}<rect x="${x0}" y="${top + 6}" width="${x1 - x0}" height="12" rx="3" fill="url(#steelH)"/><rect x="${x0 - 8}" y="${base}" width="${x1 - x0 + 16}" height="14" rx="4" fill="url(#steelH)"/>`;
+}
+
+const scenes = {
+  // ADR report for the module's Case 1, with its Naranjo total (6, probable)
+  35() {
+    const cx = 735, cy = 302, r0 = 128, r1 = 196;
+    const ang = s => Math.PI - ((s + 4) / 17) * Math.PI, pol = (r, a) => `${f1(cx + r * Math.cos(a))} ${f1(cy - r * Math.sin(a))}`;
+    const seg = (s0, s1, c) => `<path d="M${pol(r1, ang(s0))} A${r1} ${r1} 0 0 1 ${pol(r1, ang(s1))} L${pol(r0, ang(s1))} A${r0} ${r0} 0 0 0 ${pol(r0, ang(s0))} Z" fill="${c}" stroke="#0b1220" stroke-width="3"/>`;
+    const tag = (s, t) => { const a = ang(s), R = (r0 + r1) / 2 - 8, x = f1(cx + R * Math.cos(a)), y = f1(cy - R * Math.sin(a)); return T(x, y, t, { s: 23, w: 800, c: '#0b1220', tr: `rotate(${f1(90 - a * 180 / Math.PI)} ${x} ${y})` }); };
+    const field = (y, k, v) => T(96, y, k, { s: 20, w: 600, c: '#64748b', a: 'start' }) + T(96, y + 36, v, { s: 30, w: 800, c: '#0a1f44', a: 'start' }) + `<line x1="96" x2="410" y1="${y + 50}" y2="${y + 50}" stroke="#cbd5e1" stroke-width="1.5"/>`;
+    const tick = (x, y, on, t) => `<rect x="${x}" y="${y}" width="26" height="26" rx="4" fill="#fff" stroke="#475569" stroke-width="2"/>${on ? `<path d="M${x + 5} ${y + 14} l6 7 l11 -15" fill="none" stroke="#7e13b5" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>` : ''}${T(x + 36, y + 21, t, { s: 23, a: 'start', c: '#1e293b' })}`;
+    let pills = '';
+    for (let r = 0; r < 2; r++) for (let c = 0; c < 5; c++) pills += `<ellipse cx="${708 + c * 48}" cy="${541 + r * 42}" rx="18" ry="15" fill="#f8fafc" stroke="#64748b" stroke-width="1.4"/><ellipse cx="${704 + c * 48}" cy="${536 + r * 42}" rx="9" ry="5" fill="#fff" opacity=".9"/>`;
+    return svg(`${room()}
+      <g filter="url(#sh)"><rect x="505" y="34" width="462" height="402" rx="14" fill="#101828" stroke="#475569" stroke-width="2"/>
+        ${T(736, 84, 'NARANJO SCORE', { s: 31, w: 800, c: '#e2e8f0', f: MONO, ls: 2 })}
+        ${seg(-4, .5, '#94a3b8')}${seg(.5, 4.5, '#fbbf24')}${seg(4.5, 8.5, '#2dd4bf')}${seg(8.5, 13, '#c084fc')}
+        ${tag(-1.8, 'Doubtful')}${tag(2.5, 'Possible')}${tag(6.5, 'Probable')}${tag(10.8, 'Definite')}
+        <line x1="${cx}" y1="${cy}" x2="${f1(cx + (r0 - 10) * Math.cos(ang(6)))}" y2="${f1(cy - (r0 - 10) * Math.sin(ang(6)))}" stroke="#f8fafc" stroke-width="7" stroke-linecap="round"/><circle cx="${cx}" cy="${cy}" r="15" fill="#f8fafc" stroke="#475569" stroke-width="3"/>
+        ${T(632, 412, '6', { s: 88, w: 800, c: '#2dd4bf', f: MONO })}${T(805, 402, 'PROBABLE', { s: 46, w: 800, c: '#2dd4bf' })}</g>
+      ${shade(250, 588, 200)}
+      <g transform="rotate(-2 250 310)" filter="url(#sh)"><rect x="56" y="34" width="392" height="556" rx="14" fill="url(#board)" stroke="#3f2d17" stroke-width="2"/>
+        <rect x="76" y="66" width="352" height="508" rx="3" fill="url(#paper)"/><rect x="76" y="66" width="352" height="74" fill="#0a1f44"/>
+        ${T(252, 99, 'ADVERSE DRUG REACTION', { s: 25, w: 800, c: '#fff' })}${T(252, 127, 'Suspected reaction report', { s: 20, w: 500, c: '#bae6fd' })}
+        ${field(174, 'Suspected medicine', 'Ramipril 5 mg')}${field(268, 'Reaction', 'Persistent dry cough')}${field(362, 'Onset after first dose', '21 days')}
+        ${T(96, 470, 'Seriousness', { s: 20, c: '#64748b', a: 'start' })}${tick(96, 486, false, 'Serious')}${tick(96, 526, true, 'Not serious')}
+        <rect x="186" y="14" width="132" height="44" rx="8" fill="url(#steelH)" stroke="#334155"/><circle cx="252" cy="27" r="9" fill="#1e293b"/></g>
+      ${shade(514, 574, 54)}${bottle(514, 574, 98, 168, { lab: 'Ramipril', sub: '5 mg', cap: '#7e13b5', band: '#7e13b5', s: 21 })}
+      ${shade(824, 610, 150)}<g transform="rotate(-3 820 560)" filter="url(#sh2)"><rect x="672" y="512" width="300" height="100" rx="8" fill="url(#foil)" stroke="#64748b"/>${pills}</g>`);
+  },
+
+  // The module's 3Rs and its housing ranges: 22 ± 3 °C, 30 to 70% RH, 12 h light : 12 h dark
+  36() {
+    const rule = (y, c, t, u) => `<rect x="62" y="${y}" width="58" height="58" rx="12" fill="${c}"/>${T(91, y + 43, 'R', { s: 42, w: 800, c: '#fff' })}${T(136, y + 38, t, { s: 37, w: 800, a: 'start' })}${u ? '' : ''}`;
+    const row = (y, k, v, u, c) => `${T(662, y, k, { s: 22, w: 700, c: '#94a3b8', a: 'start', f: MONO })}${T(928, y + 10, v, { s: 54, c, a: 'end', f: SEG, w: 700 })}${u ? T(936, y + 8, u, { s: 26, c, a: 'start' }) : ''}`;
+    const m = (x, flip, s = 2.7) => `<g transform="translate(${x} 474) scale(${flip ? -s : s} ${s})">${animalSideArt({ kind: 'mouse', life: 'none' })}</g>`;
+    let flakes = ''; for (let i = 0; i < 90; i++) { const x = 262 + (i * 83.7) % 476, y = 478 + (i * 37.3) % 44; flakes += `<ellipse cx="${f1(x)}" cy="${f1(y)}" rx="${5 + (i % 3) * 2}" ry="${2 + i % 2}" fill="${i % 3 ? '#f4e3bd' : '#a98752'}" opacity=".85" transform="rotate(${i * 47 % 180} ${f1(x)} ${f1(y)})"/>`; }
+    return svg(`${room()}
+      <g filter="url(#sh)"><rect x="40" y="30" width="390" height="262" rx="4" fill="url(#paper)"/><circle cx="235" cy="44" r="8" fill="#dc2626"/>
+        ${T(235, 88, 'THE 3Rs', { s: 30, w: 800, c: '#7e13b5', ls: 3 })}${rule(104, '#7e13b5', 'Replacement')}${rule(166, '#0d9488', 'Reduction')}${rule(228, '#d97706', 'Refinement')}</g>
+      <g filter="url(#sh)"><rect x="640" y="30" width="330" height="232" rx="12" fill="#101828" stroke="#475569" stroke-width="2"/>
+        ${T(805, 68, 'ANIMAL ROOM', { s: 24, w: 800, c: '#e2e8f0', f: MONO, ls: 2 })}
+        ${row(126, 'TEMP', '22', '°C', '#f87171')}${row(186, 'HUMIDITY', '55', '%', '#4ade80')}${row(244, 'LIGHT', '12:12', 'h', '#fbbf24')}</g>
+      <g transform="rotate(3 515 170)" filter="url(#sh)"><rect x="452" y="58" width="126" height="176" rx="3" fill="url(#paper)"/>${T(515, 92, 'IAEC', { s: 26, w: 800, c: '#0a1f44' })}${T(515, 116, 'protocol', { s: 19, w: 600, c: '#475569' })}<g transform="rotate(-14 515 174)"><circle cx="515" cy="174" r="44" fill="none" stroke="#16a34a" stroke-width="4"/><circle cx="515" cy="174" r="37" fill="none" stroke="#16a34a" stroke-width="1.6"/>${T(515, 181, 'APPROVED', { s: 16, w: 800, c: '#16a34a' })}</g></g>
+      ${shade(500, 528, 290)}
+      <path d="M232 342 L768 342 L746 530 L254 530 Z" fill="url(#tray)" stroke="#e2e8f0" stroke-opacity=".6" stroke-width="2"/>
+      <path d="M250 476 L750 476 L746 530 L254 530 Z" fill="url(#bed)"/>${flakes}
+      ${m(345, false, 3.1)}${m(560, true, 3.1)}${m(650, false, 3.1)}${m(452, false, 2.6)}
+      <path d="M232 342 L768 342 L746 530 L254 530 Z" fill="#fff" opacity=".05"/><path d="M262 352 L300 352 L280 520 L262 520 Z" fill="#fff" opacity=".12"/>
+      <rect x="216" y="316" width="568" height="30" rx="6" fill="url(#steelH)" stroke="#475569"/>${Array.from({ length: 42 }, (_, i) => `<rect x="${226 + i * 13}" y="320" width="6" height="22" rx="2" fill="#475569" opacity=".65"/>`).join('')}
+      <g filter="url(#sh2)"><rect x="286" y="356" width="236" height="46" rx="4" fill="#fff5cf" stroke="#b45309"/>${T(404, 388, 'Swiss albino mice', { s: 26, w: 800, c: '#78350f' })}</g>
+      <g filter="url(#sh2)"><path d="M570 318 L570 350 L580 372 L590 372 L600 350 L600 318 Z" fill="url(#steel)"/><rect x="541" y="214" width="88" height="106" rx="14" fill="url(#clearG)" stroke="#e0f2fe" stroke-width="2"/><rect x="547" y="244" width="76" height="70" rx="10" fill="url(#liquid)"/><rect x="557" y="200" width="56" height="18" rx="4" fill="#334155"/></g>`);
+  },
+
+  // Trial design: phases, randomisation into two arms, matching coded kits for blinding
+  37() {
+    const box = (x, y, w, h, t, c, tc = '#0f172a', s = 30) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="12" fill="${c}" stroke="#0f172a" stroke-opacity=".28" stroke-width="2"/>${[].concat(t).map((l, i, a) => T(x + w / 2, y + h / 2 + s * .36 + (i - (a.length - 1) / 2) * s * 1.2, l, { s, w: 800, c: tc })).join('')}`;
+    const arrow = (d, c = '#334155') => `<path d="${d}" fill="none" stroke="${c}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#ah)"/>`;
+    const phases = ['Phase I', 'Phase II', 'Phase III', 'Phase IV'].map((p, i) => `<path d="M${64 + i * 222} 52 h196 l26 28 l-26 28 h-196 l26 -28 Z" fill="${i === 2 ? '#7e13b5' : '#dbe3ee'}"/>${T(174 + i * 222, 92, p, { s: 31, w: 800, c: i === 2 ? '#fff' : '#334155' })}`).join('');
+    const binder = (x, c, t) => `<g filter="url(#sh2)"><rect x="${x}" y="312" width="70" height="194" rx="5" fill="${c}"/><rect x="${x + 6}" y="312" width="9" height="194" fill="#fff" opacity=".16"/><rect x="${x + 12}" y="334" width="46" height="150" rx="3" fill="url(#paper)"/><circle cx="${x + 35}" cy="492" r="0" />${T(0, 0, t, { s: 27, w: 800, c: '#0a1f44', tr: `translate(${x + 45} 409) rotate(-90)` })}</g>`;
+    const kit = (x, t) => `${shade(x, 566, 56)}${bottle(x, 566, 104, 158, { lab: 'KIT', sub: t, cap: '#f8fafc', band: '#0d9488', s: 26, lh: 74 })}`;
+    return svg(`${room()}
+      <defs><marker id="ah" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="#334155"/></marker></defs>
+      <g filter="url(#sh)"><rect x="34" y="24" width="932" height="318" rx="8" fill="url(#steelH)"/><rect x="44" y="34" width="912" height="298" rx="3" fill="#fbfcfe"/>
+        ${phases}
+        ${box(70, 168, 196, 104, ['Eligible', 'participants'], '#e0f2fe', '#0a1f44', 27)}
+        ${arrow('M272 220 H330')}
+        <circle cx="388" cy="220" r="50" fill="#7e13b5"/>${T(388, 240, 'R', { s: 58, w: 800, c: '#fff' })}
+        ${arrow('M434 196 Q470 160 508 156')}${arrow('M434 244 Q470 280 508 286')}
+        ${box(516, 124, 214, 66, 'Test drug', '#ccfbf1', '#134e4a', 30)}${box(516, 252, 214, 66, 'Comparator', '#fef3c7', '#78350f', 30)}
+        ${arrow('M738 156 Q780 165 806 200')}${arrow('M738 286 Q780 276 806 242')}
+        ${box(812, 176, 128, 90, ['End-', 'point'], '#ede9fe', '#4c1d95', 27)}</g>
+      ${shade(170, 512, 130)}${binder(66, '#1d4ed8', 'PROTOCOL')}${binder(142, '#0d9488', 'CONSENT')}${binder(218, '#b45309', 'CRF')}
+      ${kit(405, '017')}${kit(526, '042')}
+      ${shade(800, 600, 170)}<g filter="url(#sh)"><path d="M650 522 L950 522 L992 612 L610 612 Z" fill="url(#paper)" stroke="#94a3b8"/>${T(800, 558, 'Informed Consent', { s: 31, w: 800, c: '#0a1f44' })}<line x1="650" x2="952" y1="574" y2="574" stroke="#cbd5e1" stroke-width="3"/><path d="M664 602 q18 -24 30 -6 t26 -4 t24 2 t34 -6" fill="none" stroke="#1d4ed8" stroke-width="3.5" stroke-linecap="round"/><line x1="656" x2="830" y1="606" y2="606" stroke="#94a3b8" stroke-width="2"/></g>
+      <g filter="url(#sh2)" transform="rotate(-9 900 596)"><rect x="838" y="590" width="150" height="12" rx="6" fill="#0a1f44"/><path d="M838 590 L818 596 L838 602 Z" fill="#cbd5e1"/></g>`);
+  },
+
+  // Centrifuged serum tubes, the module's five kits and a photometer
+  38() {
+    const kits = [['GLU', '#dc2626'], ['UREA', '#2563eb'], ['CREA', '#d97706'], ['ALT', '#0d9488'], ['AST', '#7e13b5']];
+    let tubes = ''; [0, 1, 2, 3, 4].forEach(i => { tubes += tube(112 + i * 68, 276, 486, 50, [[.42, '#7f1d1d'], [.5, '#e5e7eb'], [.86, '#f2c94c']], '#ca9a04'); });
+    return svg(`${room()}
+      <rect x="44" y="210" width="912" height="14" rx="3" fill="url(#steelH)"/>${shade(500, 224, 450)}
+      ${kits.map(([t, c], i) => bottle(136 + i * 182, 212, 128, 180, { lab: t, cap: c, band: c, s: 37, lh: 78 })).join('')}
+      ${rack(64, 436, 330, 490, tubes)}
+      <g filter="url(#sh2)"><rect x="96" y="530" width="310" height="62" rx="6" fill="url(#paper)" stroke="#94a3b8"/>${T(251, 573, 'Serum samples', { s: 34, w: 800, c: '#0a1f44' })}</g>
+      ${shade(740, 512, 250)}
+      <g filter="url(#sh)"><rect x="492" y="262" width="486" height="246" rx="16" fill="url(#whiteCase)" stroke="#64748b" stroke-width="2"/>
+        <rect x="516" y="288" width="286" height="168" rx="8" fill="#0b1220" stroke="#334155" stroke-width="3"/>
+        ${T(538, 330, 'GLUCOSE', { s: 31, w: 800, c: '#7dd3fc', f: MONO, a: 'start' })}${T(706, 440, '94', { s: 80, c: '#4ade80', f: SEG, w: 700, a: 'end' })}${T(714, 440, 'mg/dL', { s: 24, c: '#86efac', a: 'start', f: MONO })}
+        ${[0, 1, 2].map(r => [0, 1, 2].map(c => `<rect x="${826 + c * 46}" y="${292 + r * 46}" width="38" height="38" rx="6" fill="url(#darkCase)" stroke="#0f172a"/>`).join('')).join('')}
+        <rect x="826" y="432" width="130" height="36" rx="7" fill="#16a34a" stroke="#14532d"/>${T(891, 458, 'READ', { s: 25, w: 800, c: '#fff' })}
+        <rect x="516" y="470" width="286" height="24" rx="4" fill="#1e293b"/>${T(659, 488, 'XPRISM photometer', { s: 18, w: 700, c: '#cbd5e1' })}</g>
+      ${shade(470, 602, 36)}<g filter="url(#sh2)"><rect x="447" y="520" width="48" height="82" rx="3" fill="url(#clearG)" stroke="#dbeafe" stroke-width="2"/><rect x="451" y="548" width="40" height="51" fill="#f9a8c4" opacity=".92"/><rect x="455" y="524" width="8" height="74" fill="#fff" opacity=".4"/></g>`);
+  },
+
+  // Stopped TMB (yellow, read at 450 nm): standards 1000 to 31.25 pg/mL in columns 1-2, three groups in duplicate
+  39() {
+    const mix = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
+    const col = od => { const t = Math.min(1, od / 2.2); return `rgb(${(t < .5 ? mix([248, 245, 228], [250, 214, 72], t * 2) : mix([250, 214, 72], [226, 150, 8], t * 2 - 1)).join(',')})`; };
+    const std = [1000, 500, 250, 125, 62.5, 31.25].map(c => .057 + .0021 * c);
+    const X0 = 96, Y0 = 118, dx = 45, dy = 44;
+    let wells = '', seed = 11; const rnd = () => (seed = seed * 16807 % 2147483647) / 2147483647;
+    for (let r = 0; r < 8; r++) for (let c = 0; c < 12; c++) {
+      const x = X0 + c * dx, y = Y0 + r * dy;
+      let fill = '#eef2f6';
+      if (c < 2) fill = col(r < 6 ? std[r] : .05);
+      else if (c < 8) { const g = Math.floor((c - 2) / 2), base = [.34, 1.62, .78][g]; fill = col(base * (.9 + rnd() * .2)); }
+      wells += `<circle cx="${x}" cy="${y}" r="18.5" fill="${fill}" stroke="#94a3b8" stroke-width="1.4"/><circle cx="${x}" cy="${y}" r="18.5" fill="url(#wellSh)"/><ellipse cx="${x - 6}" cy="${y - 7}" rx="5" ry="3" fill="#fff" opacity=".55"/>`;
+    }
+    const heads = Array.from({ length: 12 }, (_, i) => T(X0 + i * dx, 86, i + 1, { s: 20, w: 700, c: '#475569' })).join('') + 'ABCDEFGH'.split('').map((l, r) => T(58, Y0 + r * dy + 7, l, { s: 20, w: 700, c: '#475569' })).join('');
+    const gx = x => 716 + x * 214 / 1000, gy = od => 252 - od * 66;
+    const pts = [1000, 500, 250, 125, 62.5, 31.25].map((c, i) => [gx(c), gy(.057 + .0021 * c + [.03, -.04, .02, -.015, .01, -.005][i])]);
+    return svg(`${room()}
+      ${shade(345, 498, 310)}
+      <g filter="url(#sh)"><path d="M36 62 Q36 44 54 44 L632 44 Q650 44 650 62 L650 462 Q650 480 632 480 L54 480 Q36 480 36 462 Z" fill="url(#whiteCase)" stroke="#64748b" stroke-width="2"/>${heads}${wells}</g>
+      <g filter="url(#sh)"><rect x="672" y="34" width="300" height="256" rx="10" fill="#0b1220" stroke="#475569" stroke-width="3"/>
+        ${T(822, 72, 'TNF-α standard curve', { s: 21, w: 800, c: '#e2e8f0' })}
+        <path d="M716 96 V252 H946" fill="none" stroke="#64748b" stroke-width="3"/>${T(704, 124, 'OD', { s: 16, c: '#94a3b8', tr: 'rotate(-90 704 124)' })}${T(946, 276, 'pg/mL', { s: 16, c: '#94a3b8', a: 'end' })}
+        <line x1="${gx(0)}" y1="${gy(.057)}" x2="${gx(1000)}" y2="${gy(2.157)}" stroke="#2dd4bf" stroke-width="3.5"/>${pts.map(([x, y]) => `<circle cx="${f1(x)}" cy="${f1(y)}" r="7.5" fill="#fbbf24" stroke="#0b1220" stroke-width="2"/>`).join('')}</g>
+      ${shade(822, 510, 160)}
+      <g filter="url(#sh)"><rect x="672" y="312" width="300" height="198" rx="14" fill="url(#whiteCase)" stroke="#64748b" stroke-width="2"/>
+        <rect x="694" y="334" width="256" height="92" rx="6" fill="#0b1220"/>${T(822, 400, '450 nm', { s: 54, w: 700, c: '#86efac', f: MONO })}
+        <rect x="694" y="442" width="256" height="48" rx="5" fill="#1e293b"/><rect x="706" y="454" width="232" height="24" rx="2" fill="#0b1220"/></g>`);
+  },
+
+  // Group I control, II injury, III treated: MDA rises and GSH falls with injury, as in the module
+  40() {
+    const pink = ['#fbd3df', '#d9176f', '#f06aa4'], yel = ['#f7c400', '#fdf1bf', '#fbdd55'];
+    const set = (x0, cols) => [0, 1, 2].map(g => [0, 1].map(k => tube(x0 + g * 102 + k * 46, 296, 486, 40, [[.74, cols[g]]], null)).join('')).join('');
+    const plate = (x, a, b) => `<g filter="url(#sh2)"><rect x="${x}" y="226" width="300" height="58" rx="7" fill="#0f172a" stroke="#475569"/>${T(x + 14, 266, a, { s: 33, w: 800, c: '#f8fafc', a: 'start' })}${T(x + 286, 266, b, { s: 29, w: 700, c: '#7dd3fc', a: 'end', f: MONO })}</g>`;
+    const nums = (x0) => ['I', 'II', 'III'].map((t, g) => T(x0 + 23 + g * 102, 549, t, { s: 37, w: 800, c: '#e2e8f0' })).join('');
+    const reag = [['TBA', 'url(#hdpe)', '#334155'], ['TCA', 'url(#hdpe)', '#334155'], ['DTNB', 'url(#amberG)', '#7c2d12'], ['H₂O₂', 'url(#amberG)', '#7c2d12']];
+    return svg(`${room()}
+      <rect x="44" y="196" width="640" height="13" rx="3" fill="url(#steelH)"/>${shade(364, 209, 310)}
+      ${reag.map(([t, f, c], i) => bottle(124 + i * 160, 198, 118, 164, { lab: t, fill: f, cap: c, s: 33, lh: 66 })).join('')}
+      ${rack(42, 356, 340, 490, set(66, pink))}${plate(50, 'MDA', '532 nm')}${nums(66)}
+      ${rack(374, 688, 340, 490, set(398, yel))}${plate(382, 'GSH', '412 nm')}${nums(398)}
+      ${shade(846, 512, 140)}
+      <g filter="url(#sh)"><rect x="712" y="96" width="262" height="414" rx="16" fill="url(#whiteCase)" stroke="#64748b" stroke-width="2"/>
+        <rect x="734" y="120" width="218" height="130" rx="8" fill="#0b1220" stroke="#334155" stroke-width="3"/>${T(893, 212, '532', { s: 66, c: '#4ade80', f: SEG, w: 700, a: 'end' })}${T(900, 212, 'nm', { s: 26, c: '#86efac', a: 'start', f: MONO })}
+        <rect x="734" y="274" width="218" height="88" rx="8" fill="url(#darkCase)"/><rect x="752" y="292" width="182" height="52" rx="4" fill="#0f172a"/>${[0, 1, 2, 3].map(i => `<rect x="${768 + i * 42}" y="300" width="24" height="36" rx="2" fill="${['#fbd3df', '#d9176f', '#f06aa4', '#fff'][i]}" opacity=".92"/>`).join('')}
+        ${T(843, 404, 'Spectrophotometer', { s: 22, w: 800, c: '#334155' })}${[0, 1, 2, 3].map(i => `<circle cx="${780 + i * 42}" cy="452" r="14" fill="${i === 0 ? '#16a34a' : '#94a3b8'}" stroke="#334155" stroke-width="2"/>`).join('')}</g>`);
+  },
+
+  // The common laboratory species at the module's body weights. The art differs in viewpoint, so each has a frame.
+  41() {
+    const frame = (x, y, w, h) => `<g filter="url(#sh)"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="12" fill="url(#panelG)" stroke="#94a3b8" stroke-width="1.5"/></g>`;
+    const name = (x, y, a, b, sa = 38, sb = 30, anchor = 'middle') => T(x, y, a, { s: sa, w: 800, c: '#0a1f44', a: anchor }) + T(x, y + sb * 1.32, b, { s: sb, w: 700, c: '#7e13b5', f: MONO, a: anchor });
+    // the render's shaved patch is for the Exp 08 wheals: lay fur from the shoulders over it
+    const pig = `<g transform="translate(-36 347) scale(.5)">${realGuineaPig('')}<mask id="gpHeal" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="480"><rect x="372" y="128" width="176" height="140" rx="16" fill="#fff" filter="url(#labFeather)"/></mask><g mask="url(#gpHeal)">${realGuineaPig('translate(-164 0)').replace('mix-blend-mode:multiply', '')}</g></g>`;
+    return svg(`<rect width="1000" height="625" fill="#dfe7ef"/><rect width="1000" height="625" fill="url(#lightTile)" opacity=".7"/>
+      ${frame(22, 22, 324, 278)}<ellipse cx="188" cy="194" rx="96" ry="9" fill="#475569" opacity=".3" filter="url(#labSoft)"/><g transform="translate(196 158) scale(3.9)">${animalSideArt({ kind: 'mouse', life: 'none' })}</g>${name(184, 244, 'Mouse', '20–30 g')}
+      ${frame(358, 22, 324, 278)}<ellipse cx="520" cy="196" rx="122" ry="10" fill="#475569" opacity=".3" filter="url(#labSoft)"/><g transform="translate(536 150) scale(2.65)">${animalSideArt({ kind: 'rat', life: 'none' })}</g>${name(520, 244, 'Rat', '150–250 g')}
+      ${frame(22, 312, 660, 290)}${pig}${name(550, 452, 'Guinea pig', '400–600 g', 42, 32)}
+      ${frame(694, 22, 284, 580)}<ellipse cx="836" cy="484" rx="104" ry="11" fill="#475569" opacity=".3" filter="url(#labSoft)"/><g transform="translate(836 222) scale(.5)">${realRabbitHead({ body: true })}</g>${name(836, 540, 'Rabbit', '1.5–2.5 kg')}`);
+  },
+
+  // Weighing 16.0 g NaCl for 2 L of Tyrode (8.0 g/L), with the module's recipe chart
+  42() {
+    const rows = [['NaCl', '8.0', '6.9', '6.5'], ['KCl', '0.2', '0.35', '0.14'], ['CaCl₂', '0.2', '0.28', '0.12'], ['NaHCO₃', '1.0', '2.1', '0.2'], ['Glucose', '1.0', '2.0', '—']];
+    const X = [56, 196, 286, 376];
+    const table = rows.map((r, i) => `${i % 2 ? '' : `<rect x="50" y="${112 + i * 36}" width="402" height="36" fill="#f1f5f9"/>`}${r.map((c, j) => T(j ? X[j] + 30 : X[j], 139 + i * 36, c, { s: 26, w: j ? 700 : 800, c: j === 1 ? '#7e13b5' : '#0f172a', a: j ? 'middle' : 'start', f: j ? MONO : 'Inter' })).join('')}`).join('');
+    let salt = ''; for (let i = 0; i < 80; i++) { const x = 132 + (i * 41.3) % 96, u = (x - 180) / 48, y = 402 - ((i * 13.7) % 1 * .4 + .6) * 26 * (1 - u * u); salt += `<rect x="${f1(x)}" y="${f1(y)}" width="3.6" height="3.6" fill="${i % 3 ? '#ffffff' : '#cbd5e1'}" transform="rotate(${i * 31} ${f1(x)} ${f1(y)})"/>`; }
+    return svg(`${room()}
+      <g filter="url(#sh)"><rect x="36" y="26" width="430" height="286" rx="4" fill="url(#paper)"/><circle cx="251" cy="40" r="8" fill="#dc2626"/>
+        ${T(62, 78, 'Salts, g/L', { s: 28, w: 800, c: '#0a1f44', a: 'start' })}
+        ${['Tyrode', 'Krebs', 'Ringer'].map((t, i) => T(X[i + 1] + 30, 104, t, { s: 20, w: 800, c: i ? '#475569' : '#7e13b5' })).join('')}${table}</g>
+      ${shade(180, 510, 150)}
+      <g filter="url(#sh)"><rect x="48" y="446" width="266" height="64" rx="10" fill="url(#whiteCase)" stroke="#64748b" stroke-width="2"/><rect x="66" y="456" width="176" height="44" rx="4" fill="#0b1220"/>${T(232, 491, '16.000', { s: 33, c: '#4ade80', f: SEG, w: 700, a: 'end' })}${T(290, 488, 'g', { s: 32, w: 800, c: '#334155' })}
+        <rect x="62" y="330" width="236" height="116" rx="4" fill="url(#clearG)" stroke="#e0f2fe" stroke-width="2.5"/><rect x="110" y="426" width="140" height="10" rx="2" fill="url(#steelH)"/><rect x="172" y="436" width="16" height="10" fill="#64748b"/>
+        <path d="M112 396 L248 396 L236 426 L124 426 Z" fill="#f8fafc" stroke="#94a3b8"/><ellipse cx="180" cy="402" rx="56" ry="10" fill="#fff"/><path d="M126 402 Q180 362 234 402 Z" fill="#f1f5f9"/>${salt}</g>
+      ${shade(560, 512, 112)}
+      <g filter="url(#sh2)" transform="translate(44 0)"><path d="M483 164 L483 320 Q418 352 418 426 Q418 496 516 496 Q614 496 614 426 Q614 352 549 320 L549 164 Z" fill="url(#clearG)" stroke="#e0f2fe" stroke-width="2.5"/>
+        <path d="M483 248 L483 320 Q422 352 422 426 Q422 492 516 492 Q610 492 610 426 Q610 352 549 320 L549 248 Z" fill="url(#liquid)"/><ellipse cx="516" cy="248" rx="33" ry="5" fill="#e0f2fe" opacity=".85"/><ellipse cx="516" cy="222" rx="33" ry="5" fill="none" stroke="#fff" stroke-width="2.5"/>
+        <rect x="474" y="142" width="84" height="24" rx="4" fill="#94a3b8"/><rect x="456" y="400" width="120" height="58" rx="3" fill="url(#paper)" stroke="#94a3b8"/>${T(516, 428, '2000 mL', { s: 25, w: 800, c: '#0a1f44' })}${T(516, 451, 'Tyrode', { s: 20, w: 700, c: '#7e13b5' })}</g>
+      <rect x="458" y="496" width="204" height="24" rx="6" fill="url(#darkCase)" stroke="#0f172a"/>
+      ${[['TYRODE', '#7e13b5', 702], ['KREBS', '#0d9488', 800], ['RINGER', '#d97706', 898]].map(([t, c, x], i) => `${shade(x + 10, 548, 52)}${bottle(x + 10, 548, 92, 270, { lab: t, cap: c, band: c, s: 17, fill: 'url(#clearG)', liq: 'url(#liquid)', lh: 92 })}`).join('')}`);
+  },
+
+  // A fictional target with the module's four scores; compound C (-9.6 kcal/mol) binds best
+  43() {
+    const spectrum = (t, l = 62) => `hsl(${f1(214 - t * 186)} 82% ${l}%)`;
+    let n = 0;
+    function helix(p, q, turns, A, w, t0, t1) {
+      const dx = q[0] - p[0], dy = q[1] - p[1], L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L, nx = -uy, ny = ux;
+      const at = (t, s) => { const o = A * Math.sin(2 * Math.PI * turns * t); return `${f1(p[0] + dx * t + ux * s * w + nx * o)} ${f1(p[1] + dy * t + uy * s * w + ny * o)}`; };
+      let back = '', front = '';
+      const N = Math.ceil(turns * 2);
+      for (let k = 0; k < N; k++) {
+        const a = Math.max(0, (k - .5) / (2 * turns)), b = Math.min(1, (k + .5) / (2 * turns));
+        const up = [], dn = [];
+        for (let i = 0; i <= 12; i++) { const t = a + (b - a) * i / 12; up.push(at(t, 1)); dn.unshift(at(t, -1)); }
+        const c = t0 + (t1 - t0) * (a + b) / 2, isFront = k % 2 === 1;
+        const shape = `<path d="M${up.join(' L')} L${dn.join(' L')} Z" fill="${spectrum(c, isFront ? 64 : 34)}" stroke="#04101f" stroke-width="1.5"/>`;
+        if (isFront) front += shape; else back += shape;
+      }
+      return back + front;
+    }
+    function strand(p, q, w, t) {
+      const dx = q[0] - p[0], dy = q[1] - p[1], L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L, nx = -uy, ny = ux, hb = L - 46;
+      const P = (a, s) => `${f1(p[0] + ux * a + nx * s)} ${f1(p[1] + uy * a + ny * s)}`;
+      return `<path d="M${P(0, w)} L${P(hb, w)} L${P(hb, w * 1.9)} L${P(L, 0)} L${P(hb, -w * 1.9)} L${P(hb, -w)} L${P(0, -w)} Z" fill="${spectrum(t)}" stroke="#04101f" stroke-width="2"/>`;
+    }
+    const loop = (d, t) => `<path d="${d}" fill="none" stroke="#04101f" stroke-width="13" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${spectrum(t, 58)}" stroke-width="9" stroke-linecap="round"/>`;
+    const C = '#fde047', cx = 350, cy = 262;
+    const atoms = [[0, -36], [31, -18], [31, 18], [0, 36], [-31, 18], [-31, -18], [66, -30], [84, 2], [62, 28], [-60, -38], [-62, 44], [112, 8]];
+    const bonds = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0], [1, 6], [6, 7], [7, 8], [8, 2], [5, 9], [4, 10], [7, 11]];
+    const hetero = { 7: '#60a5fa', 9: '#f87171', 10: '#f87171', 11: '#60a5fa' };
+    const A = i => [cx + atoms[i][0], cy + atoms[i][1]];
+    const lig = bonds.map(([a, b]) => `<line x1="${A(a)[0]}" y1="${A(a)[1]}" x2="${A(b)[0]}" y2="${A(b)[1]}" stroke="#1a1405" stroke-width="13" stroke-linecap="round"/><line x1="${A(a)[0]}" y1="${A(a)[1]}" x2="${A(b)[0]}" y2="${A(b)[1]}" stroke="${C}" stroke-width="8.5" stroke-linecap="round"/>`).join('') + Object.entries(hetero).map(([i, c]) => `<circle cx="${A(i)[0]}" cy="${A(i)[1]}" r="11" fill="${c}" stroke="#04101f" stroke-width="2"/>`).join('');
+    const hb = ([x, y], [a, b]) => `<line x1="${x}" y1="${y}" x2="${a}" y2="${b}" stroke="#a3e635" stroke-width="4" stroke-dasharray="9 8" stroke-linecap="round"/><circle cx="${a}" cy="${b}" r="10" fill="#f87171" stroke="#04101f" stroke-width="2"/>`;
+    const res = [['C', '−9.6', 1], ['D', '−8.8', 0], ['B', '−8.0', 0], ['A', '−6.2', 0]];
+    return svg(`${room()}
+      <ellipse cx="500" cy="536" rx="170" ry="16" fill="#000" opacity=".6" filter="url(#labSoft)"/><rect x="462" y="462" width="76" height="62" fill="url(#castIron)"/><path d="M372 536 Q372 522 400 522 L600 522 Q628 522 628 536 Z" fill="url(#castIron)"/>
+      <g filter="url(#sh)"><rect x="40" y="20" width="920" height="448" rx="16" fill="#0c111b" stroke="#475569" stroke-width="3"/></g>
+      <svg x="56" y="36" width="888" height="416" viewBox="56 36 888 416">
+        <rect x="56" y="36" width="888" height="416" fill="#050b18"/>
+        <circle cx="350" cy="262" r="140" fill="url(#pocket)" filter="url(#big)"/>
+        ${loop('M104 402 C150 440 240 440 262 402', .02)}${strand([96, 408], [214, 318], 15, .06)}
+        ${loop('M214 318 C232 290 150 250 120 226', .14)}${helix([110, 208], [262, 80], 3.2, 30, 15, .16, .36)}
+        ${loop('M262 80 C320 40 400 40 430 82', .4)}${helix([436, 88], [600, 156], 3.2, 30, 15, .42, .62)}
+        ${loop('M600 156 C640 210 620 262 590 276', .65)}${strand([594, 288], [484, 360], 15, .7)}
+        ${loop('M484 360 C450 410 500 430 560 420', .76)}${helix([566, 420], [354, 432], 2.6, 24, 15, .8, .98)}
+        ${hb(A(9), [262, 202])}${hb(A(10), [258, 334])}${hb(A(11), [506, 244])}${lig}
+        <line x1="628" x2="628" y1="58" y2="432" stroke="#1e293b" stroke-width="3"/>
+        ${T(788, 96, 'Docking scores', { s: 33, w: 800, c: '#f8fafc' })}${T(788, 130, 'kcal/mol', { s: 24, w: 600, c: '#7dd3fc', f: MONO })}
+        ${res.map(([c, e, on], i) => `${on ? `<rect x="648" y="${152 + i * 70}" width="280" height="62" rx="10" fill="#7e13b5"/>` : `<rect x="648" y="${152 + i * 70}" width="280" height="62" rx="10" fill="#111b2e"/>`}${T(680, 196 + i * 70, c, { s: 38, w: 800, c: on ? '#fff' : '#94a3b8', a: 'start' })}${T(908, 197 + i * 70, e, { s: 42, w: 700, c: on ? '#fff' : '#cbd5e1', a: 'end', f: MONO })}`).join('')}
+      </svg>
+      <g filter="url(#sh2)"><path d="M250 566 L746 566 L782 612 L214 612 Z" fill="url(#darkCase)" stroke="#0f172a"/>${Array.from({ length: 4 }, (_, r) => Array.from({ length: 22 - r }, (_, c) => `<rect x="${262 - r * 8 + c * (21.5 + r * .9)}" y="${571 + r * 10}" width="${17 + r * .7}" height="7.5" rx="1.5" fill="#94a3b8" opacity=".75"/>`).join('')).join('')}</g>`);
+  },
+};
+
+const n = new URLSearchParams(location.search).get('n') || '35';
+document.getElementById('stage').innerHTML = scenes[n]();
+</script>

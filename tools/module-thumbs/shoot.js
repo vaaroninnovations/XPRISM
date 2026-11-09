@@ -20,7 +20,7 @@ const ONLY = (process.argv[3] || '').split(',').filter(Boolean);
   let bad = 0;
   for (const s of slugs.sort()) {
     const n = s.split('/').pop().slice(0, 2);
-    if (ONLY.length && !ONLY.includes(n)) continue;
+    if (n >= '35' || (ONLY.length && !ONLY.includes(n))) continue;   // 35-43 have no scene: draw.js makes those
     const errs = []; const h = e => errs.push(e.message); p.on('pageerror', h);
     await p.goto(BASE + s); await p.waitForTimeout(700);
     await p.addStyleTag({ content: '.pulse{animation:none!important;filter:none!important;outline:none!important}' });
