@@ -150,6 +150,7 @@
             <button onclick="skipWait()" class="mt-2 w-full py-1 text-[11px] rounded bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold">⏩ Skip waiting</button>
           </div>
           <svg id="scene" viewBox="0 0 1000 420" preserveAspectRatio="xMidYMid meet" class="w-full block flex-1 min-h-0"></svg>
+          <p id="rabbitCredit" style="font-size:10px;line-height:1.4;color:#64748b;margin:0 12px 6px"></p>
           <div id="actionFeedback" class="m-2 mt-0 bg-slate-900/90 text-white py-2 px-4 rounded-lg text-xs flex items-center justify-between shadow-lg border border-slate-700 shrink-0">
             <div class="flex items-center space-x-2">
               <span id="feedbackIcon" class="text-teal-400 font-bold text-sm">ℹ</span>
@@ -784,6 +785,7 @@
 
     // ---------------- panel ----------------
     function renderMethodTabs() {
+      const credit = $('rabbitCredit'); credit.innerHTML = RABBIT_CREDIT; credit.hidden = S.method !== 'A';   // only Method A shows the rabbit
       $('methodTabs').innerHTML = Object.entries(METHODS).map(([k, M]) => `<button onclick="setMethod('${k}')" class="px-2.5 py-1 text-[11px] rounded font-semibold ${S.method === k ? 'bg-teal-600 text-white' : 'text-slate-600 hover:bg-slate-100'}">${M.label}</button>`).join('');
       $('subjBtns').innerHTML = METHODS[S.method].subjects.map(sb => `<button class="chip ${S.subj === sb.id ? 'on' : ''}" onclick="S.subj='${sb.id}';renderAll()">${sb.label}</button>`).join('');
     }

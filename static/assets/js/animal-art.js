@@ -320,5 +320,10 @@
     return `translate(${f2(509 + s * Math.sin(t * TAU * 21) * .9)} ${f2(200 + s * Math.cos(t * TAU * 17) * .6)}) scale(1 ${(1 + Math.sin(t * TAU * 1.4) * .012 + s * .006).toFixed(4)}) translate(-509 -200)`;
   }
 
-  Object.assign(global, { ANI_DEFS, animalSideArt, animalTopArt, realRabbitHead, realRabbitEye, realRabbitLid, rabbitPose, animateRabbit, guineaPigPose, realGuineaPig, realFrogBody, realFrogLeg, frogVentralArt, frogPlate, frogPlateUrl, openFrogAnatomy });
+  // Required by CC BY-SA 4.0 wherever rbHead, rbEar or rbBody are shown. Full details: ../img/animals/CREDITS.md
+  const creditLink = (href, text) => `<a href="${href}" target="_blank" rel="noopener noreferrer" style="color:#0f766e;text-decoration:underline">${text}</a>`;
+  const commonsPhoto = n => creditLink(`https://commons.wikimedia.org/wiki/File:Portraits_of_rabbits_in_the_Philippines_${n}.jpg`, n);
+  const RABBIT_CREDIT = `Rabbit images adapted from \u201cPortraits of rabbits in the Philippines\u201d ${commonsPhoto('06')}, ${commonsPhoto('11')} and ${commonsPhoto('13')} by ${creditLink('https://commons.wikimedia.org/wiki/User:FBenjr123', 'FBenjr123')} (Wikimedia Commons), ${creditLink('https://creativecommons.org/licenses/by-sa/4.0/', 'CC BY-SA 4.0')}. Cropped, mirrored and retouched. These adapted images are shared under the same licence and are not covered by the XPRISM copyright notice.`;
+
+  Object.assign(global, { ANI_DEFS, animalSideArt, animalTopArt, realRabbitHead, realRabbitEye, realRabbitLid, rabbitPose, animateRabbit, guineaPigPose, RABBIT_CREDIT, realGuineaPig, realFrogBody, realFrogLeg, frogVentralArt, frogPlate, frogPlateUrl, openFrogAnatomy });
 })(window);

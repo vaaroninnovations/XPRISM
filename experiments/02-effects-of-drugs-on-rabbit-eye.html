@@ -360,6 +360,7 @@
           </div>
 
         </div>
+        <p id="rabbitCredit" style="font-size:10px;line-height:1.4;color:#64748b;margin:6px 12px;text-align:center;flex-shrink:0"></p>
       </div>
 
       <!-- RIGHT SIDE: INSTRUMENTS PALETTE -->
@@ -705,6 +706,7 @@
     const _realRng = seed => () => (seed = (seed * 16807) % 2147483647) / 2147483647;
     const _realMemo = {};
     // realRabbitHead, realRabbitEye, realGuineaPig, realFrogBody, realFrogLeg: ../assets/js/animal-art.js
+    document.getElementById('rabbitCredit').innerHTML = RABBIT_CREDIT;
     document.getElementById('rabbitRigOverview').innerHTML = `<g transform="translate(250 176) scale(.292)">${realRabbitHead({ earTop: -300 })}</g>` + realRabbitEye(221.5, 172, 4.6, 'miniRightPupil', 2.44) + realRabbitEye(278.4, 172, 4.6, 'miniLeftPupil', 2.44) + `<text x="222" y="194" text-anchor="middle" font-size="9" font-weight="bold" fill="#0369a1">Right Eye</text><text x="278" y="194" text-anchor="middle" font-size="9" font-weight="bold" fill="#475569">Left Eye</text>`;
   </script>
   <script>
