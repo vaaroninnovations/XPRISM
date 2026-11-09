@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="../assets/css/tailwind.css">
   <link rel="stylesheet" href="../assets/css/theme.css">
   <script src="../assets/js/tone.min.js"></script>
+  <script src="../assets/js/lab-bench.js"></script>
 <style>
     * { box-sizing: border-box; }
     :root { color-scheme: light; }
@@ -814,7 +815,7 @@
     function clockStr(t) { const s = Math.round(CFG.startClock + t); return `${Math.floor(s / 3600) % 24}:${String(Math.floor(s % 3600 / 60)).padStart(2, '0')}`; }
 
     // ---------------------------------------------------------------- shared SVG defs
-    const DEFS = `<defs>
+    const DEFS = `<defs>${LAB_ROOM_DEFS}
       <filter id="sh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="3" dy="5" stdDeviation="4" flood-color="#000" flood-opacity=".42"/></filter>
       <filter id="sh2" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="1" dy="2" stdDeviation="1.5" flood-color="#000" flood-opacity=".45"/></filter>
       <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
@@ -822,10 +823,10 @@
       <filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="7" result="n"/><feColorMatrix in="n" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .07 0"/></filter>
       <filter id="furF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9 .25" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 .55  0 0 0 0 .5  0 0 0 0 .48  0 0 0 .32 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
       <filter id="beddingF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".18" numOctaves="3" seed="12"/><feColorMatrix values="0 0 0 0 .45  0 0 0 0 .3  0 0 0 0 .12  0 0 0 .55 0"/></filter>
-      <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#26313d"/><stop offset="1" stop-color="#1c252f"/></linearGradient>
-      <radialGradient id="spot" cx=".5" cy=".35" r=".7"><stop offset="0" stop-color="#5b6b7c" stop-opacity=".45"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+      
+      
       <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2d3946"/><stop offset="1" stop-color="#27323e"/></linearGradient>
-      <linearGradient id="bench" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a4048"/><stop offset=".06" stop-color="#23272d"/><stop offset="1" stop-color="#16191d"/></linearGradient>
+      
       <linearGradient id="steel" x1="0" x2="1"><stop offset="0" stop-color="#6b7280"/><stop offset=".35" stop-color="#f3f4f6"/><stop offset=".55" stop-color="#d1d5db"/><stop offset="1" stop-color="#4b5563"/></linearGradient>
       <linearGradient id="steelH" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9ca3af"/><stop offset=".4" stop-color="#f9fafb"/><stop offset="1" stop-color="#6b7280"/></linearGradient>
       <linearGradient id="glass" x1="0" x2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".7"/><stop offset=".12" stop-color="#ffffff" stop-opacity=".22"/><stop offset=".5" stop-color="#e0f2fe" stop-opacity=".14"/><stop offset=".85" stop-color="#ffffff" stop-opacity=".3"/><stop offset="1" stop-color="#bae6fd" stop-opacity=".65"/></linearGradient>
@@ -850,17 +851,10 @@
     ${ANI_DEFS}</defs>`;
 
     function room(benchY = 470) {
-      let tiles = '';
-      for (let y = 0; y < benchY; y += 38) for (let x = (y / 38) % 2 ? -26 : 0; x < 1000; x += 52) tiles += `<rect x="${x}" y="${y}" width="51" height="37" fill="url(#tile)" stroke="#1a222b" stroke-width="1"/>`;
       let ticks = '';
       for (let k = 0; k < 60; k++) { const a = k * 6 * Math.PI / 180, b = k % 5 === 0; ticks += `<line x1="${(Math.sin(a) * (b ? 30 : 33)).toFixed(1)}" y1="${(-Math.cos(a) * (b ? 30 : 33)).toFixed(1)}" x2="${(Math.sin(a) * 36).toFixed(1)}" y2="${(-Math.cos(a) * 36).toFixed(1)}" stroke="#111827" stroke-width="${b ? 2.2 : .8}"/>`; }
-      return `<rect width="1000" height="560" fill="url(#wall)"/>${tiles}<rect width="1000" height="${benchY}" fill="url(#spot)"/>
-        <g transform="translate(958 46)" filter="url(#sh2)"><circle r="42" fill="#1f2937"/><circle r="38.5" fill="#fbfbf8"/>${ticks}
-          <g id="hHand"><rect x="-1.8" y="-21" width="3.6" height="25" rx="1.8" fill="#111827"/></g><g id="mHand"><rect x="-1.3" y="-31" width="2.6" height="36" rx="1.3" fill="#111827"/></g><g id="sHand"><rect x="-.5" y="-33" width="1" height="40" fill="#dc2626"/></g><circle r="2.2" fill="#dc2626"/></g>
-        <rect y="${benchY - 6}" width="1000" height="8" fill="#5b636d"/>
-        <rect y="${benchY}" width="1000" height="${560 - benchY}" fill="url(#bench)"/>
-        <rect y="${benchY}" width="1000" height="${560 - benchY}" filter="url(#grain)" opacity=".7"/>
-        <rect y="${benchY + 2}" width="1000" height="2" fill="#fff" opacity=".08"/>`;
+      return labRoom(benchY) + `<g transform="translate(958 46)" filter="url(#sh2)"><circle r="42" fill="#1f2937"/><circle r="38.5" fill="#fbfbf8"/>${ticks}
+          <g id="hHand"><rect x="-1.8" y="-21" width="3.6" height="25" rx="1.8" fill="#111827"/></g><g id="mHand"><rect x="-1.3" y="-31" width="2.6" height="36" rx="1.3" fill="#111827"/></g><g id="sHand"><rect x="-.5" y="-33" width="1" height="40" fill="#dc2626"/></g><circle r="2.2" fill="#dc2626"/></g>`;
     }
     function updateWallClock() {
       const t = CFG.startClock + S.t, h = $('hHand'); if (!h) return;
