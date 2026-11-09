@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="../assets/css/tailwind.css">
   <link rel="stylesheet" href="../assets/css/theme.css">
   <script src="../assets/js/tone.min.js"></script>
+  <script src="../assets/js/lab-bench.js"></script>
   <style>
     * { box-sizing: border-box; }
     :root { color-scheme: light; }
@@ -45,6 +46,9 @@
     #scene text { pointer-events: none; }
     #scene .hot { cursor: pointer; }
     #scene .hot:hover { filter: drop-shadow(0 0 5px rgba(253,224,71,.95)); }
+    #scene .fplate { transition: opacity .45s ease; }
+    #scene .hring { fill: none; stroke: #fde047; stroke-width: 2; stroke-dasharray: 5 4; opacity: 0; transition: opacity .15s ease; pointer-events: none; }
+    #scene .hot:hover .hring, #scene .pulse .hring { opacity: 1; }
     #scene .pulse { animation: xpulse 1.4s ease-in-out infinite; }
     @keyframes xpulse { 0%,100% { filter: drop-shadow(0 0 2px rgba(56,189,248,.3)); } 50% { filter: drop-shadow(0 0 9px rgba(56,189,248,1)); } }
     .xb-fb { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #0f172a; color: #fff; padding: 8px 14px; font-size: 12px; min-height: 38px; }
@@ -862,7 +866,7 @@
     }
 
     // ---------------------------------------------------------------- shared SVG defs
-    const DEFS = `<defs>
+    const DEFS = `<defs>${LAB_DEFS}
       <filter id="sh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="3" dy="5" stdDeviation="4" flood-color="#000" flood-opacity=".38"/></filter>
       <filter id="sh2" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="1" dy="2" stdDeviation="1.5" flood-color="#000" flood-opacity=".45"/></filter>
       <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
@@ -873,17 +877,17 @@
       <filter id="bellyF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".06" numOctaves="2" seed="5"/><feColorMatrix values="0 0 0 0 .55  0 0 0 0 .5  0 0 0 0 .3  0 0 0 .25 0"/></filter>
       <filter id="musF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".02 .5" numOctaves="2" seed="2"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .08  0 0 0 0 .1  0 0 0 .35 0"/></filter>
       <filter id="smokeF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" seed="9"/><feColorMatrix values="0 0 0 0 .6  0 0 0 0 .6  0 0 0 0 .6  0 0 0 .09 0"/></filter>
-      <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#26313d"/><stop offset="1" stop-color="#1c252f"/></linearGradient><radialGradient id="spot" cx=".5" cy=".35" r=".7"><stop offset="0" stop-color="#5b6b7c" stop-opacity=".45"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+      
       <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2d3946"/><stop offset="1" stop-color="#27323e"/></linearGradient>
-      <linearGradient id="bench" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a4048"/><stop offset=".06" stop-color="#23272d"/><stop offset="1" stop-color="#16191d"/></linearGradient>
-      <linearGradient id="steel" x1="0" x2="1"><stop offset="0" stop-color="#6b7280"/><stop offset=".35" stop-color="#f3f4f6"/><stop offset=".55" stop-color="#d1d5db"/><stop offset="1" stop-color="#4b5563"/></linearGradient>
-      <linearGradient id="steelH" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9ca3af"/><stop offset=".4" stop-color="#f9fafb"/><stop offset="1" stop-color="#6b7280"/></linearGradient>
-      <linearGradient id="castIron" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4b5563"/><stop offset="1" stop-color="#1f2937"/></linearGradient>
+      
+      
+      
+      
       <linearGradient id="enamel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3f6e5a"/><stop offset=".5" stop-color="#2f5a48"/><stop offset="1" stop-color="#1d3b2f"/></linearGradient>
-      <linearGradient id="brass" x1="0" x2="1"><stop offset="0" stop-color="#7c5a1c"/><stop offset=".4" stop-color="#f5d78e"/><stop offset=".6" stop-color="#d4a73c"/><stop offset="1" stop-color="#6b4d17"/></linearGradient>
-      <linearGradient id="glass" x1="0" x2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".7"/><stop offset=".12" stop-color="#ffffff" stop-opacity=".22"/><stop offset=".5" stop-color="#e0f2fe" stop-opacity=".14"/><stop offset=".85" stop-color="#ffffff" stop-opacity=".3"/><stop offset="1" stop-color="#bae6fd" stop-opacity=".65"/></linearGradient>
-      <linearGradient id="glassEdge" x1="0" x2="1"><stop offset="0" stop-color="#f8fafc"/><stop offset=".5" stop-color="#e2e8f0" stop-opacity=".75"/><stop offset="1" stop-color="#f8fafc"/></linearGradient>
-      <linearGradient id="liquid" x1="0" x2="1"><stop offset="0" stop-color="#60a5fa" stop-opacity=".8"/><stop offset=".5" stop-color="#bfdbfe" stop-opacity=".7"/><stop offset="1" stop-color="#3b82f6" stop-opacity=".85"/></linearGradient>
+      
+      
+      
+      
       <linearGradient id="amber" x1="0" x2="1"><stop offset="0" stop-color="#3b1d06"/><stop offset=".3" stop-color="#9a5a17"/><stop offset=".5" stop-color="#b8752a"/><stop offset="1" stop-color="#3b1d06"/></linearGradient>
       <linearGradient id="hdpe" x1="0" x2="1"><stop offset="0" stop-color="#cbd5e1"/><stop offset=".4" stop-color="#f8fafc"/><stop offset="1" stop-color="#94a3b8"/></linearGradient>
       <linearGradient id="drumShade" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".75"/><stop offset=".18" stop-color="#000" stop-opacity=".15"/><stop offset=".42" stop-color="#fff" stop-opacity=".07"/><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".8"/></linearGradient>
@@ -898,15 +902,7 @@
       <clipPath id="drumClip"><rect x="712" y="64" width="206" height="402" rx="4"/></clipPath>
     </defs>`;
 
-    function room(benchY = 470) {
-      let tiles = '';
-      for (let y = 0; y < benchY; y += 38) for (let x = (y / 38) % 2 ? -26 : 0; x < 1000; x += 52) tiles += `<rect x="${x}" y="${y}" width="51" height="37" fill="url(#tile)" stroke="#1a222b" stroke-width="1"/>`;
-      return `<rect width="1000" height="560" fill="url(#wall)"/>${tiles}<rect width="1000" height="${benchY}" fill="url(#spot)"/>
-        <rect y="${benchY - 6}" width="1000" height="8" fill="#5b636d"/>
-        <rect y="${benchY}" width="1000" height="${560 - benchY}" fill="url(#bench)"/>
-        <rect y="${benchY}" width="1000" height="${560 - benchY}" filter="url(#grain)" opacity=".7"/>
-        <rect y="${benchY + 2}" width="1000" height="2" fill="#fff" opacity=".08"/>`;
-    }
+    function room(benchY = 470) { return labRoom(benchY); }
     const lbl = (x, y, t, o = {}) => `<text x="${x}" y="${y}" font-size="${o.s || 10}" fill="${o.c || '#1e293b'}" text-anchor="${o.a || 'middle'}" font-weight="${o.w || 600}" font-family="${o.f || 'Inter, sans-serif'}">${t}</text>`;
     const tag = (x, y, t, c = '#0f172a') => `<g><rect x="${x - t.length * 3.1 - 6}" y="${y - 11}" width="${t.length * 6.2 + 12}" height="16" rx="4" fill="${c}" opacity=".78"/>${lbl(x, y + 1, t, { c: '#fff', s: 10 })}</g>`;
 
@@ -1131,13 +1127,55 @@
     function tubeOK(k) { const t = S.tubes[k]; return t.vol >= 5 && t.mixed && Math.abs(tubeConc(k) / TUBE_DEF[k].conc - 1) < 0.03; }
 
     // ================================================================ STATION 2: DISSECTION
+    // The frog is a stack of rendered plates (../assets/img/frog). The tables below are in each
+    // plate's own pixels and fa() maps them into the scene.
+    const FROG_PX = [1376, 768];
+    const FT = {
+      ventral: { s: .72917, x: -1.67, y: 0 },      // full bleed: the tray and the table it stands on
+      insitu: { s: .79433, x: -46.5, y: -25.4 },   // zoomed to sit inside the render's white border
+      tied: { s: .72917, x: -1.67, y: 0 }
+    };
+    const fa = (k, x, y) => [+(FT[k].x + x * FT[k].s).toFixed(1), +(FT[k].y + y * FT[k].s).toFixed(1)];
+    const fpts = (k, list) => list.map(p => fa(k, p[0], p[1]).join(',')).join(' ');
+    const FROG_EYES = [[613, 100], [760, 100]], FROG_TOES = [[245, 592], [1128, 590]];
+    // each limb's hit zone and the box holding its pins (0, 1 fore; 2, 3 hind)
+    const FROG_LIMBS = [
+      { c: [445, 205], r: 34, box: [395, 122, 135, 170] }, { c: [925, 205], r: 34, box: [845, 122, 130, 178] },
+      { c: [320, 590], r: 40, box: [245, 468, 185, 205] }, { c: [1050, 590], r: 40, box: [940, 452, 190, 228] }
+    ];
+    const CUT = { x: 499, top: 128, bot: 273, need: 125 };   // midline incision in scene units: sternum (top) to pubis (bot)
+    // the two bellies, viewer's left and right of the linea alba; ends are [sternal, pubic]
+    const BELLY = {
+      insitu: {
+        alba: [[740, 277], [630, 455]],
+        L: { mid: [625, 375], ends: [[700, 205], [525, 535]], thread: [[[653, 177], [747, 233]], [[491, 509], [559, 551]]],
+          poly: [[745, 180], [770, 235], [740, 277], [705, 332], [672, 385], [630, 455], [595, 517], [565, 575], [540, 568], [508, 545], [500, 470], [530, 385], [585, 295], [660, 215]] },
+        R: { mid: [745, 430], ends: [[840, 250], [640, 570]], thread: [[[795, 227], [880, 278]], [[600, 549], [680, 591]]],
+          poly: [[845, 220], [885, 280], [890, 315], [820, 410], [765, 515], [710, 560], [620, 590], [580, 580], [595, 517], [630, 455], [672, 385], [705, 332], [740, 277], [770, 235], [790, 222]] }
+      },
+      tied: {
+        alba: [[770, 235], [625, 410]],
+        L: { mid: [620, 340], ends: [[765, 140], [457, 527]],
+          poly: [[735, 112], [795, 120], [815, 172], [770, 235], [720, 290], [675, 345], [625, 410], [565, 490], [525, 540], [490, 570], [445, 552], [430, 500], [450, 470], [475, 430], [520, 350], [580, 260], [635, 205], [705, 160]] },
+        R: { mid: [760, 400], ends: [[901, 200], [582, 582]],
+          poly: [[815, 172], [870, 180], [915, 195], [928, 225], [895, 290], [860, 350], [805, 430], [740, 525], [665, 595], [610, 615], [565, 605], [550, 570], [525, 540], [565, 490], [625, 410], [675, 345], [720, 290], [770, 235]] }
+      }
+    };
+    const frogOpen = F => !!(F.flaps[0] && F.flaps[1]);
+    const frogTied = F => !!(F.belly && F.ties[F.belly][0] && F.ties[F.belly][1]);
+    const hotC = (act, [x, y], r) => `<g class="hot" data-act="${act}"><circle cx="${x}" cy="${y}" r="${r}" fill="#fff" opacity="0"/><circle class="hring" cx="${x}" cy="${y}" r="${r - 2}"/></g>`;
+    const hotR = (act, x, y, w, h) => `<g class="hot" data-act="${act}"><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#fff" opacity="0"/><rect class="hring" x="${x + 1}" y="${y + 1}" width="${w - 2}" height="${h - 2}" rx="7"/></g>`;
+    const hotL = (act, [x1, y1], [x2, y2], w) => `<g class="hot" data-act="${act}"><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#fff" stroke-opacity="0" stroke-width="${w}"/><line class="hring" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/></g>`;
+    const thread = (k, t) => { const [a, b] = t.map(p => fa(k, p[0], p[1])), mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2, xy = `x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"`; return `<line ${xy} stroke="#78716c" stroke-width="3.8" stroke-linecap="round"/><line ${xy} stroke="#fafaf9" stroke-width="2.2" stroke-linecap="round"/><circle cx="${mx}" cy="${my}" r="4.2" fill="#fafaf9" stroke="#78716c" stroke-width=".8"/><path d="M${mx} ${my} q-14 -11 -28 -7" stroke="#fafaf9" stroke-width="1.6" fill="none"/>`; };
+
     function sceneDissection() {
+      const plate = (id, src, k, extra = '') => frogPlate(src, FROG_PX[0], FROG_PX[1], FT[k], `id="${id}" class="fplate" ${extra}`);
       let s = room(520);
-      // dissecting tray
-      s += `<rect x="150" y="30" width="700" height="500" rx="18" fill="url(#steelH)" filter="url(#sh)"/>
-        <rect x="166" y="44" width="668" height="472" rx="12" fill="url(#wax)"/>
-        <rect x="166" y="44" width="668" height="472" rx="12" filter="url(#grain)" opacity=".9"/>
-        ${[[230, 90], [770, 120], [260, 470], [760, 450], [700, 80], [300, 300]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.4" fill="#000" opacity=".5"/>`).join('')}`;
+      s += FROG_LIMBS.map((L, i) => { const [x, y] = fa('ventral', L.box[0], L.box[1]), k = FT.ventral.s; return `<clipPath id="fpLimb${i}"><rect x="${x}" y="${y}" width="${L.box[2] * k}" height="${L.box[3] * k}"/></clipPath>`; }).join('');
+      s += plate('fp_ventral', 'frog-ventral-unpinned-3d', 'ventral');
+      s += FROG_LIMBS.map((L, i) => plate('fp_pin' + i, 'frog-ventral-pinned-3d', 'ventral', `clip-path="url(#fpLimb${i})" style="opacity:0"`)).join('');
+      s += plate('fp_insitu', 'frog-rectus-abdominis-in-situ-3d', 'insitu', 'style="opacity:0"');
+      s += plate('fp_tied', 'frog-rectus-abdominis-prepared-3d', 'tied', 'style="opacity:0"');
       s += `<g id="frogG"></g>`;
       // instrument tray
       s += `<g>
@@ -1160,74 +1198,79 @@
         <ellipse id="dishLiq" cx="929" cy="472" rx="50" ry="24" fill="#cfeaf5" opacity="0"/>
         <ellipse cx="929" cy="466" rx="56" ry="27" fill="none" stroke="#fff" stroke-opacity=".5"/>
         <g id="dishTissue"></g>
-      </g>${lbl(929, 518, 'Petri dish (Ringer)', { c: '#cbd5e1' })}`;
-      s += lbl(184, 66, `Frog no. <tspan id="frogNo">${S.frog.n}</tspan>`, { a: 'start', c: '#e7e5e4', s: 11 }) + lbl(184, 81, 'Rana tigrina • pithed', { a: 'start', c: '#a8a29e', s: 9, w: 500 });
+      </g><rect x="866" y="506" width="126" height="18" rx="9" fill="#0f172a" opacity=".78"/>${lbl(929, 519, 'Petri dish (Ringer)', { c: '#f1f5f9', s: 9.5 })}`;
+      s += `<rect x="14" y="12" width="176" height="42" rx="8" fill="#0f172a" opacity=".78"/>` + lbl(26, 30, `Frog no. <tspan id="frogNo">${S.frog.n}</tspan>`, { a: 'start', c: '#f1f5f9', s: 11 }) + lbl(26, 45, 'Hoplobatrachus tigerinus • pithed', { a: 'start', c: '#cbd5e1', s: 9, w: 500 });
       s += `<g id="cutLayer"></g><rect id="dragPad" x="420" y="150" width="160" height="260" fill="#fff" opacity="0" style="display:none"/>`;
       return s;
     }
+    // Fading a plate in over the one below it: lower plates stay put, so nothing dips through to the room.
+    function setFrogPlates() {
+      const F = S.frog, open = frogOpen(F), show = { fp_insitu: open, fp_tied: open && frogTied(F) };
+      F.pins.forEach((p, i) => { show['fp_pin' + i] = !!p; });
+      Object.entries(show).forEach(([id, on]) => { const e = $(id); if (e) e.style.opacity = on ? 1 : 0; });
+    }
     function drawFrog() {
       const g = $('frogG'); if (!g) return;
-      const F = S.frog, open = F.flaps[0] && F.flaps[1];
-      let s = `<ellipse cx="500" cy="300" rx="150" ry="230" fill="#000" opacity=".28" filter="url(#blur3)"/>`;
-      // belly-up frog, limbs extended for pinning: ../assets/js/animal-art.js
-      s += frogVentralArt('12');
-      // eyes at the head margin
-      s += `<g class="hot" data-act="eye"><ellipse cx="452" cy="96" rx="15" ry="12" fill="url(#eyeG)" stroke="#1f2a0a"/><ellipse cx="447" cy="91" rx="4" ry="3" fill="#fff" opacity=".6"/></g>
-            <ellipse cx="548" cy="96" rx="15" ry="12" fill="url(#eyeG)" stroke="#1f2a0a"/><ellipse cx="543" cy="91" rx="4" ry="3" fill="#fff" opacity=".6"/>`;
-      // belly (ventral skin) or opened abdomen
-      if (open) s += abdomenOpen();
-      // partially reflected flap
-      if (F.flaps[0] && !open) s += `<path d="M500 186 L470 186 Q430 270 470 370 L500 370 Z" fill="#7a2228"/><path d="M470 186 Q400 270 470 370 L452 370 Q380 270 452 186 Z" fill="url(#belly)" stroke="#a8925a"/>`;
-      if (F.flaps[1] && !open) s += `<path d="M500 186 L530 186 Q570 270 530 370 L500 370 Z" fill="#7a2228"/><path d="M530 186 Q600 270 530 370 L548 370 Q620 270 548 186 Z" fill="url(#belly)" stroke="#a8925a"/>`;
-      // incision line
-      if (F.cutPath.length && !open) s += F.cutPath.map(([a, b]) => `<line x1="500" x2="500" y1="${a}" y2="${b}" stroke="#7f1d1d" stroke-width="2.4" stroke-linecap="round"/>`).join('');
-      if (F.lifted && !F.cut) s += `<path d="M490 370 Q500 358 510 370" fill="#e6d6aa" stroke="#a8925a"/><path d="M492 352 L500 368 L508 352" fill="none" stroke="#9ca3af" stroke-width="2.5"/>`;
-      // pins
-      const pinAt = [[372, 236], [628, 236], [406, 512], [594, 512]];
-      F.pins.forEach((p, i) => { if (p) s += pin(...pinAt[i], ['#dc2626', '#2563eb', '#16a34a', '#eab308'][i]); });
-      if (open) [[440, 210], [560, 210], [440, 350], [560, 350]].forEach(([x, y], i) => s += pin(x + (x < 500 ? -22 : 22), y, '#e5e7eb'));
-      // hit zones
-      s += `<rect class="hot" data-act="toe" x="384" y="500" width="34" height="50" fill="#fff" opacity="0"/>`;
-      if (F.tool === 'pins') pinAt.forEach((p, i) => { if (!F.pins[i]) s += `<circle class="hot" data-act="pin:${i}" cx="${p[0]}" cy="${p[1]}" r="18" fill="#fff" opacity="0"/>`; });
-      if (!F.cut) s += `<rect class="hot" data-act="lift" x="482" y="352" width="36" height="30" fill="#fff" opacity="0"/>`;
-      if (F.cut >= 1 && !open) { s += `<rect class="hot" data-act="flap:0" x="430" y="200" width="66" height="160" fill="#fff" opacity="0"/><rect class="hot" data-act="flap:1" x="504" y="200" width="66" height="160" fill="#fff" opacity="0"/>`; }
+      const F = S.frog, open = frogOpen(F);
+      setFrogPlates();
+      let s = open ? abdomenOpen() : skinOverlay();
+      if (!open) {
+        s += FROG_EYES.map(p => hotC('eye', fa('ventral', p[0], p[1]), 15)).join('');
+        s += FROG_TOES.map(p => hotC('toe', fa('ventral', p[0], p[1]), 30)).join('');
+        if (F.tool === 'pins') FROG_LIMBS.forEach((L, i) => { if (!F.pins[i]) s += hotC('pin:' + i, fa('ventral', L.c[0], L.c[1]), L.r); });
+        if (!F.cut) s += hotR('lift', CUT.x - 23, CUT.bot - 19, 46, 32);
+        if (F.cut >= 1) { if (!F.flaps[0]) s += hotR('flap:0', CUT.x - 58, CUT.top + 6, 52, CUT.bot - CUT.top - 12); if (!F.flaps[1]) s += hotR('flap:1', CUT.x + 6, CUT.top + 6, 52, CUT.bot - CUT.top - 12); }
+      }
       g.innerHTML = s;
       const dish = $('dishLiq'); if (dish) dish.setAttribute('opacity', ringerReady() ? .7 : 0);
       const dt = $('dishTissue'); if (dt) dt.innerHTML = F.inDish ? `<path d="M904 470 Q929 462 954 470 Q929 480 904 470 Z" fill="url(#muscle)" stroke="#7c1820"/><line x1="904" y1="470" x2="886" y2="462" stroke="#f5f5f4" stroke-width="1.4"/><line x1="954" y1="470" x2="972" y2="462" stroke="#f5f5f4" stroke-width="1.4"/>` : '';
       $('frogNo') && ($('frogNo').textContent = F.n);
       const th = $('toolHalo'); if (th) { const yy = { forceps: 72, scissors: 140, pins: 208, thread: 276 }[F.tool]; th.innerHTML = yy ? `<rect x="876" y="${yy}" width="106" height="64" rx="7" fill="none" stroke="#f59e0b" stroke-width="2.5"/>` : ''; }
     }
-    function pin(x, y, c) { return `<g filter="url(#sh2)"><line x1="${x}" y1="${y}" x2="${x + 4}" y2="${y - 22}" stroke="#d1d5db" stroke-width="1.6"/><circle cx="${x + 4}" cy="${y - 23}" r="4.5" fill="${c}"/><circle cx="${x + 3}" cy="${y - 24.5}" r="1.4" fill="#fff" opacity=".7"/></g>`; }
-    function bellyPath(side, lift) {
-      const x0 = side === 'L' ? 472 : 503, x1 = side === 'L' ? 497 : 528, dy = lift ? -4 : 0;
-      return `M${x0 + 4} ${190 + dy} Q${(x0 + x1) / 2} ${184 + dy} ${x1} ${190 + dy} L${x1} ${368 + dy} Q${(x0 + x1) / 2} ${376 + dy} ${x0 + 3} ${368 + dy} Q${x0 - 3} ${280 + dy} ${x0 + 4} ${190 + dy} Z`;
+    // the intact belly: tented skin, the midline cut and any flap already folded back
+    function skinOverlay() {
+      const F = S.frog, mid = (CUT.top + CUT.bot) / 2; let s = '';
+      [0, 1].forEach(i => {
+        if (!F.flaps[i]) return;
+        const sgn = i ? 1 : -1, gape = `M${CUT.x} ${CUT.top} Q${CUT.x + sgn * 64} ${mid} ${CUT.x} ${CUT.bot} Z`;
+        s += `<clipPath id="fpGape${i}"><path d="${gape}"/></clipPath>${frogPlate('frog-rectus-abdominis-in-situ-3d', FROG_PX[0], FROG_PX[1], { s: .35, x: CUT.x - 241.5, y: CUT.top - 61.3 }, `clip-path="url(#fpGape${i})"`)}`;
+        s += `<path d="M${CUT.x} ${CUT.top} Q${CUT.x + sgn * 86} ${mid} ${CUT.x} ${CUT.bot} Q${CUT.x + sgn * 66} ${mid} ${CUT.x} ${CUT.top} Z" fill="#ded5ae" stroke="#9f8d58" stroke-width="1"/>`;
+      });
+      if (F.cutPath.length) s += F.cutPath.map(([a, b]) => `<line x1="${CUT.x}" x2="${CUT.x}" y1="${a}" y2="${b}" stroke="#7f1d1d" stroke-width="2.4" stroke-linecap="round"/>`).join('');
+      if (F.lifted && !F.cut) {
+        s += `<g transform="translate(0 -99)"><path d="M490 370 Q500 358 510 370" fill="#e6d6aa" stroke="#a8925a"/><path d="M492 352 L500 368 L508 352" fill="none" stroke="#9ca3af" stroke-width="2.5"/></g>`;
+        if (F.tool === 'scissors' && HINTS) s += `<line x1="${CUT.x}" x2="${CUT.x}" y1="${CUT.top}" y2="${CUT.bot}" stroke="#fde047" stroke-width="1.6" stroke-dasharray="5 5" pointer-events="none"/>`;
+      }
+      return s;
     }
     function abdomenOpen() {
-      const F = S.frog; let s = '';
-      // reflected skin flaps pinned out
-      s += `<path d="M470 150 Q392 270 452 392 L420 392 Q360 270 440 150 Z" fill="url(#belly)" stroke="#a8925a"/><path d="M530 150 Q608 270 548 392 L580 392 Q640 270 560 150 Z" fill="url(#belly)" stroke="#a8925a"/>`;
-      s += `<path d="M470 150 Q440 270 452 392 L548 392 Q560 270 530 150 Z" fill="#8c2a2e"/>`;               // obliques / body wall
-      s += `<path d="M470 150 Q440 270 452 392 L548 392 Q560 270 530 150 Z" filter="url(#musF)" opacity=".8"/>`;
-      s += `<path d="M478 170 Q500 160 522 170 L522 186 L478 186 Z" fill="#e8e1d0" opacity=".85"/>`;         // xiphisternum
+      const F = S.frog, k = frogTied(F) ? 'tied' : 'insitu', T = BELLY[k]; let s = '';
       ['L', 'R'].forEach(side => {
-        if (F.free && F.belly === side) return;
-        const ruined = F.ruined[side];
-        s += `<path d="${bellyPath(side)}" fill="${ruined ? '#5b1218' : 'url(#muscle)'}" stroke="#6b1219" stroke-width="1"/>`;
-        if (!ruined) [228, 268, 310].forEach(y => s += `<path d="M${side === 'L' ? 473 : 504} ${y} Q${side === 'L' ? 485 : 516} ${y + 3} ${side === 'L' ? 497 : 528} ${y}" stroke="#f1e6d6" stroke-width="2.2" fill="none" opacity=".85"/>`);
-        else s += `<text x="${side === 'L' ? 485 : 516}" y="285" font-size="7" fill="#fecaca" text-anchor="middle" transform="rotate(-90 ${side === 'L' ? 485 : 516} 285)">retracted</text>`;
-        const t = F.ties[side];
-        if (t[0]) s += `<path d="M${side === 'L' ? 470 : 501} 194 L${side === 'L' ? 499 : 530} 194" stroke="#fafaf9" stroke-width="2.6"/><path d="M${side === 'L' ? 485 : 516} 194 l-4 -18" stroke="#fafaf9" stroke-width="1.4" fill="none"/>`;
-        if (t[1]) s += `<path d="M${side === 'L' ? 470 : 501} 364 L${side === 'L' ? 499 : 530} 364" stroke="#fafaf9" stroke-width="2.6"/><path d="M${side === 'L' ? 485 : 516} 364 l-4 22" stroke="#fafaf9" stroke-width="1.4" fill="none"/>`;
-        s += `<rect class="hot" data-act="end:${side}0" x="${side === 'L' ? 468 : 500}" y="182" width="32" height="22" fill="#fff" opacity="0"/><rect class="hot" data-act="end:${side}1" x="${side === 'L' ? 468 : 500}" y="354" width="32" height="22" fill="#fff" opacity="0"/>`;
+        const B = T[side], [cx, cy] = fa(k, B.mid[0], B.mid[1]);
+        if (F.ruined[side]) s += `<polygon points="${fpts(k, B.poly)}" fill="#1c0507" opacity=".62" filter="url(#blur3)"/><rect x="${cx - 32}" y="${cy - 11}" width="64" height="16" rx="8" fill="#450a0a" opacity=".85"/>${lbl(cx, cy + 1, 'retracted', { s: 9.5, c: '#fecaca', w: 700 })}`;
+        if (k === 'insitu') B.thread.forEach((t, end) => { if (F.ties[side][end]) s += thread(k, t); });
       });
-      s += `<line x1="500" y1="186" x2="500" y2="372" stroke="#f5efe2" stroke-width="3"/>`;   // linea alba
-      s += `<rect class="hot" data-act="alba" x="494" y="220" width="12" height="120" fill="#fff" opacity="0"/>`;
-      if (F.cuts[0]) s += `<line x1="466" y1="176" x2="534" y2="176" stroke="#450a0a" stroke-width="1.5" stroke-dasharray="3 2"/>`;
-      if (F.cuts[1]) s += `<line x1="466" y1="382" x2="534" y2="382" stroke="#450a0a" stroke-width="1.5" stroke-dasharray="3 2"/>`;
-      if (F.free && !F.inDish && F.belly) {
-        s += `<g class="hot" data-act="muscle" filter="url(#sh)" transform="translate(${F.belly === 'L' ? -60 : 60} 0)"><path d="${bellyPath(F.belly, true)}" fill="url(#muscle)" stroke="#6b1219"/>${[228, 268, 310].map(y => `<path d="M${F.belly === 'L' ? 473 : 504} ${y - 4} Q${F.belly === 'L' ? 485 : 516} ${y - 1} ${F.belly === 'L' ? 497 : 528} ${y - 4}" stroke="#f1e6d6" stroke-width="2" fill="none"/>`).join('')}
-          <path d="M${F.belly === 'L' ? 485 : 516} 186 l-4 -22 M${F.belly === 'L' ? 485 : 516} 368 l-4 24" stroke="#fafaf9" stroke-width="1.5"/></g>`;
-        s += `<path d="${bellyPath(F.belly)}" fill="#3f0d10" opacity=".9"/>`;
+      if (k === 'tied' && !F.free) {
+        const B = T[F.belly], [cx, cy] = fa(k, B.mid[0], B.mid[1]);
+        s += `<rect x="${cx - 32}" y="${cy - 10}" width="64" height="16" rx="8" fill="#0f172a" opacity=".72"/>${lbl(cx, cy + 2, 'this belly', { s: 9.5, c: '#fef3c7', w: 700 })}`;
+        // scissor cuts, just outside each knot
+        B.ends.forEach((c, end) => {
+          if (!F.cuts[end]) return;
+          const out = end ? [-.55, .83] : [.55, -.83], [ax, ay] = fa(k, c[0] + out[0] * 24 - 35, c[1] + out[1] * 24 - 23), [bx, by] = fa(k, c[0] + out[0] * 24 + 35, c[1] + out[1] * 24 + 23);
+          s += `<line x1="${ax}" y1="${ay}" x2="${bx}" y2="${by}" stroke="#450a0a" stroke-width="2" stroke-dasharray="3 2"/>`;
+        });
+        if (F.cuts[2]) { const [a, b] = T.alba.map(p => fa(k, p[0], p[1])); s += `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#450a0a" stroke-width="2" stroke-dasharray="3 2"/>`; }
+      }
+      if (F.free && F.belly) {
+        const B = T[F.belly], pts = fpts(k, B.poly);
+        s += `<polygon points="${pts}" fill="#1c0507" opacity=".62" filter="url(#blur3)"/>`;
+        if (!F.inDish) {
+          const [dx, dy] = F.belly === 'L' ? [-100, -44] : [92, 40];
+          s += `<clipPath id="fpMuscle"><polygon points="${pts}"/></clipPath><g class="hot" data-act="muscle" filter="url(#sh)" transform="translate(${dx} ${dy})">${frogPlate('frog-rectus-abdominis-prepared-3d', FROG_PX[0], FROG_PX[1], FT.tied, 'clip-path="url(#fpMuscle)"')}</g>`;
+        }
+      } else {
+        ['L', 'R'].forEach(side => T[side].ends.forEach((c, end) => { s += hotC(`end:${side}${end}`, fa(k, c[0], c[1]), 22); }));
+        s += hotL('alba', fa(k, T.alba[0][0], T.alba[0][1]), fa(k, T.alba[1][0], T.alba[1][1]), 20);
       }
       return s;
     }
@@ -1283,25 +1326,25 @@
       if (S.station !== 2) return;
       const F = S.frog; if (F.cut || F.tool !== 'scissors') return;
       const p = svgPoint($('scene'), e);
-      if (Math.abs(p.x - 500) > 26 || p.y < 170 || p.y > 390) return;
+      if (Math.abs(p.x - CUT.x) > 26 || p.y < CUT.top - 14 || p.y > CUT.bot + 18) return;
       if (!F.lifted) { say('Lift the skin with the forceps first, or you will cut straight into the muscle.', true); return; }
       _drag = { y: p.y }; e.preventDefault();
     }
     function dissectMove(e) {
       if (!_drag) return;
       const p = svgPoint($('scene'), e), F = S.frog;
-      if (Math.abs(p.x - 500) > 30) { say('Keep the cut in the midline.', true); _drag = null; return; }
-      const a = Math.max(188, Math.min(_drag.y, p.y)), b = Math.min(372, Math.max(_drag.y, p.y));
+      if (Math.abs(p.x - CUT.x) > 30) { say('Keep the cut in the midline.', true); _drag = null; return; }
+      const a = Math.max(CUT.top, Math.min(_drag.y, p.y)), b = Math.min(CUT.bot, Math.max(_drag.y, p.y));
       F.cutPath.push([a, b]); _drag.y = p.y;
       // coverage
       const segs = F.cutPath.slice().sort((u, v) => u[0] - v[0]); let cov = 0, cur = null;
       segs.forEach(([u, v]) => { if (!cur) cur = [u, v]; else if (u <= cur[1]) cur[1] = Math.max(cur[1], v); else { cov += cur[1] - cur[0]; cur = [u, v]; } });
       if (cur) cov += cur[1] - cur[0];
-      if (cov > 160) { F.cut = 1; _drag = null; beep('ok'); say('Midline skin incision made from pubis to sternum. Reflect each skin flap with the forceps.'); refreshChecklist(); }
+      if (cov > CUT.need) { F.cut = 1; _drag = null; beep('ok'); say('Midline skin incision made from pubis to sternum. Reflect each skin flap with the forceps.'); refreshChecklist(); }
       drawFrog();
     }
     function dissectUp() { _drag = null; }
-    function newFrog() { const n = S.frog.n + 1; S.frog = Object.assign(freshState().frog, { n }); say(`Frog no. ${n} brought from the animal house (Reduction: try to succeed with this one).`); drawFrog(); renderCtx(); refreshChecklist(); }
+    function newFrog() { const n = S.frog.n + 1; S.frog = Object.assign(freshState().frog, { n }); say(`Frog no. ${n} issued (Reduction: each new frog is another animal used, so try to succeed with this one).`); drawFrog(); renderCtx(); refreshChecklist(); }
     // ================================================================ STATION 3: ORGAN BATH & KYMOGRAPH
     const BX = 330, BW = 80, BTOP = 250, BBOT = 440;           // bath geometry
     const levelY = L => BBOT - 4 - L * 7.2;                      // 25 mL → y 256
@@ -1311,13 +1354,14 @@
       return `<g class="hot" data-act="${act}">
         <circle cx="${x}" cy="${y}" r="11" fill="url(#glass)" stroke="#94a3b8" stroke-width="1.5"/>
         <g id="${act}Key" transform="rotate(${open ? 90 : 0} ${x} ${y})"><rect x="${x - 15}" y="${y - 3.5}" width="30" height="7" rx="3" fill="#e2e8f0" stroke="#64748b"/><rect x="${x + 9}" y="${y - 5}" width="9" height="10" rx="2" fill="#475569"/></g>
-        ${lbl(x, y + 25, label, { s: 8.5, c: '#e2e8f0' })}
+        ${act === 'drain' ? lbl(x + 16, y + 4, label, { s: 8.5, c: '#e2e8f0', a: 'start' }) : lbl(x, y + 25, label, { s: 8.5, c: '#e2e8f0' })}
       </g>`;
     }
     function sceneBath() {
       let s = room(530);
+      s += labShadows([[110, 528, 76], [254, 530, 46], [372, 529, 32], [456, 530, 32]]);
       // wall shelf for the reservoir
-      s += `<rect x="28" y="214" width="230" height="10" fill="url(#steelH)" filter="url(#sh2)"/><path d="M40 224 L40 252 L70 224 Z" fill="#6b7280"/><path d="M246 224 L246 252 L216 224 Z" fill="#6b7280"/>`;
+      s += `<rect x="28" y="214" width="230" height="10" fill="url(#steelH)" filter="url(#sh2)"/><path d="M40 224 L40 252 L70 224 Z" fill="#475569"/><path d="M246 224 L246 252 L216 224 Z" fill="#475569"/>`;
       // reservoir (aspirator bottle)
       s += `<g class="hot" data-act="res">
         <clipPath id="resClip"><path d="M58 74 Q58 60 74 58 L154 58 Q170 60 170 74 L170 200 Q170 212 158 212 L70 212 Q58 212 58 200 Z"/></clipPath>
@@ -1333,11 +1377,11 @@
       s += `<g class="hot" data-act="phyVial" filter="url(#sh2)"><rect x="186" y="170" width="24" height="42" rx="4" fill="url(#amber)"/><rect x="189" y="164" width="18" height="8" rx="2" fill="#9ca3af"/><rect x="188" y="182" width="20" height="20" fill="#fff"/>${lbl(198, 191, 'PHYSO', { s: 4.6, w: 800 })}${lbl(198, 198, '1 mg/mL', { s: 4.2 })}</g>
             <g class="hot" data-act="dtcVial" filter="url(#sh2)"><rect x="218" y="170" width="24" height="42" rx="4" fill="url(#amber)"/><rect x="221" y="164" width="18" height="8" rx="2" fill="#9ca3af"/><rect x="220" y="182" width="20" height="20" fill="#fff"/>${lbl(230, 191, 'd-TC', { s: 5, w: 800 })}${lbl(230, 198, '1 mg/mL', { s: 4.2 })}</g>`;
       // tubing reservoir → inlet tap → bath
-      s += `<path d="M114 212 L114 230 Q114 238 120 240 L120 400 Q120 430 150 430 L281 430" fill="none" stroke="url(#rubber)" stroke-width="7" stroke-linecap="round"/>
+      s += `${labTube('M114 212 L114 230 Q114 238 120 240 L120 400 Q120 430 150 430 L281 430', 7, { fill: '#bae6fd' })}${labFlowPath('flowIn', 'M114 212 L114 230 Q114 238 120 240 L120 400 Q120 430 150 430 L281 430', 3)}
             <path d="M303 430 L332 430" fill="none" stroke="url(#glass)" stroke-width="8"/><path d="M303 430 L332 430" fill="none" stroke="#94a3b8" stroke-width="1"/>`;
       // retort stand for the bath
-      s += `<rect x="214" y="520" width="80" height="10" rx="2" fill="url(#castIron)" filter="url(#sh2)"/><rect x="246" y="150" width="9" height="372" fill="url(#steel)"/>
-            <rect x="240" y="300" width="22" height="18" rx="3" fill="url(#castIron)"/><rect x="262" y="306" width="68" height="6" fill="url(#steelH)"/><rect x="322" y="298" width="10" height="22" rx="2" fill="#374151"/>`;
+      s += `${labStandBase(214, 520, 80, 10)}<rect x="246" y="150" width="9" height="372" fill="url(#steel)"/>
+            ${labBoss(240, 300)}<rect x="262" y="306" width="68" height="6" fill="url(#steelH)"/><rect x="322" y="298" width="10" height="22" rx="2" fill="#374151"/>`;
       // air pump
       s += `<g filter="url(#sh)"><rect x="40" y="470" width="140" height="58" rx="8" fill="url(#enamel)" stroke="#14281f"/>
             ${lbl(92, 490, 'AQUA-AIR', { s: 9, c: '#d1fae5', w: 800 })}${lbl(92, 502, 'aerator pump', { s: 7, c: '#a7f3d0', w: 500 })}
@@ -1345,7 +1389,7 @@
             <g class="hot" data-act="air:-1"><circle cx="122" cy="516" r="8" fill="#1f2937"/>${lbl(122, 519.5, '−', { s: 12, c: '#fff' })}</g>
             <g class="hot" data-act="air:1"><circle cx="174" cy="516" r="8" fill="#1f2937"/>${lbl(174, 519.5, '+', { s: 12, c: '#fff' })}</g>
             <text id="airTxt" x="92" y="519" font-size="8" fill="#fef3c7" text-anchor="middle" font-family="JetBrains Mono">OFF</text></g>
-            <path d="M180 488 Q205 488 205 470 L205 236 Q205 226 215 226 L340 226 Q352 226 352 236" fill="none" stroke="#f8fafc" stroke-width="4"/>`;
+            ${labTube('M180 488 Q205 488 205 470 L205 236 Q205 226 215 226 L340 226 Q352 226 352 236', 4, { fill: '#bbf7d0' })}${labFlowPath('flowAir', 'M180 488 Q205 488 205 470 L205 236 Q205 226 215 226 L340 226 Q352 226 352 236', 1.6)}`;
       // bath (single-wall student organ bath)
       s += `<g>
         <path d="M${BX} ${BTOP} L${BX} ${BBOT - 10} Q${BX} ${BBOT + 4} ${BX + 16} ${BBOT + 6} L${BX + 34} ${BBOT + 12} L${BX + 46} ${BBOT + 12} L${BX + BW - 16} ${BBOT + 6} Q${BX + BW} ${BBOT + 4} ${BX + BW} ${BBOT - 10} L${BX + BW} ${BTOP}" fill="#0b1220" opacity=".18"/>
@@ -1365,40 +1409,24 @@
         <rect class="hot" data-act="bath" x="${BX}" y="${BTOP - 10}" width="${BW}" height="${BBOT - BTOP + 10}" fill="#fff" opacity="0"/>
       </g>`;
       s += tapG(292, 430, 'inlet', 'inlet', S.bath.inlet) + tapG(BX + 40, 458, 'drain', 'drain', S.bath.drain);
-      s += `<path d="M${BX + 40} 469 L${BX + 40} 488" stroke="#94a3b8" stroke-width="5"/>
+      s += `<path d="M${BX + 40} 469 L${BX + 40} 488" stroke="#94a3b8" stroke-width="5"/>${labFlowPath('flowOut', `M${BX + 40} 469 L${BX + 40} 526`, 2.6)}
         <g><path d="M346 486 L346 526 Q346 529 350 529 L394 529 Q398 529 398 526 L398 486" fill="url(#glass)" stroke="url(#glassEdge)" stroke-width="2"/><rect id="wasteLiq" x="348" y="528" width="48" height="0" fill="#dbeafe" opacity=".7"/>${lbl(372, 548, 'waste', { s: 8, c: '#94a3b8' })}</g>`;
       // tissue holder / aerator tube (L-shaped glass)
       s += `<g class="hot" data-act="holder"><g id="holderG"></g></g>`;
       // lever stand
-      s += `<rect x="430" y="522" width="52" height="8" rx="2" fill="url(#castIron)"/><rect x="451" y="200" width="8" height="324" fill="url(#steel)"/>
-            <rect x="445" y="232" width="20" height="26" rx="3" fill="url(#castIron)"/>
+      s += `${labStandBase(430, 522, 52, 8)}<rect x="451" y="200" width="8" height="324" fill="url(#steel)"/>
+            ${labBoss(445, 232, 20, 26)}
             <g class="hot" data-act="lvl:-1"><path d="M470 228 l8 -9 l8 9 z" fill="#f59e0b"/></g><g class="hot" data-act="lvl:1"><path d="M470 262 l8 9 l8 -9 z" fill="#f59e0b"/></g>
             ${lbl(478, 284, 'level', { s: 7.5, c: '#e2e8f0' })}
             <g class="hot" data-act="lever"><g id="leverG"></g></g>`;
       // kymograph
-      s += `<g>
-        <rect x="690" y="466" width="250" height="62" rx="6" fill="url(#castIron)" filter="url(#sh)"/>
-        <rect x="700" y="474" width="230" height="4" fill="#fff" opacity=".1"/>
-        <rect x="770" y="488" width="92" height="22" rx="3" fill="url(#brass)"/>${lbl(816, 497, 'C.F. PALMER-type', { s: 5.6, c: '#3b2a0b', w: 800 })}${lbl(816, 505, 'SHERRINGTON KYMOGRAPH', { s: 5, c: '#3b2a0b', w: 700 })}
-        <g class="hot" data-act="speed"><rect x="700" y="484" width="60" height="34" rx="4" fill="#111827"/><line id="gearLever" x1="730" y1="510" x2="718" y2="492" stroke="#e5e7eb" stroke-width="3.5" stroke-linecap="round"/><circle cx="730" cy="510" r="4" fill="#9ca3af"/><text id="gearTxt" x="730" y="530" font-size="7" fill="#fde68a" text-anchor="middle" font-family="JetBrains Mono"></text></g>
-        <g class="hot" data-act="switch"><rect x="872" y="484" width="58" height="34" rx="4" fill="#111827"/><rect id="swKnob" x="880" y="492" width="18" height="18" rx="3" fill="#b91c1c"/><text id="swTxt" x="914" y="505" font-size="8" fill="#fca5a5" text-anchor="middle" font-weight="800">OFF</text></g>
-        <rect x="808" y="40" width="14" height="430" fill="url(#steel)"/>
-        <g class="hot" data-act="paper">
-          <rect x="712" y="60" width="206" height="408" rx="4" fill="url(#steel)"/>
-          <rect id="paperBg" x="712" y="62" width="206" height="404" fill="#111" opacity="0"/>
-          <rect id="paperSmoke" x="712" y="62" width="206" height="404" filter="url(#smokeF)" opacity="0"/>
-          <g clip-path="url(#drumClip)"><polyline id="drumTrace" fill="none" stroke="#f1f5f9" stroke-width="1.3" stroke-linejoin="round"/><g id="drumMarks"></g></g>
-          <rect x="712" y="60" width="206" height="408" rx="4" fill="url(#drumShade)"/><rect x="712" y="60" width="206" height="408" rx="4" fill="none" stroke="#cbd5e1" stroke-width="1.5" opacity=".8"/>
-        </g>
-        <ellipse cx="815" cy="60" rx="103" ry="9" fill="url(#steelH)" stroke="#4b5563"/><ellipse cx="815" cy="468" rx="103" ry="9" fill="none" stroke="#1f2937" stroke-width="2"/>
-        <rect x="805" y="24" width="20" height="30" rx="3" fill="url(#steel)"/>
-      </g>${lbl(815, 546, 'Kymograph', { s: 9, c: '#94a3b8' })}`;
+      s += labKymograph() + lbl(815, 546, 'Kymograph', { s: 9, c: '#cbd5e1' });
       // rack with ACh tubes and stock vial
-      s += `<g filter="url(#sh)"><rect x="560" y="402" width="124" height="9" fill="#e5e7eb" stroke="#9ca3af"/><rect x="560" y="440" width="124" height="9" fill="#e5e7eb" stroke="#9ca3af"/><rect x="562" y="411" width="4" height="29" fill="#9ca3af"/><rect x="678" y="411" width="4" height="29" fill="#9ca3af"/></g>`;
+      s += `<g filter="url(#sh)"><rect x="560" y="402" width="124" height="9" fill="#e5e7eb" stroke="#9ca3af"/><rect x="560" y="440" width="124" height="9" fill="#e5e7eb" stroke="#9ca3af"/><rect x="562" y="411" width="4" height="29" fill="#9ca3af"/><rect x="562" y="449" width="4" height="81" fill="url(#steel)"/><rect x="678" y="411" width="4" height="29" fill="#9ca3af"/><rect x="678" y="449" width="4" height="81" fill="url(#steel)"/></g>`;
       s += smallTube('T1', 582, 330) + smallTube('T2', 612, 330);
       s += `<g class="hot" data-act="stock3" filter="url(#sh2)"><rect x="640" y="370" width="28" height="9" rx="2" fill="#9ca3af"/><rect x="637" y="377" width="34" height="62" rx="5" fill="url(#amber)"/><rect x="640" y="390" width="28" height="30" fill="#fff"/>${lbl(654, 401, 'ACh', { s: 7, w: 800 })}${lbl(654, 410, '1 mg/mL', { s: 6, c: '#b91c1c' })}</g>`;
       // syringe on bench
-      s += `<g class="hot" data-act="syr" id="syrBench" filter="url(#sh2)">
+      s += `<rect x="494" y="484" width="4" height="46" fill="url(#steel)"/><rect x="568" y="484" width="4" height="46" fill="url(#steel)"/><g class="hot" data-act="syr" id="syrBench" filter="url(#sh2)">
         <rect x="484" y="472" width="100" height="12" rx="2" fill="url(#glass)" stroke="#f1f5f9" stroke-width="1.4"/>
         ${Array.from({ length: 11 }, (_, i) => `<line x1="${494 + i * 8}" x2="${494 + i * 8}" y1="472" y2="${i % 5 ? 477 : 480}" stroke="#334155" stroke-width=".6"/>`).join('')}
         <rect id="syrLiqB" x="494" y="474" width="0" height="8" fill="#c4b5fd" opacity=".7"/>
@@ -1596,9 +1624,9 @@
       const phi = Math.asin(dy / LONG);
       const penX = PIV[0] + LONG * Math.cos(phi) - (m.contact === 0 ? 10 : 0), penY = PIV[1] + LONG * Math.sin(phi);
       const shX = PIV[0] - SHORT * Math.cos(phi), shY = PIV[1] - SHORT * Math.sin(phi);
-      let lv = `<line x1="${shX}" y1="${shY}" x2="${penX}" y2="${penY}" stroke="#d1d5db" stroke-width="3.2" stroke-linecap="round"/><line x1="${shX}" y1="${shY - 1}" x2="${penX}" y2="${penY - 1}" stroke="#fff" stroke-width="1" opacity=".6"/>`;
-      lv += `<circle cx="${PIV[0]}" cy="${PIV[1]}" r="6" fill="url(#steelH)" stroke="#374151"/><circle cx="${PIV[0]}" cy="${PIV[1]}" r="2" fill="#111827"/>`;
-      lv += `<path d="M${penX - 1} ${penY - 2} l${m.contact ? 9 : 7} 2 l${m.contact ? -9 : -7} 2 z" fill="#fbbf24"/>`;   // writing point (parchment/celluloid)
+      let lv = `<line x1="${shX}" y1="${shY}" x2="${penX}" y2="${penY}" stroke="#cbd5e1" stroke-width="3" stroke-linecap="round"/><line x1="${shX}" y1="${shY - 1}" x2="${penX}" y2="${penY - 1}" stroke="#fff" stroke-width="1" opacity=".6"/>`;
+      lv += `<circle cx="${PIV[0]}" cy="${PIV[1]}" r="7" fill="url(#brass)" stroke="#78350f"/><circle cx="${PIV[0]}" cy="${PIV[1]}" r="2" fill="#111827"/>`;
+      lv += `<circle cx="${penX}" cy="${penY}" r="4.5" fill="#fbbf24" opacity=".28"/><path d="M${penX - 1} ${penY - 2} l${m.contact ? 9 : 7} 2 l${m.contact ? -9 : -7} 2 z" fill="#fbbf24"/>`;   // writing point (parchment/celluloid)
       // load
       if (m.load) { const lx = PIV[0] + 30 * Math.cos(phi), ly = PIV[1] + 30 * Math.sin(phi); lv += `<rect x="${lx - 6}" y="${ly + 2}" width="12" height="${m.load === 2 ? 14 : m.load === 1 ? 10 : 7}" rx="2" fill="url(#brass)"/><text x="${lx}" y="${ly + 26}" font-size="7" text-anchor="middle" fill="#fde68a">${m.load} g</text>`; }
       $('leverG').innerHTML = lv + `<rect x="${PIV[0] - SHORT - 8}" y="${PIV[1] - 16}" width="${SHORT + LONG}" height="32" fill="#fff" opacity="0"/>`;
@@ -1626,12 +1654,16 @@
         bub.innerHTML = bs;
       }
       // kymograph
-      $('paperBg').setAttribute('fill', k.paper ? '#121212' : '#f5f5f4'); $('paperBg').setAttribute('opacity', k.paper || k.glazed ? 1 : 0);
+      $('paperBg').setAttribute('fill', k.paper ? 'url(#smokedDrum)' : '#f5f5f4'); $('paperBg').setAttribute('opacity', k.paper || k.glazed ? 1 : 0);
       $('paperSmoke').setAttribute('opacity', k.paper ? 1 : 0);
       const sp = SPEEDS_K.findIndex(s => s.k === k.speed);
       $('gearLever').setAttribute('x2', sp < 0 ? 730 : 730 + [-12, 0, 12][sp]); $('gearLever').setAttribute('y2', sp < 0 ? 494 : 492);
       $('gearTxt').textContent = k.speed ? ['SLOW', 'MED', 'FAST'][sp] : 'NEUTRAL';
       $('swKnob').setAttribute('x', k.run ? 904 : 880); $('swKnob').setAttribute('fill', k.run ? '#16a34a' : '#b91c1c');
+      labDrumTick(!!(k.run && k.speed), !!(k.run && !k.speed), k.x * DMM * 2.2);
+      labFlowTick('flowIn', b.inlet && r.vol > 0, dtR);
+      labFlowTick('flowOut', b.drain && b.L > 0, dtR, 80);
+      labFlowTick('flowAir', S.air > 0, dtR, 24 + S.air * 14);
       $('swTxt').textContent = k.run ? 'ON' : 'OFF'; $('swTxt').setAttribute('x', k.run ? 888 : 914); $('swTxt').setAttribute('fill', k.run ? '#86efac' : '#fca5a5');
       // drum trace: pen at x 712, older paper moves to the right on the visible face
       const baseY = PIV[1] + base;
@@ -1734,6 +1766,7 @@
         h = `<b>In hand:</b> ${F.tool ? { forceps: 'forceps', scissors: 'fine scissors', pins: 'dissecting pins', thread: 'cotton thread' }[F.tool] : 'nothing (pick an instrument)'}
           <p style="color:#64748b;margin-top:6px">${F.tool === 'scissors' && F.lifted && !F.cut ? 'Press and <b>drag</b> along the midline from the pubis up to the sternum.' : 'Click the frog where the instrument should act.'}</p>
           <p style="margin-top:6px">Frogs used: <b>${F.n}</b>${F.ruined.L && F.ruined.R ? '' : ''}</p>
+          <div class="row"><button class="xb-btn sec" onclick="openFrogAnatomy()">Frog anatomy reference</button></div>
           ${F.ruined.L && F.ruined.R ? `<div class="row"><button class="xb-btn warn" onclick="newFrog()">Take a new frog</button></div>` : ''}`;
       } else {
         t = 'Organ bath & kymograph';

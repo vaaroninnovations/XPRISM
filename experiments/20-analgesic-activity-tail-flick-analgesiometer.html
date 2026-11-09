@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="../assets/css/tailwind.css">
   <link rel="stylesheet" href="../assets/css/theme.css">
   <script src="../assets/js/tone.min.js"></script>
+  <script src="../assets/js/lab-bench.js"></script>
   <style>
     * { box-sizing: border-box; }
     :root { color-scheme: light; }
@@ -1129,7 +1130,7 @@
     // =====================================================================
     // Shared SVG: defs, room, cages, animals (top view), balances, bottles
     // =====================================================================
-    const DEFS = `<defs>
+    const DEFS = `<defs>${LAB_ROOM_DEFS}
       <filter id="sh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="3" dy="5" stdDeviation="4" flood-color="#000" flood-opacity=".42"/></filter>
       <filter id="sh2" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="1" dy="2" stdDeviation="1.5" flood-color="#000" flood-opacity=".5"/></filter>
       <filter id="glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
@@ -1138,10 +1139,10 @@
       <filter id="furT" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9 .25" numOctaves="2" seed="5"/><feColorMatrix values="0 0 0 0 .55  0 0 0 0 .5  0 0 0 0 .48  0 0 0 .35 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
       <filter id="shavF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".18 .5" numOctaves="3" seed="11"/><feColorMatrix values="0 0 0 0 .45  0 0 0 0 .3  0 0 0 0 .12  0 0 0 .55 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
       <filter id="brushed" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".01 .9" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .16 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
-      <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#26313d"/><stop offset="1" stop-color="#1c252f"/></linearGradient>
-      <radialGradient id="spot" cx=".5" cy=".3" r=".75"><stop offset="0" stop-color="#6b7c8e" stop-opacity=".45"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+      
+      
       <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2d3946"/><stop offset="1" stop-color="#27323e"/></linearGradient>
-      <linearGradient id="bench" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a4048"/><stop offset=".06" stop-color="#23272d"/><stop offset="1" stop-color="#16191d"/></linearGradient>
+      
       <linearGradient id="steel" x1="0" x2="1"><stop offset="0" stop-color="#6b7280"/><stop offset=".35" stop-color="#f3f4f6"/><stop offset=".55" stop-color="#d1d5db"/><stop offset="1" stop-color="#4b5563"/></linearGradient>
       <linearGradient id="steelH" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9ca3af"/><stop offset=".4" stop-color="#f9fafb"/><stop offset="1" stop-color="#6b7280"/></linearGradient>
       <linearGradient id="cabF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2e8f0"/><stop offset=".5" stop-color="#cbd5e1"/><stop offset="1" stop-color="#94a3b8"/></linearGradient>
@@ -1164,15 +1165,7 @@
       <radialGradient id="btnRed" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#f87171"/><stop offset="1" stop-color="#991b1b"/></radialGradient>
       ${APP_DEFS}
     ${ANI_DEFS}</defs>`;
-    function room(benchY = 430) {
-      let t = '';
-      for (let y = 0; y < benchY; y += 38) for (let x = (y / 38) % 2 ? -26 : 0; x < 1000; x += 52) t += `<rect x="${x}" y="${y}" width="51" height="37" fill="url(#tile)" stroke="#1a222b" stroke-width="1"/>`;
-      return `<rect width="1000" height="560" fill="url(#wall)"/>${t}<rect width="1000" height="${benchY}" fill="url(#spot)"/>
-        <rect y="${benchY - 6}" width="1000" height="8" fill="#5b636d"/>
-        <rect y="${benchY}" width="1000" height="${560 - benchY}" fill="url(#bench)"/>
-        <rect y="${benchY}" width="1000" height="${560 - benchY}" filter="url(#grain)" opacity=".7"/>
-        <rect y="${benchY + 2}" width="1000" height="2" fill="#fff" opacity=".08"/>`;
-    }
+    function room(benchY = 430) { return labRoom(benchY); }
     const lbl = (x, y, t, o = {}) => `<text x="${x}" y="${y}" font-size="${o.s || 10}" fill="${o.c || '#1e293b'}" text-anchor="${o.a || 'middle'}" font-weight="${o.w || 600}" font-family="${o.f || 'Inter, sans-serif'}">${t}</text>`;
     const tag = (x, y, t, c = '#0f172a') => `<g><rect x="${x - t.length * 3.1 - 6}" y="${y - 11}" width="${t.length * 6.2 + 12}" height="16" rx="4" fill="${c}" opacity=".85"/>${lbl(x, y + 1, t, { c: '#fff', s: 10 })}</g>`;
     const benchLbl = (x, y, t) => lbl(x, y, t, { c: '#e2e8f0', s: 10.5, w: 700 });
@@ -1191,7 +1184,7 @@
       const marks = a.marked ? (CFG.markTool === 'picric' ? MARKCODE[a.id].map(p => `<ellipse cx="${MARKPOS[p][0]}" cy="${MARKPOS[p][1]}" rx="3.6" ry="2.8" fill="#f59e0b" opacity=".85"/>`).join('')
         : `<text x="-30" y="3" font-size="6" font-weight="900" fill="#111827" font-family="Inter" transform="rotate(0)">${a.id}</text><path d="M -27 -3.5 v7 M -21 -3.5 v7" stroke="#111827" stroke-width=".6" opacity=".5"/>`) : '';
       const sleepy = a.dose && excessAt(a, (S.clock - a.dose.t) / 60) > 1.0;  // heavily opioid-treated animals sit still (Straub tail not shown)
-      return `<g class="hot" data-act="${act}" transform="translate(${x} ${y}) rotate(${rot}) scale(${sc})">${animalTopArt({ kind: CFG.sp === 'rat' ? 'rat' : 'mouse' })}${marks}</g>`;
+      return `<g class="hot" data-act="${act}" transform="translate(${x} ${y}) rotate(${rot}) scale(${sc})">${animalTopArt({ kind: CFG.sp === 'rat' ? 'rat' : 'mouse', life: sleepy ? 'breath' : '' })}${marks}</g>`;
     }
     const tagS = (x, y, t, c) => `<g><rect x="${x - t.length * 2.6 - 4}" y="${y - 8}" width="${t.length * 5.2 + 8}" height="12" rx="3" fill="${c}" opacity=".88"/>${lbl(x, y + 1.5, t, { c: '#fff', s: 8.5, w: 700 })}</g>`;
     const animalTag = (a, x, y) => a.id ? tagS(x, y, aName(a), a.group === 'T' ? '#6d28d9' : a.group === 'C' ? '#334155' : '#0f172a') : '';

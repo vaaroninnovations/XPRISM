@@ -285,6 +285,9 @@
               <text x="43" y="94" text-anchor="middle" font-family="Inter" font-size="5.5" font-weight="700" fill="#422006">DO NOT RECAP</text>
             </g>
 
+            <!-- Holding cage: the mice waiting for the selected route -->
+            <g id="holdCage"></g>
+
             <!-- Heat lamp (only for i.v.) -->
             <g id="heatLamp" style="display:none">
               <ellipse cx="168" cy="452" rx="26" ry="6" fill="#111827"/>
@@ -359,7 +362,7 @@
           <div id="actionFeedback" class="absolute bottom-2 left-4 right-4 bg-slate-900/90 text-white py-2 px-4 rounded-lg text-xs flex items-center justify-between backdrop-blur-md shadow-lg border border-slate-700 pointer-events-none z-30">
             <div class="flex items-center space-x-2">
               <span id="feedbackIcon" class="text-teal-400 font-bold text-sm">ℹ</span>
-              <span id="feedbackText">Choose a route and pick a mouse from the tray. It will be weighed and restrained for you.</span>
+              <span id="feedbackText">Choose a route and click a mouse in the holding cage. It will be weighed and restrained for you.</span>
             </div>
             <span id="phaseIndicator" class="text-[11px] font-mono text-slate-400 hidden sm:inline"></span>
           </div>
@@ -704,6 +707,7 @@
     // --- SCENE LAYOUT ---
     const CAGE_POS = { iv: [690, 150], ip: [888, 150], im: [1086, 150], sc: [690, 310], oral: [888, 310], X: [1086, 310] };
     const CAGE_W = 180, CAGE_H = 90;
+    const HOLD_POS = [300, 160], HOLD_W = 240, HOLD_H = 90;
     const VIALS = [
       { conc: 8, x: 664, use: "i.v." },
       { conc: 4, x: 712, use: "i.p./s.c./p.o." },
@@ -784,6 +788,22 @@
         for (let k = 0; k < 40; k++) el('ellipse', { cx: 12 + Math.random() * (CAGE_W - 24), cy: CAGE_H - 16 + Math.random() * 14, rx: 0.8 + Math.random() * 1.3, ry: 0.5 + Math.random() * 0.7, fill: Math.random() < 0.5 ? "#b48a4a" : "#f3e2bd", opacity: 0.85 }, sp);
       });
 
+      const W = HOLD_W, H = HOLD_H, hold = document.getElementById('holdCage');
+      hold.setAttribute('transform', `translate(${HOLD_POS[0]} ${HOLD_POS[1]})`);
+      hold.innerHTML = `
+        <rect x="-14" y="${H}" width="${W + 28}" height="9" fill="url(#steel)" stroke="#6b7280" stroke-width="0.8"/>
+        <rect x="-14" y="${H + 9}" width="${W + 28}" height="3" fill="#000" opacity="0.1"/>
+        <path d="M 6 ${H + 9} L 6 ${H + 34} L 30 ${H + 9} Z M ${W - 6} ${H + 9} L ${W - 6} ${H + 34} L ${W - 30} ${H + 9} Z" fill="#9ca3af"/>
+        <polygon points="0,12 ${W},12 ${W - 7},${H} 7,${H}" fill="url(#cageTub)" stroke="#94a3b8" stroke-width="1"/>
+        <polygon points="10,${H - 18} ${W - 10},${H - 18} ${W - 7},${H} 7,${H}" fill="url(#bedding)"/>
+        <g id="holdSlots"></g>
+        <rect x="-5" y="2" width="${W + 10}" height="11" rx="2.5" fill="url(#steel)" stroke="#6b7280" stroke-width="0.8"/>
+        <g stroke="#9ca3af" stroke-width="1.3">${Array.from({ length: Math.ceil(W / 7) }, (_, k) => `<line x1="${4 + k * 7}" y1="3" x2="${4 + k * 7}" y2="12"/>`).join('')}</g>
+        <rect x="${W - 76}" y="18" width="68" height="18" rx="2" fill="#fff" stroke="#0f766e" stroke-width="1.2"/>
+        <rect x="${W - 76}" y="18" width="5" height="18" fill="#0f766e"/>
+        <text x="${W - 39}" y="26" text-anchor="middle" font-family="Inter" font-size="5.2" font-weight="800" fill="#0a1f44">HOLDING CAGE</text>
+        <text id="holdCount" x="${W - 39}" y="33" text-anchor="middle" font-family="JetBrains Mono" font-size="4.6" fill="#475569"></text>`;
+
       const layer = document.getElementById('syrLayer');
       syrs.forEach((s, i) => {
         const g = el('g', { id: `syr${i}`, class: "svg-btn" }, layer);
@@ -821,7 +841,7 @@
       document.getElementById('calcHint').classList.add('hidden');
       renderAll();
       previewPose();
-      showFeedback(`${ROUTES[k].name} selected. Pick a mouse from the tray; it will be weighed and restrained.`);
+      showFeedback(`${ROUTES[k].name} selected. Click a mouse in the holding cage; it will be weighed and restrained.`);
     }
 
     function renderTray() {
@@ -839,6 +859,19 @@
       b.disabled = x.dosed;
       b.innerText = x.dosed ? "🔒 Coded Mouse X: dosed by examiner" : "🔒 Coded Mouse X (route hidden, exam)";
       b.classList.toggle('opacity-60', x.dosed);
+      renderHoldingCage();
+    }
+
+    // The waiting mice, drawn in the holding cage. A picked or dosed mouse is no longer here.
+    function renderHoldingCage() {
+      const slots = document.getElementById('holdSlots');
+      if (!slots) return;
+      const x = animals.find(a => a.coded);
+      const mice = animals.filter(a => !a.coded && a.route === S.route && !a.dosed && !(S.sel && !S.sel.coded && S.sel.route === a.route && S.sel.idx === a.idx))
+        .map(a => [`selectAnimal(${a.idx})`, `#${a.label}`]);
+      if (!x.dosed && !(S.sel && S.sel.coded)) mice.push(['selectCoded()', '#X']);
+      slots.innerHTML = mice.map(([act, label], k) => `<g class="svg-btn" onclick="${act}" transform="translate(${36 + k * 56} ${HOLD_H - 24})"><rect x="-26" y="-20" width="52" height="38" fill="#fff" opacity="0"/>${cageMouse(label)}</g>`).join('');
+      document.getElementById('holdCount').textContent = mice.length ? `${ROUTES[S.route].short} • click a mouse` : 'none waiting';
     }
 
     function currentAnimal() {
@@ -1038,7 +1071,7 @@
       const onFlange = evt.target.closest('.flange');
       if (onFlange && (s.mode === "vial" || s.mode === "site")) { drag = { s, kind: "plunger" }; return; }
       if (s.mode === "site") { showFeedback("Push the thumb-rest to complete the injection before withdrawing.", true); return; }
-      if (!S.restrained) { showFeedback("Pick a mouse from the tray first. It will be weighed and restrained on the pad.", true); return; }
+      if (!S.restrained) { showFeedback("Click a mouse in the holding cage first. It will be weighed and restrained on the pad.", true); return; }
       // keep the grab point: distance from the needle tip back along the barrel to the pointer
       const p0 = svgPoint(evt), r0 = s.a * Math.PI / 180;
       const d0 = Math.max(SYR_TYPES[s.type].L + 8, (s.x - p0.x) * Math.cos(r0) + (s.y - p0.y) * Math.sin(r0));
@@ -1151,7 +1184,7 @@
 
     function clickVial(i) {
       if (drag || S.busy) return;
-      if (!S.restrained) { showFeedback("Pick a mouse from the tray first. It will be weighed and restrained on the pad.", true); return; }
+      if (!S.restrained) { showFeedback("Click a mouse in the holding cage first. It will be weighed and restrained on the pad.", true); return; }
       const s = syrs.find(x => x.mode === "free") || (S.lastSyr && ["tray", "vial"].includes(S.lastSyr.mode) ? S.lastSyr : null);
       if (!s) { showFeedback("Click a syringe in the tray first, then click the vial (or drag the syringe onto the vial).", true); return; }
       if (s.mode === "vial" && s.vial === i) return;
@@ -1327,6 +1360,7 @@
         const asleep = st === "asleep";
         node.querySelector('.cmEye').style.display = asleep ? "none" : "";
         node.querySelector('.cmEyeShut').style.display = asleep ? "" : "none";
+        node.querySelector('.lvBreath').dataset.life = asleep ? 'breath' : '';
         node.querySelector('.cmLegs').style.display = asleep ? "none" : "";
         node.querySelector('.cmLegsOut').style.display = asleep ? "" : "none";
       });
@@ -1415,7 +1449,7 @@
       syrs.forEach(x => { resetSyringe(x); drawSyringe(x, true); });
       renderAll();
       previewPose();
-      showFeedback("New experiment. Choose a route and pick a mouse from the tray.");
+      showFeedback("New experiment. Choose a route and click a mouse in the holding cage.");
     }
 
     function loadReferenceDataset() {

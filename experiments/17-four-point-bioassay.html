@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="../assets/css/tailwind.css">
   <link rel="stylesheet" href="../assets/css/theme.css">
   <script src="../assets/js/tone.min.js"></script>
+  <script src="../assets/js/lab-bench.js"></script>
   <style>
     * { box-sizing: border-box; }
     :root { color-scheme: light; }
@@ -884,7 +885,7 @@
     }
 
     // ---------------------------------------------------------------- shared SVG defs
-    const DEFS = `<defs>
+    const DEFS = `<defs>${LAB_DEFS}
       <filter id="sh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="3" dy="5" stdDeviation="4" flood-color="#000" flood-opacity=".38"/></filter>
       <filter id="sh2" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="1" dy="2" stdDeviation="1.5" flood-color="#000" flood-opacity=".45"/></filter>
       <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
@@ -899,19 +900,19 @@
       <filter id="gutF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".09" numOctaves="2" seed="13"/><feColorMatrix values="0 0 0 0 .6  0 0 0 0 .25  0 0 0 0 .25  0 0 0 .3 0"/></filter>
       <filter id="musF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".02 .5" numOctaves="2" seed="2"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .08  0 0 0 0 .1  0 0 0 .35 0"/></filter>
       <filter id="smokeF" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" seed="9"/><feColorMatrix values="0 0 0 0 .6  0 0 0 0 .6  0 0 0 0 .6  0 0 0 .09 0"/></filter>
-      <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#26313d"/><stop offset="1" stop-color="#1c252f"/></linearGradient><radialGradient id="spot" cx=".5" cy=".35" r=".7"><stop offset="0" stop-color="#5b6b7c" stop-opacity=".45"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+      
       <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2d3946"/><stop offset="1" stop-color="#27323e"/></linearGradient>
-      <linearGradient id="bench" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a4048"/><stop offset=".06" stop-color="#23272d"/><stop offset="1" stop-color="#16191d"/></linearGradient>
-      <linearGradient id="steel" x1="0" x2="1"><stop offset="0" stop-color="#6b7280"/><stop offset=".35" stop-color="#f3f4f6"/><stop offset=".55" stop-color="#d1d5db"/><stop offset="1" stop-color="#4b5563"/></linearGradient>
-      <linearGradient id="steelH" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9ca3af"/><stop offset=".4" stop-color="#f9fafb"/><stop offset="1" stop-color="#6b7280"/></linearGradient>
-      <linearGradient id="castIron" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4b5563"/><stop offset="1" stop-color="#1f2937"/></linearGradient>
+      
+      
+      
+      
       <linearGradient id="enamel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3f6e5a"/><stop offset=".5" stop-color="#2f5a48"/><stop offset="1" stop-color="#1d3b2f"/></linearGradient>
       <linearGradient id="enamelB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e5e7eb"/><stop offset=".5" stop-color="#cbd5e1"/><stop offset="1" stop-color="#94a3b8"/></linearGradient>
-      <linearGradient id="brass" x1="0" x2="1"><stop offset="0" stop-color="#7c5a1c"/><stop offset=".4" stop-color="#f5d78e"/><stop offset=".6" stop-color="#d4a73c"/><stop offset="1" stop-color="#6b4d17"/></linearGradient>
-      <linearGradient id="glass" x1="0" x2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".7"/><stop offset=".12" stop-color="#ffffff" stop-opacity=".22"/><stop offset=".5" stop-color="#e0f2fe" stop-opacity=".14"/><stop offset=".85" stop-color="#ffffff" stop-opacity=".3"/><stop offset="1" stop-color="#bae6fd" stop-opacity=".65"/></linearGradient>
-      <linearGradient id="glassEdge" x1="0" x2="1"><stop offset="0" stop-color="#f8fafc"/><stop offset=".5" stop-color="#e2e8f0" stop-opacity=".75"/><stop offset="1" stop-color="#f8fafc"/></linearGradient>
-      <linearGradient id="liquid" x1="0" x2="1"><stop offset="0" stop-color="#60a5fa" stop-opacity=".8"/><stop offset=".5" stop-color="#bfdbfe" stop-opacity=".7"/><stop offset="1" stop-color="#3b82f6" stop-opacity=".85"/></linearGradient>
-      <linearGradient id="jacketW" x1="0" x2="1"><stop offset="0" stop-color="#38bdf8" stop-opacity=".35"/><stop offset=".5" stop-color="#bae6fd" stop-opacity=".22"/><stop offset="1" stop-color="#0ea5e9" stop-opacity=".4"/></linearGradient>
+      
+      
+      
+      
+      
       <linearGradient id="amber" x1="0" x2="1"><stop offset="0" stop-color="#3b1d06"/><stop offset=".3" stop-color="#9a5a17"/><stop offset=".5" stop-color="#b8752a"/><stop offset="1" stop-color="#3b1d06"/></linearGradient>
       <linearGradient id="hdpe" x1="0" x2="1"><stop offset="0" stop-color="#cbd5e1"/><stop offset=".4" stop-color="#f8fafc"/><stop offset="1" stop-color="#94a3b8"/></linearGradient>
       <linearGradient id="drumShade" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".75"/><stop offset=".18" stop-color="#000" stop-opacity=".15"/><stop offset=".42" stop-color="#fff" stop-opacity=".07"/><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".8"/></linearGradient>
@@ -930,15 +931,7 @@
       <clipPath id="drumClip"><rect x="712" y="64" width="206" height="402" rx="4"/></clipPath>
     </defs>`;
 
-    function room(benchY = 470) {
-      let tiles = '';
-      for (let y = 0; y < benchY; y += 38) for (let x = (y / 38) % 2 ? -26 : 0; x < 1000; x += 52) tiles += `<rect x="${x}" y="${y}" width="51" height="37" fill="url(#tile)" stroke="#1a222b" stroke-width="1"/>`;
-      return `<rect width="1000" height="560" fill="url(#wall)"/>${tiles}<rect width="1000" height="${benchY}" fill="url(#spot)"/>
-        <rect y="${benchY - 6}" width="1000" height="8" fill="#5b636d"/>
-        <rect y="${benchY}" width="1000" height="${560 - benchY}" fill="url(#bench)"/>
-        <rect y="${benchY}" width="1000" height="${560 - benchY}" filter="url(#grain)" opacity=".7"/>
-        <rect y="${benchY + 2}" width="1000" height="2" fill="#fff" opacity=".08"/>`;
-    }
+    function room(benchY = 470) { return labRoom(benchY); }
     const lbl = (x, y, t, o = {}) => `<text x="${x}" y="${y}" font-size="${o.s || 10}" fill="${o.c || '#1e293b'}" text-anchor="${o.a || 'middle'}" font-weight="${o.w || 600}" font-family="${o.f || 'Inter, sans-serif'}">${t}</text>`;
     const tag = (x, y, t, c = '#0f172a') => `<g><rect x="${x - t.length * 3.1 - 6}" y="${y - 11}" width="${t.length * 6.2 + 12}" height="16" rx="4" fill="${c}" opacity=".85"/>${lbl(x, y + 1, t, { c: '#fff', s: 10 })}</g>`;
 
@@ -1429,7 +1422,8 @@
     }
     function sceneBath() {
       let s = room(530);
-      s += `<rect x="28" y="214" width="236" height="10" fill="url(#steelH)" filter="url(#sh2)"/><path d="M40 224 L40 252 L70 224 Z" fill="#6b7280"/><path d="M252 224 L252 252 L222 224 Z" fill="#6b7280"/>`;
+      s += labShadows([[110, 528, 76], [254, 530, 46], [372, 529, 32], [456, 530, 32], [646, 526, 40], [530, 526, 36]]);
+      s += `<rect x="28" y="214" width="236" height="10" fill="url(#steelH)" filter="url(#sh2)"/><path d="M40 224 L40 252 L70 224 Z" fill="#475569"/><path d="M252 224 L252 252 L222 224 Z" fill="#475569"/>`;
       // reservoir (Mariotte bottle)
       s += `<g class="hot" data-act="res">
         <clipPath id="resClip"><path d="M58 74 Q58 60 74 58 L154 58 Q170 60 170 74 L170 200 Q170 212 158 212 L70 212 Q58 212 58 200 Z"/></clipPath>
@@ -1443,12 +1437,12 @@
       </g>`;
       // thermostat / heater controller on the shelf
       s += `<g filter="url(#sh)">
-        <rect x="178" y="128" width="82" height="86" rx="6" fill="url(#enamelB)" stroke="#475569"/>
-        ${lbl(219, 142, 'THERMOSTAT', { s: 7.5, w: 800, c: '#0f172a' })}
+        <rect x="178" y="128" width="82" height="86" rx="6" fill="url(#circBody)" stroke="#475569" stroke-width="1.2"/>
+        ${lbl(219, 142, 'THERMOSTAT', { s: 7.5, w: 800, c: '#e2e8f0' })}
         <rect x="186" y="148" width="66" height="24" rx="3" fill="#111827"/>
         <text id="thAct" x="246" y="166" font-size="14" text-anchor="end" fill="#f87171" font-family="DSEG7, JetBrains Mono, monospace">25.0</text>
         <text x="190" y="158" font-size="5.5" fill="#9ca3af">ACT</text>
-        <text id="thSet" x="246" y="184" font-size="8.5" text-anchor="end" fill="#1e293b" font-weight="800" font-family="JetBrains Mono">SET 30.0</text>
+        <text id="thSet" x="246" y="184" font-size="8.5" text-anchor="end" fill="#fbbf24" font-weight="800" font-family="JetBrains Mono">SET 30.0</text>
         <g class="hot" data-act="heat:-1"><rect x="186" y="190" width="18" height="16" rx="3" fill="#334155"/>${lbl(195, 202, '▼', { s: 9, c: '#fff' })}</g>
         <g class="hot" data-act="heat:1"><rect x="208" y="190" width="18" height="16" rx="3" fill="#334155"/>${lbl(217, 202, '▲', { s: 9, c: '#fff' })}</g>
         <g class="hot" data-act="heatPow"><rect x="232" y="190" width="22" height="16" rx="3" fill="#111827"/><circle id="thLed" cx="243" cy="198" r="4.5" fill="#7f1d1d"/></g>
@@ -1456,10 +1450,10 @@
       // heater cable
       s += `<path d="M258 150 Q330 120 380 170 Q410 200 426 214" fill="none" stroke="#111827" stroke-width="3"/>`;
       // tubing reservoir → inlet tap → bath (through the warming coil)
-      s += `<path d="M114 212 L114 230 Q114 238 120 246 L120 400 Q120 430 150 430 L281 430" fill="none" stroke="url(#rubber)" stroke-width="7" stroke-linecap="round"/>`;
+      s += `${labTube('M114 212 L114 230 Q114 238 120 246 L120 400 Q120 430 150 430 L281 430', 7, { fill: '#bae6fd' })}${labFlowPath('flowIn', 'M114 212 L114 230 Q114 238 120 246 L120 400 Q120 430 150 430 L281 430', 3)}`;
       // retort stand for the bath
-      s += `<rect x="214" y="520" width="80" height="10" rx="2" fill="url(#castIron)" filter="url(#sh2)"/><rect x="246" y="250" width="9" height="272" fill="url(#steel)"/>
-            <rect x="240" y="320" width="22" height="18" rx="3" fill="url(#castIron)"/><rect x="262" y="326" width="44" height="6" fill="url(#steelH)"/>`;
+      s += `${labStandBase(214, 520, 80, 10)}<rect x="246" y="250" width="9" height="272" fill="url(#steel)"/>
+            ${labBoss(240, 320)}<rect x="262" y="326" width="44" height="6" fill="url(#steelH)"/>`;
       // air pump
       s += `<g filter="url(#sh)"><rect x="40" y="470" width="140" height="58" rx="8" fill="url(#enamel)" stroke="#14281f"/>
             ${lbl(92, 490, 'AQUA-AIR', { s: 9, c: '#d1fae5', w: 800 })}${lbl(92, 502, 'aerator pump', { s: 7, c: '#a7f3d0', w: 500 })}
@@ -1467,7 +1461,7 @@
             <g class="hot" data-act="air:-1"><circle cx="122" cy="516" r="8" fill="#1f2937"/>${lbl(122, 519.5, '−', { s: 12, c: '#fff' })}</g>
             <g class="hot" data-act="air:1"><circle cx="174" cy="516" r="8" fill="#1f2937"/>${lbl(174, 519.5, '+', { s: 12, c: '#fff' })}</g>
             <text id="airTxt" x="92" y="519" font-size="8" fill="#fef3c7" text-anchor="middle" font-family="JetBrains Mono">OFF</text></g>
-            <path d="M180 488 Q205 488 205 470 L205 226 Q205 218 215 218 L340 218 Q352 218 352 228" fill="none" stroke="#f8fafc" stroke-width="4"/>`;
+            ${labTube('M180 488 Q205 488 205 470 L205 226 Q205 218 215 218 L340 218 Q352 218 352 228', 4, { fill: '#bbf7d0' })}${labFlowPath('flowAir', 'M180 488 Q205 488 205 470 L205 226 Q205 218 215 218 L340 218 Q352 218 352 228', 1.6)}`;
       // water jacket (outer bath) with immersion heater and thermometer
       s += `<g>
         <rect x="${JX0}" y="${JY0}" width="${JX1 - JX0}" height="${JY1 - JY0}" rx="12" fill="url(#jacketW)"/>
@@ -1498,35 +1492,19 @@
         <rect class="hot" data-act="bath" x="${BX}" y="${BTOP - 10}" width="${BW}" height="${BBOT - BTOP + 10}" fill="#fff" opacity="0"/>
       </g>`;
       s += tapG(292, 430, 'inlet', 'inlet', S.bath.inlet) + tapG(BX + 40, 462, 'drain', 'drain', S.bath.drain);
-      s += `<path d="M${BX + 40} 473 L${BX + 40} 490" stroke="#94a3b8" stroke-width="5"/>
+      s += `<path d="M${BX + 40} 473 L${BX + 40} 490" stroke="#94a3b8" stroke-width="5"/>${labFlowPath('flowOut', `M${BX + 40} 473 L${BX + 40} 526`, 2.6)}
         <g><path d="M346 488 L346 526 Q346 529 350 529 L394 529 Q398 529 398 526 L398 488" fill="url(#glass)" stroke="url(#glassEdge)" stroke-width="2"/><rect id="wasteLiq" x="348" y="528" width="48" height="0" fill="#dbeafe" opacity=".7"/></g>${lbl(372, 548, 'waste', { s: 8.5, c: '#cbd5e1' })}`;
       s += `<g class="hot" data-act="holder"><g id="holderG"></g></g>`;
       // lever stand
-      s += `<rect x="430" y="522" width="52" height="8" rx="2" fill="url(#castIron)"/><rect x="451" y="200" width="8" height="324" fill="url(#steel)"/>
-            <rect x="445" y="232" width="20" height="26" rx="3" fill="url(#castIron)"/>
+      s += `${labStandBase(430, 522, 52, 8)}<rect x="451" y="200" width="8" height="324" fill="url(#steel)"/>
+            ${labBoss(445, 232, 20, 26)}
             <g class="hot" data-act="lvl:-1"><path d="M470 228 l8 -9 l8 9 z" fill="#f59e0b"/></g><g class="hot" data-act="lvl:1"><path d="M470 262 l8 9 l8 -9 z" fill="#f59e0b"/></g>
             ${lbl(478, 284, 'level', { s: 8, c: '#f1f5f9' })}
             <g class="hot" data-act="lever"><g id="leverG"></g></g>`;
       // kymograph
-      s += `<g>
-        <rect x="690" y="466" width="250" height="62" rx="6" fill="url(#castIron)" filter="url(#sh)"/>
-        <rect x="700" y="474" width="230" height="4" fill="#fff" opacity=".1"/>
-        <rect x="770" y="488" width="92" height="22" rx="3" fill="url(#brass)"/>${lbl(816, 497, 'C.F. PALMER-type', { s: 5.6, c: '#3b2a0b', w: 800 })}${lbl(816, 505, 'SHERRINGTON KYMOGRAPH', { s: 5, c: '#3b2a0b', w: 700 })}
-        <g class="hot" data-act="speed"><rect x="700" y="484" width="60" height="34" rx="4" fill="#111827"/><line id="gearLever" x1="730" y1="510" x2="718" y2="492" stroke="#e5e7eb" stroke-width="3.5" stroke-linecap="round"/><circle cx="730" cy="510" r="4" fill="#9ca3af"/><text id="gearTxt" x="730" y="530" font-size="7.5" fill="#fde68a" text-anchor="middle" font-family="JetBrains Mono" font-weight="700"></text></g>
-        <g class="hot" data-act="switch"><rect x="872" y="484" width="58" height="34" rx="4" fill="#111827"/><rect id="swKnob" x="880" y="492" width="18" height="18" rx="3" fill="#b91c1c"/><text id="swTxt" x="914" y="505" font-size="8" fill="#fca5a5" text-anchor="middle" font-weight="800">OFF</text></g>
-        <rect x="808" y="40" width="14" height="430" fill="url(#steel)"/>
-        <g class="hot" data-act="paper">
-          <rect x="712" y="60" width="206" height="408" rx="4" fill="url(#steel)"/>
-          <rect id="paperBg" x="712" y="62" width="206" height="404" fill="#111" opacity="0"/>
-          <rect id="paperSmoke" x="712" y="62" width="206" height="404" filter="url(#smokeF)" opacity="0"/>
-          <g clip-path="url(#drumClip)"><polyline id="drumTrace" fill="none" stroke="#f1f5f9" stroke-width="1.3" stroke-linejoin="round"/><g id="drumMarks"></g></g>
-          <rect x="712" y="60" width="206" height="408" rx="4" fill="url(#drumShade)"/><rect x="712" y="60" width="206" height="408" rx="4" fill="none" stroke="#cbd5e1" stroke-width="1.5" opacity=".8"/>
-        </g>
-        <ellipse cx="815" cy="60" rx="103" ry="9" fill="url(#steelH)" stroke="#4b5563"/><ellipse cx="815" cy="468" rx="103" ry="9" fill="none" stroke="#1f2937" stroke-width="2"/>
-        <rect x="805" y="24" width="20" height="30" rx="3" fill="url(#steel)"/>
-      </g>${lbl(815, 546, 'Kymograph', { s: 9, c: '#cbd5e1' })}`;
+      s += labKymograph() + lbl(815, 546, 'Kymograph', { s: 9, c: '#cbd5e1' });
       // rack: tube 1, tube 2 (standard) and the unknown
-      s += `<g filter="url(#sh)"><rect x="556" y="402" width="128" height="9" fill="#e5e7eb" stroke="#9ca3af"/><rect x="556" y="440" width="128" height="9" fill="#e5e7eb" stroke="#9ca3af"/><rect x="558" y="411" width="4" height="29" fill="#9ca3af"/><rect x="678" y="411" width="4" height="29" fill="#9ca3af"/></g>`;
+      s += `<g filter="url(#sh)"><rect x="556" y="402" width="128" height="9" fill="#e5e7eb" stroke="#9ca3af"/><rect x="556" y="440" width="128" height="9" fill="#e5e7eb" stroke="#9ca3af"/><rect x="558" y="411" width="4" height="29" fill="#9ca3af"/><rect x="558" y="449" width="4" height="81" fill="url(#steel)"/><rect x="678" y="411" width="4" height="29" fill="#9ca3af"/><rect x="678" y="449" width="4" height="81" fill="url(#steel)"/></g>`;
       s += smallTube('T1', 578, 330) + smallTube('T2', 608, 330);
       s += `<g class="hot" data-act="vialX" filter="url(#sh2)">
         <rect x="642" y="364" width="28" height="9" rx="2" fill="#1d4ed8"/>
@@ -1537,7 +1515,7 @@
         ${lbl(656, 396, 'TEST X', { s: 7.4, w: 800, c: '#1d4ed8' })}${lbl(656, 405, 'histamine', { s: 5.5, c: '#334155' })}${lbl(656, 413, 'strength ?', { s: 5.5, c: '#b91c1c', w: 700 })}
       </g>`;
       // syringe on bench
-      s += `<g class="hot" data-act="syr" id="syrBench" filter="url(#sh2)">
+      s += `<rect x="494" y="484" width="4" height="46" fill="url(#steel)"/><rect x="568" y="484" width="4" height="46" fill="url(#steel)"/><g class="hot" data-act="syr" id="syrBench" filter="url(#sh2)">
         <rect x="484" y="472" width="100" height="12" rx="2" fill="url(#glass)" stroke="#f1f5f9" stroke-width="1.4"/>
         ${Array.from({ length: 11 }, (_, i) => `<line x1="${494 + i * 8}" x2="${494 + i * 8}" y1="472" y2="${i % 5 ? 477 : 480}" stroke="#334155" stroke-width=".6"/>`).join('')}
         <rect x="584" y="474" width="16" height="8" fill="#e5e7eb" stroke="#9ca3af"/><rect x="598" y="468" width="5" height="20" rx="1" fill="#9ca3af"/>
@@ -1739,9 +1717,9 @@
       const phi = Math.asin(dy / LONG);
       const penX = PIV[0] + LONG * Math.cos(phi) - (m.contact === 0 ? 10 : 0), penY = PIV[1] + LONG * Math.sin(phi);
       const shX = PIV[0] - SHORT * Math.cos(phi), shY = PIV[1] - SHORT * Math.sin(phi);
-      let lv = `<line x1="${shX}" y1="${shY}" x2="${penX}" y2="${penY}" stroke="#e5e7eb" stroke-width="3.2" stroke-linecap="round"/><line x1="${shX}" y1="${shY - 1}" x2="${penX}" y2="${penY - 1}" stroke="#fff" stroke-width="1" opacity=".7"/>`;
-      lv += `<circle cx="${PIV[0]}" cy="${PIV[1]}" r="6" fill="url(#steelH)" stroke="#374151"/><circle cx="${PIV[0]}" cy="${PIV[1]}" r="2" fill="#111827"/>`;
-      lv += `<path d="M${penX - 1} ${penY - 2} l${m.contact ? 9 : 7} 2 l${m.contact ? -9 : -7} 2 z" fill="#fbbf24"/>`;
+      let lv = `<line x1="${shX}" y1="${shY}" x2="${penX}" y2="${penY}" stroke="#cbd5e1" stroke-width="3" stroke-linecap="round"/><line x1="${shX}" y1="${shY - 1}" x2="${penX}" y2="${penY - 1}" stroke="#fff" stroke-width="1" opacity=".7"/>`;
+      lv += `<circle cx="${PIV[0]}" cy="${PIV[1]}" r="7" fill="url(#brass)" stroke="#78350f"/><circle cx="${PIV[0]}" cy="${PIV[1]}" r="2" fill="#111827"/>`;
+      lv += `<circle cx="${penX}" cy="${penY}" r="4.5" fill="#fbbf24" opacity=".28"/><path d="M${penX - 1} ${penY - 2} l${m.contact ? 9 : 7} 2 l${m.contact ? -9 : -7} 2 z" fill="#fbbf24"/>`;
       if (m.load) { const lx = PIV[0] + 30 * Math.cos(phi), ly = PIV[1] + 30 * Math.sin(phi); lv += `<rect x="${lx - 6}" y="${ly + 2}" width="12" height="${m.load === 2 ? 14 : m.load === 1 ? 10 : 7}" rx="2" fill="url(#brass)"/><text x="${lx}" y="${ly + 26}" font-size="8" text-anchor="middle" fill="#fde68a" font-weight="700">${m.load} g</text>`; }
       $('leverG').innerHTML = lv + `<rect x="${PIV[0] - SHORT - 8}" y="${PIV[1] - 16}" width="${SHORT + LONG}" height="32" fill="#fff" opacity="0"/>`;
       // ileum segment & threads
@@ -1750,9 +1728,7 @@
       if (m.hook) {
         const tb = m.lowered ? HOOK[1] : HOOK[1] - 150, tt = tb - (L0 - shorten);
         const wv = 6.5 + shorten * 0.06;
-        tg += `<path d="M${HOOK[0] - wv} ${tb} L${HOOK[0] - wv} ${tt} Q${HOOK[0]} ${tt - 4} ${HOOK[0] + wv} ${tt} L${HOOK[0] + wv} ${tb} Q${HOOK[0]} ${tb + 4} ${HOOK[0] - wv} ${tb} Z" fill="#e7a092" stroke="#9d4b42" stroke-width="1"/>`;
-        tg += `<rect x="${HOOK[0] - wv * 0.4}" y="${tt + 2}" width="${wv * 0.5}" height="${tb - tt - 4}" fill="#fde2da" opacity=".7"/>`;
-        [0.25, 0.5, 0.75].forEach(f => { const yy = tb - (tb - tt) * f; tg += `<path d="M${HOOK[0] - wv} ${yy} Q${HOOK[0]} ${yy + 2} ${HOOK[0] + wv} ${yy}" stroke="#c46f63" stroke-width=".9" fill="none" opacity=".8"/>`; });
+        tg += labIleum(HOOK[0], tt, tb, wv);
         tg += m.lever ? `<line x1="${HOOK[0]}" y1="${tt}" x2="${shX}" y2="${shY}" stroke="#fafaf9" stroke-width="1.1"/>` : `<path d="M${HOOK[0]} ${tt} q-8 -20 6 -40" fill="none" stroke="#fafaf9" stroke-width="1.1"/>`;
       } else if (m.held) tg += tag(372, 200, 'ileum held by its threads', '#7c2d12');
       $('tissueG').innerHTML = tg;
@@ -1769,12 +1745,16 @@
         bub.innerHTML = bs;
       }
       // kymograph
-      $('paperBg').setAttribute('fill', k.paper ? '#121212' : '#f5f5f4'); $('paperBg').setAttribute('opacity', k.paper || k.glazed ? 1 : 0);
+      $('paperBg').setAttribute('fill', k.paper ? 'url(#smokedDrum)' : '#f5f5f4'); $('paperBg').setAttribute('opacity', k.paper || k.glazed ? 1 : 0);
       $('paperSmoke').setAttribute('opacity', k.paper ? 1 : 0);
       const sp = SPEEDS_K.findIndex(s => s.k === k.speed);
       $('gearLever').setAttribute('x2', sp < 0 ? 730 : 730 + [-12, 0, 12][sp]); $('gearLever').setAttribute('y2', sp < 0 ? 494 : 492);
       $('gearTxt').textContent = k.speed ? ['SLOW', 'MED', 'FAST'][sp] : 'NEUTRAL';
       $('swKnob').setAttribute('x', k.run ? 904 : 880); $('swKnob').setAttribute('fill', k.run ? '#16a34a' : '#b91c1c');
+      labDrumTick(!!(k.run && k.speed), !!(k.run && !k.speed), k.x * DMM * 2.2);
+      labFlowTick('flowIn', b.inlet && r.vol > 0, dtR);
+      labFlowTick('flowOut', b.drain && b.L > 0, dtR, 80);
+      labFlowTick('flowAir', S.air > 0, dtR, 24 + S.air * 14);
       $('swTxt').textContent = k.run ? 'ON' : 'OFF'; $('swTxt').setAttribute('x', k.run ? 888 : 914); $('swTxt').setAttribute('fill', k.run ? '#86efac' : '#fca5a5');
       const baseY = PIV[1] + base, DX = DMM * 4;
       if (k.paper) {

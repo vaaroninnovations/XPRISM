@@ -150,7 +150,7 @@
           </div>
         </div>
         <div id="stepper" class="px-3 py-2 bg-white border-b border-slate-200 flex flex-wrap gap-1.5 text-[11px] font-semibold shrink-0"></div>
-        <div id="benchArea" class="flex-1 relative flex flex-col overflow-hidden" style="background:#e9eef2">
+        <div id="benchArea" class="flex-1 relative flex flex-col overflow-hidden" style="background:#0b101b">
           <div id="waitCard" class="hidden absolute top-3 right-3 z-20 bg-slate-900/90 text-white rounded-xl px-4 py-3 shadow-xl border border-slate-700 backdrop-blur w-60">
             <div id="waitTitle" class="text-[10px] uppercase tracking-wider text-amber-300 font-bold font-mono">Waiting</div>
             <div id="waitClock" class="seg text-3xl text-amber-400 mt-1" style="text-shadow:0 0 10px rgba(251,191,36,.6)">00:00</div>
@@ -743,78 +743,426 @@
         this.drawScene(dtR);
       },
 
-      // ---------- scene ----------
+                  // ---------- scene ----------
       buildScene() {
         const c = this.cfg, svg = $('scene');
         svg.innerHTML = `
           <defs>
-            <linearGradient id="glass" x1="0" x2="1"><stop offset="0" stop-color="#cfe8f5" stop-opacity=".55"/><stop offset=".5" stop-color="#ffffff" stop-opacity=".25"/><stop offset="1" stop-color="#9cc9df" stop-opacity=".6"/></linearGradient>
-            <linearGradient id="drumG" x1="0" x2="1"><stop offset="0" stop-color="#0b1220"/><stop offset=".45" stop-color="#253043"/><stop offset=".55" stop-color="#2b3649"/><stop offset="1" stop-color="#0b1220"/></linearGradient>
-            <linearGradient id="metal" x1="0" x2="1"><stop offset="0" stop-color="#64748b"/><stop offset=".5" stop-color="#e2e8f0"/><stop offset="1" stop-color="#64748b"/></linearGradient>
-            <clipPath id="drumClip"><rect x="690" y="34" width="250" height="300" rx="6"/></clipPath>
+            <!-- Drop shadows & ambient depth -->
+            <filter id="sh" x="-20%" y="-20%" width="150%" height="150%">
+              <feDropShadow dx="2" dy="4" stdDeviation="3.5" flood-color="#050811" flood-opacity="0.5"/>
+            </filter>
+            <filter id="shSmall" x="-20%" y="-20%" width="150%" height="150%">
+              <feDropShadow dx="1" dy="2" stdDeviation="1.5" flood-color="#050811" flood-opacity="0.45"/>
+            </filter>
+            <filter id="glowGold" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="1.8" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <filter id="glowGreen" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="2" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <filter id="traceGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="0" stdDeviation="0.6" flood-color="#ffffff" flood-opacity="0.8"/>
+            </filter>
+
+            <!-- Lab Wall & Ambient Spotlight -->
+            <linearGradient id="wallGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#334155"/>
+              <stop offset="35%" stop-color="#1e293b"/>
+              <stop offset="85%" stop-color="#0f172a"/>
+              <stop offset="100%" stop-color="#020617"/>
+            </linearGradient>
+
+            <radialGradient id="labSpot" cx="50%" cy="32%" r="68%">
+              <stop offset="0%" stop-color="#60a5fa" stop-opacity="0.18"/>
+              <stop offset="45%" stop-color="#38bdf8" stop-opacity="0.06"/>
+              <stop offset="100%" stop-color="#000000" stop-opacity="0.55"/>
+            </radialGradient>
+
+            <pattern id="tilePat" width="60" height="34" patternUnits="userSpaceOnUse">
+              <rect width="59" height="33" fill="#1e293b" fill-opacity="0.35" stroke="#475569" stroke-width="0.8" stroke-opacity="0.3"/>
+              <line x1="0" y1="0" x2="59" y2="0" stroke="#94a3b8" stroke-width="0.6" stroke-opacity="0.25"/>
+            </pattern>
+
+            <!-- Heavy Epoxy Resin Benchtop -->
+            <linearGradient id="benchSurface" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1e2530"/>
+              <stop offset="25%" stop-color="#141a22"/>
+              <stop offset="70%" stop-color="#0d1117"/>
+              <stop offset="100%" stop-color="#06090d"/>
+            </linearGradient>
+
+            <linearGradient id="benchBevel" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#94a3b8"/>
+              <stop offset="40%" stop-color="#cbd5e1"/>
+              <stop offset="100%" stop-color="#334155"/>
+            </linearGradient>
+
+            <!-- Glassware Gradients -->
+            <linearGradient id="glassCyl" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#e0f2fe" stop-opacity="0.65"/>
+              <stop offset="10%" stop-color="#ffffff" stop-opacity="0.5"/>
+              <stop offset="30%" stop-color="#f0f9ff" stop-opacity="0.12"/>
+              <stop offset="65%" stop-color="#e0f2fe" stop-opacity="0.18"/>
+              <stop offset="90%" stop-color="#ffffff" stop-opacity="0.45"/>
+              <stop offset="100%" stop-color="#bae6fd" stop-opacity="0.6"/>
+            </linearGradient>
+
+            <linearGradient id="glassEdge" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#7dd3fc" stop-opacity="0.85"/>
+              <stop offset="30%" stop-color="#ffffff" stop-opacity="0.95"/>
+              <stop offset="70%" stop-color="#38bdf8" stop-opacity="0.75"/>
+              <stop offset="100%" stop-color="#0284c7" stop-opacity="0.85"/>
+            </linearGradient>
+
+            <linearGradient id="tyrodeFluid" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.45"/>
+              <stop offset="25%" stop-color="#bae6fd" stop-opacity="0.32"/>
+              <stop offset="70%" stop-color="#7dd3fc" stop-opacity="0.38"/>
+              <stop offset="100%" stop-color="#0284c7" stop-opacity="0.5"/>
+            </linearGradient>
+
+            <linearGradient id="jacketFluid" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#0284c7" stop-opacity="0.3"/>
+              <stop offset="30%" stop-color="#7dd3fc" stop-opacity="0.12"/>
+              <stop offset="70%" stop-color="#bae6fd" stop-opacity="0.18"/>
+              <stop offset="100%" stop-color="#0369a1" stop-opacity="0.35"/>
+            </linearGradient>
+
+            <!-- Metals -->
+            <linearGradient id="steelVert" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#334155"/>
+              <stop offset="18%" stop-color="#94a3b8"/>
+              <stop offset="42%" stop-color="#ffffff"/>
+              <stop offset="68%" stop-color="#cbd5e1"/>
+              <stop offset="100%" stop-color="#1e293b"/>
+            </linearGradient>
+
+            <linearGradient id="steelHoriz" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#475569"/>
+              <stop offset="25%" stop-color="#f8fafc"/>
+              <stop offset="65%" stop-color="#94a3b8"/>
+              <stop offset="100%" stop-color="#1e293b"/>
+            </linearGradient>
+
+            <linearGradient id="castIron" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#475569"/>
+              <stop offset="20%" stop-color="#334155"/>
+              <stop offset="65%" stop-color="#1e293b"/>
+              <stop offset="100%" stop-color="#0f172a"/>
+            </linearGradient>
+
+            <linearGradient id="brass" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#fef08a"/>
+              <stop offset="25%" stop-color="#eab308"/>
+              <stop offset="60%" stop-color="#ca8a04"/>
+              <stop offset="85%" stop-color="#a16207"/>
+              <stop offset="100%" stop-color="#713f12"/>
+            </linearGradient>
+
+            <linearGradient id="brassHoriz" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#fef08a"/>
+              <stop offset="30%" stop-color="#eab308"/>
+              <stop offset="70%" stop-color="#ca8a04"/>
+              <stop offset="100%" stop-color="#713f12"/>
+            </linearGradient>
+
+            <!-- Smoked Paper Drum Cylindrical Shading -->
+            <linearGradient id="smokedDrum" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#06090e"/>
+              <stop offset="10%" stop-color="#111620"/>
+              <stop offset="35%" stop-color="#1c2432"/>
+              <stop offset="55%" stop-color="#243042"/>
+              <stop offset="75%" stop-color="#17202c"/>
+              <stop offset="92%" stop-color="#0c1017"/>
+              <stop offset="100%" stop-color="#05070b"/>
+            </linearGradient>
+
+            <!-- Translucent Silicone & Rubber Tubing -->
+            <linearGradient id="siliconeTube" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#94a3b8" stop-opacity="0.85"/>
+              <stop offset="28%" stop-color="#f8fafc" stop-opacity="0.95"/>
+              <stop offset="65%" stop-color="#cbd5e1" stop-opacity="0.6"/>
+              <stop offset="100%" stop-color="#64748b" stop-opacity="0.85"/>
+            </linearGradient>
+
+            <linearGradient id="aerationTube" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#4ade80" stop-opacity="0.9"/>
+              <stop offset="30%" stop-color="#bbf7d0" stop-opacity="0.95"/>
+              <stop offset="70%" stop-color="#22c55e" stop-opacity="0.85"/>
+              <stop offset="100%" stop-color="#15803d" stop-opacity="0.9"/>
+            </linearGradient>
+
+            <!-- Viable Intestinal Tissue Anatomy -->
+            <linearGradient id="tissueGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#fb7185"/>
+              <stop offset="22%" stop-color="#fda4af"/>
+              <stop offset="48%" stop-color="#ffe4e6"/>
+              <stop offset="75%" stop-color="#f43f5e"/>
+              <stop offset="100%" stop-color="#be123c"/>
+            </linearGradient>
+
+            <linearGradient id="circulatorBody" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#334155"/>
+              <stop offset="30%" stop-color="#1e293b"/>
+              <stop offset="85%" stop-color="#0f172a"/>
+              <stop offset="100%" stop-color="#090d14"/>
+            </linearGradient>
+
+            <!-- Clip Paths -->
+            <clipPath id="drumClip"><rect x="690" y="34" width="250" height="294" rx="4"/></clipPath>
             <clipPath id="bathClip"><rect x="324" y="132" width="72" height="214" rx="8"/></clipPath>
+            <clipPath id="resClip"><rect x="72" y="36" width="106" height="132" rx="14"/></clipPath>
           </defs>
-          <rect x="0" y="370" width="1000" height="40" fill="#1f2a37"/>
-          <rect x="0" y="366" width="1000" height="6" fill="#334155"/>
-          <!-- stand -->
-          <rect x="250" y="20" width="10" height="350" fill="url(#metal)"/>
-          <rect x="220" y="360" width="80" height="10" rx="2" fill="#475569"/>
-          <rect x="256" y="78" width="200" height="6" fill="url(#metal)"/>
-          <!-- reservoir -->
-          <g>
-            <rect x="70" y="40" width="110" height="130" rx="18" fill="url(#glass)" stroke="#7aa7c0" stroke-width="2"/>
-            <rect id="resFluid" x="74" y="70" width="102" height="96" rx="14" fill="${c.fluid || '#d9f2ff'}" opacity=".85"/>
-            <rect x="110" y="26" width="30" height="16" rx="3" fill="#94a3b8"/>
-            <text x="125" y="110" text-anchor="middle" font-size="12" font-weight="700" fill="#0c4a6e">${c.pss}</text>
-            <text x="125" y="126" text-anchor="middle" font-size="10" fill="#075985">${c.temp}</text>
-            <path d="M125 170 L125 200 L230 200 L230 352 L360 352 L360 346" fill="none" stroke="#9cc9df" stroke-width="5"/>
-            <circle cx="230" cy="250" r="9" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/><rect id="tap" x="222" y="247" width="16" height="6" rx="2" fill="#475569"/>
-            <text x="230" y="276" text-anchor="middle" font-size="9" fill="#475569">inlet tap</text>
+
+          <!-- ================= BACKGROUND: LAB WALL & LIGHTING ================= -->
+          <rect width="1000" height="355" fill="url(#wallGrad)"/>
+          <rect width="1000" height="355" fill="url(#tilePat)"/>
+          <rect width="1000" height="355" fill="url(#labSpot)"/>
+
+          <!-- Wall Shelf for Tyrode Reservoir -->
+          <rect x="52" y="172" width="146" height="7" rx="2" fill="url(#steelHoriz)" filter="url(#shSmall)"/>
+          <polygon points="66,179 66,197 82,179" fill="#475569"/>
+          <polygon points="184,179 184,197 168,179" fill="#475569"/>
+
+          <!-- ================= BENCHTOP ================= -->
+          <!-- Contact Shadows under equipment -->
+          <ellipse cx="260" cy="358" rx="48" ry="5.5" fill="#000" opacity="0.45" filter="url(#shSmall)"/>
+          <ellipse cx="156" cy="358" rx="44" ry="5" fill="#000" opacity="0.4" filter="url(#shSmall)"/>
+          <ellipse cx="360" cy="358" rx="38" ry="5.5" fill="#000" opacity="0.38" filter="url(#shSmall)"/>
+          <ellipse cx="425" cy="360" rx="16" ry="4" fill="#000" opacity="0.3" filter="url(#shSmall)"/>
+          <ellipse cx="815" cy="358" rx="134" ry="9" fill="#000" opacity="0.55" filter="url(#shSmall)"/>
+
+          <!-- Bench Bevel Edge & Work Surface -->
+          <rect x="0" y="352" width="1000" height="3" fill="url(#benchBevel)"/>
+          <rect x="0" y="355" width="1000" height="45" fill="url(#benchSurface)"/>
+          <line x1="0" y1="358" x2="1000" y2="358" stroke="#ffffff" stroke-opacity="0.08" stroke-width="1"/>
+
+          <!-- ================= THERMOSTATIC CIRCULATOR (HEATING UNIT) ================= -->
+          <g id="circulatorUnit" filter="url(#sh)">
+            <!-- Circulator Housing -->
+            <rect x="114" y="286" width="84" height="68" rx="5" fill="url(#circulatorBody)" stroke="#475569" stroke-width="1.2"/>
+            <rect x="114" y="286" width="84" height="7" rx="3" fill="url(#steelHoriz)"/>
+            <!-- Louvres / Vents -->
+            <line x1="120" y1="334" x2="148" y2="334" stroke="#000" stroke-width="1.2"/><line x1="120" y1="335" x2="148" y2="335" stroke="#475569" stroke-width="0.8"/>
+            <line x1="120" y1="339" x2="148" y2="339" stroke="#000" stroke-width="1.2"/><line x1="120" y1="340" x2="148" y2="340" stroke="#475569" stroke-width="0.8"/>
+            <line x1="120" y1="344" x2="148" y2="344" stroke="#000" stroke-width="1.2"/><line x1="120" y1="345" x2="148" y2="345" stroke="#475569" stroke-width="0.8"/>
+            <!-- Digital LED Display Panel -->
+            <rect x="122" y="299" width="45" height="22" rx="3" fill="#06090e" stroke="#334155" stroke-width="0.8"/>
+            <text x="163" y="316" font-family="DSEG7, JetBrains Mono, monospace" font-size="12.5" font-weight="700" fill="#f59e0b" text-anchor="end" filter="url(#glowGold)">37.0</text>
+            <text x="126" y="327" font-size="5.5" font-weight="700" fill="#94a3b8">BATH °C</text>
+            <!-- Status Pilot LED -->
+            <circle cx="182" cy="307" r="3.5" fill="#22c55e" filter="url(#glowGreen)"/>
+            <text x="182" y="318" font-size="4.8" font-weight="700" fill="#86efac" text-anchor="middle">CIRC</text>
+            <text x="156" y="293" font-size="5" font-weight="800" fill="#cbd5e1" text-anchor="middle" letter-spacing="0.5">THERMO-CIRCULATOR</text>
           </g>
-          <!-- O2 line -->
-          <path d="M40 360 L40 300 Q40 290 50 290 L170 290" fill="none" stroke="#22c55e" stroke-width="3"/>
-          <text x="40" y="380" font-size="9" fill="#94a3b8" text-anchor="middle">${c.gas || 'Air'}</text>
-          <!-- bath jacket -->
-          <rect x="304" y="112" width="112" height="252" rx="14" fill="${c.jacket ? '#bae6fd' : 'none'}" opacity="${c.jacket ? .35 : 0}" stroke="${c.jacket ? '#7aa7c0' : 'none'}" stroke-width="2"/>
-          <rect x="322" y="128" width="76" height="220" rx="10" fill="url(#glass)" stroke="#7aa7c0" stroke-width="2"/>
+          <!-- Silicone Water Circulation Tubes (Circulator <-> Organ Bath Jacket) -->
+          <path d="M198 326 Q245 350 304 332" fill="none" stroke="url(#siliconeTube)" stroke-width="5" opacity="0.85"/>
+          <path d="M198 326 Q245 350 304 332" fill="none" stroke="#38bdf8" stroke-width="2" opacity="0.5"/>
+          <path d="M304 142 Q230 142 198 304" fill="none" stroke="url(#siliconeTube)" stroke-width="5" opacity="0.85"/>
+          <path d="M304 142 Q230 142 198 304" fill="none" stroke="#38bdf8" stroke-width="2" opacity="0.5"/>
+
+          <!-- ================= RETORT STAND & CLAMPS ================= -->
+          <!-- Cast-iron Base -->
+          <rect x="215" y="348" width="80" height="10" rx="3" fill="url(#castIron)" stroke="#475569" stroke-width="1" filter="url(#shSmall)"/>
+          <rect x="217" y="349" width="76" height="2" fill="#ffffff" opacity="0.2"/>
+          <rect x="246" y="342" width="18" height="7" rx="2" fill="url(#steelHoriz)"/>
+          <!-- Stainless Upright Rod -->
+          <rect x="250" y="18" width="10" height="326" fill="url(#steelVert)"/>
+          <ellipse cx="255" cy="18" rx="5" ry="2" fill="#cbd5e1"/>
+          <!-- Heavy Bosshead Clamp -->
+          <rect x="244" y="71" width="22" height="20" rx="3.5" fill="url(#castIron)" stroke="#475569" stroke-width="0.8" filter="url(#shSmall)"/>
+          <rect x="236" y="78" width="9" height="5" rx="1.5" fill="url(#brass)"/>
+          <circle cx="236" cy="80.5" r="3.5" fill="url(#brass)" stroke="#78350f" stroke-width="0.5"/>
+          <!-- Horizontal Support Arm -->
+          <rect x="256" y="77" width="196" height="6" fill="url(#steelHoriz)"/>
+
+          <!-- ================= TYRODE RESERVOIR (MARIOTTE / ASPIRATOR BOTTLE) ================= -->
+          <g id="reservoirAssembly">
+            <!-- Glass Bottle Contour & Body -->
+            <rect x="70" y="34" width="110" height="136" rx="16" fill="url(#glassCyl)" stroke="url(#glassEdge)" stroke-width="2.2" filter="url(#sh)"/>
+            <!-- Ground Glass Neck -->
+            <rect x="108" y="22" width="34" height="14" rx="3" fill="url(#glassCyl)" stroke="#7aa7c0" stroke-width="1.5"/>
+            <!-- Rubber Stopper in Neck -->
+            <rect x="110" y="16" width="30" height="11" rx="3" fill="#78350f" stroke="#451a03" stroke-width="0.8"/>
+            <!-- Mariotte Air Inlet Glass Tube dipping into liquid -->
+            <rect x="123" y="6" width="4" height="150" rx="1.5" fill="url(#glassCyl)" stroke="#94a3b8" stroke-width="0.6"/>
+            <!-- Fluid Layer inside Mariotte Bottle -->
+            <g clip-path="url(#resClip)">
+              <rect id="resFluid" x="72" y="66" width="106" height="102" fill="url(#tyrodeFluid)"/>
+              <ellipse cx="125" cy="66" rx="53" ry="4.5" fill="#e0f2fe" opacity="0.6"/>
+            </g>
+            <!-- Cylindrical Specular Reflection Highlight -->
+            <rect x="76" y="44" width="6" height="116" rx="3" fill="#ffffff" opacity="0.38"/>
+            <rect x="168" y="44" width="4" height="116" rx="2" fill="#ffffff" opacity="0.22"/>
+            <!-- Etched Volume Graduation Marks -->
+            <line x1="164" x2="174" y1="52" y2="52" stroke="#fef08a" stroke-width="1.2"/><text x="162" y="54" font-size="6.5" font-weight="700" fill="#fef08a" text-anchor="end">1000 mL</text>
+            <line x1="166" x2="174" y1="78" y2="78" stroke="#fef08a" stroke-width="1.2"/><text x="162" y="80" font-size="6.5" font-weight="700" fill="#fef08a" text-anchor="end">750</text>
+            <line x1="164" x2="174" y1="104" y2="104" stroke="#fef08a" stroke-width="1.2"/><text x="162" y="106" font-size="6.5" font-weight="700" fill="#fef08a" text-anchor="end">500</text>
+            <line x1="166" x2="174" y1="130" y2="130" stroke="#fef08a" stroke-width="1.2"/><text x="162" y="132" font-size="6.5" font-weight="700" fill="#fef08a" text-anchor="end">250</text>
+            <!-- Printed Laboratory Reagent Label -->
+            <rect x="83" y="84" width="84" height="52" rx="3" fill="#ffffff" opacity="0.95" stroke="#0284c7" stroke-width="1.2" filter="url(#shSmall)"/>
+            <rect x="85" y="86" width="80" height="48" rx="2" fill="none" stroke="#0284c7" stroke-width="0.6"/>
+            <text x="125" y="101" text-anchor="middle" font-size="9.5" font-weight="800" fill="#0369a1" letter-spacing="0.5">${c.pss}</text>
+            <text x="125" y="115" text-anchor="middle" font-size="8" font-weight="700" fill="#0284c7">${c.temp}</text>
+            <text x="125" y="126" text-anchor="middle" font-size="6" font-weight="600" fill="#64748b">Mammalian PSS • pH 7.4</text>
+            <!-- Reservoir Bottom Tubulure & Feed Line -->
+            <rect x="120" y="168" width="10" height="6" fill="url(#glassCyl)" stroke="#7aa7c0"/>
+            <path d="M125 170 L125 200 L230 200 L230 352 L360 352 L360 346" fill="none" stroke="url(#siliconeTube)" stroke-width="6.5" stroke-linecap="round"/>
+            <path d="M125 170 L125 200 L230 200 L230 352 L360 352 L360 346" fill="none" stroke="#38bdf8" stroke-width="2.5" opacity="0.75"/>
+            <!-- Inlet Stopcock Valve at (230, 250) -->
+            <circle cx="230" cy="250" r="10" fill="url(#brass)" stroke="#78350f" stroke-width="1.2" filter="url(#shSmall)"/>
+            <g id="tap" style="transform-origin: 230px 250px;">
+              <rect x="220" y="246" width="20" height="8" rx="2.5" fill="#1e293b" stroke="#475569"/>
+              <rect x="228" y="241" width="4" height="18" rx="1.5" fill="#f8fafc"/>
+            </g>
+            <text x="230" y="274" text-anchor="middle" font-size="8" font-weight="800" fill="#94a3b8" letter-spacing="0.5">INLET TAP</text>
+          </g>
+
+          <!-- ================= AERATION (O2 / CARBOGEN / AIR LINE) ================= -->
+          <path d="M40 360 L40 300 Q40 290 50 290 L170 290" fill="none" stroke="url(#aerationTube)" stroke-width="4" stroke-linecap="round"/>
+          <path d="M40 360 L40 300 Q40 290 50 290 L170 290" fill="none" stroke="#ffffff" stroke-width="1.2" opacity="0.5"/>
+          <text x="40" y="378" font-size="8.5" font-weight="800" fill="#86efac" text-anchor="middle">${c.gas || 'Air'}</text>
+
+          <!-- ================= DOUBLE-WALLED ORGAN BATH (JACKET + 20 mL BATH) ================= -->
+          <!-- Outer Glass Water Jacket -->
+          <rect x="302" y="112" width="116" height="242" rx="14" fill="${c.jacket ? 'url(#jacketFluid)' : 'none'}" stroke="url(#glassEdge)" stroke-width="2.2" filter="url(#sh)"/>
+          <ellipse cx="360" cy="112" rx="58" ry="6" fill="url(#glassCyl)" stroke="#7dd3fc" stroke-width="1.2"/>
+          <path d="M306 128 L306 338" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round" opacity="0.4"/>
+          <path d="M414 128 L414 338" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" opacity="0.25"/>
+
+          <!-- Glass Preheating Spiral inside the warm jacket water -->
+          <g opacity="0.55">
+            <ellipse cx="334" cy="180" rx="9" ry="3.5" fill="none" stroke="#e0f2fe" stroke-width="2.2"/>
+            <ellipse cx="334" cy="205" rx="9" ry="3.5" fill="none" stroke="#e0f2fe" stroke-width="2.2"/>
+            <ellipse cx="334" cy="230" rx="9" ry="3.5" fill="none" stroke="#e0f2fe" stroke-width="2.2"/>
+            <ellipse cx="334" cy="255" rx="9" ry="3.5" fill="none" stroke="#e0f2fe" stroke-width="2.2"/>
+            <ellipse cx="334" cy="280" rx="9" ry="3.5" fill="none" stroke="#e0f2fe" stroke-width="2.2"/>
+            <ellipse cx="334" cy="305" rx="9" ry="3.5" fill="none" stroke="#e0f2fe" stroke-width="2.2"/>
+          </g>
+
+          <!-- Inner Organ Tube (20 mL capacity) -->
+          <rect x="322" y="128" width="76" height="222" rx="10" fill="url(#glassCyl)" stroke="url(#glassEdge)" stroke-width="2"/>
+          <ellipse cx="360" cy="128" rx="38" ry="4" fill="url(#glassCyl)" stroke="#bae6fd" stroke-width="1"/>
           <g clip-path="url(#bathClip)">
-            <rect id="bathFluid" x="322" y="150" width="76" height="200" fill="${c.fluid || '#d9f2ff'}" opacity=".8"/>
+            <rect id="bathFluid" x="322" y="150" width="76" height="200" fill="url(#tyrodeFluid)"/>
             <rect id="bathTint" x="322" y="150" width="76" height="200" fill="#a78bfa" opacity="0"/>
+            <ellipse cx="360" cy="150" rx="36" ry="3.5" fill="#e0f2fe" opacity="0.7"/>
             <g id="bubbles"></g>
           </g>
-          <text x="360" y="392" text-anchor="middle" font-size="10" fill="#cbd5e1">${c.bathMl} mL bath${c.jacket ? ' • 37 °C jacket' : ''}</text>
-          <!-- aerator tube + tissue holder -->
-          <path d="M346 84 L346 328 Q346 336 354 336 L366 336" fill="none" stroke="#cbd5e1" stroke-width="4"/>
-          <path d="M170 290 Q300 290 300 100 Q300 84 346 84" fill="none" stroke="#22c55e" stroke-width="2.5" opacity=".7"/>
-          <g id="tissue"></g>
-          <line id="thread" stroke="#475569" stroke-width="1.2"/>
-          <!-- lever -->
-          <rect x="440" y="60" width="14" height="40" rx="3" fill="url(#metal)"/>
-          <line id="lever" stroke="#334155" stroke-width="3" stroke-linecap="round"/>
-          <circle id="pivot" cx="447" cy="84" r="5" fill="#334155" stroke="#e2e8f0"/>
-          <circle id="counterW" r="5" fill="#64748b"/>
-          <!-- syringe -->
-          <g id="syringe" opacity="0">
-            <rect x="380" y="10" width="14" height="70" rx="3" fill="#f8fafc" stroke="#64748b"/>
-            <rect id="syrFluid" x="382" y="30" width="10" height="48" fill="#a78bfa" opacity=".7"/>
-            <rect id="syrPl" x="384" y="0" width="6" height="30" fill="#94a3b8"/>
-            <line x1="387" y1="80" x2="387" y2="140" stroke="#64748b" stroke-width="1.5"/>
+          <!-- Etched Bath Volume Graduations -->
+          <line x1="390" x2="397" y1="170" y2="170" stroke="#fef08a" stroke-width="1.2"/><text x="388" y="172" font-size="6.5" font-weight="700" fill="#fef08a" text-anchor="end">20 mL</text>
+          <line x1="392" x2="397" y1="210" y2="210" stroke="#fef08a" stroke-width="1.2"/><text x="388" y="212" font-size="6.5" font-weight="700" fill="#fef08a" text-anchor="end">15</text>
+          <line x1="392" x2="397" y1="250" y2="250" stroke="#fef08a" stroke-width="1.2"/><text x="388" y="252" font-size="6.5" font-weight="700" fill="#fef08a" text-anchor="end">10</text>
+          <text x="360" y="375" text-anchor="middle" font-size="9" font-weight="800" fill="#94a3b8" letter-spacing="0.5">${c.bathMl} mL BATH${c.jacket ? ' • 37 °C JACKET' : ''}</text>
+
+          <!-- Waste Collection Beaker & Drain Line neatly to the right -->
+          <path d="M360 348 L360 362 Q360 370 374 370 L414 370" fill="none" stroke="url(#siliconeTube)" stroke-width="3.5" stroke-linecap="round"/>
+          <g id="wasteBeaker" filter="url(#shSmall)">
+            <polygon points="414,360 417,388 433,388 436,360" fill="url(#glassCyl)" stroke="#64748b" stroke-width="1" opacity="0.85"/>
+            <polygon points="415,372 417,387 433,387 435,372" fill="#38bdf8" opacity="0.4"/>
+            <text x="425" y="382" font-size="5" font-weight="700" fill="#cbd5e1" text-anchor="middle">WASTE</text>
           </g>
-          <!-- kymograph drum -->
-          <rect x="800" y="336" width="30" height="34" fill="#475569"/>
-          <rect x="760" y="12" width="110" height="14" rx="4" fill="#475569"/>
-          <rect x="690" y="34" width="250" height="300" rx="6" fill="url(#drumG)" stroke="#0a1f44" stroke-width="2"/>
-          <g clip-path="url(#drumClip)"><g id="drumStripes"></g><polyline id="drumTrace" fill="none" stroke="#f8fafc" stroke-width="1.6"/><g id="drumMarks"></g></g>
-          <rect x="690" y="34" width="250" height="300" rx="6" fill="none" stroke="#000" stroke-opacity=".4" stroke-width="2"/>
-          <text x="815" y="360" text-anchor="middle" font-size="10" fill="#cbd5e1">Sherrington kymograph (smoked paper)</text>
-          <text id="drumLabel" x="935" y="50" text-anchor="end" font-size="10" fill="#94a3b8" font-family="JetBrains Mono">drum stopped</text>
-          <circle id="penTip" r="3" fill="#fbbf24"/>
+
+          <!-- Glass Aerator Stem & Tissue J-Hook -->
+          <path d="M346 84 L346 328 Q346 336 354 336 L366 336" fill="none" stroke="url(#glassCyl)" stroke-width="4.5" stroke-linecap="round"/>
+          <path d="M346 84 L346 328 Q346 336 354 336 L366 336" fill="none" stroke="#ffffff" stroke-width="1.5" opacity="0.6"/>
+          <!-- Aerator Supply Tubing from left -->
+          <path d="M170 290 Q300 290 300 100 Q300 84 346 84" fill="none" stroke="url(#aerationTube)" stroke-width="3" opacity="0.85"/>
+          <path d="M170 290 Q300 290 300 100 Q300 84 346 84" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.4"/>
+
+          <!-- Tissue Segment (Rat Ileum) & Suspension Silk Thread -->
+          <g id="tissue"></g>
+          <line id="thread" stroke="#1e293b" stroke-width="1.2" stroke-linecap="round"/>
+
+          <!-- ================= ISOTONIC FRONTAL WRITING LEVER & FULCRUM ================= -->
+          <!-- Fulcrum Clamp on Stand -->
+          <rect x="440" y="66" width="14" height="34" rx="3" fill="url(#castIron)" stroke="#475569" stroke-width="0.8" filter="url(#shSmall)"/>
+          <rect x="444" y="60" width="6" height="6" rx="1.5" fill="url(#brass)"/>
+          <!-- Lever Arm -->
+          <line id="lever" stroke="url(#steelHoriz)" stroke-width="3" stroke-linecap="round" filter="url(#shSmall)"/>
+          <!-- Jewel Pivot Bearing Housing -->
+          <circle id="pivot" cx="447" cy="84" r="6.5" fill="url(#brass)" stroke="#78350f" stroke-width="1" filter="url(#shSmall)"/>
+          <circle cx="447" cy="84" r="2.5" fill="#3b2003"/>
+          <circle cx="446" cy="83" r="1.2" fill="#ffffff" opacity="0.7"/>
+          <!-- Knurled Brass Counterweight on Short Arm -->
+          <circle id="counterW" r="7" fill="url(#brass)" stroke="#78350f" stroke-width="1" filter="url(#shSmall)"/>
+
+          <!-- ================= SYRINGE INJECTION ANIMATION ================= -->
+          <g id="syringe" opacity="0" filter="url(#shSmall)">
+            <rect x="378" y="10" width="16" height="70" rx="3" fill="url(#glassCyl)" stroke="#64748b" stroke-width="1.2"/>
+            <line x1="378" x2="384" y1="24" y2="24" stroke="#334155" stroke-width="0.8"/>
+            <line x1="378" x2="384" y1="36" y2="36" stroke="#334155" stroke-width="0.8"/>
+            <line x1="378" x2="384" y1="48" y2="48" stroke="#334155" stroke-width="0.8"/>
+            <line x1="378" x2="384" y1="60" y2="60" stroke="#334155" stroke-width="0.8"/>
+            <rect id="syrFluid" x="380" y="30" width="12" height="48" fill="#a78bfa" opacity="0.75"/>
+            <rect id="syrPl" x="382" y="0" width="8" height="30" rx="1.5" fill="url(#steelVert)"/>
+            <ellipse cx="386" cy="0" rx="9" ry="2.8" fill="url(#steelHoriz)"/>
+            <line x1="386" y1="80" x2="386" y2="148" stroke="#cbd5e1" stroke-width="1.6"/>
+            <line x1="386" y1="148" x2="386" y2="152" stroke="#94a3b8" stroke-width="0.8"/>
+          </g>
+
+          <!-- ================= SHERRINGTON KYMOGRAPH (SMOKED PAPER DRUM) ================= -->
+          <!-- Heavy Cast-iron Base Casting (Palmer Pattern) -->
+          <g id="kymographBase" filter="url(#sh)">
+            <rect x="680" y="328" width="270" height="36" rx="5" fill="url(#castIron)" stroke="#475569" stroke-width="1.2"/>
+            <rect x="684" y="330" width="262" height="3" fill="#ffffff" opacity="0.15"/>
+            <!-- Palmer Brass Engraved Maker's Plate -->
+            <rect x="765" y="336" width="100" height="22" rx="3" fill="url(#brass)" stroke="#78350f" stroke-width="0.8"/>
+            <text x="815" y="345" text-anchor="middle" font-size="6.2" font-weight="800" fill="#3b2003" letter-spacing="0.5">SHERRINGTON KYMOGRAPH</text>
+            <text x="815" y="353" text-anchor="middle" font-size="5" font-weight="700" fill="#583101">C.F. PALMER (LONDON) LTD.</text>
+            <!-- Mechanical Speed Gear Lever Gate -->
+            <rect x="696" y="335" width="46" height="23" rx="3" fill="#090d14" stroke="#334155" stroke-width="0.8"/>
+            <line x1="719" y1="352" x2="710" y2="340" stroke="#f8fafc" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="710" cy="340" r="3" fill="url(#brass)"/>
+            <text x="719" y="354" font-size="5" font-weight="700" fill="#94a3b8" text-anchor="middle">GEAR</text>
+            <!-- Main Power Toggle Switch -->
+            <rect x="888" y="335" width="46" height="23" rx="3" fill="#090d14" stroke="#334155" stroke-width="0.8"/>
+            <circle cx="911" cy="346" r="4.5" fill="#b91c1c" stroke="#7f1d1d" stroke-width="0.8"/>
+            <text x="911" y="354" font-size="5" font-weight="700" fill="#cbd5e1" text-anchor="middle">MOTOR</text>
+          </g>
+
+          <!-- Polished Drive Spindle & Top Lock Nut -->
+          <rect x="810" y="18" width="10" height="315" fill="url(#steelVert)"/>
+          <rect x="794" y="14" width="42" height="12" rx="3" fill="url(#brassHoriz)" stroke="#78350f" stroke-width="0.8"/>
+
+          <!-- 3D Smoked Paper Recording Cylinder -->
+          <g id="kymographDrumAssembly">
+            <!-- Brass Top Rim -->
+            <ellipse cx="815" cy="34" rx="125" ry="9" fill="url(#brassHoriz)" stroke="#78350f" stroke-width="0.8"/>
+            <!-- Matte Smoked Carbon Surface -->
+            <rect x="690" y="34" width="250" height="294" fill="url(#smokedDrum)" filter="url(#sh)"/>
+            <!-- Brass Bottom Rim -->
+            <ellipse cx="815" cy="328" rx="125" ry="9" fill="url(#brassHoriz)" stroke="#78350f" stroke-width="0.8"/>
+            <!-- Trace & Annotations inside Drum Clip -->
+            <g clip-path="url(#drumClip)">
+              <g id="drumStripes"></g>
+              <!-- Soot-scratched brilliant white trace -->
+              <polyline id="drumTrace" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" filter="url(#traceGlow)"/>
+              <g id="drumMarks"></g>
+            </g>
+            <!-- Drum Glass Reflection / Border Sheen -->
+            <rect x="690" y="34" width="250" height="294" fill="none" stroke="#000000" stroke-opacity="0.5" stroke-width="1.5"/>
+            <!-- Status Badge Display -->
+            <g id="drumStatusWrap" transform="translate(850, 42)">
+              <rect x="0" y="0" width="84" height="20" rx="4" fill="#090d14" stroke="#334155" stroke-width="1" filter="url(#shSmall)"/>
+              <circle id="drumLed" cx="10" cy="10" r="3.5" fill="#eab308" filter="url(#glowGold)"/>
+              <text id="drumLabel" x="20" y="13.5" font-size="7.5" font-weight="700" fill="#fbbf24" font-family="JetBrains Mono">drum stopped</text>
+            </g>
+            <!-- Active Stylus Point / Golden Needle Tip -->
+            <circle id="penTip" r="3.2" fill="#fbbf24" stroke="#d97706" stroke-width="1" filter="url(#glowGold)"/>
+          </g>
         `;
         const st = $('drumStripes');
-        for (let i = 0; i < 14; i++) el('rect', { x: 690 + i * 20, y: 34, width: 2, height: 300, fill: '#ffffff', opacity: .03 }, st);
+        for (let i = 0; i < 14; i++) el('rect', { x: 690 + i * 20, y: 34, width: 1.5, height: 294, fill: '#ffffff', opacity: .04 }, st);
         const b = $('bubbles');
         this.bub = [];
-        for (let i = 0; i < 9; i++) { const cb = el('circle', { r: 1.5 + Math.random() * 2, fill: '#fff', opacity: .7 }, b); this.bub.push({ e: cb, y: 340 - Math.random() * 180, x: 348 + Math.random() * 6, v: 30 + Math.random() * 30 }); }
+        for (let i = 0; i < 12; i++) {
+          const cb = el('circle', { r: 1.5 + Math.random() * 2, fill: '#ffffff', opacity: .85, stroke: '#38bdf8', 'stroke-width': '0.5' }, b);
+          this.bub.push({ e: cb, y: 340 - Math.random() * 180, x: 348 + Math.random() * 6, v: 32 + Math.random() * 32 });
+        }
         this.drawScene(0);
       },
       penAt(h) { return [815, 270 - h * 2.1]; },
@@ -825,12 +1173,58 @@
         $('lever').setAttribute('x1', A[0]); $('lever').setAttribute('y1', A[1]); $('lever').setAttribute('x2', px); $('lever').setAttribute('y2', py);
         $('counterW').setAttribute('cx', A[0] - dx / L * 12); $('counterW').setAttribute('cy', A[1] - dy / L * 12);
         $('penTip').setAttribute('cx', px); $('penTip').setAttribute('cy', py);
-        // tissue: hangs from hook (366,336) up to top that shortens with contraction
+
+        // Realistic Rat Ileum tissue anatomy: hangs from J-hook (366,336) up to top tie
         const L0 = this.cfg.tissueLen ?? 120, sh = this.h * 0.32;
         const top = 336 - (L0 - sh), w = (this.cfg.tissueW ?? 9) * (1 + sh / L0 * 1.2);
-        $('tissue').innerHTML = `<path d="M366 336 C ${366 - w} ${336 - (L0 - sh) * 0.3}, ${366 - w} ${top + (L0 - sh) * 0.3}, 366 ${top} C ${366 + w} ${top + (L0 - sh) * 0.3}, ${366 + w} ${336 - (L0 - sh) * 0.3}, 366 336 Z" fill="${this.cfg.tissueColor || '#f0a3a3'}" stroke="#b45309" stroke-opacity=".35"/>
-          ${[0.25, 0.5, 0.75].map(f => `<line x1="${366 - w * 0.6}" x2="${366 + w * 0.6}" y1="${336 - (L0 - sh) * f}" y2="${336 - (L0 - sh) * f}" stroke="#9f1239" stroke-opacity=".25"/>`).join('')}`;
+        const hTissue = L0 - sh;
+        const segs = 4;
+        const leftPts = [], rightPts = [];
+        for (let i = 0; i <= segs; i++) {
+          const t = i / segs;
+          const y = 336 - hTissue * t;
+          const bulge = Math.sin(t * Math.PI) * (w * 0.32) + Math.sin(t * Math.PI * segs) * (w * 0.12);
+          const currW = w * 0.72 + bulge;
+          leftPts.push([366 - currW, y]);
+          rightPts.unshift([366 + currW, y]);
+        }
+        let pathD = `M 366 336 `;
+        for (let i = 0; i < leftPts.length; i++) {
+          if (i === 0) pathD += `Q ${leftPts[i][0]} ${336 - 6} ${leftPts[i][0]} ${leftPts[i][1]} `;
+          else pathD += `Q ${leftPts[i][0] - 1} ${(leftPts[i-1][1] + leftPts[i][1])/2} ${leftPts[i][0]} ${leftPts[i][1]} `;
+        }
+        pathD += `L 366 ${top} `;
+        for (let i = 0; i < rightPts.length; i++) {
+          pathD += `Q ${rightPts[i][0] + 1} ${(i === 0 ? top + 6 : (rightPts[i-1][1] + rightPts[i][1])/2)} ${rightPts[i][0]} ${rightPts[i][1]} `;
+        }
+        pathD += `Z`;
+
+        const foldLines = [0.18, 0.36, 0.54, 0.72, 0.86].map(f => {
+          const y = 336 - hTissue * f;
+          const cw = (w * 0.72 + Math.sin(f * Math.PI) * (w * 0.32)) * 0.88;
+          return `<path d="M ${366 - cw} ${y} Q 366 ${y + 2.5} ${366 + cw} ${y}" fill="none" stroke="#be123c" stroke-width="1.2" stroke-opacity="0.35"/>`;
+        }).join('');
+
+        const specD = `M 364 ${336 - 8} Q ${364 - w*0.3} ${(336 + top)/2} 364 ${top + 8}`;
+        const topKnot = `
+          <ellipse cx="366" cy="${top}" rx="${w * 0.45}" ry="2" fill="#0f172a" stroke="#000" stroke-width="0.8"/>
+          <path d="M ${366 - w*0.3} ${top} Q ${366 - w*0.7} ${top - 4} ${366 - w*0.5} ${top - 7}" fill="none" stroke="#0f172a" stroke-width="1.2" stroke-linecap="round"/>
+        `;
+        const botKnot = `
+          <ellipse cx="366" cy="336" rx="${w * 0.45}" ry="2" fill="#0f172a" stroke="#000" stroke-width="0.8"/>
+          <path d="M ${366 + w*0.3} 336 Q ${366 + w*0.6} 340 ${366 + w*0.5} 344" fill="none" stroke="#0f172a" stroke-width="1.2" stroke-linecap="round"/>
+        `;
+
+        $('tissue').innerHTML = `
+          <path d="${pathD}" fill="url(#tissueGrad)" stroke="#9f1239" stroke-width="1" stroke-opacity="0.45" filter="url(#shSmall)"/>
+          <path d="${specD}" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" opacity="0.45"/>
+          ${foldLines}
+          ${topKnot}
+          ${botKnot}
+        `;
+
         $('thread').setAttribute('x1', 366); $('thread').setAttribute('y1', top); $('thread').setAttribute('x2', A[0]); $('thread').setAttribute('y2', A[1]);
+
         // fluid level during wash
         const lvl = this.washAnim > 0 ? 150 + Math.sin(this.washAnim * Math.PI) * 150 : 150;
         $('bathFluid').setAttribute('y', lvl); $('bathTint').setAttribute('y', lvl);
@@ -842,6 +1236,7 @@
         const sy = $('syringe');
         sy.setAttribute('opacity', this.syrAnim > 0 ? 1 : 0);
         $('syrPl').setAttribute('y', 0 + (1 - this.syrAnim) * 30); $('syrFluid').setAttribute('height', 48 * this.syrAnim);
+
         // drum trace window (pen at x=815, older trace to the left)
         const running = this.phase === 'contact' || this.phase === 'wash';
         const pts = []; const sx = 1.6;
@@ -851,7 +1246,13 @@
         $('drumMarks').innerHTML = this.marks.filter(mk => this.x - mk.xd < 90).map(mk => { const X = 815 - (this.x - mk.xd) * sx; return `<line x1="${X}" x2="${X}" y1="282" y2="292" stroke="#fbbf24"/><text x="${X}" y="304" font-size="10" fill="#fde68a" text-anchor="middle" font-family="JetBrains Mono">${mk.label}</text>`; }).join('') +
           this.mods.filter(mk => this.x - mk.x < 90).map(mk => { const X = 815 - (this.x - mk.x) * sx; return `<line x1="${X}" x2="${X}" y1="60" y2="300" stroke="#c4b5fd" stroke-dasharray="4 3"/>`; }).join('');
         $('drumStripes').setAttribute('transform', `translate(${-((this.x * sx) % 20)} 0)`);
-        $('drumLabel').textContent = running ? 'drum running ▸' : 'drum stopped';
+        $('drumLabel').textContent = running ? 'RUNNING ▸' : 'STOPPED';
+        $('drumLabel').setAttribute('fill', running ? '#4ade80' : '#fbbf24');
+        const led = $('drumLed');
+        if (led) {
+          led.setAttribute('fill', running ? '#22c55e' : '#eab308');
+          led.setAttribute('filter', running ? 'url(#glowGreen)' : 'url(#glowGold)');
+        }
       },
       drawStrip() {
         const box = $('kymoStrip'); if (!box) return;
