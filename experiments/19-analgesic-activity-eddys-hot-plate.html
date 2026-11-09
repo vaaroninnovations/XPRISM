@@ -1198,7 +1198,7 @@
       const marks = a.marked ? (CFG.markTool === 'picric' ? MARKCODE[a.id].map(p => `<ellipse cx="${MARKPOS[p][0]}" cy="${MARKPOS[p][1]}" rx="3.6" ry="2.8" fill="#f59e0b" opacity=".85"/>`).join('')
         : `<text x="-30" y="3" font-size="6" font-weight="900" fill="#111827" font-family="Inter" transform="rotate(0)">${a.id}</text><path d="M -27 -3.5 v7 M -21 -3.5 v7" stroke="#111827" stroke-width=".6" opacity=".5"/>`) : '';
       const sleepy = a.dose && excessAt(a, (S.clock - a.dose.t) / 60) > 1.0;  // heavily opioid-treated animals sit still (Straub tail not shown)
-      return `<g class="hot" data-act="${act}" transform="translate(${x} ${y}) rotate(${rot}) scale(${sc})">${animalTopArt({ kind: CFG.sp === 'rat' ? 'rat' : 'mouse' })}${marks}</g>`;
+      return `<g class="hot" data-act="${act}" transform="translate(${x} ${y}) rotate(${rot}) scale(${sc})">${animalTopArt({ kind: CFG.sp === 'rat' ? 'rat' : 'mouse', life: sleepy ? 'breath' : '' })}${marks}</g>`;
     }
     const tagS = (x, y, t, c) => `<g><rect x="${x - t.length * 2.6 - 4}" y="${y - 8}" width="${t.length * 5.2 + 8}" height="12" rx="3" fill="${c}" opacity=".88"/>${lbl(x, y + 1.5, t, { c: '#fff', s: 8.5, w: 700 })}</g>`;
     const animalTag = (a, x, y) => a.id ? tagS(x, y, aName(a), a.group === 'T' ? '#6d28d9' : a.group === 'C' ? '#334155' : '#0f172a') : '';

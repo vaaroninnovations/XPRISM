@@ -705,7 +705,7 @@
     const _realRng = seed => () => (seed = (seed * 16807) % 2147483647) / 2147483647;
     const _realMemo = {};
     // realRabbitHead, realRabbitEye, realGuineaPig, realFrogBody, realFrogLeg: ../assets/js/animal-art.js
-    document.getElementById('rabbitRigOverview').innerHTML = `<g transform="translate(250 176) scale(.292)">${realRabbitHead({ earTop: -300 })}</g>` + realRabbitEye(222, 169, 8.5, 'miniRightPupil', 4.5) + realRabbitEye(278, 169, 8.5, 'miniLeftPupil', 4.5) + `<text x="222" y="194" text-anchor="middle" font-size="9" font-weight="bold" fill="#0369a1">Right Eye</text><text x="278" y="194" text-anchor="middle" font-size="9" font-weight="bold" fill="#475569">Left Eye</text>`;
+    document.getElementById('rabbitRigOverview').innerHTML = `<g transform="translate(250 176) scale(.292)">${realRabbitHead({ earTop: -300 })}</g>` + realRabbitEye(221.5, 172, 4.6, 'miniRightPupil', 2.44) + realRabbitEye(278.4, 172, 4.6, 'miniLeftPupil', 2.44) + `<text x="222" y="194" text-anchor="middle" font-size="9" font-weight="bold" fill="#0369a1">Right Eye</text><text x="278" y="194" text-anchor="middle" font-size="9" font-weight="bold" fill="#475569">Left Eye</text>`;
   </script>
   <script>
     // --- PHARMACOLOGY DATABASE ---
@@ -1510,7 +1510,7 @@
       }
       function paintPupil(c) {
         $id(c.side + 'Pupil').setAttribute('r', c.r.toFixed(2));
-        $id(c.side === 'right' ? 'miniRightPupil' : 'miniLeftPupil').setAttribute('r', (c.r / 26 * 4.5).toFixed(2));
+        $id(c.side === 'right' ? 'miniRightPupil' : 'miniLeftPupil').setAttribute('r', (c.r / 26 * 2.44).toFixed(2));
       }
 
       // ---- Wet cornea. feSpecularLighting draws the highlight; the penlight moves its point source.

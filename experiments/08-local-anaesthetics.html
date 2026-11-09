@@ -605,7 +605,7 @@
       return `
         <g transform="scale(${s})">
           <g transform="${flip}">
-            ${animalSideArt({ kind: 'mouse' })}
+            ${animalSideArt({ kind: 'mouse', life: shut ? 'breath' : '' })}
             ${shut ? '<ellipse cx="16" cy="-2.3" rx="1.6" ry="1.3" fill="#f4eeeb"/><path d="M14.7 -2.2 Q16 -1.3 17.4 -2.2" stroke="#a07a7a" stroke-width=".5" fill="none"/>' : ''}
           </g>
           ${label ? `<text y="${shut ? 22 : -13}" text-anchor="middle" font-family="JetBrains Mono" font-size="6" font-weight="700" fill="#334155">${label}</text>` : ''}
@@ -684,11 +684,16 @@
     function applyAll() { subjSites().forEach((s, k) => apply(s.id, 0)); showFeedback('Drugs applied. Test each site immediately (baseline) and then every 5 min.'); }
     function test(id, silent) {
       const s = S.sites[id];
-      if (s.t0 === null) { if (!silent) showFeedback('Apply the drug to this site first.', true); return; }
+      if (s.t0 === null) {
+        if (silent) return;
+        // an eye that has received nothing still has its normal reflex; it just isn't a timed reading
+        if (s.method === 'A') { s.anim = 1.6; s.animRes = 6; beep('tick'); showFeedback(`${s.name}: nothing instilled yet, so the reflex is intact (6/6 blinks, not recorded). Instil ${s.drug} to start the timed readings.`); return; }
+        showFeedback('Apply the drug to this site first.', true); return;
+      }
       const tm = sinceMin(s); if (tm < 0) return;
       const v = measure(s, tm);
       s.tests.push({ t: tm, v }); s.last = S.t; s.anim = 1.6; s.animRes = v;
-      if (!silent) { beep(isBlocked(s, v) ? 'warn' : 'tick'); showFeedback(`${s.name} (${s.drug}) at ${fx(tm, 1)} min: ${s.method === 'C' ? `withdrawal ${v >= 10 ? 'absent (> 10 s)' : 'in ' + v + ' s'}` : `${v}/6 ${s.method === 'A' ? 'blinks' : 'twitches'}`}.`); }
+      if (!silent) { beep(isBlocked(s, v) ? 'warn' : 'tick'); showFeedback(`${s.name} (${s.drug}) at ${fx(tm, 1)} min: ${s.method === 'C' ? `withdrawal ${v >= 10 ? 'absent (> 10 s)' : 'in ' + v + ' s'}` : `${v}/6 ${s.method === 'A' ? 'blinks' : 'twitches'}`}.${s.p.emax && s.method !== 'C' && tm < 3 && !isBlocked(s, v) ? ' Too early to judge: the block takes a few minutes to develop. Run the clock and test again.' : ''}`); }
       renderSites();
     }
     function tick(dt, dtR) {
@@ -713,26 +718,30 @@
     function drawScene() {
       const svg = $('scene');
       const ss = subjSites();
-      let body = '';
+      let body = '', flinch = 0;
       if (S.method === 'A') {
+        const lidOf = s => { if (!(s.anim > 0 && s.animRes > 0)) return 0; const gap = 1.6 / s.animRes, off = Math.abs((1.6 - s.anim) % gap - gap / 2), c = Math.max(0, 1 - off / Math.min(.12, gap * .4)); return c * c * (3 - 2 * c); };
+        flinch = Math.max(...ss.map(lidOf));
+        const pose = rabbitPose(flinch);
         const eye = (s, cx) => {
-          const blink = s.anim > 0 && s.animRes > 0 && (Math.floor(s.anim * 8) % Math.max(1, Math.round(8 / s.animRes)) === 0);
+          const lid = lidOf(s);   // one smooth blink for each responsive touch, spread over the 1.6 s test
           const touching = s.anim > 0;
           return `<g class="svg-btn" data-site="${s.id}">
-            ${realRabbitEye(cx, 200, 22, '', 9.5)}
-            ${blink ? `<path d="M ${cx - 27} 201 Q ${cx} 168 ${cx + 27} 201 Q ${cx} 232 ${cx - 27} 201 Z" fill="#efe7e2" stroke="#b9a79e" stroke-width="1.5"/><path d="M ${cx - 25} 204 Q ${cx} 216 ${cx + 25} 204" fill="none" stroke="#8a7a72" stroke-width="2.5"/>` : ''}
+            <circle cx="${cx}" cy="196" r="26" fill="#fff" opacity=".001"/>
+            <g transform="translate(500 215) scale(1.46)"><g transform="${pose}">${realRabbitLid(cx < 500 ? -1 : 1, lid)}</g></g>
             ${touching ? `<path d="M ${cx + 120} 120 Q ${cx + 60} 150 ${cx + 22} 196" stroke="#f8fafc" stroke-width="3" fill="none"/><circle cx="${cx + 22}" cy="196" r="5" fill="#fff" stroke="#cbd5e1"/>` : ''}
             <rect x="${cx - 92}" y="254" width="184" height="38" rx="7" fill="#fff" opacity=".82"/>
             <text x="${cx}" y="268" text-anchor="middle" font-size="12" font-weight="700" fill="#13294f">${s.name}: ${s.drug}</text>
             <text x="${cx}" y="286" text-anchor="middle" font-size="11" fill="#475569" font-family="JetBrains Mono">${s.t0 === null ? 'not applied' : `t = ${fx(sinceMin(s), 1)} min • last ${s.tests.length ? s.tests[s.tests.length - 1].v + '/6' : '—'}`}</text>
           </g>`;
         };
-        body = `<g transform="translate(500 215) scale(1.46)">${realRabbitHead({ earTop: -210, body: true })}</g>${eye(ss[0], 360)}${eye(ss[1], 640)}`;
+        body = `<g transform="translate(500 215) scale(1.46)"><g transform="${pose}">${realRabbitHead({ earTop: -210, body: true })}</g></g>${eye(ss[0], 360)}${eye(ss[1], 640)}`;
       } else if (S.method === 'B') {
         // Four wheals inside the shaved patch of the render (scene x 396-528, y 144-250). Labels sit out on the fur.
         const pos = [[426, 170], [498, 170], [426, 224], [498, 224]], R = 17;
         const hintW = 262;
-        body = `<rect width="1000" height="420" fill="#e9eef2"/>${realGuineaPig()}
+        const shiver = ss.some(s => s.anim > 0 && s.animRes > 0 && Math.floor(s.anim * 10) % 2 === 0);
+        body = `<rect width="1000" height="420" fill="#e9eef2"/>${realGuineaPig(guineaPigPose(shiver))}
           <rect x="${462 - hintW / 2}" y="116" width="${hintW}" height="19" rx="9.5" fill="#fff" opacity=".88"/>
           <text x="462" y="129" text-anchor="middle" font-size="10" font-weight="600" fill="#9a3412">shaved area • click a wheal to prick it 6 times</text>
           ${ss.map((s, i) => {
@@ -770,6 +779,7 @@
           <text x="500" y="412" text-anchor="middle" font-size="10" fill="#475569">click a leg to dip its foot and time withdrawal</text>`;
       }
       svg.innerHTML = `<defs>${VIVO_DEFS}</defs>${body}`;
+      if (S.method === 'A') animateRabbit(svg, flinch);
     }
 
     // ---------------- panel ----------------
