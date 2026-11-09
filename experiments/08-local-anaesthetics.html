@@ -150,7 +150,6 @@
             <button onclick="skipWait()" class="mt-2 w-full py-1 text-[11px] rounded bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold">⏩ Skip waiting</button>
           </div>
           <svg id="scene" viewBox="0 0 1000 420" preserveAspectRatio="xMidYMid meet" class="w-full block flex-1 min-h-0"></svg>
-          <p id="rabbitCredit" style="font-size:10px;line-height:1.4;color:#64748b;margin:0 12px 6px"></p>
           <div id="actionFeedback" class="m-2 mt-0 bg-slate-900/90 text-white py-2 px-4 rounded-lg text-xs flex items-center justify-between shadow-lg border border-slate-700 shrink-0">
             <div class="flex items-center space-x-2">
               <span id="feedbackIcon" class="text-teal-400 font-bold text-sm">ℹ</span>
@@ -724,19 +723,24 @@
         const lidOf = s => { if (!(s.anim > 0 && s.animRes > 0)) return 0; const gap = 1.6 / s.animRes, off = Math.abs((1.6 - s.anim) % gap - gap / 2), c = Math.max(0, 1 - off / Math.min(.12, gap * .4)); return c * c * (3 - 2 * c); };
         flinch = Math.max(...ss.map(lidOf));
         const pose = rabbitPose(flinch);
-        const eye = (s, cx) => {
+        // The whole animal stands in the middle; the eyes are small on it, so each has a magnified view at the side.
+        // It faces the viewer, so its left eye is on the viewer's right.
+        const RS = .46, RY = 173;
+        const eye = (s, side) => {
           const lid = lidOf(s);   // one smooth blink for each responsive touch, spread over the 1.6 s test
-          const touching = s.anim > 0;
+          const touching = s.anim > 0, x = 500 + side * 295, y = 160, R = 112, ex = 500 + side * 39, ey = RY + 1;
           return `<g class="svg-btn" data-site="${s.id}">
-            <circle cx="${cx}" cy="196" r="26" fill="#fff" opacity=".001"/>
-            <g transform="translate(500 215) scale(1.46)"><g transform="${pose}">${realRabbitLid(cx < 500 ? -1 : 1, lid)}</g></g>
-            ${touching ? `<path d="M ${cx + 120} 120 Q ${cx + 60} 150 ${cx + 22} 196" stroke="#f8fafc" stroke-width="3" fill="none"/><circle cx="${cx + 22}" cy="196" r="5" fill="#fff" stroke="#cbd5e1"/>` : ''}
-            <rect x="${cx - 92}" y="254" width="184" height="38" rx="7" fill="#fff" opacity=".82"/>
-            <text x="${cx}" y="268" text-anchor="middle" font-size="12" font-weight="700" fill="#13294f">${s.name}: ${s.drug}</text>
-            <text x="${cx}" y="286" text-anchor="middle" font-size="11" fill="#475569" font-family="JetBrains Mono">${s.t0 === null ? 'not applied' : `t = ${fx(sinceMin(s), 1)} min • last ${s.tests.length ? s.tests[s.tests.length - 1].v + '/6' : '—'}`}</text>
+            <path d="M${ex} ${ey} L${x - side * R} ${y}" stroke="#64748b" stroke-width="1" stroke-dasharray="3 3" fill="none"/>
+            <circle cx="${ex}" cy="${ey}" r="14" fill="#fff" opacity=".001"/>
+            <g transform="translate(500 ${RY}) scale(${RS})"><g transform="${pose}">${realRabbitLid(side, lid)}</g></g>
+            ${realRabbitEyeView(side, lid, x, y, R)}
+            ${touching ? `<path d="M ${x + side * 104} ${y - 122} Q ${x + side * 62} ${y - 70} ${x + side * 14} ${y - 2}" stroke="#f8fafc" stroke-width="3" fill="none"/><circle cx="${x + side * 14}" cy="${y - 2}" r="6" fill="#fff" stroke="#cbd5e1"/>` : ''}
+            <rect x="${x - 92}" y="284" width="184" height="38" rx="7" fill="#fff" opacity=".9"/>
+            <text x="${x}" y="298" text-anchor="middle" font-size="12" font-weight="700" fill="#13294f">${s.name}: ${s.drug}</text>
+            <text x="${x}" y="316" text-anchor="middle" font-size="11" fill="#475569" font-family="JetBrains Mono">${s.t0 === null ? 'not applied' : `t = ${fx(sinceMin(s), 1)} min • last ${s.tests.length ? s.tests[s.tests.length - 1].v + '/6' : '—'}`}</text>
           </g>`;
         };
-        body = `<g transform="translate(500 215) scale(1.46)"><g transform="${pose}">${realRabbitHead({ earTop: -210, body: true })}</g></g>${eye(ss[0], 360)}${eye(ss[1], 640)}`;
+        body = `<rect width="1000" height="420" fill="#e9eef2"/><ellipse cx="500" cy="412" rx="128" ry="7" fill="#475569" opacity=".35" filter="url(#realBlur)"/><g transform="translate(500 ${RY}) scale(${RS})"><g transform="${pose}">${realRabbitHead({ body: true })}</g></g>${eye(ss[1], -1)}${eye(ss[0], 1)}`;
       } else if (S.method === 'B') {
         // Four wheals inside the shaved patch of the render (scene x 396-528, y 144-250). Labels sit out on the fur.
         const pos = [[426, 170], [498, 170], [426, 224], [498, 224]], R = 17;
@@ -785,7 +789,6 @@
 
     // ---------------- panel ----------------
     function renderMethodTabs() {
-      const credit = $('rabbitCredit'); credit.innerHTML = RABBIT_CREDIT; credit.hidden = S.method !== 'A';   // only Method A shows the rabbit
       $('methodTabs').innerHTML = Object.entries(METHODS).map(([k, M]) => `<button onclick="setMethod('${k}')" class="px-2.5 py-1 text-[11px] rounded font-semibold ${S.method === k ? 'bg-teal-600 text-white' : 'text-slate-600 hover:bg-slate-100'}">${M.label}</button>`).join('');
       $('subjBtns').innerHTML = METHODS[S.method].subjects.map(sb => `<button class="chip ${S.subj === sb.id ? 'on' : ''}" onclick="S.subj='${sb.id}';renderAll()">${sb.label}</button>`).join('');
     }

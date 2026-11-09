@@ -360,7 +360,6 @@
           </div>
 
         </div>
-        <p id="rabbitCredit" style="font-size:10px;line-height:1.4;color:#64748b;margin:6px 12px;text-align:center;flex-shrink:0"></p>
       </div>
 
       <!-- RIGHT SIDE: INSTRUMENTS PALETTE -->
@@ -706,8 +705,7 @@
     const _realRng = seed => () => (seed = (seed * 16807) % 2147483647) / 2147483647;
     const _realMemo = {};
     // realRabbitHead, realRabbitEye, realGuineaPig, realFrogBody, realFrogLeg: ../assets/js/animal-art.js
-    document.getElementById('rabbitCredit').innerHTML = RABBIT_CREDIT;
-    document.getElementById('rabbitRigOverview').innerHTML = `<g transform="translate(250 176) scale(.292)">${realRabbitHead({ earTop: -300 })}</g>` + realRabbitEye(221.5, 172, 4.6, 'miniRightPupil', 2.44) + realRabbitEye(278.4, 172, 4.6, 'miniLeftPupil', 2.44) + `<text x="222" y="194" text-anchor="middle" font-size="9" font-weight="bold" fill="#0369a1">Right Eye</text><text x="278" y="194" text-anchor="middle" font-size="9" font-weight="bold" fill="#475569">Left Eye</text>`;
+    document.getElementById('rabbitRigOverview').innerHTML = `<g transform="translate(250 168) scale(.343)">${realRabbitHead()}</g>` + realRabbitEye(220.7, 168, 4.6, 'miniRightPupil', 2.44) + realRabbitEye(279.5, 168, 4.6, 'miniLeftPupil', 2.44) + `<text x="204" y="172" text-anchor="end" font-size="9" font-weight="bold" fill="#0369a1">Right Eye</text><text x="296" y="172" text-anchor="start" font-size="9" font-weight="bold" fill="#475569">Left Eye</text>`;
   </script>
   <script>
     // --- PHARMACOLOGY DATABASE ---
@@ -1571,9 +1569,9 @@
         const twitch = burst * Math.sin(clock * 2 * Math.PI * 9);           // 9 Hz whisking
         document.querySelectorAll('.rbEarL').forEach(g => g.setAttribute('transform', `rotate(${(drift + twitch * 2.5).toFixed(2)} -66 -92)`));
         document.querySelectorAll('.rbEarR').forEach(g => g.setAttribute('transform', `rotate(${(-drift * .8 - twitch * 1.5).toFixed(2)} 66 -92)`));
-        document.querySelectorAll('.rbWhisk').forEach(g => g.setAttribute('transform', `translate(0 ${(twitch * 1.2).toFixed(2)})`));
+        document.querySelectorAll('.rbWhisk').forEach(g => g.setAttribute('transform', `translate(0 ${(twitch * 2.4).toFixed(2)})`));
         // Rabbits move their noses constantly, at around 4 Hz.
-        document.querySelectorAll('.rbNose').forEach(g => g.setAttribute('transform', `translate(0 ${(Math.sin(clock * 2 * Math.PI * 4) * .9).toFixed(2)})`));
+        document.querySelectorAll('.rbNose').forEach(g => g.setAttribute('transform', `translate(0 ${(Math.sin(clock * 2 * Math.PI * 4) * 2).toFixed(2)})`));
       }
 
       // ---- Main loop. Frames are skipped while resting, so low-spec lab PCs stay responsive.

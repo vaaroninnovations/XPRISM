@@ -14,12 +14,12 @@
   'use strict';
 
   // Bump after re-baking: nginx caches /assets/ for 30 days.
-  const ANI_VER = 6;
+  const ANI_VER = 7;
   const BASE = new URL('../img/animals/', document.currentScript.src).href;
   const BOX = {
     'side-rat': [-38, -23, 50, 20], 'side-mouse': [-38, -23, 50, 20], earS: [16.5, -22, 30, -7.5],
     footH: [-23, 8, 3, 19], footHfar: [-23, 8, 3, 19], footF: [18, 9, 32, 19], footFfar: [18, 9, 32, 19],
-    top: [-27, -16, 32, 16], 'top-mouse': [-24.27, -11.86, 28.83, 11.78], 'top-rat': [-25.06, -14.23, 28.77, 14.16], rbHead: [-152, -130, 152, 150], rbEar: [20, -244, 112, -70], rbBody: [-264, 84, 264, 256],
+    top: [-27, -16, 32, 16], 'top-mouse': [-24.27, -11.86, 28.83, 11.78], 'top-rat': [-25.06, -14.23, 28.77, 14.16], rbHead: [-114, -146, 116, 254], rbEarL: [-230, -366, -4, -30], rbEarR: [9, -356, 235, -30], rbBody: [-245, -146, 225, 526],
     guineaPig: [112, 28, 906, 412], frogBody: [428, 84, 572, 286], frogVen07: [96, 28, 564, 448], frogVen12: [330, 48, 670, 566]
   };
 
@@ -114,30 +114,25 @@
         </g>`;
   }
 
-  // ---- albino rabbit, front view centred on the origin. o: {earTop (y of ear tips), body}
+  // ---- albino rabbit, front view. Units are pixels of the render, origin midway between the eyes. o: {body}
   function realRabbitHead(o = {}) {
-    const T = o.earTop || -230, ky = f2((T + 90) / (-230 + 90));
-    const ear = s => `<g transform="scale(${s} 1) translate(0 -90) scale(1 ${ky}) translate(0 90)">${sprite('rbEar')}</g>`;
-    const wh = [[-1, -5, 30], [-1, 2, 36], [-1, 9, 34], [-1, -9, 25], [-1, 13, 28], [1, -5, 30], [1, 2, 36], [1, 9, 34], [1, -9, 25], [1, 13, 28]].map(([s, dy, l]) => `<path d="M${s * 22} ${84 + dy * .4} Q${s * (22 + l * 1.8)} ${76 + dy} ${s * (22 + l * 3)} ${92 + dy * 2.2}" fill="none" stroke="#fffaf2" stroke-opacity=".82" stroke-width=".55"/>`).join('');
-    const HEAD = 'M0 -112 C50 -116 106 -96 128 -48 C144 -10 124 42 88 84 C62 112 32 132 0 134 C-32 132 -62 112 -88 84 C-124 42 -144 -10 -128 -48 C-106 -96 -50 -116 0 -112Z', BODY = 'M-250 250 C-230 130 -130 96 0 96 C130 96 230 130 250 250Z';
+    const wh = [[-1, -6, 96], [-1, 3, 112], [-1, 12, 104], [1, -6, 96], [1, 3, 112], [1, 12, 104]].map(([s, dy, l]) => `<path d="M${s * 34} ${158 + dy} Q${s * (34 + l * .6)} ${146 + dy * 1.6} ${s * (34 + l)} ${166 + dy * 3}" fill="none" stroke="#e9e2da" stroke-opacity=".8" stroke-width="1.1"/>`).join('');
     // a soft cast shadow keeps white fur readable on the pale scene backgrounds
-    const cast = d => `<path d="${d}" fill="#4a3a34" opacity=".34" filter="url(#realBlur)" transform="translate(2 7)"/>`;
-    return `${o.body ? cast(BODY) + sprite('rbBody') : ''}${cast(HEAD)}<g class="rbEarL">${ear(-1)}</g><g class="rbEarR">${ear(1)}</g>${sprite('rbHead')}<clipPath id="rbMuzzleC"><ellipse cx="0" cy="86" rx="26" ry="15"/></clipPath><g class="rbNose"><g clip-path="url(#rbMuzzleC)">${sprite('rbHead')}</g></g><g class="rbWhisk">${wh}</g>`;
+    const cast = (cy, rx, ry) => `<ellipse cx="0" cy="${cy}" rx="${rx}" ry="${ry}" fill="#4a3a34" opacity=".34" filter="url(#realBlur)" transform="translate(4 10)"/>`;
+    return `${o.body ? sprite('rbBody') : cast(62, 110, 186)}<g class="rbEarL">${sprite('rbEarL')}</g><g class="rbEarR">${sprite('rbEarR')}</g>${sprite('rbHead')}<radialGradient id="rbMuzzleG"><stop offset=".6" stop-color="#fff"/><stop offset="1" stop-color="#000"/></radialGradient><mask id="rbMuzzleM"><ellipse cx="0" cy="158" rx="54" ry="48" fill="url(#rbMuzzleG)"/></mask><g class="rbNose"><g mask="url(#rbMuzzleM)">${sprite('rbHead')}</g></g><g class="rbWhisk">${wh}</g>`;
   }
-  // One eye laid over the photographed head so the experiment can still resize the pupil (pupilId is that hook).
+  // One eye laid over the head so an experiment can still resize the pupil (pupilId is that hook).
+  // The rabbit faces the viewer with its eyes on the sides of its head, so a round eye looks narrow.
   function realRabbitEye(cx, cy, r, pupilId, pupilR) {
-    return `<circle cx="${cx}" cy="${cy}" r="${f2(r * 1.14)}" fill="#7d5a60" opacity=".6"/>
-        <circle cx="${cx}" cy="${cy}" r="${r}" fill="#a9525f" opacity=".9"/>
-        <circle ${pupilId ? `id="${pupilId}" ` : ''}cx="${cx}" cy="${cy}" r="${pupilR}" fill="#2a0510" opacity=".92"/>
-        <circle cx="${f2(cx - r * .32)}" cy="${f2(cy - r * .36)}" r="${f2(r * .16)}" fill="#fff" opacity=".75"/>`;
+    return `<g transform="translate(${cx} ${cy}) scale(.62 1)"><circle r="${r}" fill="#a9525f" opacity=".55"/>
+        <circle ${pupilId ? `id="${pupilId}" ` : ''}r="${pupilR}" fill="#2a0510" opacity=".92"/>
+        <circle cx="${f2(-r * .32)}" cy="${f2(-r * .36)}" r="${f2(r * .16)}" fill="#fff" opacity=".75"/></g>`;
   }
-  // Eyelid of the photographed head, in head coordinates. side -1 (viewer's left) or 1; c 0 (open) to 1 (shut).
-  // In-focus fur from the nose side of the eye closes over it, so the lid is the animal's own coat.
-  // The chains trace the two sides of the eye opening, top to bottom, in rbHead pixels.
-  const EYE_SIDES = [
-    [[158, 290], [132, 303], [119, 335], [126, 366], [141, 392], [178, 406]],
-    [[158, 290], [180, 308], [198, 345], [205, 380], [200, 402], [178, 406]]
-  ];
+  // Each eye by side (-1 is the viewer's left), in head units: centre, then the two edges of the opening from top to bottom.
+  const EYES = {
+    '-1': { at: [-84, 3], a: [[-83, -19], [-91, -13], [-94.5, -3], [-94.5, 7], [-91, 17], [-84, 26]], b: [[-83, -19], [-77, -14], [-74, -4], [-74, 8], [-76, 19], [-84, 26]] },
+    1: { at: [82.5, 3], a: [[81, -19], [75.5, -13], [73, -2], [73.5, 10], [76, 20], [81, 26]], b: [[81, -19], [87, -14], [91.5, -3], [92, 7], [89, 17], [81, 26]] }
+  };
   function walkChain(ch, t) {
     let left = t * ch.reduce((n, p, i) => i ? n + Math.hypot(p[0] - ch[i - 1][0], p[1] - ch[i - 1][1]) : 0, 0);
     const out = [ch[0]];
@@ -147,15 +142,24 @@
     }
     return out;
   }
-  function realRabbitLid(side, c) {
+  // Eyelid in head units, c 0 (open) to 1 (shut). Fur from the nose side of the eye closes over it, so the lid is
+  // the animal's own coat. tag keeps the ids apart when one eye is drawn twice.
+  function realRabbitLid(side, c, tag = '') {
     if (c <= 0) return '';
-    const P = ([x, y]) => `${f2(side * (152 - x / 3))} ${f2(y / 3 - 130)}`, t = .05 + c * .66;
-    const a = walkChain(EYE_SIDES[0], t), b = walkChain(EYE_SIDES[1], t), L = a[a.length - 1], R = b[b.length - 1];
-    const Q = `Q${P([(L[0] + R[0]) / 2, (L[1] + R[1]) / 2 + 7])} ${P(R)}`, id = 'rbLid' + (side < 0 ? 'L' : 'R');
+    const P = ([x, y]) => `${f2(x)} ${f2(y)}`, t = .05 + c * .85;
+    const a = walkChain(EYES[side].a, t), b = walkChain(EYES[side].b, t), L = a[a.length - 1], R = b[b.length - 1];
+    const Q = `Q${P([(L[0] + R[0]) / 2, (L[1] + R[1]) / 2 + 2.5])} ${P(R)}`, id = `rbLid${side < 0 ? 'L' : 'R'}${tag}`;
     const lid = `M${a.map(P).join('L')}${Q}L${b.slice(0, -1).reverse().map(P).join('L')}Z`;
-    return `<g pointer-events="none"><filter id="${id}F" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="1.4"/></filter><mask id="${id}"><path d="${lid}" fill="#fff" filter="url(#${id}F)"/></mask>
-        <g mask="url(#${id})"><g transform="translate(${side * 25} 0)">${sprite('rbHead')}</g><path d="${lid}" fill="#6f625e" opacity=".2"/></g>
-        <path d="M${P(L)}${Q}" fill="none" stroke="#7a5a5c" stroke-width=".55" stroke-linecap="round" opacity=".6"/></g>`;
+    return `<g pointer-events="none"><filter id="${id}F" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation=".8"/></filter><mask id="${id}"><path d="${lid}" fill="#fff" filter="url(#${id}F)"/></mask>
+        <g mask="url(#${id})"><g transform="translate(${side * 30} 0)">${sprite('rbBody')}</g><path d="${lid}" fill="#6f625e" opacity=".2"/></g>
+        <path d="M${P(L)}${Q}" fill="none" stroke="#7a5a5c" stroke-width=".8" stroke-linecap="round" opacity=".6"/></g>`;
+  }
+  // A round magnified view of one eye, centred on (x, y) in the caller's scene. c is the lid, as above.
+  function realRabbitEyeView(side, c, x, y, r, zoom = 4) {
+    const [ex, ey] = EYES[side].at, id = `rbLoupe${side < 0 ? 'L' : 'R'}`;
+    return `<clipPath id="${id}"><circle cx="${x}" cy="${y}" r="${r}"/></clipPath><circle cx="${x}" cy="${y}" r="${r}" fill="#fff"/>
+        <g clip-path="url(#${id})"><g transform="translate(${x} ${y}) scale(${zoom}) translate(${-ex} ${-ey})">${sprite('rbBody')}${realRabbitLid(side, c, 'Z')}</g></g>
+        <circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="#334155" stroke-width="3"/>`;
   }
   // A cut-out render with its studio shadow baked in pale. Multiplying makes that read as a shadow, but an SVG
   // blends only with its own content, so the caller must paint the bench behind this inside the same SVG.
@@ -299,7 +303,7 @@
   // flinch 0..1 follows the reflex. It stays 0 when the eye is anaesthetised, so motion can't be mistaken for a response.
   function rabbitPose(flinch = 0) {
     if (stillMotion) return '';
-    return `translate(0 ${f2(Math.sin(nowS() * TAU * .8) * .8 - flinch * 2.4)}) scale(${f2(1 - flinch * .012)})`;
+    return `translate(0 ${f2(Math.sin(nowS() * TAU * .8) * 1.8 - flinch * 6)}) scale(${f2(1 - flinch * .012)})`;
   }
   const rb = { burst: 0, next: 2 };
   function animateRabbit(root, flinch = 0) {
@@ -310,8 +314,8 @@
     const tw = rb.burst * Math.sin(t * TAU * 9), set = (c, v) => root.querySelectorAll(c).forEach(g => g.setAttribute('transform', v));
     set('.rbEarL', `rotate(${f2(drift + tw * 2.5 - flinch * 7)} -66 -92)`);
     set('.rbEarR', `rotate(${f2(-drift * .8 - tw * 1.5 + flinch * 7)} 66 -92)`);
-    set('.rbWhisk', `translate(0 ${f2(tw * 1.2)})`);
-    set('.rbNose', `translate(0 ${f2(Math.sin(t * TAU * 4) * .9)})`);
+    set('.rbWhisk', `translate(0 ${f2(tw * 2.4)})`);
+    set('.rbNose', `translate(0 ${f2(Math.sin(t * TAU * 4) * 2)})`);
   }
   // Resting guinea pig, about 84 breaths a minute. shiver is the panniculus reflex: the skin of the back jumps.
   function guineaPigPose(shiver) {
@@ -320,10 +324,5 @@
     return `translate(${f2(509 + s * Math.sin(t * TAU * 21) * .9)} ${f2(200 + s * Math.cos(t * TAU * 17) * .6)}) scale(1 ${(1 + Math.sin(t * TAU * 1.4) * .012 + s * .006).toFixed(4)}) translate(-509 -200)`;
   }
 
-  // Required by CC BY-SA 4.0 wherever rbHead, rbEar or rbBody are shown. Full details: ../img/animals/CREDITS.md
-  const creditLink = (href, text) => `<a href="${href}" target="_blank" rel="noopener noreferrer" style="color:#0f766e;text-decoration:underline">${text}</a>`;
-  const commonsPhoto = n => creditLink(`https://commons.wikimedia.org/wiki/File:Portraits_of_rabbits_in_the_Philippines_${n}.jpg`, n);
-  const RABBIT_CREDIT = `Rabbit images adapted from \u201cPortraits of rabbits in the Philippines\u201d ${commonsPhoto('06')}, ${commonsPhoto('11')} and ${commonsPhoto('13')} by ${creditLink('https://commons.wikimedia.org/wiki/User:FBenjr123', 'FBenjr123')} (Wikimedia Commons), ${creditLink('https://creativecommons.org/licenses/by-sa/4.0/', 'CC BY-SA 4.0')}. Cropped, mirrored and retouched. These adapted images are shared under the same licence and are not covered by the XPRISM copyright notice.`;
-
-  Object.assign(global, { ANI_DEFS, animalSideArt, animalTopArt, realRabbitHead, realRabbitEye, realRabbitLid, rabbitPose, animateRabbit, guineaPigPose, RABBIT_CREDIT, realGuineaPig, realFrogBody, realFrogLeg, frogVentralArt, frogPlate, frogPlateUrl, openFrogAnatomy });
+  Object.assign(global, { ANI_DEFS, animalSideArt, animalTopArt, realRabbitHead, realRabbitEye, realRabbitLid, realRabbitEyeView, rabbitPose, animateRabbit, guineaPigPose, realGuineaPig, realFrogBody, realFrogLeg, frogVentralArt, frogPlate, frogPlateUrl, openFrogAnatomy });
 })(window);
