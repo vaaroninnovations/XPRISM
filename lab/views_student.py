@@ -1,12 +1,13 @@
 import json
 
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from . import access
-from .models import Assignment, Attempt, Role
+from .feedback import attempt_report
+from .models import Assignment, Attempt, Experiment, ExperimentFeedback, Role
 from .permissions import audit, get_attempt_or_403, role_required
 
 
@@ -47,10 +48,13 @@ def dashboard(request):
 
 @role_required(Role.STUDENT)
 def assignment(request, pk):
-    from django.shortcuts import get_object_or_404
     a = get_object_or_404(Assignment.objects.select_related('experiment', 'batch'), pk=pk, batch__enrollments__student=request.user)
     attempts = list(Attempt.objects.filter(assignment=a, student=request.user))
-    return render(request, 'lab/student_assignment.html', _summary(a, attempts))
+    ctx = _summary(a, attempts)
+    latest = next((x for x in attempts if x.status != Attempt.STARTED), None)       # attempts are newest first
+    ctx.update(latest=latest, report=attempt_report(latest) if latest else None, can_rate=not request.user.is_shared_demo,
+               rated=bool(latest) and ExperimentFeedback.objects.filter(attempt=latest).exists())
+    return render(request, 'lab/student_assignment.html', ctx)
 
 
 def _clip(obj, limit=60000):
@@ -106,4 +110,39 @@ def api_submit(request, pk):
     at.save()
     audit(request, 'attempt_submitted', f'attempt {at.pk}', exp=a.experiment.no, auto=at.auto_score)
     return JsonResponse({'ok': True, 'auto_score': at.auto_score, 'marks': at.final_marks, 'max_marks': float(a.max_marks),
-                         'viva': [at.viva_score, at.viva_total], 'answer_ok': at.answer_ok, 'late': at.is_late, 'timed_out': at.timed_out})
+                         'viva': [at.viva_score, at.viva_total], 'answer_ok': at.answer_ok, 'late': at.is_late, 'timed_out': at.timed_out,
+                         'report': attempt_report(at)})
+
+
+@require_POST
+def api_feedback(request, slug):
+    """Called by bridge.js and the assignment page when a student rates an experiment."""
+    u = request.user
+    if not u.is_authenticated:
+        return JsonResponse({'error': 'Your session has expired. Sign in again, then send your feedback.'}, status=401)
+    if u.role != Role.STUDENT:
+        return JsonResponse({'error': 'Only students and free-trial users rate experiments.'}, status=403)
+    exp = get_object_or_404(Experiment, slug=slug)
+    try:
+        data = json.loads(request.body.decode('utf-8') or '{}')
+        rating = int(data.get('rating'))
+    except (ValueError, TypeError, AttributeError, UnicodeDecodeError):
+        return JsonResponse({'error': 'Choose a rating from 1 to 5.'}, status=400)
+    if not 1 <= rating <= 5:
+        return JsonResponse({'error': 'Choose a rating from 1 to 5.'}, status=400)
+    difficulty = data.get('difficulty') if data.get('difficulty') in dict(ExperimentFeedback.DIFFICULTY) else ''
+    comment = str(data.get('comment') or '').strip()[:1000]
+    attempt = None
+    if data.get('attempt') not in (None, ''):
+        ref = str(data['attempt'])
+        attempt = Attempt.objects.filter(pk=int(ref) if ref.isdigit() else 0, student=u, assignment__experiment=exp).exclude(status=Attempt.STARTED).first()
+        if attempt is None:
+            return JsonResponse({'error': 'Submit the attempt before you rate it.'}, status=400)
+    context = ExperimentFeedback.ASSIGNMENT if attempt else (ExperimentFeedback.PRACTICE if u.has_full_access else ExperimentFeedback.TRIAL)
+    values = {'rating': rating, 'difficulty': difficulty, 'comment': comment, 'college': u.college, 'context': context}
+    if attempt:
+        ExperimentFeedback.objects.update_or_create(attempt=attempt, defaults={**values, 'user': u, 'experiment': exp})
+    else:
+        ExperimentFeedback.objects.update_or_create(user=u, experiment=exp, attempt=None, defaults=values)
+    audit(request, 'experiment_feedback', f'exp {exp.no}', rating=rating)
+    return JsonResponse({'ok': True})

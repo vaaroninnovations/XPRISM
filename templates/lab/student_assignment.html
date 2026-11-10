@@ -1,32 +1,68 @@
 {% extends 'base.html' %}
-{% load labtags %}
+{% load labtags static %}
 {% block title %}{{ a.experiment.title }}{% endblock %}
 {% block content %}
-<a href="{% url 'student_dashboard' %}" class="text-xs font-semibold text-teal-700 hover:underline">← My assignments</a>
+<a href="{% url 'student_dashboard' %}" class="text-sm font-semibold text-teal-700 hover:underline">Back to my assignments</a>
 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-4">
   <div class="flex flex-wrap items-start justify-between gap-3 border-b pb-4">
     <div>
-      <div class="flex items-center gap-2"><span class="mono text-[11px] font-bold text-teal-700 bg-teal-50 border border-teal-200 px-2 py-0.5 rounded">EXP #{{ a.experiment.no|stringformat:"02d" }}</span>{{ state|state_badge }}{% if a.exam_mode %}<span class="text-[11px] font-semibold border px-2 py-0.5 rounded-full bg-rose-50 text-rose-800 border-rose-200">Exam mode</span>{% endif %}</div>
+      <div class="flex items-center gap-2"><span class="text-xs font-semibold text-slate-600">Exp {{ a.experiment.no|stringformat:"02d" }}</span>{{ state|state_badge }}{% if a.exam_mode %}<span class="text-[11px] font-semibold border px-2 py-0.5 rounded-full bg-rose-50 text-rose-800 border-rose-200">Exam mode</span>{% endif %}</div>
       <h1 class="text-xl font-bold text-slate-900 mt-2">{{ a.experiment.title }}</h1>
-      <p class="text-xs text-slate-500">{{ a.batch.name }} • opens {{ a.opens_at|date:"d M Y H:i" }} • due {{ a.due_at|date:"d M Y H:i" }}{% if not a.allow_late %} (no late submissions){% endif %}</p>
+      <p class="text-sm text-slate-500 mt-1">{{ a.batch.name }} • opens {{ a.opens_at|date:"d M Y H:i" }} • due {{ a.due_at|date:"d M Y H:i" }}{% if not a.allow_late %} (no late submissions){% endif %}</p>
     </div>
-    {% if can_start %}<a href="{{ a.launch_url }}" class="px-5 py-2.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow">{% if state == 'in_progress' %}Resume experiment{% else %}Start experiment{% endif %} →</a>{% endif %}
+    {% if can_start %}<a href="{{ a.launch_url }}" class="px-5 py-2.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow">{% if state == 'in_progress' %}Resume experiment{% elif used %}Start another attempt{% else %}Start experiment{% endif %}</a>{% endif %}
   </div>
-  {% if a.instructions %}<div class="p-3 rounded-lg bg-slate-50 border border-slate-200 text-sm text-slate-700 whitespace-pre-line"><b class="text-xs uppercase text-slate-500 block mb-1">Instructions from your faculty</b>{{ a.instructions }}</div>{% endif %}
-  <div class="grid sm:grid-cols-4 gap-3 text-center">
-    <div class="p-3 rounded-lg bg-slate-50 border"><div class="text-[10px] uppercase text-slate-500 font-mono">Attempts used</div><div class="text-lg font-bold mono">{{ used }}/{{ a.max_attempts }}</div></div>
-    <div class="p-3 rounded-lg bg-slate-50 border"><div class="text-[10px] uppercase text-slate-500 font-mono">Max marks</div><div class="text-lg font-bold mono">{{ a.max_marks|floatformat:"-1" }}</div></div>
-    <div class="p-3 rounded-lg bg-slate-50 border"><div class="text-[10px] uppercase text-slate-500 font-mono">Time limit</div><div class="text-lg font-bold mono">{% if a.exam_mode %}{{ a.time_limit_min }} min{% else %}none{% endif %}</div></div>
-    <div class="p-3 rounded-lg bg-teal-50 border border-teal-200"><div class="text-[10px] uppercase text-teal-700 font-mono">Best marks</div><div class="text-lg font-extrabold mono text-teal-800">{{ best|marks }}</div></div>
+  {% if a.instructions %}<div class="p-3 rounded-lg bg-slate-50 border border-slate-200 text-sm text-slate-700 whitespace-pre-line"><b class="text-xs text-slate-500 block mb-1">Instructions from your faculty</b>{{ a.instructions }}</div>{% endif %}
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+    <div class="p-3 rounded-lg bg-slate-50 border"><div class="text-xs text-slate-500">Attempts used</div><div class="text-lg font-bold">{{ used }}/{{ a.max_attempts }}</div></div>
+    <div class="p-3 rounded-lg bg-slate-50 border"><div class="text-xs text-slate-500">Maximum marks</div><div class="text-lg font-bold">{{ a.max_marks|floatformat:"-1" }}</div></div>
+    <div class="p-3 rounded-lg bg-slate-50 border"><div class="text-xs text-slate-500">Time limit</div><div class="text-lg font-bold">{% if a.exam_mode %}{{ a.time_limit_min }} min{% else %}None{% endif %}</div></div>
+    <div class="p-3 rounded-lg bg-teal-50 border border-teal-200"><div class="text-xs text-teal-700">Best marks</div><div class="text-lg font-extrabold text-teal-800">{{ best|marks }}</div></div>
   </div>
-  {% if a.exam_mode %}<p class="text-xs text-rose-800 bg-rose-50 border border-rose-200 rounded-lg p-3">Exam mode: the timer starts when you open the experiment and keeps running if you close the tab. Reference datasets, auto-run and skip buttons are switched off. Your work is submitted automatically when time runs out.</p>{% endif %}
-  <div>
-    <h2 class="text-sm font-bold text-slate-700 mb-2">Your attempts</h2>
-    <table class="obs-table w-full text-xs text-left"><thead><tr><th>#</th><th>Status</th><th>Started</th><th>Submitted</th><th>Viva</th><th>Answer</th><th>Auto score</th><th>Marks</th><th>Feedback</th></tr></thead><tbody>
-    {% for at in attempts %}<tr><td>{{ forloop.revcounter }}</td><td>{{ at.status|state_badge }}{% if at.is_late %} <span class="text-rose-700">late</span>{% endif %}{% if at.timed_out %} <span class="text-rose-700">timed out</span>{% endif %}</td><td>{{ at.started_at|date:"d M H:i" }}</td><td>{{ at.submitted_at|date:"d M H:i"|default:"—" }}</td>
-      <td class="mono">{% if at.viva_total %}{{ at.viva_score }}/{{ at.viva_total }}{% else %}—{% endif %}</td><td>{% if at.answer_ok is None %}—{% elif at.answer_ok %}✓{% else %}✗{% endif %}</td><td class="mono">{{ at.auto_score|default_if_none:"—" }}{% if at.auto_score is not None %}%{% endif %}</td><td class="mono font-bold">{{ at|marks }}</td><td class="text-slate-600">{{ at.feedback|default:"—" }}</td></tr>
-    {% empty %}<tr><td colspan="9" class="text-slate-400 py-3">Not started yet.</td></tr>{% endfor %}
-    </tbody></table>
-  </div>
+  {% if a.exam_mode %}<p class="text-sm text-rose-800 bg-rose-50 border border-rose-200 rounded-lg p-3">Exam mode: the timer starts when you open the experiment and keeps running if you close the tab. Reference datasets, auto-run and skip buttons are switched off. Your work is submitted automatically when time runs out.</p>{% endif %}
 </div>
+
+{% if report %}
+<section class="fb-report" id="feedback" aria-labelledby="fbTitle">
+  <div class="fb-top">
+    <div><h2 id="fbTitle">{{ report.headline }}</h2><p>Feedback on your latest attempt, submitted {{ latest.submitted_at|date:"d M Y, H:i" }}</p></div>
+    <div class="fb-marks">{{ latest|marks }}<span>/{{ a.max_marks|floatformat:"-1" }}</span><small>{% if report.provisional %}Provisional marks{% else %}Marks from your faculty{% endif %}</small></div>
+  </div>
+  <ul class="fb-parts">
+    {% for p in report.parts %}<li class="fb-part fb-{{ p.state }}"><h3>{{ p.label }}<span>{{ p.share }}% of the score</span></h3><span class="fb-val">{{ p.value }}</span><div class="fb-bar"><i style="width: {{ p.pct }}%"></i></div><p>{{ p.advice }}</p></li>{% endfor %}
+  </ul>
+  <div class="fb-more">
+    {% if latest.feedback %}<div class="fb-faculty"><b>From your faculty</b><p>{{ latest.feedback }}</p></div>{% endif %}
+    {% for n in report.notes %}<p class="fb-note">{{ n }}</p>{% endfor %}
+    {% if report.revise %}
+    <details class="fb-revise"><summary>Viva questions to revise ({{ report.revise|length }})</summary>
+      <ol>{% for q in report.revise %}<li><b>{{ q.q }}</b><span>Your answer: {{ q.chosen|default:"not answered" }}</span><span class="fb-right">Correct answer: {{ q.correct }}</span></li>{% endfor %}</ol>
+    </details>
+    {% endif %}
+    {% if report.provisional %}<p class="fb-left">Provisional marks are calculated automatically. Your faculty reviews each submission and may change them.{% if report.attempts_left and can_start %} You have {{ report.attempts_left }} more attempt{{ report.attempts_left|pluralize }}, and your best attempt counts.{% endif %}</p>{% endif %}
+  </div>
+  {% if can_rate %}{% if rated %}<div class="fb-rate"><p class="fb-thanks">You rated this experiment. Thank you.</p></div>{% else %}<div id="rateBox" data-url="{% url 'api_feedback' a.experiment.slug %}" data-attempt="{{ latest.pk }}"></div>{% endif %}{% endif %}
+</section>
+{% endif %}
+
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+  <h2 class="text-base font-bold text-slate-800 mb-3">Your attempts</h2>
+  <table class="obs-table w-full text-sm text-left"><thead><tr><th>#</th><th>Status</th><th>Started</th><th>Submitted</th><th>Viva</th><th>Unknown</th><th>Auto score</th><th>Marks</th><th>Faculty feedback</th></tr></thead><tbody>
+  {% for at in attempts %}<tr><td>{{ forloop.revcounter }}</td><td>{{ at.status|state_badge }}{% if at.is_late %} <span class="text-rose-700">late</span>{% endif %}{% if at.timed_out %} <span class="text-rose-700">timed out</span>{% endif %}</td><td>{{ at.started_at|date:"d M H:i" }}</td><td>{{ at.submitted_at|date:"d M H:i"|default:"—" }}</td>
+    <td>{% if at.viva_total %}{{ at.viva_score }}/{{ at.viva_total }}{% else %}—{% endif %}</td><td>{% if at.answer_ok is None %}—{% elif at.answer_ok %}Correct{% elif at.answer_given %}Not right{% else %}Not entered{% endif %}</td><td>{{ at.auto_score|default_if_none:"—" }}{% if at.auto_score is not None %}%{% endif %}</td><td class="font-bold">{{ at|marks }}</td><td class="text-slate-600">{{ at.feedback|default:"—" }}</td></tr>
+  {% empty %}<tr><td colspan="9" class="text-slate-500 py-3">Not started yet. Your feedback report appears here after you submit.</td></tr>{% endfor %}
+  </tbody></table>
+</div>
+{% endblock %}
+{% block scripts %}
+{% if report and can_rate and not rated %}
+<script src="{% static 'js/rate.js' %}"></script>
+<script>
+  (function () {
+    var box = document.getElementById('rateBox');
+    var csrf = (document.cookie.match(/(?:^|; )csrftoken=([^;]+)/) || [])[1] || '{{ csrf_token }}';
+    window.XPFeedback.mount(box, { url: box.dataset.url, csrf: csrf, attempt: box.dataset.attempt });
+  })();
+</script>
+{% endif %}
 {% endblock %}

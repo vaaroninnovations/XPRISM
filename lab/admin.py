@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import Assignment, Attempt, AuditLog, Batch, College, ConsentRecord, DataRequest, Enrollment, Experiment, FreeYearApplication, FreeYearInvitation, User
+from .models import Assignment, Attempt, AuditLog, Batch, College, ConsentRecord, DataRequest, Enrollment, Experiment, ExperimentFeedback, FreeYearApplication, FreeYearInvitation, User
 
 
 @admin.register(User)
@@ -64,3 +64,4 @@ admin.site.register(ConsentRecord, list_display=('user', 'policy_version', 'acce
 admin.site.register(DataRequest, list_display=('username_snapshot', 'kind', 'status', 'created_at'))
 admin.site.register(FreeYearApplication, list_display=('name', 'email', 'kind', 'institution', 'status', 'created_at'), raw_id_fields=('user', 'reviewed_by'))
 admin.site.register(FreeYearInvitation, list_display=('email', 'status', 'created_at', 'sent_at', 'opted_out_at'), raw_id_fields=('invited_by',))
+admin.site.register(ExperimentFeedback, list_display=('experiment', 'rating', 'difficulty', 'context', 'college', 'updated_at'), list_filter=('context', 'rating'), raw_id_fields=('user', 'attempt'))

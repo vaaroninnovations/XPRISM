@@ -49,6 +49,8 @@ urlpatterns = [
     path('student/', stu.dashboard, name='student_dashboard'),
     path('student/assignments/<int:pk>/', stu.assignment, name='student_assignment'),
     path('api/attempts/<int:pk>/submit', stu.api_submit, name='api_submit'),
+    path('api/experiments/<slug:slug>/feedback', stu.api_feedback, name='api_feedback'),
+    path('feedback/', st.feedback_overview, name='feedback_overview'),
 
     # faculty / lab assistant / college admin
     path('faculty/', st.dashboard, name='staff_dashboard'),

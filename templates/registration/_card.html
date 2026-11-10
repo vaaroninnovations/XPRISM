@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="flex justify-center py-6">
-  <div class="w-full {% block width %}max-w-md{% endblock %} bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4">
+<div class="xp-auth {% block width %}xp-auth-narrow{% endblock %}">
+  <div class="xp-auth-form">
     {% block card %}{% endblock %}
   </div>
+  {% block side %}{% endblock %}
 </div>
 {% endblock %}
