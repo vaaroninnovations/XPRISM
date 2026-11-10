@@ -324,5 +324,15 @@
     return `translate(${f2(509 + s * Math.sin(t * TAU * 21) * .9)} ${f2(200 + s * Math.cos(t * TAU * 17) * .6)}) scale(1 ${(1 + Math.sin(t * TAU * 1.4) * .012 + s * .006).toFixed(4)}) translate(-509 -200)`;
   }
 
-  Object.assign(global, { ANI_DEFS, animalSideArt, animalTopArt, realRabbitHead, realRabbitEye, realRabbitLid, realRabbitEyeView, rabbitPose, animateRabbit, guineaPigPose, realGuineaPig, realFrogBody, realFrogLeg, frogVentralArt, frogPlate, frogPlateUrl, openFrogAnatomy });
+  // Photo renders of a blue nitrile glove, cut out by tools/hand-sprites and laid over the animal a bench draws.
+  // name: scruff | tail | hold. (x, y) is the top left corner and w the width, in the caller's units.
+  const HAND_VER = 2, HAND_BASE = new URL('../img/hands/', document.currentScript.src).href;
+  const HAND_SIZE = { scruff: [640, 415], tail: [640, 413], hold: [640, 434] };
+  function handArt(name, x, y, w, attrs = '') {
+    const [pw, ph] = HAND_SIZE[name], url = `${HAND_BASE}${name}.webp?v=${HAND_VER}`;
+    if (!held.has('hand-' + name)) { const im = new Image(); im.src = url; held.set('hand-' + name, im); }
+    return `<image x="${f2(x)}" y="${f2(y)}" width="${f2(w)}" height="${f2(w * ph / pw)}" preserveAspectRatio="none" decoding="sync" ${attrs} href="${url}"/>`;
+  }
+
+  Object.assign(global, { handArt, ANI_DEFS, animalSideArt, animalTopArt, realRabbitHead, realRabbitEye, realRabbitLid, realRabbitEyeView, rabbitPose, animateRabbit, guineaPigPose, realGuineaPig, realFrogBody, realFrogLeg, frogVentralArt, frogPlate, frogPlateUrl, openFrogAnatomy });
 })(window);

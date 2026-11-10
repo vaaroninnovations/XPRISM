@@ -4,3 +4,6 @@ staticfiles/
 __pycache__/
 *.pyc
 node_modules/
+
+# full-size hand renders (about 8 MB each); the cut sprites are in static/assets/img/hands
+tools/hand-sprites/renders/

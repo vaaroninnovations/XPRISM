@@ -854,12 +854,8 @@
     }
     // gloved hand (for held-animal views)
     function handMarkup() {
-      const f = (y, len) => `<path d="M 26 ${y} C 14 ${y - 2}, -6 ${y - 1}, ${-len} ${y + 3}" stroke="url(#glove)" stroke-width="9.5" stroke-linecap="round" fill="none"/>`;
-      return `<path d="M 34 -60 L 200 -214 L 244 -168 L 66 -20 Z" fill="url(#sleeve)" stroke="#94a3b8"/>
-        <path d="M 34 -60 L 66 -20 L 76 -30 L 44 -70 Z" fill="#a5b4fc" stroke="#6366f1" stroke-width="0.6"/>
-        <path d="M 10 -44 C 22 -60, 52 -58, 62 -38 C 70 -20, 58 4, 38 12 C 22 18, 8 10, 6 -6 Z" fill="url(#glove)" stroke="#4c51b8" stroke-width="0.8"/>
-        ${f(-34, 24)}${f(-22, 27)}${f(-10, 26)}${f(2, 22)}
-        <path d="M 30 -44 C 22 -56, 10 -60, 0 -58" stroke="url(#glove)" stroke-width="10" stroke-linecap="round" fill="none"/>`;
+      // a photo render in the units of #hrHand: the thumb rests behind the neck and the fingers close round the chest
+      return handArt('hold', -66, -84, 236);
     }
 
     // ------------------------------------------------ stations, click routing, checklist + hints
