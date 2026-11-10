@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="../assets/css/theme.css">
   <script src="../assets/js/tone.min.js"></script>
   <script src="../assets/js/lab-bench.js"></script>
+  <script src="../assets/js/lab-micro.js"></script>
   <style>
     * { box-sizing: border-box; }
     :root { color-scheme: light; }
@@ -1650,7 +1651,7 @@
       if (bub) {
         const n = S.air === 0 || !m.lowered ? 0 : Math.min(14, S.air * 3);
         let bs = '';
-        BUB.forEach((p, i) => { if (i >= n) return; p.y -= p.v * (0.6 + S.air * 0.35) * dtR; if (p.y < y + 3) p.y = HOOK[1] + 2; const xx = 356 + Math.sin(p.y / 7 + p.ph) * (S.air >= 4 ? 6 : 2.5); bs += `<circle cx="${xx}" cy="${p.y}" r="${p.r * (S.air >= 4 ? 1.5 : 1)}" fill="#fff" opacity=".75"/>`; });
+        BUB.forEach((p, i) => { if (i >= n) return; p.y -= p.v * (0.6 + S.air * 0.35) * dtR; const xx = 356 + Math.sin(p.y / 7 + p.ph) * (S.air >= 4 ? 6 : 2.5); if (p.y < y + 3) { LabMicro.pop(xx, y); p.y = HOOK[1] + 2; return; } bs += LabMicro.bubble(xx, p.y, p.r * (S.air >= 4 ? 1.5 : 1) * (1 + 0.4 * (HOOK[1] - p.y) / Math.max(20, HOOK[1] - y))); });
         bub.innerHTML = bs;
       }
       // kymograph
@@ -1664,6 +1665,7 @@
       labFlowTick('flowIn', b.inlet && r.vol > 0, dtR);
       labFlowTick('flowOut', b.drain && b.L > 0, dtR, 80);
       labFlowTick('flowAir', S.air > 0, dtR, 24 + S.air * 14);
+      LabMicro.tick(dtR, { surface: { after: 'bub', x0: BX, x1: BX + BW, y, wet: b.L > 0.2, air: m.lowered ? S.air : 0 }, reservoir: { id: 'resLiq', on: b.inlet && r.vol > 0 }, waste: { id: 'wasteLiq', on: b.drain && b.L > 0 }, needle: { id: 'airNeedle', rate: S.air } });
       $('swTxt').textContent = k.run ? 'ON' : 'OFF'; $('swTxt').setAttribute('x', k.run ? 888 : 914); $('swTxt').setAttribute('fill', k.run ? '#86efac' : '#fca5a5');
       // drum trace: pen at x 712, older paper moves to the right on the visible face
       const baseY = PIV[1] + base;

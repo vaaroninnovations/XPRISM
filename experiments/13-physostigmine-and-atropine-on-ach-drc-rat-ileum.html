@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="../assets/css/tailwind.css">
   <link rel="stylesheet" href="../assets/css/theme.css">
   <script src="../assets/js/tone.min.js"></script>
+  <script src="../assets/js/lab-micro.js"></script>
   <style>
     * { box-sizing: border-box; }
     body { font-family: 'Inter', sans-serif; background: #f1f5f9; color: #0a1f44; }
@@ -1167,7 +1168,7 @@
         const b = $('bubbles');
         this.bub = [];
         for (let i = 0; i < 12; i++) {
-          const cb = el('circle', { r: 1.5 + Math.random() * 2, fill: '#ffffff', opacity: .85, stroke: '#38bdf8', 'stroke-width': '0.5' }, b);
+          const cb = el('circle', { r: 1.5 + Math.random() * 2, fill: '#e0f2fe', 'fill-opacity': .22, stroke: '#ffffff', 'stroke-opacity': .85, 'stroke-width': '0.6' }, b);
           this.bub.push({ e: cb, y: 340 - Math.random() * 180, x: 348 + Math.random() * 6, v: 32 + Math.random() * 32 });
         }
         this.drawScene(0);
@@ -1239,7 +1240,8 @@
         $('bathTint').setAttribute('fill', m.color || '#a78bfa');
         $('bathTint').setAttribute('opacity', (this.mod !== 'none' ? 0.18 : 0) + (this.phase === 'contact' || this.phase === 'hold' ? 0.12 : 0));
         $('tap').setAttribute('transform', this.washAnim > 0 ? 'rotate(90 230 250)' : '');
-        this.bub.forEach(b => { b.y -= b.v * dtR; if (b.y < lvl + 4) b.y = 340; b.e.setAttribute('cx', b.x + Math.sin(b.y / 9) * 2); b.e.setAttribute('cy', b.y); });
+        this.bub.forEach(b => { b.y -= b.v * dtR; if (b.y < lvl + 4) { LabMicro.pop(b.x + Math.sin(b.y / 9) * 2, lvl); b.y = 340; } b.e.setAttribute('cx', b.x + Math.sin(b.y / 9) * 2); b.e.setAttribute('cy', b.y); });
+        LabMicro.tick(dtR, { surface: { after: 'bubbles', x0: 324, x1: 396, y: lvl, wet: true, air: 2 }, reservoir: { id: 'resFluid', on: this.washAnim > 0 } });
         const sy = $('syringe');
         sy.setAttribute('opacity', this.syrAnim > 0 ? 1 : 0);
         $('syrPl').setAttribute('y', 0 + (1 - this.syrAnim) * 30); $('syrFluid').setAttribute('height', 48 * this.syrAnim);
