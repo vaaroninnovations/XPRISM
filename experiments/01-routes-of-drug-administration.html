@@ -657,24 +657,8 @@
 
     // Nitrile-gloved hand pinching the scruff between index finger and thumb (local mouse coordinates)
     function glovedHand() {
-      const finger = (d, w, col) => `<path d="${d}" stroke="${col}" stroke-width="${w}" stroke-linecap="round" fill="none"/>`;
-      // Side view from the thumb side; forearm comes in from the upper right
-      return `
-        <g class="hand">
-          <path d="M 52 -100 L 82 -158 L 116 -140 L 80 -84 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="0.8"/>
-          <path d="M 54 -104 L 84 -88" stroke="#cbd5e1" stroke-width="4"/>
-          <path d="M 66 -130 L 98 -114" stroke="#e2e8f0" stroke-width="1"/>
-          <path d="M 60 -96 C 44 -88, 24 -76, 10 -64 C 4 -59, 2 -53, 7 -49 L 26 -50 C 38 -55, 50 -66, 62 -76 C 70 -82, 72 -90, 60 -96 Z" fill="url(#gloveBack)"/>
-          <path d="M 56 -93 C 42 -85, 26 -75, 13 -64" stroke="#cfe3fd" stroke-width="1.8" fill="none" opacity="0.7"/>
-          ${finger("M 15 -55 Q 9 -45 15 -38", 7.5, "#2f6bd0")}
-          ${finger("M 9 -57 L 2 -44 Q 0 -36 4 -31 L 9 -25", 8.5, "#5c9cf0")}
-          ${finger("M 7 -56 L 0.5 -44", 1.6, "#cfe3fd")}
-          <path d="M 2 -44 q 3 -1.5 5 0.5 M 2.5 -32 q 3 -1 4.5 1" stroke="#1e4fa3" stroke-width="0.6" fill="none" opacity="0.55"/>
-          <path d="M 7 -23 Q 13 -31 19 -23 Z" fill="url(#furGrad)" stroke="#e2dbd8" stroke-width="0.4"/>
-          ${finger("M 38 -62 Q 29 -46 18.5 -25", 8.5, "#4f8fea")}
-          ${finger("M 40 -60 Q 32 -47 24 -32", 1.5, "#cfe3fd")}
-          <path d="M 31 -44 q 3 1 5 -1" stroke="#1e4fa3" stroke-width="0.6" fill="none" opacity="0.55"/>
-        </g>`;
+      // a photo render: thumb and index finger meet over the shoulders, behind the ear, the wrist fades out to the upper right
+      return `<g class="hand" transform="rotate(-24 5 -25)">${handArt('scruff', -10, -90, 112)}</g>`;
     }
 
     // Perspex restrainer for tail-vein injection (tail exits through the rear plug)
