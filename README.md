@@ -208,7 +208,8 @@ lab/               models, roles/permissions, views, forms, management commands,
 templates/         pages for every role, sign-in/consent, legal texts
 experiments/       the 43 simulation pages (served through the app)
 static/assets/     Tailwind CSS (compiled), theme.css (shared with the benches), site.css (site pages only),
-                   fonts, Tone.js, bridge.js (submission/exam), rate.js (feedback report and rating), viva.js
+                   fonts, Tone.js, bridge.js (submission/exam), rate.js (feedback report and rating), viva.js,
+                   lab-bench.js (shared lab scene), lab-micro.js (bubbles, ripples and other small motion in the organ baths)
 deploy/            setup.sh, update.sh, nginx + systemd configs, env.example, backup.sh
 tests/             browser end-to-end tests (Playwright) used before release
 ```
