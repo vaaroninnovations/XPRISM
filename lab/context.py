@@ -53,7 +53,7 @@ def site(request):
                           and u.consent_version == settings.POLICY_VERSION and u.ethics_version == settings.ETHICS_VERSION
                           and not u.free_year_applications.exclude(status=FreeYearApplication.REJECTED).exists())
     return {
-        'PENDING_FREE_YEAR': pending_free_year, 'SHOW_FREE_YEAR': show_free_year,
+        'PENDING_FREE_YEAR': pending_free_year, 'FREE_MONTH_AUTO': settings.FREE_MONTH_AUTO_APPROVE, 'SHOW_FREE_YEAR': show_free_year,
         'PENDING_CONTACT': u.is_authenticated and u.is_platform_admin and ContactRequest.objects.filter(status=ContactRequest.NEW).count(),
         'SEO': _seo(request), 'ANALYTICS': _analytics(request), 'ANALYTICS_CONFIGURED': bool(settings.GOOGLE_ANALYTICS_ID or settings.GOOGLE_TAG_MANAGER_ID),
         'SITE_NAME': settings.SITE_NAME, 'SITE_TAGLINE': settings.SITE_TAGLINE,

@@ -1,4 +1,4 @@
-"""One free month of access, awarded by a super admin from a FreeYearApplication.
+"""One free month of access, awarded from a FreeYearApplication: automatically when it is made, or by a super admin.
 
 An individual gets User.subscribed_until on their account (created if they have none). A college
 gets College.subscription_until, on an existing college or on a new one with its College Admin.
@@ -48,6 +48,22 @@ def find_account(app):
     accounts = User.objects.filter(anonymised=False)
     return (accounts.filter(username__iexact=app.email).first()
             or accounts.filter(email__iexact=app.email).order_by('-is_trial_account', 'pk').first())
+
+
+def can_auto_approve(app):
+    """Whether an application can be approved without a person looking at it.
+
+    A new account or a new college harms nobody. Anything that would change something that already exists and
+    that the applicant has not shown is theirs waits for a super admin: an existing college (by name, or the
+    applicant's own), and an account that has been deactivated."""
+    account = find_account(app)
+    if account is not None and not account.is_active:
+        return False
+    if app.kind == FreeYearApplication.INDIVIDUAL:
+        return True
+    if account is not None and account.college_id:
+        return False
+    return not College.objects.filter(name__iexact=app.institution.strip()).exists()
 
 
 def _new_account(app, username, **fields):

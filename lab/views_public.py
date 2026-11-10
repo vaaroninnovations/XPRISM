@@ -17,7 +17,8 @@ from django.views.decorators.http import require_GET, require_POST
 from . import access
 from .contact import TOPICS
 from .context import PUBLIC_PAGES
-from .emails import send_contact_received, send_free_year_received
+from . import free_year
+from .emails import send_contact_received, send_free_year_approved, send_free_year_auto_approved, send_free_year_received, set_password_url
 from .forms import ContactForm, FreeYearApplicationForm
 from .models import CATEGORIES, LEVELS, Assignment, Attempt, Experiment, FreeYearApplication, FreeYearInvitation, Role
 from .permissions import audit, client_ip
@@ -122,8 +123,27 @@ def free_year_apply(request):
         with transaction.atomic():
             app.save()
             audit(request, 'free_year_applied', f'#{app.pk}', kind=app.kind)
-            send_free_year_received(app, request)
-    return JsonResponse({'ok': True, 'email': app.email})
+            if settings.FREE_MONTH_AUTO_APPROVE and free_year.can_auto_approve(app):
+                _approve_free_month(request, app)
+            else:
+                send_free_year_received(app, request)
+    # the same answer for every application, so it never shows whether an address was already known or approved
+    return JsonResponse({'ok': True, 'email': app.email, 'auto': settings.FREE_MONTH_AUTO_APPROVE})
+
+
+def _approve_free_month(request, app):
+    """Award the month without a super admin: a new college with its College Admin, or the applicant's own account.
+    Nothing here is taken from the request, so a visitor cannot point the award at a college that already exists."""
+    if app.kind == FreeYearApplication.COLLEGE:
+        college, admin = free_year.award_college(app)
+        send_free_year_approved(app, username=admin.username, college=college, set_password_url=set_password_url(admin, request), request=request)
+    else:
+        account, created = free_year.award_individual(app)
+        send_free_year_approved(app, username=account.username, set_password_url=set_password_url(account, request) if created else None, request=request)
+    app.status, app.reviewed_at, app.review_note = FreeYearApplication.APPROVED, timezone.now(), 'Approved automatically.'
+    app.save()
+    audit(request, 'free_year_auto_approved', f'#{app.pk} {app.email}', college=app.awarded_college, until=str(app.awarded_until or ''))
+    send_free_year_auto_approved(app, request)
 
 
 def invitation_opt_out(request, token):
