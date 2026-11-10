@@ -67,7 +67,10 @@ granted an individual subscription under **Platform → Trial users**, which can
 Students of a college whose subscription lapses fall back to the one-visit rule.
 
 **One free month:** visitors and free-trial users see a pop-up (on the home and modules pages, at most once
-a week) and an "Apply here" bar on other pages. Applications go to the super admins by e-mail and under
+a week) and an "Apply here" bar on other pages. An application is **approved automatically** the moment it is made: the
+applicant is e-mailed how to sign in, and the super admins are told. Three cases wait for a super admin instead: a college
+whose name is already on the platform, an applicant who already belongs to a college, and an account that has been
+deactivated. Set `FREE_MONTH_AUTO_APPROVE=false` in `.env` to decide every application by hand. Applications are listed under
 **Platform → Free month**. Approving awards a month straight away: an individual gets an individual subscription
 (an account is created if they have none), and a college gets a college subscription (a new college with its
 College Admin, or an existing college chosen from the list). The applicant is e-mailed the decision, with a

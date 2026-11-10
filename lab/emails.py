@@ -129,6 +129,17 @@ def send_free_year_received(app, request=None):
     transaction.on_commit(go)
 
 
+def send_free_year_auto_approved(app, request=None):
+    """Tell the super admins about an application that was approved without them."""
+    review_url = _base_url(request) + reverse('free_year_applications')
+
+    def go():
+        to = _super_admin_addresses()
+        if to:
+            _send_to(to, 'Super admin', f'Free-month application #{app.pk} approved automatically', 'free_year_review', {'app': app, 'review_url': review_url, 'auto': True})
+    transaction.on_commit(go)
+
+
 def send_free_year_approved(app, username=None, college=None, set_password_url=None, request=None):
     login_url = _base_url(request) + reverse('login')
     transaction.on_commit(lambda: _send_to([app.email], app.name, f'Your free month of {settings.SITE_NAME} is ready', 'free_year_approved', {

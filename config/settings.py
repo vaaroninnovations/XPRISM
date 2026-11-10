@@ -180,6 +180,8 @@ ETHICS_VERSION = '2026-11-02'
 # a free-trial visit ends when the user returns to the lab index / a dashboard, opens another module, or after this many hours
 TRIAL_VISIT_MAX_HOURS = int(env('TRIAL_VISIT_MAX_HOURS', '3'))
 SUBSCRIPTION_CONTACT = env('SUBSCRIPTION_CONTACT', 'drvaraprasadsaka@gmail.com')
+# a free-month application is approved the moment it is made; set to false to have a super admin decide each one
+FREE_MONTH_AUTO_APPROVE = env_bool('FREE_MONTH_AUTO_APPROVE', True)
 # most invitations sent in 24 hours: mail providers limit daily sending and treat sudden bursts as spam
 FREE_YEAR_INVITES_PER_DAY = int(env('FREE_YEAR_INVITES_PER_DAY', '200'))
 

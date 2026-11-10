@@ -840,6 +840,7 @@ class SignupEmailTests(Base):
 
 
 @override_settings(SUBSCRIPTION_CONTACT='owner@example.com')
+@override_settings(FREE_MONTH_AUTO_APPROVE=False)
 class FreeYearTests(Base):
     FORM = {'kind': 'individual', 'name': 'Asha Rao', 'email': 'Asha@Example.com', 'institution': 'Rao College', 'occupation': 'faculty', 'consent': 'on'}
 
@@ -1029,6 +1030,102 @@ class FreeYearTests(Base):
         self.assertEqual(one_month_after(datetime.date(2028, 1, 31)), datetime.date(2028, 2, 29))
         self.assertEqual(one_month_after(datetime.date(2027, 12, 15)), datetime.date(2028, 1, 15))
         self.assertEqual(one_month_after(datetime.date(2027, 3, 31)), datetime.date(2027, 4, 30))
+
+
+@override_settings(SUBSCRIPTION_CONTACT='owner@example.com')
+class FreeMonthAutoApprovalTests(Base):
+    """An application is approved the moment it is made, unless it would change something that already exists."""
+    FORM = {'kind': 'individual', 'name': 'Asha Rao', 'email': 'Asha@Example.com', 'institution': 'Rao College', 'occupation': 'faculty', 'consent': 'on'}
+
+    def setUp(self):
+        cache.clear()
+
+    def apply(self, **extra):
+        with self.captureOnCommitCallbacks(execute=True):
+            return self.client.post('/api/free-year/apply', {**self.FORM, **extra})
+
+    def test_individual_gets_an_account_and_a_month_straight_away(self):
+        r = self.apply()
+        self.assertEqual(r.json(), {'ok': True, 'email': 'asha@example.com', 'auto': True})
+        app = FreeYearApplication.objects.get()
+        u = User.objects.get(username='asha@example.com')
+        self.assertEqual((app.status, app.user, app.reviewed_by, app.review_note), (FreeYearApplication.APPROVED, u, None, 'Approved automatically.'))
+        self.assertEqual(u.subscribed_until, one_month_after(timezone.localdate()))
+        self.assertTrue(u.has_full_access and u.is_trial_account and u.email_verified)
+        self.assertEqual([m.to for m in mail.outbox], [['asha@example.com'], ['owner@example.com']])
+        self.assertIn('/accounts/password/reset/', mail.outbox[0].body)
+        self.assertIn('approved automatically', mail.outbox[1].body)
+        self.assertNotIn('/accounts/password/reset/', mail.outbox[1].body)
+        self.assertTrue(AuditLog.objects.filter(action='free_year_auto_approved').exists())
+        link = re.search(r'http://\S+/accounts/password/reset/\S+', mail.outbox[0].body).group(0)
+        self.assertEqual(self.client.get(link.split('testserver')[-1] if 'testserver' in link else '/' + link.split('/', 3)[3]).status_code, 302)
+
+    def test_signed_in_trial_user_is_unlocked_at_once(self):
+        trial = mkuser('t@example.com', Role.STUDENT, is_trial_account=True, email='t@example.com')
+        self.login(trial)
+        self.apply(email='someone-else@example.com')
+        trial.refresh_from_db()
+        self.assertTrue(trial.has_full_access)
+        self.assertEqual(FreeYearApplication.objects.get().email, 't@example.com')
+        self.assertFalse(User.objects.filter(email='someone-else@example.com').exists())
+        self.assertNotIn('/accounts/password/reset/', mail.outbox[0].body)      # they already have a password
+        self.assertNotContains(self.client.get('/modules/'), 'id="freeYearModal"')
+
+    def test_new_college_is_created_with_its_admin(self):
+        self.apply(kind='college', institution='Rao College of Pharmacy')
+        app = FreeYearApplication.objects.get()
+        college = College.objects.get(name='Rao College of Pharmacy')
+        admin = User.objects.get(college=college)
+        self.assertEqual((app.status, app.awarded_college, admin.role), (FreeYearApplication.APPROVED, college, Role.COLLEGE_ADMIN))
+        self.assertEqual(college.subscription_until, one_month_after(timezone.localdate()))
+        self.assertIn(admin.username, mail.outbox[0].body)
+
+    def test_existing_college_waits_for_a_super_admin(self):
+        until = self.c1.subscription_until
+        self.apply(kind='college', institution='  college one ', college=str(self.c1.pk))
+        app = FreeYearApplication.objects.get()
+        self.assertEqual(app.status, FreeYearApplication.PENDING)
+        self.c1.refresh_from_db()
+        self.assertEqual(self.c1.subscription_until, until)
+        self.assertEqual(College.objects.filter(name__iexact='college one').count(), 1)
+        self.assertEqual([m.to for m in mail.outbox], [['owner@example.com'], ['asha@example.com']])
+        self.assertIn('waiting for your review', mail.outbox[0].body)
+
+    def test_a_posted_college_id_cannot_redirect_the_award(self):
+        self.apply(kind='college', institution='Brand New College', college=str(self.c2.pk))
+        self.assertEqual(FreeYearApplication.objects.get().awarded_college.name, 'Brand New College')
+        self.c2.refresh_from_db()
+        self.assertIsNone(self.c2.subscription_until)
+
+    def test_member_of_a_college_applying_for_it_waits(self):
+        self.c1.subscription_active = False
+        self.c1.save()
+        self.st.email = 'bp001@example.com'
+        self.st.save()
+        self.login(self.st)
+        self.apply(kind='college', institution='Some Other Name')
+        self.assertEqual(FreeYearApplication.objects.get().status, FreeYearApplication.PENDING)
+        self.assertFalse(College.objects.filter(name='Some Other Name').exists())
+
+    def test_deactivated_account_waits(self):
+        mkuser('asha@example.com', Role.STUDENT, is_trial_account=True, email='asha@example.com', is_active=False)
+        self.apply()
+        self.assertEqual(FreeYearApplication.objects.get().status, FreeYearApplication.PENDING)
+        self.assertIsNone(User.objects.get(username='asha@example.com').subscribed_until)
+
+    def test_one_month_per_address_and_the_same_answer_each_time(self):
+        first = self.apply().json()
+        mail.outbox.clear()
+        again = self.apply().json()
+        self.assertEqual(first, again)
+        self.assertEqual(FreeYearApplication.objects.count(), 1)
+        self.assertEqual(mail.outbox, [])
+        self.assertEqual(User.objects.get(username='asha@example.com').subscribed_until, one_month_after(timezone.localdate()))
+
+    def test_pop_up_says_what_will_happen(self):
+        self.assertContains(self.client.get('/'), 'Most applications are approved straight away.')
+        with override_settings(FREE_MONTH_AUTO_APPROVE=False):
+            self.assertContains(self.client.get('/'), 'Our super admin reviews every application.')
 
 
 class FreeYearInvitationTests(Base):

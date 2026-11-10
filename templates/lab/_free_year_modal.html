@@ -41,18 +41,23 @@
         <span data-error="message" class="block text-[11px] font-normal text-rose-700"></span></label>
     </div>
     <div>
-      <label class="flex items-start gap-2 text-xs text-slate-800"><input type="checkbox" name="consent" required class="accent-teal-600 w-4 h-4 mt-0.5"> <span>I agree that XPRISM may use these details to review my application and contact me about it. See the <a href="{% url 'privacy' %}" target="_blank" class="text-teal-700 underline">Privacy Policy</a>.</span></label>
+      <label class="flex items-start gap-2 text-xs text-slate-800"><input type="checkbox" name="consent" required class="accent-teal-600 w-4 h-4 mt-0.5"> <span>I agree that XPRISM may use these details to {% if FREE_MONTH_AUTO %}set up my free month{% else %}review my application{% endif %} and contact me about it. See the <a href="{% url 'privacy' %}" target="_blank" class="text-teal-700 underline">Privacy Policy</a>.</span></label>
       <p data-error="consent" class="text-[11px] text-rose-700"></p>
     </div>
     <p data-error="form" class="text-xs text-rose-700" role="alert"></p>
     <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
-      <p class="text-[11px] text-slate-500">Our super admin reviews every application.</p>
+      <p class="text-[11px] text-slate-500">{% if FREE_MONTH_AUTO %}Most applications are approved straight away.{% else %}Our super admin reviews every application.{% endif %}</p>
       <button type="submit" class="px-5 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow">Submit application</button>
     </div>
   </form>
   <div id="freeYearDone" class="hidden px-6 py-8 text-center space-y-3" role="status">
+    {% if FREE_MONTH_AUTO %}
+    <h3 class="text-base font-bold text-slate-900">Check your inbox</h3>
+    <p class="text-sm text-slate-600">Thank you. We have written to <b id="freeYearDoneEmail"></b>. Most applications are approved straight away, and the e-mail tells you how to sign in. If yours needs a check first, we will write again with the decision.</p>
+    {% else %}
     <h3 class="text-base font-bold text-slate-900">Application received</h3>
     <p class="text-sm text-slate-600">Thank you. Once it has been verified, we will write to <b id="freeYearDoneEmail"></b> with your free month of access.</p>
+    {% endif %}
     <button type="button" data-free-year-close class="px-5 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow">Close</button>
   </div>
 </dialog>

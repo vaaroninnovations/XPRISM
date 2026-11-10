@@ -1,4 +1,4 @@
-{% autoescape off %}A new application for one free month of {{ site_name }} is waiting for your review.
+{% autoescape off %}{% if auto %}An application for one free month of {{ site_name }} was approved automatically{% if app.awarded_until %}, with access until {{ app.awarded_until|date:"d F Y" }}{% endif %}. You do not need to do anything.{% else %}A new application for one free month of {{ site_name }} is waiting for your review.{% endif %}
 
 Name: {{ app.name }}
 E-mail: {{ app.email }}{% if app.phone %}
@@ -8,6 +8,6 @@ Role: {{ app.get_occupation_display }}
 Applying for: {{ app.get_kind_display }}{% if app.message %}
 Message: {{ app.message }}{% endif %}
 
-Review the application: {{ review_url }}
+{% if auto %}See all applications{% else %}Review the application{% endif %}: {{ review_url }}
 
 {{ site_name }}{% endautoescape %}
