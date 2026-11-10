@@ -227,14 +227,7 @@
           return;
         }
         lockSubmitted();
-        var j = res.j;
-        show('<div class="text-center space-y-1"><div class="text-4xl">✅</div><h3 class="text-lg font-bold">Submitted</h3><p class="text-xs text-slate-500">' + (j.late ? 'Marked late. ' : '') + (j.timed_out ? 'Submitted after the time limit. ' : '') + 'Your faculty can now review it.</p></div>' +
-          '<div class="grid grid-cols-3 gap-2 text-center"><div class="p-2 rounded-lg bg-slate-50 border"><div class="text-[10px] uppercase text-slate-500 font-mono">Viva</div><div class="font-bold mono">' + (j.viva[1] ? j.viva[0] + '/' + j.viva[1] : '—') + '</div></div>' +
-          '<div class="p-2 rounded-lg bg-slate-50 border"><div class="text-[10px] uppercase text-slate-500 font-mono">Answer</div><div class="font-bold mono">' + (j.answer_ok === null ? '—' : j.answer_ok ? '✓' : '✗') + '</div></div>' +
-          '<div class="p-2 rounded-lg bg-teal-50 border border-teal-200"><div class="text-[10px] uppercase text-teal-700 font-mono">Provisional</div><div class="font-bold mono text-teal-800">' + j.marks + '/' + j.max_marks + '</div></div></div>' +
-          '<p class="text-[11px] text-slate-500">Provisional marks are calculated automatically; your faculty may change them.</p>' +
-          '<div class="flex justify-end gap-2"><button data-x class="px-4 py-2 border rounded-lg text-xs font-semibold text-slate-600">Stay on this page</button><a href="' + esc(C.backUrl || C.home) + '" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-lg shadow">Back to my assignment</a></div>');
-        modal.querySelector('[data-x]').onclick = hide;
+        showReport(res.j);
       })
       .catch(function () {
         busy = false;
@@ -242,6 +235,28 @@
         modal.querySelector('[data-x]').onclick = hide;
         modal.querySelector('[data-go]').onclick = function () { doSubmit(auto); };
       });
+  }
+  // after a submission: the feedback report on the student's work, then the form to rate the experiment
+  function sheet(html) { modal.innerHTML = '<div class="mcp-sheet">' + html + '</div>'; modal.classList.remove('hidden'); }
+  function showReport(j) {
+    var F = window.XPFeedback, r = j.report;
+    if (!F || !r) {
+      show('<h3 class="text-lg font-bold">Submitted</h3><p class="text-sm text-slate-700">Your faculty can now review it. Provisional marks: <b>' + esc(j.marks) + '/' + esc(j.max_marks) + '</b></p><div class="flex justify-end"><a href="' + esc(C.backUrl || C.home) + '" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-lg shadow">Back to my assignment</a></div>');
+      return;
+    }
+    sheet(F.reportHtml(r, { status: 'Submitted. Your faculty can now review it and may change the marks.' }) +
+      '<div id="mcpRate"></div><div class="mcp-sheet-foot"><button type="button" data-x>Stay on this page</button><a href="' + esc(C.backUrl || C.home) + '">Back to my assignment</a></div>');
+    modal.querySelector('[data-x]').onclick = hide;
+    if (C.canRate) F.mount(document.getElementById('mcpRate'), { url: C.feedbackUrl, csrf: C.csrf, attempt: r.attempt });
+  }
+  function openRate() {
+    sheet('<div class="mcp-sheet-head"><span>' + esc(C.title) + '</span><button type="button" data-x aria-label="Close">✕</button></div><div id="mcpRate"></div>');
+    modal.querySelector('[data-x]').onclick = hide;
+    window.XPFeedback.mount(document.getElementById('mcpRate'), { url: C.feedbackUrl, csrf: C.csrf, heading: 'Rate this module', done: function () { var b = document.getElementById('mcpRateBtn'); if (b) b.textContent = 'Rated'; } });
+  }
+  if (C.canRate && window.XPFeedback && (C.mode === 'practice' || C.mode === 'trial')) {
+    bar.insertAdjacentHTML('beforeend', '<button type="button" id="mcpRateBtn" class="px-2.5 py-1 rounded-md font-semibold bg-slate-700 hover:bg-slate-600 text-white">Rate this module</button>');
+    document.getElementById('mcpRateBtn').addEventListener('click', openRate);
   }
   function lockSubmitted() {
     submitted = true;

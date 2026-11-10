@@ -36,11 +36,11 @@ def site(request):
         if r == Role.STUDENT:
             nav = [('My assignments', '/student/'), ('Practice lab', '/modules/')] if (u.has_full_access or not u.is_trial_account) else [('Lab (free trial)', '/modules/'), ('Subscribe', '/subscribe/')]
         if r in (Role.FACULTY, Role.LAB_ASSISTANT):
-            nav = [('Dashboard', '/faculty/'), ('Batches', '/faculty/batches/'), ('Experiments', '/modules/')]
+            nav = [('Dashboard', '/faculty/'), ('Batches', '/faculty/batches/'), ('Experiments', '/modules/'), ('Feedback', '/feedback/')]
         if r == Role.COLLEGE_ADMIN:
-            nav = [('College', '/college/'), ('Staff', '/college/users/'), ('Batches', '/faculty/batches/'), ('Experiments', '/college/experiments/'), ('Requests', '/college/requests/'), ('Audit log', '/college/audit/')]
+            nav = [('College', '/college/'), ('Staff', '/college/users/'), ('Batches', '/faculty/batches/'), ('Experiments', '/college/experiments/'), ('Feedback', '/feedback/'), ('Requests', '/college/requests/'), ('Audit log', '/college/audit/')]
         if u.is_platform_admin:
-            nav = [('Platform', '/platform/'), ('Contact', '/platform/contact/'), ('Free month', '/platform/free-year/'), ('Colleges', '/platform/colleges/'), ('Trial users', '/platform/trials/'), ('Catalogue', '/platform/experiments/'), ('Batches', '/faculty/batches/'), ('Requests', '/college/requests/'), ('Audit log', '/college/audit/'), ('Django admin', '/admin/')]
+            nav = [('Platform', '/platform/'), ('Contact', '/platform/contact/'), ('Free month', '/platform/free-year/'), ('Colleges', '/platform/colleges/'), ('Trial users', '/platform/trials/'), ('Catalogue', '/platform/experiments/'), ('Feedback', '/feedback/'), ('Batches', '/faculty/batches/'), ('Requests', '/college/requests/'), ('Audit log', '/college/audit/'), ('Django admin', '/admin/')]
     open_requests = 0
     if u.is_authenticated and (u.is_platform_admin or u.role == Role.COLLEGE_ADMIN):
         qs = DataRequest.objects.filter(status=DataRequest.OPEN)

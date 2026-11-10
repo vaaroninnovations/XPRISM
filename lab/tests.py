@@ -15,7 +15,7 @@ from django.test import TestCase, override_settings
 from django.utils import timezone
 
 from .free_year import one_month_after
-from .models import Assignment, Attempt, AuditLog, Batch, College, ConsentRecord, ContactRequest, DataRequest, Enrollment, Experiment, FreeYearApplication, FreeYearInvitation, Role, TrialVisit, User
+from .models import Assignment, Attempt, AuditLog, Batch, College, ConsentRecord, ContactRequest, DataRequest, Enrollment, Experiment, ExperimentFeedback, FreeYearApplication, FreeYearInvitation, Role, TrialVisit, User
 from .storage import VersionedStaticFilesStorage
 from .views_auth import anonymise_user
 
@@ -90,7 +90,7 @@ class PublicTests(Base):
 
     def test_home_modules_and_documentation_are_public(self):
         home = self.client.get('/')
-        for text in ['Replacement', 'Reduction', 'Refinement', 'Explore our 3Rs commitment', '/accounts/trial/', '/accounts/signup/', '/accounts/login/', '/modules/', '/documentation/']:
+        for text in ['Replacement', 'Reduction', 'Refinement', 'Read about ethical use of animals', '/accounts/trial/', '/accounts/signup/', '/accounts/login/', '/modules/', '/documentation/']:
             self.assertContains(home, text)
         self.assertContains(home, 'class="expCard', count=6)
         self.assertContains(self.client.get('/modules/'), 'class="expCard', count=43)
@@ -439,6 +439,116 @@ class AssignmentFlowTests(Base):
         r = self.client.post(f'/faculty/batches/{self.batch.pk}/assignments/new/', {'experiment': self.e14.pk, 'opens_at': '2026-11-01T10:00', 'due_at': '2026-11-09T10:00', 'max_marks': '20', 'max_attempts': '1', 'exam_mode': 'on', 'time_limit_min': '40'})
         self.assertEqual(r.status_code, 302)
         self.assertTrue(Assignment.objects.filter(batch=self.batch, experiment=self.e14, exam_mode=True).exists())
+
+
+class FeedbackTests(Base):
+    """The report a student reads after submitting, and the rating they give the experiment."""
+    VIVA = {'score': 1, 'total': 2, 'answered': 2, 'items': [{'i': 0, 'q': 'pA2 is', 'chosen': 'x', 'correct': 'x', 'ok': True},
+                                                              {'i': 1, 'q': 'A Schild slope of 1 means', 'chosen': 'non-competitive', 'correct': 'competitive antagonism', 'ok': False}]}
+
+    def submit(self, a=None, **payload):
+        a = a or self.a
+        self.login(self.st)
+        c = ctx_of(self.client.get(f'{a.experiment.url}?a={a.pk}'))
+        r = self.client.post(c['submitUrl'], data=json.dumps(payload), content_type='application/json')
+        return c, r.json()
+
+    def rate(self, exp, **data):
+        return self.client.post(f'/api/experiments/{exp.slug}/feedback', data=json.dumps(data), content_type='application/json')
+
+    def test_report_says_what_each_part_earned_and_what_to_revise(self):
+        c, j = self.submit(viva=self.VIVA, answer={'given': '7.1', 'truth': 9.0, 'kind': 'number', 'tol': 3.5}, completion=True)
+        rep = j['report']
+        self.assertEqual([p['key'] for p in rep['parts']], ['viva', 'answer', 'observations'])
+        self.assertEqual([p['state'] for p in rep['parts']], ['partial', 'missed', 'good'])
+        self.assertEqual(sum(p['earned'] for p in rep['parts']), round(j['auto_score']))
+        self.assertEqual(rep['revise'], [{'q': 'A Schild slope of 1 means', 'chosen': 'non-competitive', 'correct': 'competitive antagonism'}])
+        self.assertIn('outside the accepted range', rep['parts'][1]['advice'])
+        self.assertNotIn('9.0', json.dumps(rep))                     # the true value of the unknown is never sent back
+        self.assertEqual(rep['attempts_left'], self.a.max_attempts - 1)
+        self.assertTrue(c['canRate'])
+        page = self.client.get(f'/student/assignments/{self.a.pk}/')
+        self.assertContains(page, 'Viva questions to revise (1)')
+        self.assertContains(page, 'competitive antagonism')
+        self.assertContains(page, 'id="rateBox"')
+
+    def test_exam_mode_keeps_the_viva_answers_hidden(self):
+        self.a.exam_mode, self.a.time_limit_min = True, 30
+        self.a.save()
+        c, j = self.submit(viva=self.VIVA, completion=True)
+        self.assertEqual(j['report']['revise'], [])
+        self.assertIn('answers stay hidden', j['report']['parts'][0]['advice'])
+        self.assertNotContains(self.client.get(f'/student/assignments/{self.a.pk}/'), 'competitive antagonism')
+
+    def test_student_rates_a_submitted_attempt_once(self):
+        c, j = self.submit(viva=self.VIVA, completion=True)
+        at = j['report']['attempt']
+        self.assertEqual(self.rate(self.e18, rating=0, attempt=at).status_code, 400)
+        self.assertEqual(self.rate(self.e18, rating='abc').status_code, 400)
+        self.assertEqual(self.rate(self.e18, rating=4, difficulty='hard', comment=' Schild plot needs a worked example ', attempt=at).status_code, 200)
+        self.assertEqual(self.rate(self.e18, rating=5, difficulty='nonsense', attempt=at).status_code, 200)       # sending again replaces the rating
+        f = ExperimentFeedback.objects.get()
+        self.assertEqual((f.rating, f.difficulty, f.context, f.college, f.user), (5, '', 'assignment', self.c1, self.st))
+        self.assertContains(self.client.get(f'/student/assignments/{self.a.pk}/'), 'You rated this experiment')
+        self.assertTrue(AuditLog.objects.filter(action='experiment_feedback').exists())
+
+    def test_rating_needs_a_submitted_attempt_of_your_own(self):
+        self.login(self.st)
+        c = ctx_of(self.client.get(f'{self.a.experiment.url}?a={self.a.pk}'))
+        self.assertEqual(self.rate(self.e18, rating=4, attempt=c['attempt']).status_code, 400)        # still in progress
+        self.client.post(c['submitUrl'], data='{}', content_type='application/json')
+        self.assertEqual(self.rate(self.e14, rating=4, attempt=c['attempt']).status_code, 400)        # another experiment
+        self.login(self.st2)
+        self.assertEqual(self.rate(self.e18, rating=4, attempt=c['attempt']).status_code, 400)        # another student's attempt
+        self.login(self.fac)
+        self.assertEqual(self.rate(self.e18, rating=4).status_code, 403)
+        self.client.logout()
+        self.assertEqual(self.rate(self.e18, rating=4).status_code, 401)
+        self.assertFalse(ExperimentFeedback.objects.exists())
+
+    def test_practice_rating_is_one_per_experiment(self):
+        self.login(self.st)
+        self.assertTrue(ctx_of(self.client.get(self.e14.url))['feedbackUrl'].endswith(f'/api/experiments/{self.e14.slug}/feedback'))
+        self.rate(self.e14, rating=2, comment='first')
+        self.rate(self.e14, rating=3, comment='second')
+        f = ExperimentFeedback.objects.get()
+        self.assertEqual((f.rating, f.comment, f.context, f.attempt), (3, 'second', 'practice', None))
+
+    def test_staff_see_ratings_without_names_and_only_their_college(self):
+        ExperimentFeedback.objects.create(user=self.st, experiment=self.e18, college=self.c1, rating=2, difficulty='hard', comment='The Schild plot step is unclear')
+        ExperimentFeedback.objects.create(user=self.st2, experiment=self.e14, college=self.c1, rating=5)
+        other = mkuser('two-bp001', Role.STUDENT, self.c2)
+        ExperimentFeedback.objects.create(user=other, experiment=self.e14, college=self.c2, rating=1, comment='From the other college')
+        for u in (self.fac, self.la, self.ca):
+            self.login(u)
+            r = self.client.get('/feedback/')
+            self.assertContains(r, 'The Schild plot step is unclear')
+            self.assertContains(r, 'Lowest rated so far')
+            self.assertNotContains(r, 'From the other college')
+            self.assertNotContains(r, self.st.display_name)
+            self.assertNotContains(r, 'BP001')
+            self.assertContains(r, 'href="/feedback/" aria-current="page"')
+        self.login(self.sa)
+        self.assertContains(self.client.get('/feedback/'), 'From the other college')
+        self.login(self.ca2)
+        self.assertNotContains(self.client.get('/feedback/'), 'The Schild plot step is unclear')
+        self.login(self.st)
+        self.assertEqual(self.client.get('/feedback/').status_code, 403)
+
+    def test_feedback_is_in_the_data_export_and_erased_on_deletion(self):
+        ExperimentFeedback.objects.create(user=self.st, experiment=self.e18, college=self.c1, rating=4, comment='Mention of my name, Asha')
+        self.login(self.st)
+        data = json.loads(self.client.get('/me/data/?download=1').content)
+        self.assertEqual(data['experiment_feedback'][0]['comment'], 'Mention of my name, Asha')
+        anonymise_user(self.st)
+        f = ExperimentFeedback.objects.get()
+        self.assertEqual((f.rating, f.comment), (4, ''))
+
+    def test_shared_demo_login_cannot_rate(self):
+        with override_settings(SHARED_DEMO_USERNAMES=[self.st.username]):
+            self.login(self.st)
+            self.assertFalse(ctx_of(self.client.get(self.e14.url))['canRate'])
+            self.assertEqual(self.rate(self.e14, rating=5).status_code, 403)
 
 
 class EnrolmentTests(Base):
@@ -1178,7 +1288,7 @@ class ContactTests(Base):
     def test_only_one_menu_item_is_highlighted_in_the_inbox(self):
         self.login(self.sa)
         for url in ('/platform/contact/', '/platform/colleges/'):
-            self.assertContains(self.client.get(url), 'bg-teal-500 text-white shadow font-semibold', count=1)
+            self.assertContains(self.client.get(url), 'aria-current="page"', count=1)
 
     def test_only_super_admins_see_the_inbox(self):
         self.assertEqual(self.client.get('/platform/contact/').status_code, 302)

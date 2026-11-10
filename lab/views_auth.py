@@ -246,6 +246,8 @@ def _export(u):
                       'submitted_at': a.submitted_at.isoformat() if a.submitted_at else None, 'auto_score': a.auto_score,
                       'marks': a.final_marks, 'max_marks': float(a.assignment.max_marks), 'feedback': a.feedback, 'submission': a.payload}
                      for a in u.attempts.select_related('assignment__experiment')],
+        'experiment_feedback': [{'experiment': str(f.experiment), 'rating': f.rating, 'difficulty': f.get_difficulty_display(), 'comment': f.comment, 'given_at': f.updated_at.isoformat()}
+                                for f in u.experiment_feedback.select_related('experiment')],
         'free_year_applications': [{'applying_for': f.get_kind_display(), 'name': f.name, 'email': f.email, 'phone': f.phone, 'institution': f.institution,
                                     'occupation': f.occupation, 'message': f.message, 'status': f.status, 'applied_at': f.created_at.isoformat(),
                                     'awarded_until': f.awarded_until.isoformat() if f.awarded_until else None}
@@ -283,4 +285,5 @@ def anonymise_user(user):
     user.set_unusable_password()
     user.save()
     Attempt.objects.filter(student=user).update(payload={}, feedback='')
+    user.experiment_feedback.update(comment='')            # the rating stays, with nothing that says who gave it
     Enrollment.objects.filter(student=user).delete()

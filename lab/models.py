@@ -417,3 +417,28 @@ class TrialVisit(models.Model):
     class Meta:
         unique_together = ('user', 'experiment')
         ordering = ['-started_at']
+
+
+class ExperimentFeedback(models.Model):
+    """What a student or free-trial user thought of an experiment, asked for after a submission. Staff see it without names."""
+    EASY, RIGHT, HARD = 'easy', 'right', 'hard'
+    DIFFICULTY = [(EASY, 'Too easy'), (RIGHT, 'About right'), (HARD, 'Too hard')]
+    ASSIGNMENT, PRACTICE, TRIAL = 'assignment', 'practice', 'trial'
+    CONTEXTS = [(ASSIGNMENT, 'After an assignment'), (PRACTICE, 'Practice'), (TRIAL, 'Free trial')]
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='experiment_feedback')
+    experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE, related_name='feedback')
+    attempt = models.OneToOneField(Attempt, null=True, blank=True, on_delete=models.CASCADE, related_name='student_feedback')
+    college = models.ForeignKey(College, null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
+    context = models.CharField(max_length=12, choices=CONTEXTS, default=PRACTICE)
+    rating = models.PositiveSmallIntegerField()                   # 1-5
+    difficulty = models.CharField(max_length=8, choices=DIFFICULTY, blank=True)
+    comment = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-updated_at']
+        constraints = [models.UniqueConstraint(fields=['user', 'experiment'], condition=models.Q(attempt__isnull=True), name='one_practice_feedback_per_experiment')]
+
+    def __str__(self):
+        return f'{self.experiment} • {self.rating}/5'

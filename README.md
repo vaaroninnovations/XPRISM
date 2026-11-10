@@ -105,7 +105,16 @@ To end the demo, deactivate the logins or set the demo college inactive under **
 4. **Automatic score** = viva 40% + correct unknown/numeric answer 30% (only for experiments that have
    one) + completed observation sheet 30%. This becomes provisional marks out of the assignment's
    maximum.
-5. Faculty reviews each submission, can override the marks, adds feedback, and uses **Save & next** to
+5. Straight after submitting, the student sees a **feedback report**: what the viva, the unknown and the
+   observation sheet each earned, the viva questions to revise, and how many attempts are left. The same
+   report stays on the assignment page, with the faculty's own feedback once it is graded. In exam mode
+   the correct viva answers stay hidden.
+6. The student is then asked to **rate the experiment** (1 to 5, how hard it was, and an optional comment).
+   Students and free-trial users can also rate any module from its bench with **Rate this module**.
+   Faculty, lab assistants and college admins read the ratings under **Feedback** (`/feedback/`), for their
+   own college and without names; super admins see every college. Ratings are part of **My data**, and
+   the comment is erased when an account is deleted.
+7. Faculty reviews each submission, can override the marks, adds feedback, and uses **Save & next** to
    move through the queue. The marks sheet shows each student's best attempt.
 
 **Exam mode** starts a countdown when the student opens the experiment. The timer keeps running if they
@@ -198,7 +207,8 @@ config/            Django settings (all deployment values come from .env)
 lab/               models, roles/permissions, views, forms, management commands, tests
 templates/         pages for every role, sign-in/consent, legal texts
 experiments/       the 43 simulation pages (served through the app)
-static/assets/     Tailwind CSS (compiled), fonts, Tone.js, bridge.js (submission/exam), viva.js
+static/assets/     Tailwind CSS (compiled), theme.css (shared with the benches), site.css (site pages only),
+                   fonts, Tone.js, bridge.js (submission/exam), rate.js (feedback report and rating), viva.js
 deploy/            setup.sh, update.sh, nginx + systemd configs, env.example, backup.sh
 tests/             browser end-to-end tests (Playwright) used before release
 ```

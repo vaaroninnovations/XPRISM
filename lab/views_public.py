@@ -267,7 +267,8 @@ def experiment_page(request, slug):
         raise Http404
     u = request.user
     ctx = {'expNo': exp.no, 'title': exp.title, 'csrf': get_token(request), 'home': reverse('home') if u.is_authenticated else reverse('landing'),
-           'login': reverse('login') + f'?next={request.get_full_path()}'}
+           'login': reverse('login') + f'?next={request.get_full_path()}', 'feedbackUrl': reverse('api_feedback', args=[exp.slug]),
+           'canRate': u.is_authenticated and u.role == Role.STUDENT and not u.is_shared_demo}
     if not u.is_authenticated:
         return redirect_to_login(request.get_full_path())
     else:
@@ -320,7 +321,8 @@ def experiment_page(request, slug):
                     f'try {{ t = ({expr}); }} catch (e) {{}} return {{ given: el ? el.value : "", truth: t, kind: {json.dumps(kind)}, tol: {tol} }}; }};</script>\n')
     ctx_json = json.dumps(ctx).replace('</', '<' + chr(92) + '/')
     inject = (f'<script id="mcp-ctx" type="application/json">{ctx_json}</script>\n'
-              f'{probe_js}<script src="{staticfiles_storage.url("js/bridge.js")}"></script>\n</body>')
+              f'{probe_js}<script src="{staticfiles_storage.url("js/rate.js")}"></script>\n'
+              f'<script src="{staticfiles_storage.url("js/bridge.js")}"></script>\n</body>')
     page = page.replace('</body>', inject, 1)
     page = EXP_ASSET.sub(lambda m: staticfiles_storage.url(m[1]), page)
     resp = HttpResponse(page)

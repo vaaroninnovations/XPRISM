@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Student feedback{% endblock %}
+{% block content %}
+<div class="flex flex-wrap items-end justify-between gap-4">
+  <div class="max-w-2xl">
+    <h1 class="text-xl font-bold text-slate-900">Student feedback</h1>
+    <p class="text-sm text-slate-600 mt-1">Students rate an experiment after they submit it, and can rate any module they practise. Ratings are shown without names{% if not user.is_platform_admin and COLLEGE %}, for {{ COLLEGE.name }} only{% endif %}.</p>
+  </div>
+  {% if total %}
+  <div class="flex gap-3">
+    <div class="bg-white rounded-xl border border-slate-200 px-5 py-3"><div class="text-xs text-slate-500">Ratings</div><div class="fb-stat">{{ total }}</div></div>
+    <div class="bg-white rounded-xl border border-slate-200 px-5 py-3"><div class="text-xs text-slate-500">Average</div><div class="fb-stat">{{ overall }}<span class="text-base text-slate-500"> / 5</span></div></div>
+  </div>
+  {% endif %}
+</div>
+
+{% if not total %}
+<p class="xp-empty"><b>No ratings yet</b>When students submit an assignment they are asked to rate the experiment. Their ratings and comments will appear here.</p>
+{% else %}
+{% if lowest %}<p class="text-sm text-slate-700 bg-white border border-slate-200 rounded-xl px-4 py-3">Lowest rated so far: <b>Exp {{ lowest.experiment__no|stringformat:"02d" }}, {{ lowest.experiment__title }}</b> at {{ lowest.avg }} / 5 from {{ lowest.n }} rating{{ lowest.n|pluralize }}.</p>{% endif %}
+<div class="grid lg:grid-cols-3 gap-4 items-start">
+  <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+    <h2 class="text-base font-bold text-slate-800 mb-3">By experiment</h2>
+    <table class="obs-table w-full text-sm text-left">
+      <thead><tr><th>Experiment</th><th>Ratings</th><th>Average</th><th>Too easy</th><th>About right</th><th>Too hard</th></tr></thead>
+      <tbody>
+      {% for r in rows %}<tr><td><span class="text-slate-500">Exp {{ r.experiment__no|stringformat:"02d" }}</span> {{ r.experiment__title }}</td><td>{{ r.n }}</td><td class="whitespace-nowrap"><span class="fb-meter"><i style="width: {{ r.pct }}%"></i></span><b>{{ r.avg }}</b></td><td>{{ r.easy }}</td><td>{{ r.right }}</td><td>{{ r.hard }}</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+    <h2 class="text-base font-bold text-slate-800 mb-1">Latest comments</h2>
+    {% for c in comments %}
+    <blockquote class="fb-quote"><p>{{ c.comment }}</p><footer>Exp {{ c.experiment.no|stringformat:"02d" }} • {{ c.rating }} / 5{% if c.difficulty %} • {{ c.get_difficulty_display|lower }}{% endif %} • {{ c.updated_at|date:"d M Y" }}</footer></blockquote>
+    {% empty %}<p class="text-sm text-slate-500 py-3">No written comments yet.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% endblock %}

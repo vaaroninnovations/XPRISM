@@ -5,14 +5,14 @@ from collections import defaultdict
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.db.models import Count, Q
+from django.db.models import Avg, Count, Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from .forms import AssignmentForm, BatchForm, GradeForm, StudentAddForm, UploadForm, make_username, temp_password
-from .models import Assignment, Attempt, Batch, Enrollment, Role, User, new_class_code
+from .models import Assignment, Attempt, Batch, Enrollment, ExperimentFeedback, Role, User, new_class_code
 from .permissions import (audit, batches_for, can_enrol, can_grade, can_manage_batch, get_assignment_or_403,
                           get_attempt_or_403, get_batch_or_403, role_required)
 
@@ -357,3 +357,21 @@ def marks_sheet(request, pk):
         resp['Content-Disposition'] = f'attachment; filename="{fname}.xlsx"'
         return resp
     return render(request, 'lab/marks_sheet.html', {'b': b, 'assigns': assigns, 'rows': rows, 'max_total': max_total, 'can_export': request.user.role != Role.LAB_ASSISTANT})
+
+
+@role_required(Role.FACULTY, Role.LAB_ASSISTANT, Role.COLLEGE_ADMIN)
+def feedback_overview(request):
+    """What students said about each experiment. No names: the form promises that."""
+    u = request.user
+    qs = ExperimentFeedback.objects.all() if u.is_platform_admin else ExperimentFeedback.objects.filter(college=u.college)
+    rows = list(qs.values('experiment__no', 'experiment__title').annotate(
+        n=Count('pk'), avg=Avg('rating'), easy=Count('pk', filter=Q(difficulty=ExperimentFeedback.EASY)),
+        right=Count('pk', filter=Q(difficulty=ExperimentFeedback.RIGHT)), hard=Count('pk', filter=Q(difficulty=ExperimentFeedback.HARD))).order_by('experiment__no'))
+    total = sum(r['n'] for r in rows)
+    overall = round(sum(r['avg'] * r['n'] for r in rows) / total, 1) if total else None
+    for r in rows:
+        r['avg'] = round(r['avg'], 1)
+        r['pct'] = round(r['avg'] / 5 * 100)
+    comments = qs.exclude(comment='').select_related('experiment')[:60]
+    return render(request, 'lab/feedback_overview.html', {'rows': rows, 'total': total, 'overall': overall, 'comments': comments,
+                                                           'lowest': min(rows, key=lambda r: r['avg']) if len(rows) > 1 else None})

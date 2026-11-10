@@ -26,8 +26,9 @@ follow the brand.
 
 ## Fonts
 
-- **Poppins** (600, 700, 800): headings and brand text, a geometric typeface like the logo's wordmark
-- **Inter**: body text
+- **Source Serif 4** (variable, with optical sizes): headlines on the site pages
+- **Inter**: body text and controls
+- **Poppins** (600, 700, 800): headings inside the experiment benches, a geometric typeface like the logo's wordmark
 - **JetBrains Mono**: data, codes and labels
 
 All fonts are bundled in `static/assets/fonts/` (SIL Open Font License), with no external requests.
