@@ -1,5 +1,6 @@
 from django import template
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 
 register = template.Library()
 
@@ -12,6 +13,24 @@ STATE = {
     'graded': ('Graded', 'bg-emerald-50 text-emerald-800 border-emerald-200'),
     'started': ('In progress', 'bg-amber-50 text-amber-800 border-amber-200'),
 }
+
+
+class CaptureNode(template.Node):
+    def __init__(self, nodelist, name):
+        self.nodelist, self.name = nodelist, name      # "nodelist" is where Django looks for the blocks inside
+
+    def render(self, context):
+        context[self.name] = mark_safe(self.nodelist.render(context).strip())
+        return ''
+
+
+@register.tag
+def capture(parser, token):
+    """{% capture name %}...{% endcapture %}: keeps what a block rendered so the page can print it more than once."""
+    name = token.split_contents()[1]
+    nodelist = parser.parse(('endcapture',))
+    parser.delete_first_token()
+    return CaptureNode(nodelist, name)
 
 
 @register.filter

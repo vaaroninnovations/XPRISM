@@ -1,10 +1,10 @@
-{% load static %}<!DOCTYPE html>
+{% load static labtags %}<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}{{ SITE_FULL_NAME }}{% endblock %} • XPRISM</title>
-  <meta name="description" content="{% block meta_description %}{{ SEO.description }}{% endblock %}">
+  {% capture PAGE_TITLE %}{% block title %}{{ SITE_FULL_NAME }}{% endblock %} • XPRISM{% endcapture %}{% capture PAGE_DESCRIPTION %}{% block meta_description %}{{ SEO.description }}{% endblock %}{% endcapture %}<title>{{ PAGE_TITLE }}</title>
+  <meta name="description" content="{{ PAGE_DESCRIPTION }}">
   {% include 'lab/_seo_head.html' %}
   <meta name="theme-color" content="#08193b">
   <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32.png' %}">

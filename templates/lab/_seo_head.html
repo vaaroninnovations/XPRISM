@@ -6,8 +6,12 @@
   <meta property="og:site_name" content="{{ SITE_NAME }}">
   <meta property="og:type" content="website">
   <meta property="og:url" content="{{ SEO.canonical }}">
+  <meta property="og:title" content="{{ PAGE_TITLE }}">
+  <meta property="og:description" content="{{ PAGE_DESCRIPTION }}">
   <meta property="og:image" content="{{ SEO.image }}">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ PAGE_TITLE }}">
+  <meta name="twitter:description" content="{{ PAGE_DESCRIPTION }}">
   <meta name="twitter:image" content="{{ SEO.image }}">
   {% if SEO.twitter %}<meta name="twitter:site" content="{{ SEO.twitter }}">{% endif %}
   {% if SEO.jsonld %}<script type="application/ld+json">{{ SEO.jsonld }}</script>{% endif %}

@@ -1828,6 +1828,15 @@ class SiteTagTests(Base):
         self.assertContains(home, 'property="og:image"')
         self.assertContains(home, 'application/ld+json')
 
+    def test_shared_links_carry_the_page_title_and_description(self):
+        r = self.client.get('/contact/')
+        self.assertContains(r, '<title>Contact us • XPRISM</title>')
+        for tag in ('property="og:title"', 'name="twitter:title"'):
+            self.assertContains(r, f'<meta {tag} content="Contact us • XPRISM">')
+        for tag in ('name="description"', 'property="og:description"', 'name="twitter:description"'):
+            self.assertContains(r, f'<meta {tag} content="Contact XPRISM to request a demo')
+        self.assertContains(self.client.get('/'), f'<meta property="og:description" content="{settings.SEO["description"]}">')
+
     def test_noindex_switch_closes_the_whole_site(self):
         with self.settings(SEO={**settings.SEO, 'noindex': True}):
             self.assertContains(self.client.get('/robots.txt'), 'Disallow: /')
