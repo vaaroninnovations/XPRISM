@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}{% if parent %}Reply{% else %}Write a message{% endif %}{% endblock %}
+{% block content %}
+<div class="mb">
+  {% include 'lab/_mailbox_side.html' %}
+  <section class="mb-main">
+    <header class="mb-head">
+      <div>
+        <h1 class="text-xl font-bold text-slate-900">{% if parent %}Reply{% else %}Write a message{% endif %}</h1>
+        <p>Your text is placed in the XPRISM e-mail template. Replies come back to {{ address|default:"this mailbox" }}{% if not can_receive %} (the inbox here is not connected yet){% endif %}.</p>
+      </div>
+      <a href="{% url 'mailbox' %}" class="mb-back">Back to the inbox</a>
+    </header>
+    <div class="mb-write">
+      <form method="post" id="mbCompose" class="mb-form" novalidate>{% csrf_token %}
+        {% if parent %}<input type="hidden" name="parent" value="{{ parent.pk }}">{% endif %}
+        {% if form.non_field_errors %}<div class="mb-alert" role="alert"><p>{{ form.non_field_errors|join:" " }}</p></div>{% endif %}
+        {% for f in form %}
+        <div class="mb-field mb-field-{{ f.name }}">
+          <label for="{{ f.id_for_label }}">{{ f.label }}{% if not f.field.required %} <span>optional</span>{% endif %}</label>
+          {{ f }}
+          {% if f.help_text %}<p>{{ f.help_text }}</p>{% endif %}
+          {% for e in f.errors %}<p class="is-bad" role="alert">{{ e }}</p>{% endfor %}
+        </div>
+        {% endfor %}
+        <div class="mb-send">
+          <button class="mb-compose"{% if not can_send %} disabled{% endif %}>Send message</button>
+          <span>{{ left_today }} more message{{ left_today|pluralize }} can be sent in the next 24 hours.</span>
+        </div>
+      </form>
+      <aside class="mb-preview" aria-label="Preview">
+        <h2>How it will look</h2>
+        <div id="mbPreview" data-url="{% url 'mailbox_preview' %}"><p class="mb-hint">The preview appears as you type.</p></div>
+      </aside>
+    </div>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+  (function () {
+    var form = document.getElementById('mbCompose'), host = document.getElementById('mbPreview');
+    if (!form || !host || !host.attachShadow) return;
+    // the e-mail is drawn inside its own shadow tree, so the site's styles and the e-mail's never touch
+    var root = host.attachShadow({ mode: 'open' }), timer = null, seq = 0;
+    function draw() {
+      var data = new FormData(form), mine = ++seq;
+      fetch(host.dataset.url, { method: 'POST', credentials: 'same-origin', body: data })
+        .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+        .then(function (j) {
+          if (mine !== seq) return;
+          var doc = new DOMParser().parseFromString(j.html, 'text/html');
+          doc.querySelectorAll('script, link, iframe, object, embed').forEach(function (e) { e.remove(); });
+          root.innerHTML = '<div style="' + (doc.body.getAttribute('style') || '') + ';border-radius:10px;overflow:hidden">' + doc.body.innerHTML + '</div>';
+        })
+        .catch(function () { if (mine === seq) root.innerHTML = '<p style="font:14px sans-serif;color:#5a667e;margin:0">The preview could not be loaded. Your message is not affected.</p>'; });
+    }
+    form.addEventListener('input', function () { clearTimeout(timer); timer = setTimeout(draw, 350); });
+    draw();
+  })();
+</script>
+{% endblock %}

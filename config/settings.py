@@ -180,6 +180,21 @@ ETHICS_VERSION = '2026-11-02'
 # a free-trial visit ends when the user returns to the lab index / a dashboard, opens another module, or after this many hours
 TRIAL_VISIT_MAX_HOURS = int(env('TRIAL_VISIT_MAX_HOURS', '3'))
 SUBSCRIPTION_CONTACT = env('SUBSCRIPTION_CONTACT', 'drvaraprasadsaka@gmail.com')
+# ---------------------------------------------------------------- the super admins' mailbox (Platform > Mailbox)
+# Sending uses the EMAIL_* settings above. Receiving reads an ordinary mail account over IMAP; without IMAP_HOST the inbox stays empty.
+IMAP_HOST = env('IMAP_HOST', '')
+IMAP_PORT = int(env('IMAP_PORT', '993'))
+IMAP_USE_SSL = env_bool('IMAP_USE_SSL', True)
+IMAP_USER = env('IMAP_USER', '') or (EMAIL_HOST_USER if env('EMAIL_HOST') else '')
+IMAP_PASSWORD = env('IMAP_PASSWORD', '') or (EMAIL_HOST_PASSWORD if env('EMAIL_HOST') else '')
+IMAP_FOLDER = env('IMAP_FOLDER', 'INBOX')
+IMAP_TIMEOUT = int(env('IMAP_TIMEOUT', '12'))
+# the address replies should come back to; defaults to the IMAP account
+MAILBOX_ADDRESS = env('MAILBOX_ADDRESS', '')
+# most messages the mailbox will send in 24 hours, and how far back the first check of the inbox looks
+MAILBOX_MAX_PER_DAY = int(env('MAILBOX_MAX_PER_DAY', '200'))
+MAILBOX_FETCH_DAYS = int(env('MAILBOX_FETCH_DAYS', '30'))
+
 # a free-month application is approved the moment it is made; set to false to have a super admin decide each one
 FREE_MONTH_AUTO_APPROVE = env_bool('FREE_MONTH_AUTO_APPROVE', True)
 # most invitations sent in 24 hours: mail providers limit daily sending and treat sudden bursts as spam

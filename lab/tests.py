@@ -4,6 +4,7 @@ import json
 import os
 import re
 import tempfile
+from email.utils import format_datetime
 from pathlib import Path
 from unittest import mock
 
@@ -14,8 +15,9 @@ from django.core.management import call_command
 from django.test import TestCase, override_settings
 from django.utils import timezone
 
+from . import mailbox
 from .free_year import one_month_after
-from .models import Assignment, Attempt, AuditLog, Batch, College, ConsentRecord, ContactRequest, DataRequest, Enrollment, Experiment, ExperimentFeedback, FreeYearApplication, FreeYearInvitation, Role, TrialVisit, User
+from .models import Assignment, Attempt, AuditLog, Batch, College, ConsentRecord, ContactRequest, DataRequest, Enrollment, Experiment, ExperimentFeedback, FreeYearApplication, MailMessage, FreeYearInvitation, Role, TrialVisit, User
 from .storage import VersionedStaticFilesStorage
 from .views_auth import anonymise_user
 
@@ -550,6 +552,220 @@ class FeedbackTests(Base):
             self.login(self.st)
             self.assertFalse(ctx_of(self.client.get(self.e14.url))['canRate'])
             self.assertEqual(self.rate(self.e14, rating=5).status_code, 403)
+
+
+RAW_MAIL = (b'From: Asha Rao <Asha@Example.com>\r\nTo: lab@xprism.example\r\nSubject: Demo for our college\r\n'
+            b'Message-ID: <in-1@example.com>\r\nDate: Mon, 02 Nov 2026 10:00:00 +0530\r\nMIME-Version: 1.0\r\n'
+            b'Content-Type: multipart/mixed; boundary="B"\r\n\r\n'
+            b'--B\r\nContent-Type: text/html; charset=utf-8\r\n\r\n'
+            b'<html><head><style>p{color:red}</style></head><body><p>Hello team,</p><script>alert(1)</script><p>Can we book a <b>demo</b>?</p></body></html>\r\n'
+            b'--B\r\nContent-Type: application/pdf\r\nContent-Disposition: attachment; filename="syllabus.pdf"\r\nContent-Transfer-Encoding: base64\r\n\r\nJVBERi0xLjQK\r\n--B--\r\n')
+
+
+class FakeImap:
+    """Stands in for imaplib.IMAP4_SSL: one mailbox with the messages given to it."""
+    mails, fail, seen = [], False, None
+
+    def __init__(self, host, port, timeout=None):
+        if FakeImap.fail:
+            raise OSError('connection refused')
+        FakeImap.seen = {'host': host, 'port': port}
+
+    def login(self, user, password):
+        FakeImap.seen.update(user=user, password=password)
+        return 'OK', [b'']
+
+    def select(self, folder, readonly=False):
+        FakeImap.seen.update(folder=folder, readonly=readonly)
+        return 'OK', [b'1']
+
+    def uid(self, command, *args):
+        if command == 'search':
+            FakeImap.seen['search'] = args
+            return 'OK', [b' '.join(str(i + 1).encode() for i in range(len(FakeImap.mails)))]
+        FakeImap.seen['fetch'] = args[1]
+        return 'OK', [(b'1 (BODY[] {10}', FakeImap.mails[int(args[0]) - 1]), b')']
+
+    def logout(self):
+        FakeImap.seen['logged_out'] = True
+
+
+@override_settings(IMAP_HOST='imap.xprism.example', IMAP_USER='lab@xprism.example', IMAP_PASSWORD='secret', MAILBOX_ADDRESS='lab@xprism.example')
+class MailboxTests(Base):
+    """The super admins' mailbox: writing in the template, receiving over IMAP, folders and replies."""
+    FORM = {'to': 'asha@example.com', 'subject': 'Your demo on Monday', 'greeting': 'Asha', 'body': 'We can meet at 10 am.\n\nThe link is https://xprism.example/demo', 'signoff': 'The XPRISM team'}
+
+    def setUp(self):
+        cache.clear()
+        FakeImap.mails, FakeImap.fail, FakeImap.seen = [], False, None
+        patcher = mock.patch('imaplib.IMAP4_SSL', FakeImap)          # no test may reach a real mail server
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        self.login(self.sa)
+
+    def write(self, **extra):
+        with self.captureOnCommitCallbacks(execute=True):
+            return self.client.post('/platform/mailbox/compose/', {**self.FORM, **extra})
+
+    def test_only_super_admins_reach_the_mailbox(self):
+        m = mailbox.store(RAW_MAIL)
+        urls = ['/platform/mailbox/', '/platform/mailbox/compose/', f'/platform/mailbox/{m.pk}/']
+        for u in (self.ca, self.fac, self.st):
+            self.login(u)
+            for url in urls:
+                self.assertEqual(self.client.get(url).status_code, 403, f'{u.username} {url}')
+            self.assertEqual(self.client.post('/platform/mailbox/preview/', {'subject': 'x'}).status_code, 403)
+            self.assertNotContains(self.client.get('/about/'), 'Mailbox')
+        self.client.logout()
+        self.assertEqual(self.client.get('/platform/mailbox/').status_code, 302)
+        self.login(self.sa)
+        for url in urls:
+            self.assertEqual(self.client.get(url).status_code, 200, url)
+
+    def test_a_message_is_sent_in_the_template_and_kept_in_sent(self):
+        r = self.write()
+        m = MailMessage.objects.get()
+        self.assertRedirects(r, f'/platform/mailbox/{m.pk}/')
+        self.assertEqual((m.direction, m.status, m.to, m.sent_by, m.is_read), ('out', 'sent', 'asha@example.com', self.sa, True))
+        sent = mail.outbox[0]
+        self.assertEqual((sent.to, sent.subject, sent.reply_to), (['asha@example.com'], 'Your demo on Monday', ['lab@xprism.example']))
+        self.assertEqual(sent.extra_headers['Message-ID'], m.message_id)
+        html_part = sent.alternatives[0][0]
+        for text in ('Your demo on Monday', 'Hello Asha,', 'We can meet at 10 am.', 'href="https://xprism.example/demo"', 'The XPRISM team', 'cid:xprism-logo', 'You can reply to this e-mail'):
+            self.assertIn(text, html_part)
+        self.assertNotIn('do not reply', html_part)
+        self.assertIn('Hello Asha,\n\nWe can meet at 10 am.', sent.body)
+        self.assertContains(self.client.get('/platform/mailbox/?folder=sent'), 'Your demo on Monday')
+        self.assertTrue(AuditLog.objects.filter(action='mail_sent').exists())
+
+    def test_what_the_form_refuses(self):
+        self.assertContains(self.write(to='not-an-address'), 'Not a valid e-mail address')
+        self.assertContains(self.write(to=', '.join(f'p{i}@example.com' for i in range(21))), 'At most 20 addresses')
+        self.assertContains(self.write(body='   '), 'Write a message.')
+        self.assertFalse(MailMessage.objects.exists())
+        self.write(subject='Hello\nBcc: victim@example.com')            # a line break cannot add a header
+        self.assertEqual(mail.outbox[0].subject, 'Hello Bcc: victim@example.com')
+        self.assertEqual(mail.outbox[0].to, ['asha@example.com'])
+        with override_settings(MAILBOX_MAX_PER_DAY=1):
+            self.assertContains(self.write(), 'limit of 1 messages')
+        with override_settings(EMAIL_BACKEND='django.core.mail.backends.console.EmailBackend', DEBUG=False):
+            self.assertContains(self.write(), 'Sending is not set up yet')
+        self.assertEqual(MailMessage.objects.count(), 1)
+
+    def test_a_failed_send_is_recorded_and_can_be_sent_again(self):
+        with mock.patch('django.core.mail.message.EmailMessage.send', side_effect=OSError('mail server said no')):
+            self.write()
+        m = MailMessage.objects.get()
+        self.assertEqual((m.status, m.error), ('failed', 'mail server said no'))
+        self.assertContains(self.client.get(f'/platform/mailbox/{m.pk}/'), 'This message was not sent.')
+        with self.captureOnCommitCallbacks(execute=True):
+            self.client.post(f'/platform/mailbox/{m.pk}/', {'action': 'resend'})
+        again = MailMessage.objects.get()
+        self.assertEqual((again.status, len(mail.outbox)), ('sent', 1))
+        self.assertNotEqual(again.pk, m.pk)
+
+    def test_received_mail_is_kept_as_text_only(self):
+        m = mailbox.store(RAW_MAIL)
+        self.assertIsNone(mailbox.store(RAW_MAIL))                      # the same message is never stored twice
+        self.assertEqual((m.direction, m.from_name, m.from_email, m.subject, m.is_read), ('in', 'Asha Rao', 'asha@example.com', 'Demo for our college', False))
+        self.assertIn('Can we book a demo?', m.body)
+        for unsafe in ('<', 'alert(1)', 'color:red'):
+            self.assertNotIn(unsafe, m.body)
+        self.assertEqual(m.attachments, [{'name': 'syllabus.pdf', 'size': 9}])
+        page = self.client.get(f'/platform/mailbox/{m.pk}/')
+        self.assertContains(page, 'syllabus.pdf')
+        self.assertContains(page, 'Attachments are not kept here')
+        self.assertNotContains(page, '<script>alert(1)</script>')
+
+    def test_text_that_looks_like_markup_is_shown_not_run(self):
+        raw = RAW_MAIL.replace(b'<in-1@example.com>', b'<in-2@example.com>').split(b'--B')[0] .replace(b'multipart/mixed; boundary="B"', b'text/plain') + b'Try <script>alert(2)</script> & <img src=x onerror=1>\r\n'
+        m = mailbox.store(raw)
+        page = self.client.get(f'/platform/mailbox/{m.pk}/')
+        self.assertContains(page, '&lt;script&gt;alert(2)&lt;/script&gt;')
+        self.assertNotContains(page, '<img src=x')
+
+    def test_new_mail_is_fetched_read_only_and_shown_as_unread(self):
+        FakeImap.mails = [RAW_MAIL]
+        with mock.patch('imaplib.IMAP4_SSL', FakeImap):
+            r = self.client.post('/platform/mailbox/', {'action': 'check'}, follow=True)
+            self.assertContains(r, '1 new message.')
+            self.assertContains(self.client.post('/platform/mailbox/', {'action': 'check'}, follow=True), 'No new mail.')
+        self.assertEqual((FakeImap.seen['host'], FakeImap.seen['user'], FakeImap.seen['readonly'], FakeImap.seen['fetch']), ('imap.xprism.example', 'lab@xprism.example', True, '(BODY.PEEK[])'))
+        self.assertTrue(FakeImap.seen['logged_out'])
+        self.assertEqual(MailMessage.objects.count(), 1)
+        page = self.client.get('/platform/mailbox/')
+        self.assertContains(page, 'class="is-unread"')
+        self.assertContains(page, 'Mailbox <span class="xp-count">1</span>')
+        self.client.get(f'/platform/mailbox/{MailMessage.objects.get().pk}/')          # opening it marks it read
+        self.assertNotContains(self.client.get('/platform/mailbox/'), 'xp-count')
+
+    def test_the_inbox_checks_by_itself_and_survives_a_dead_server(self):
+        FakeImap.mails = [RAW_MAIL]
+        with mock.patch('imaplib.IMAP4_SSL', FakeImap):
+            self.assertContains(self.client.get('/platform/mailbox/'), 'Demo for our college')
+            FakeImap.fail = True
+            self.assertContains(self.client.post('/platform/mailbox/', {'action': 'check'}, follow=True), 'Could not reach the mail server')
+            out = io.StringIO()
+            call_command('fetch_mail', stdout=out, stderr=io.StringIO())
+            self.assertIn('0 new messages', out.getvalue())
+        with override_settings(IMAP_HOST=''):
+            MailMessage.objects.all().delete()
+            self.assertContains(self.client.get('/platform/mailbox/'), 'The inbox is not connected yet')
+
+    def test_a_reply_joins_the_conversation(self):
+        first = mailbox.store(RAW_MAIL)
+        form = self.client.get(f'/platform/mailbox/compose/?reply={first.pk}').context['form']
+        self.assertEqual((form['to'].value(), form['subject'].value(), form['greeting'].value()), ('asha@example.com', 'Re: Demo for our college', 'Asha Rao'))
+        self.assertIn('> Hello team,', form['body'].value())
+        self.write(parent=first.pk, subject='Re: Demo for our college')
+        reply = MailMessage.objects.get(direction='out')
+        self.assertEqual((reply.parent, reply.root, mail.outbox[0].extra_headers['In-Reply-To']), (first, first, '<in-1@example.com>'))
+        later = format_datetime(timezone.now() + timezone.timedelta(seconds=5)).encode()       # the answer arrives after our reply was sent
+        answer = mailbox.store(RAW_MAIL.replace(b'Mon, 02 Nov 2026 10:00:00 +0530', later).replace(b'<in-1@example.com>', b'<in-3@example.com>\r\nIn-Reply-To: ' + reply.message_id.encode()))
+        self.assertEqual((answer.parent, answer.root), (reply, first))
+        page = self.client.get(f'/platform/mailbox/{answer.pk}/')
+        self.assertContains(page, '3 messages in this conversation')
+        self.assertEqual([t.pk for t in page.context['thread']], [first.pk, reply.pk, answer.pk])
+
+    def test_folders_stars_archive_and_trash(self):
+        m = mailbox.store(RAW_MAIL)
+        post = lambda **data: self.client.post('/platform/mailbox/', data, follow=True)
+        post(toggle_star=m.pk)
+        self.assertContains(self.client.get('/platform/mailbox/?folder=starred'), 'Demo for our college')
+        self.assertContains(post(action='archive', ids=[m.pk]), '1 message archived.')
+        self.assertNotContains(self.client.get('/platform/mailbox/'), 'Demo for our college')
+        self.assertContains(self.client.get('/platform/mailbox/?folder=archive'), 'Demo for our college')
+        self.assertContains(post(action='delete', ids=[m.pk]), 'Choose one or more messages first.')       # only the trash can delete for good
+        self.assertTrue(MailMessage.objects.filter(pk=m.pk).exists())
+        post(action='trash', ids=[m.pk])
+        self.assertContains(self.client.get('/platform/mailbox/?folder=trash'), 'Demo for our college')
+        self.assertNotContains(self.client.get('/platform/mailbox/?folder=archive'), 'Demo for our college')
+        post(action='restore', ids=[m.pk])
+        self.assertIsNone(MailMessage.objects.get().trashed_at)
+        post(action='trash', ids=[m.pk])
+        self.assertContains(post(action='empty_trash'), 'Trash emptied: 1 message deleted for good.')
+        self.assertFalse(MailMessage.objects.exists())
+        self.assertContains(post(action='read'), 'Choose one or more messages first.')
+
+    def test_search_and_preview(self):
+        mailbox.store(RAW_MAIL)
+        mailbox.store(RAW_MAIL.replace(b'<in-1@example.com>', b'<in-4@example.com>').replace(b'Demo for our college', b'Invoice query'))
+        page = self.client.get('/platform/mailbox/?q=invoice')
+        self.assertContains(page, 'Invoice query')
+        self.assertNotContains(page, 'Demo for our college')
+        self.assertContains(self.client.get('/platform/mailbox/?q=nothing-like-this'), 'Nothing matches')
+        doc = self.client.post('/platform/mailbox/preview/', {'subject': 'Hi <b>', 'body': 'One\n\nTwo', 'greeting': 'Asha', 'signoff': ''}).json()['html']
+        for text in ('Hi &lt;b&gt;', 'Hello Asha,', '>One</p>', '>Two</p>', 'The XPRISM team', '/assets/img/xprism-lockup.png'):
+            self.assertIn(text, doc)
+        self.assertNotIn('cid:', doc)
+
+    def test_mail_is_erased_with_the_account(self):
+        mailbox.store(RAW_MAIL)
+        self.write()
+        mailbox.store(RAW_MAIL.replace(b'<in-1@example.com>', b'<in-5@example.com>').replace(b'Asha@Example.com', b'someone@else.example'))
+        u = mkuser('asha@example.com', Role.STUDENT, is_trial_account=True, email='asha@example.com')
+        anonymise_user(u)
+        self.assertEqual(list(MailMessage.objects.values_list('from_email', flat=True)), ['someone@else.example'])
 
 
 class EnrolmentTests(Base):

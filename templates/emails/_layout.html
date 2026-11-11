@@ -13,8 +13,8 @@
           {% block body %}{% endblock %}
         </td></tr>
         <tr><td style="padding:16px 28px;border-top:1px solid #e7e2f1;font-size:12px;color:#64748b;">
-          Questions? Write to <a href="mailto:{{ support_email }}" style="color:#7e13b5;">{{ support_email }}</a>.<br>
-          This is an automatic message from {{ site_name }}; please do not reply to it.
+          {% block footer %}Questions? Write to <a href="mailto:{{ support_email }}" style="color:#7e13b5;">{{ support_email }}</a>.<br>
+          This is an automatic message from {{ site_name }}; please do not reply to it.{% endblock %}
         </td></tr>
       </table>
     </td></tr>

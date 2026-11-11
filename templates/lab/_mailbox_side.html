@@ -1,0 +1,17 @@
+{# Left column of every mailbox page: write a message, the folders, and checking for new mail. #}
+<aside class="mb-side">
+  <a href="{% url 'mailbox_compose' %}" class="mb-compose">Write a message</a>
+  <nav aria-label="Mail folders">
+    {% for key, name in folders %}
+    <a href="{% url 'mailbox' %}?folder={{ key }}"{% if folder == key %} aria-current="page"{% endif %}>{{ name }}{% if key == 'inbox' and counts.inbox %}<b>{{ counts.inbox }}</b>{% endif %}{% if key == 'sent' and counts.failed %}<b class="is-bad" title="Not sent">{{ counts.failed }}</b>{% endif %}</a>
+    {% endfor %}
+  </nav>
+  {% if can_receive %}
+  <form method="post" action="{% url 'mailbox' %}">{% csrf_token %}<input type="hidden" name="back" value="{% url 'mailbox' %}">
+    <button name="action" value="check" class="mb-check">Check for new mail</button>
+  </form>
+  {% else %}
+  <p class="mb-hint"><b>Receiving is off.</b> Add <code>IMAP_HOST</code> to <code>.env</code> to bring replies into this inbox.</p>
+  {% endif %}
+  {% if not can_send %}<p class="mb-hint"><b>Sending is off.</b> Add <code>EMAIL_HOST</code> to <code>.env</code> first.</p>{% endif %}
+</aside>

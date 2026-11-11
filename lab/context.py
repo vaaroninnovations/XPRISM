@@ -3,7 +3,7 @@ import json
 from django.conf import settings
 from django.utils.safestring import mark_safe
 
-from .models import ContactRequest, DataRequest, FreeYearApplication, Role
+from .models import ContactRequest, DataRequest, FreeYearApplication, MailMessage, Role
 
 # the pages search engines may list and analytics may measure; everything else is private to its user
 PUBLIC_PAGES = ('/', '/modules/', '/documentation/', '/about/', '/contact/', '/ethics/', '/privacy/', '/terms/', '/conditions/')
@@ -40,7 +40,7 @@ def site(request):
         if r == Role.COLLEGE_ADMIN:
             nav = [('College', '/college/'), ('Staff', '/college/users/'), ('Batches', '/faculty/batches/'), ('Experiments', '/college/experiments/'), ('Feedback', '/feedback/'), ('Requests', '/college/requests/'), ('Audit log', '/college/audit/')]
         if u.is_platform_admin:
-            nav = [('Platform', '/platform/'), ('Contact', '/platform/contact/'), ('Free month', '/platform/free-year/'), ('Colleges', '/platform/colleges/'), ('Trial users', '/platform/trials/'), ('Catalogue', '/platform/experiments/'), ('Feedback', '/feedback/'), ('Batches', '/faculty/batches/'), ('Requests', '/college/requests/'), ('Audit log', '/college/audit/'), ('Django admin', '/admin/')]
+            nav = [('Platform', '/platform/'), ('Mailbox', '/platform/mailbox/'), ('Contact', '/platform/contact/'), ('Free month', '/platform/free-year/'), ('Colleges', '/platform/colleges/'), ('Trial users', '/platform/trials/'), ('Catalogue', '/platform/experiments/'), ('Feedback', '/feedback/'), ('Batches', '/faculty/batches/'), ('Requests', '/college/requests/'), ('Audit log', '/college/audit/'), ('Django admin', '/admin/')]
     open_requests = 0
     if u.is_authenticated and (u.is_platform_admin or u.role == Role.COLLEGE_ADMIN):
         qs = DataRequest.objects.filter(status=DataRequest.OPEN)
@@ -54,6 +54,7 @@ def site(request):
                           and not u.free_year_applications.exclude(status=FreeYearApplication.REJECTED).exists())
     return {
         'PENDING_FREE_YEAR': pending_free_year, 'FREE_MONTH_AUTO': settings.FREE_MONTH_AUTO_APPROVE, 'SHOW_FREE_YEAR': show_free_year,
+        'UNREAD_MAIL': u.is_authenticated and u.is_platform_admin and MailMessage.objects.filter(direction=MailMessage.IN, is_read=False, archived=False, trashed_at__isnull=True).count(),
         'PENDING_CONTACT': u.is_authenticated and u.is_platform_admin and ContactRequest.objects.filter(status=ContactRequest.NEW).count(),
         'SEO': _seo(request), 'ANALYTICS': _analytics(request), 'ANALYTICS_CONFIGURED': bool(settings.GOOGLE_ANALYTICS_ID or settings.GOOGLE_TAG_MANAGER_ID),
         'SITE_NAME': settings.SITE_NAME, 'SITE_TAGLINE': settings.SITE_TAGLINE,

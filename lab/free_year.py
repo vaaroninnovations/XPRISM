@@ -119,6 +119,8 @@ def erase_personal_data(user):
         apps = apps | FreeYearApplication.objects.filter(email__iexact=user.email)
     apps.filter(status=FreeYearApplication.PENDING).update(status=FreeYearApplication.REJECTED, review_note='The applicant deleted their account.')
     apps.update(name='Deleted user', email='', phone='', message='', user=None, institution='')
+    from .mailbox import erase_for
+    erase_for(user.email)                                   # mail to and from this address in the super admins' mailbox
     requests = ContactRequest.objects.filter(user=user)
     if user.email:
         requests = requests | ContactRequest.objects.filter(email__iexact=user.email)

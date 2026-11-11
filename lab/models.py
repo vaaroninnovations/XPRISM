@@ -442,3 +442,51 @@ class ExperimentFeedback(models.Model):
 
     def __str__(self):
         return f'{self.experiment} • {self.rating}/5'
+
+
+class MailMessage(models.Model):
+    """One e-mail in the super admins' mailbox: received over IMAP, or written on the site and sent in the XPRISM template."""
+    IN, OUT = 'in', 'out'
+    RECEIVED, QUEUED, SENT, FAILED = 'received', 'queued', 'sent', 'failed'
+    direction = models.CharField(max_length=3, choices=[(IN, 'Received'), (OUT, 'Sent')])
+    status = models.CharField(max_length=10, choices=[(RECEIVED, 'Received'), (QUEUED, 'Sending'), (SENT, 'Sent'), (FAILED, 'Not sent')], default=RECEIVED)
+    message_id = models.CharField(max_length=255, unique=True)
+    in_reply_to = models.CharField(max_length=255, blank=True)
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL, related_name='replies')
+    root = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL, related_name='thread')      # first message of the conversation
+    from_name = models.CharField(max_length=120, blank=True)
+    from_email = models.CharField(max_length=254, blank=True)
+    to = models.TextField(blank=True)                                  # addresses separated by commas
+    subject = models.CharField(max_length=255)
+    body = models.TextField(blank=True)                                # plain text only: received HTML is never kept
+    greeting = models.CharField(max_length=120, blank=True)            # sent mail: the name after "Hello"
+    signoff = models.CharField(max_length=120, blank=True)             # sent mail: the line after "Regards,"
+    attachments = models.JSONField(default=list, blank=True)           # received mail: names and sizes only, the files are not stored
+    is_read = models.BooleanField(default=False)
+    starred = models.BooleanField(default=False)
+    archived = models.BooleanField(default=False)
+    trashed_at = models.DateTimeField(null=True, blank=True)
+    sent_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
+    error = models.CharField(max_length=500, blank=True)
+    date = models.DateTimeField(default=timezone.now)                  # when it was received or sent
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-date', '-pk']
+        indexes = [models.Index(fields=['direction', 'archived', '-date'])]
+
+    def __str__(self):
+        return f'{self.get_direction_display()}: {self.subject}'
+
+    @property
+    def recipients(self):
+        return [a.strip() for a in self.to.split(',') if a.strip()]
+
+    @property
+    def who(self):
+        """The other party: the sender of received mail, the recipients of sent mail."""
+        return (self.from_name or self.from_email) if self.direction == self.IN else self.to
+
+    @property
+    def snippet(self):
+        return ' '.join(line for line in self.body.split() if line)[:140]

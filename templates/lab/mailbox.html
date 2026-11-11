@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}Mailbox: {{ folder_name }}{% endblock %}
+{% block content %}
+<div class="mb">
+  {% include 'lab/_mailbox_side.html' %}
+  <section class="mb-main">
+    <header class="mb-head">
+      <div>
+        <h1 class="text-xl font-bold text-slate-900">{{ folder_name }}</h1>
+        <p>{% if q %}{{ page.paginator.count }} result{{ page.paginator.count|pluralize }} for “{{ q }}”{% else %}{{ page.paginator.count }} message{{ page.paginator.count|pluralize }}{% if address %} • {{ address }}{% endif %}{% endif %}</p>
+      </div>
+      <form method="get" class="mb-search" role="search">
+        <input type="hidden" name="folder" value="{{ folder }}">
+        <input type="search" name="q" value="{{ q }}" placeholder="Search this folder" aria-label="Search this folder">
+        <button>Search</button>
+        {% if q %}<a href="{% url 'mailbox' %}?folder={{ folder }}">Clear</a>{% endif %}
+      </form>
+    </header>
+
+    {% if page.object_list %}
+    <form method="post" id="mbForm">{% csrf_token %}<input type="hidden" name="back" value="{{ request.get_full_path }}">
+      <div class="mb-bar">
+        <label class="mb-all"><input type="checkbox" id="mbAll" aria-label="Select every message on this page"> <span>All</span></label>
+        {% if folder == 'trash' %}
+        <button name="action" value="restore">Restore</button>
+        <button name="action" value="delete" class="is-bad" data-confirm="Delete the selected messages for good? This cannot be undone.">Delete for good</button>
+        <button name="action" value="empty_trash" class="is-bad mb-right" data-confirm="Delete every message in the trash for good? This cannot be undone." data-no-selection>Empty trash</button>
+        {% else %}
+        <button name="action" value="read">Mark read</button>
+        <button name="action" value="unread">Mark unread</button>
+        {% if folder == 'archive' %}<button name="action" value="unarchive">Move back</button>{% else %}<button name="action" value="archive">Archive</button>{% endif %}
+        <button name="action" value="trash">Move to trash</button>
+        {% endif %}
+      </div>
+      <ul class="mb-list">
+        {% for m in page.object_list %}
+        <li class="{% if not m.is_read %}is-unread{% endif %}">
+          <input type="checkbox" name="ids" value="{{ m.pk }}" aria-label="Select: {{ m.subject }}">
+          <button name="toggle_star" value="{{ m.pk }}" class="mb-star{% if m.starred %} is-on{% endif %}" aria-label="{% if m.starred %}Remove star{% else %}Add star{% endif %}" aria-pressed="{{ m.starred|yesno:'true,false' }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.85 6.05 6.55.85-4.8 4.6 1.25 6.6L12 17.45 6.15 20.7l1.25-6.6-4.8-4.6 6.55-.85z"/></svg></button>
+          <a href="{% url 'mailbox_message' m.pk %}?folder={{ folder }}">
+            <span class="mb-who">{% if m.direction == 'out' %}<i>To</i> {% endif %}{{ m.who|default:"(unknown)" }}</span>
+            <span class="mb-line"><b>{{ m.subject }}</b><span>{{ m.snippet }}</span></span>
+            <span class="mb-meta">{% if m.status == 'failed' %}<em class="is-bad">Not sent</em>{% elif m.status == 'queued' %}<em>Sending</em>{% endif %}{% if m.attachments %}<em title="{{ m.attachments|length }} attachment{{ m.attachments|length|pluralize }}">{{ m.attachments|length }} file{{ m.attachments|length|pluralize }}</em>{% endif %}<time datetime="{{ m.date|date:'c' }}">{{ m.date|date:"d M, H:i" }}</time></span>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </form>
+    {% if page.has_other_pages %}
+    <nav class="mb-pages" aria-label="Pages">
+      {% if page.has_previous %}<a href="?folder={{ folder }}&q={{ q|urlencode }}&page={{ page.previous_page_number }}">Newer</a>{% endif %}
+      <span>Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+      {% if page.has_next %}<a href="?folder={{ folder }}&q={{ q|urlencode }}&page={{ page.next_page_number }}">Older</a>{% endif %}
+    </nav>
+    {% endif %}
+    {% elif q %}
+    <p class="xp-empty"><b>Nothing matches “{{ q }}”</b>Search looks at the subject, the addresses and the text of each message in this folder.</p>
+    {% elif folder == 'inbox' and not can_receive %}
+    <div class="xp-empty"><b>The inbox is not connected yet</b>Sent messages work as soon as <code>EMAIL_HOST</code> is set. To receive replies here, add <code>IMAP_HOST</code> (and, if they differ from the sending account, <code>IMAP_USER</code> and <code>IMAP_PASSWORD</code>) to <code>.env</code> and restart the site.</div>
+    {% elif folder == 'inbox' %}
+    <p class="xp-empty"><b>No mail yet</b>New mail arrives when you open this page or press “Check for new mail”.</p>
+    {% elif folder == 'sent' %}
+    <p class="xp-empty"><b>Nothing sent yet</b><a href="{% url 'mailbox_compose' %}" class="text-teal-700 underline">Write a message</a> to send your first e-mail in the XPRISM template.</p>
+    {% elif folder == 'trash' %}
+    <p class="xp-empty"><b>The trash is empty</b>Messages you move here stay until you delete them for good.</p>
+    {% else %}
+    <p class="xp-empty"><b>Nothing here</b>{% if folder == 'starred' %}Star a message to find it again quickly.{% else %}Archive a message to keep it out of the inbox.{% endif %}</p>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+  (function () {
+    var form = document.getElementById('mbForm'); if (!form) return;
+    var all = document.getElementById('mbAll'), boxes = [].slice.call(form.querySelectorAll('input[name=ids]'));
+    all.addEventListener('change', function () { boxes.forEach(function (b) { b.checked = all.checked; }); });
+    form.addEventListener('submit', function (e) {
+      var b = e.submitter; if (!b || !b.dataset.confirm) return;
+      if (!b.hasAttribute('data-no-selection') && !boxes.some(function (x) { return x.checked; })) return;
+      if (!window.confirm(b.dataset.confirm)) e.preventDefault();
+    });
+  })();
+</script>
+{% endblock %}

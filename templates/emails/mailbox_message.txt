@@ -1,0 +1,10 @@
+{% autoescape off %}Hello{% if greeting %} {{ greeting }}{% endif %},
+
+{{ body }}
+
+Regards,
+{{ signoff }}{% if company %}
+{{ company }}{% endif %}
+
+You can reply to this e-mail{% if reply_to %}, or write to {{ reply_to }}{% endif %}.
+{{ site_name }}: {{ site_full_name }}{% endautoescape %}

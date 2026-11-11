@@ -61,7 +61,7 @@
     <div class="xp-subnav-in">
       <div class="xp-tabs">
         {% for label, href in NAV %}
-        <a href="{{ href }}"{% if request.path == href or href != '/' and request.path|slice:':14' == href|slice:':14' %} aria-current="page"{% endif %}>{{ label }}{% if label == 'Requests' and OPEN_REQUESTS %} <span class="xp-count">{{ OPEN_REQUESTS }}</span>{% endif %}{% if label == 'Free month' and PENDING_FREE_YEAR %} <span class="xp-count">{{ PENDING_FREE_YEAR }}</span>{% endif %}{% if label == 'Contact' and PENDING_CONTACT %} <span class="xp-count">{{ PENDING_CONTACT }}</span>{% endif %}</a>
+        <a href="{{ href }}"{% if request.path == href or href != '/' and request.path|slice:':14' == href|slice:':14' %} aria-current="page"{% endif %}>{{ label }}{% if label == 'Requests' and OPEN_REQUESTS %} <span class="xp-count">{{ OPEN_REQUESTS }}</span>{% endif %}{% if label == 'Free month' and PENDING_FREE_YEAR %} <span class="xp-count">{{ PENDING_FREE_YEAR }}</span>{% endif %}{% if label == 'Mailbox' and UNREAD_MAIL %} <span class="xp-count">{{ UNREAD_MAIL }}</span>{% endif %}{% if label == 'Contact' and PENDING_CONTACT %} <span class="xp-count">{{ PENDING_CONTACT }}</span>{% endif %}</a>
         {% endfor %}
       </div>
       <div class="xp-tabs xp-tabs-own">

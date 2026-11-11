@@ -290,6 +290,49 @@ class FreeYearApplicationForm(forms.ModelForm):
         return phone
 
 
+class MailComposeForm(StyledMixin, forms.Form):
+    """A message written in the super admins' mailbox. The text goes into the XPRISM e-mail template."""
+    to = forms.CharField(label='To', max_length=1200, help_text='One e-mail address, or several separated by commas. Everyone listed sees the other addresses.')
+    subject = forms.CharField(label='Subject', max_length=255)
+    greeting = forms.CharField(label='Greeting name', max_length=120, required=False, help_text='Shown as "Hello Asha,". Leave empty for a plain "Hello,".')
+    body = forms.CharField(label='Message', max_length=20000, widget=forms.Textarea(attrs={'rows': 12}), strip=False)
+    signoff = forms.CharField(label='Sign-off', max_length=120, required=False, help_text='The line under "Regards,".')
+
+    def __init__(self, *a, **kw):
+        super().__init__(*a, **kw)
+        self._style()
+
+    def clean_to(self):
+        from .free_year import parse_addresses
+        from .mailbox import MAX_RECIPIENTS
+        valid, invalid = parse_addresses(self.cleaned_data['to'])
+        if invalid:
+            raise forms.ValidationError(f'Not a valid e-mail address: {", ".join(invalid[:5])}')
+        if not valid:
+            raise forms.ValidationError('Enter at least one e-mail address.')
+        if len(valid) > MAX_RECIPIENTS:
+            raise forms.ValidationError(f'At most {MAX_RECIPIENTS} addresses in one message.')
+        return valid
+
+    def clean_subject(self):
+        subject = ' '.join(self.cleaned_data['subject'].split())        # a line break here would let text into the e-mail headers
+        if not subject:
+            raise forms.ValidationError('Enter a subject.')
+        return subject
+
+    def clean_body(self):
+        body = self.cleaned_data['body'].replace('\r\n', '\n').strip('\n')
+        if not body.strip():
+            raise forms.ValidationError('Write a message.')
+        return body
+
+    def clean_greeting(self):
+        return ' '.join(self.cleaned_data['greeting'].split())
+
+    def clean_signoff(self):
+        return ' '.join(self.cleaned_data['signoff'].split())
+
+
 class ContactForm(StyledMixin, forms.ModelForm):
     subtopic = forms.ChoiceField(label='Sub-topic', choices=[('', 'Choose a sub-topic')] + GROUPED_SUBTOPICS)
     consent = forms.BooleanField(label='I agree that XPRISM may use these details to respond to this request', error_messages={'required': 'Please agree so that we can respond to you.'})

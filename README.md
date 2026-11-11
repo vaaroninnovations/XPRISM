@@ -81,6 +81,26 @@ separate invitation whose link opens the pop-up. An address is invited once, add
 every invitation has an opt-out link, and at most `FREE_YEAR_INVITES_PER_DAY` (default 200) go out in 24 hours.
 Sending needs `EMAIL_HOST` to be set; without it the page refuses to send.
 
+## Mailbox
+
+Super admins have a mailbox under **Platform → Mailbox** for writing to anyone and reading the replies.
+
+- **Writing:** enter the address (up to 20, separated by commas), the subject and the text. The message is sent in the XPRISM
+  e-mail template (`templates/emails/mailbox_message.html`), with an optional name after "Hello" and a sign-off. A preview
+  beside the form shows the finished e-mail as you type. At most `MAILBOX_MAX_PER_DAY` (default 200) go out in 24 hours.
+- **Receiving:** the site reads an ordinary mail account over IMAP. New mail comes in when the inbox is opened (at most every
+  five minutes), on **Check for new mail**, and with `manage.py fetch_mail`, which can run from cron. The mail account is only
+  read: nothing is marked as seen or deleted there.
+- **Working through it:** Inbox, Starred, Sent, Archive and Trash; search; mark read or unread; reply and forward; replies are
+  shown with the message they answer. A message that could not be sent says why and can be sent again. Messages leave for
+  good only from the Trash.
+- **Safety:** only the text of a received e-mail is kept and shown, never its HTML. Attachments are listed by name and size
+  but not stored, so open the mail account itself to download one. Mail to and from an address is erased when that person's
+  account is deleted.
+
+Sending uses the `EMAIL_*` settings. To receive, set `IMAP_HOST` in `.env`; `IMAP_USER` and `IMAP_PASSWORD` default to the
+sending account. Set `MAILBOX_ADDRESS` if replies should go to a different address from the one the site reads.
+
 ## Public demo logins
 
 `manage.py setup_demo` creates "XPRISM Demo College" with one shared login per role, all with the password `Xprism@2026`:
@@ -208,6 +228,7 @@ browser, so server load is light.
 ```
 config/            Django settings (all deployment values come from .env)
 lab/               models, roles/permissions, views, forms, management commands, tests
+                   (mailbox.py and views_mailbox.py: the super admins' mailbox)
 templates/         pages for every role, sign-in/consent, legal texts
 experiments/       the 43 simulation pages (served through the app)
 static/assets/     Tailwind CSS (compiled), theme.css (shared with the benches), site.css (site pages only),

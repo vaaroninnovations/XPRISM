@@ -42,3 +42,10 @@ def pct(v, total):
         return round(float(v) / float(total) * 100)
     except (TypeError, ValueError, ZeroDivisionError):
         return 0
+
+
+@register.filter
+def paragraphs(text):
+    """Text split where the writer left an empty line, for templates that wrap each paragraph themselves."""
+    import re
+    return [p for p in re.split(r'\n\s*\n', str(text or '').replace('\r\n', '\n').strip('\n')) if p.strip()]

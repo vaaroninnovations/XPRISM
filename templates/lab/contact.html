@@ -2,40 +2,70 @@
 {% block title %}Contact us{% endblock %}
 {% block meta_description %}Contact XPRISM to request a demo or a quotation, get technical help, or ask about accounts, billing, training and partnerships.{% endblock %}
 {% block content %}
-<section class="max-w-2xl">
-  <div class="mono text-[11px] font-bold text-teal-700">CONTACT US</div>
-  <h1 class="text-2xl font-bold text-slate-900 mt-1">How can we help?</h1>
-  <p class="text-sm text-slate-600 mt-1 leading-relaxed">Choose a subject and tell us what you need. Our team reviews every request and replies by e-mail.</p>
-</section>
-<div class="xh-contact">
-  <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+<div class="ct">
+  <section>
+    <h1>Tell us what you need.</h1>
+    <p class="ct-lead">A demo for your department, a quotation, a module that will not load: choose a subject and write to us. A person on our team reads every request and replies by e-mail.</p>
+
+    <nav class="ct-ways" aria-label="Common requests">
+      <a href="{% url 'contact' %}?topic=demo#write"{% if form.topic.value == 'demo' %} aria-current="true"{% endif %}><b>See it with your faculty</b><span>A live walkthrough online or on campus, or a demo login.</span><i>Request a demo</i></a>
+      <a href="{% url 'contact' %}?topic=quotation#write"{% if form.topic.value == 'quotation' %} aria-current="true"{% endif %}><b>Bring XPRISM to your college</b><span>A subscription for a college, a university or one person.</span><i>Ask for a quotation</i></a>
+      <a href="{% url 'contact' %}?topic=technical#write"{% if form.topic.value == 'technical' %} aria-current="true"{% endif %}><b>Something is not working</b><span>Sign-in, a module, marks that are not saving, exam mode.</span><i>Report a problem</i></a>
+      <a href="{% url 'contact' %}?topic=privacy#write"{% if form.topic.value == 'privacy' %} aria-current="true"{% endif %}><b>Your data</b><span>Download, correct or delete what we hold, or raise a grievance.</span><i>Privacy request</i></a>
+    </nav>
+
+    <div class="ct-next">
+      <h2>What happens next</h2>
+      <ol>
+        <li>You get a reference number and a confirmation by e-mail straight away.</li>
+        <li>We read your request and, if we need more detail, write back to ask.</li>
+        <li>You receive our reply at the address you give here.</li>
+      </ol>
+    </div>
+
+    <div class="ct-org">
+      <h2>{{ LEGAL.org_name }}</h2>
+      <p>{{ LEGAL.org_address }}</p>
+      <p>Before you write: <a href="{% url 'documentation' %}">read the documentation</a>, <a href="{% url 'password_reset' %}">reset your password</a> or see the <a href="{% url 'privacy' %}">Privacy Policy</a>.</p>
+    </div>
+  </section>
+
+  <section class="ct-card" id="write">
     {% if sent %}
-    <div class="space-y-3" role="status">
-      <h2 class="text-lg font-bold text-slate-900">Thank you. We have received your request.</h2>
-      <p class="text-sm text-slate-600">Your reference is <b class="mono">{{ sent }}</b>. We have sent a confirmation to your e-mail address.</p>
-      <a href="{% url 'contact' %}" class="inline-block px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow">Send another request</a>
+    <div class="ct-done" role="status">
+      <h2>Thank you. We have received your request.</h2>
+      <p>Your reference is</p>
+      <div class="ct-ref mono">{{ sent }}</div>
+      <p>We have sent a confirmation to your e-mail address. Quote the reference if you write to us again about this.</p>
+      <a href="{% url 'contact' %}" class="xh-btn xh-btn-quiet">Send another request</a>
     </div>
     {% else %}
-    <form id="contactForm" method="post" class="space-y-3" novalidate>{% csrf_token %}
-      {% if form.non_field_errors %}<div class="px-3 py-2 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-sm" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+    <h2>Write to us</h2>
+    <p>Fields marked optional can be left empty.</p>
+    <form id="contactForm" method="post" class="ct-form" novalidate>{% csrf_token %}
+      {% if form.non_field_errors %}<div class="ct-alert" role="alert">{{ form.non_field_errors }}</div>{% endif %}
       <div style="position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
-      {% include 'registration/_fields.html' %}
-      <button class="w-full py-2.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow">Send request</button>
+      <div class="ct-pair">
+        {% include 'lab/_contact_field.html' with f=form.topic %}
+        {% include 'lab/_contact_field.html' with f=form.subtopic %}
+      </div>
+      <div class="ct-pair">
+        {% include 'lab/_contact_field.html' with f=form.name %}
+        {% include 'lab/_contact_field.html' with f=form.email %}
+      </div>
+      <div class="ct-pair">
+        {% include 'lab/_contact_field.html' with f=form.phone %}
+        {% include 'lab/_contact_field.html' with f=form.institution %}
+      </div>
+      {% include 'lab/_contact_field.html' with f=form.message %}
+      <div>
+        <label class="ct-check">{{ form.consent }} <span>{{ form.consent.label }}</span></label>
+        {% for e in form.consent.errors %}<p class="ct-err" role="alert">{{ e }}</p>{% endfor %}
+      </div>
+      <button>Send request</button>
     </form>
     {% endif %}
-  </div>
-  <aside class="space-y-3">
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 text-sm text-slate-600 space-y-2">
-      <h2 class="text-sm font-bold text-slate-900">{{ LEGAL.org_name }}</h2>
-      <p>{{ LEGAL.org_address }}</p>
-    </div>
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 text-sm text-slate-600 space-y-2">
-      <h2 class="text-sm font-bold text-slate-900">Quick links</h2>
-      <p><a href="{% url 'documentation' %}" class="text-teal-700 hover:underline">Read the documentation</a></p>
-      <p><a href="{% url 'password_reset' %}" class="text-teal-700 hover:underline">Reset your password</a></p>
-      <p><a href="{% url 'privacy' %}" class="text-teal-700 hover:underline">Privacy Policy</a></p>
-    </div>
-  </aside>
+  </section>
 </div>
 {% endblock %}
 {% block scripts %}

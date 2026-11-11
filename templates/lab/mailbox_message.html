@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}{{ m.subject }}{% endblock %}
+{% block content %}
+<div class="mb">
+  {% include 'lab/_mailbox_side.html' %}
+  <section class="mb-main">
+    <form method="post" class="mb-bar mb-bar-top">{% csrf_token %}<input type="hidden" name="folder" value="{{ folder }}">
+      <a href="{% url 'mailbox' %}?folder={{ folder }}" class="mb-back">Back to {{ folder_name }}</a>
+      {% if not m.trashed_at %}
+      <a href="{% url 'mailbox_compose' %}?reply={{ m.pk }}" class="is-main">Reply</a>
+      <a href="{% url 'mailbox_compose' %}?forward={{ m.pk }}">Forward</a>
+      <button name="action" value="{% if m.starred %}unstar{% else %}star{% endif %}">{% if m.starred %}Remove star{% else %}Star{% endif %}</button>
+      <button name="action" value="unread">Mark unread</button>
+      {% if m.archived %}<button name="action" value="unarchive">Move back</button>{% else %}<button name="action" value="archive">Archive</button>{% endif %}
+      <button name="action" value="trash">Move to trash</button>
+      {% else %}
+      <button name="action" value="restore">Restore</button>
+      <button name="action" value="delete" class="is-bad" data-confirm="Delete this message for good? This cannot be undone.">Delete for good</button>
+      {% endif %}
+    </form>
+
+    <h1 class="text-xl font-bold text-slate-900 mb-subject">{{ thread.0.subject }}</h1>
+    {% if thread|length > 1 %}<p class="mb-count">{{ thread|length }} messages in this conversation</p>{% endif %}
+
+    {% for t in thread %}
+    <article class="mb-msg{% if t.direction == 'out' %} is-out{% endif %}{% if t.pk == m.pk %} is-current{% endif %}" id="m{{ t.pk }}">
+      <header>
+        <div>
+          <b>{% if t.direction == 'out' %}{{ SITE_NAME }}{% if t.sent_by %} <span>({{ t.sent_by.display_name }})</span>{% endif %}{% else %}{{ t.from_name|default:t.from_email|default:"(unknown sender)" }}{% endif %}</b>
+          <p>{% if t.direction == 'in' and t.from_name %}{{ t.from_email }} • {% endif %}to {{ t.to|default:"(no address)" }}</p>
+        </div>
+        <div class="mb-when">
+          {% if t.status == 'failed' %}<em class="is-bad">Not sent</em>{% elif t.status == 'queued' %}<em>Sending</em>{% elif t.direction == 'out' %}<em class="is-ok">Sent</em>{% endif %}
+          <time datetime="{{ t.date|date:'c' }}">{{ t.date|date:"D d M Y, H:i" }}</time>
+        </div>
+      </header>
+      {% if t.status == 'failed' %}
+      <form method="post" action="{% url 'mailbox_message' t.pk %}" class="mb-alert">{% csrf_token %}
+        <p><b>This message was not sent.</b> {{ t.error|default:"The mail server refused it." }}</p>
+        <button name="action" value="resend">Send again</button>
+      </form>
+      {% endif %}
+      <div class="mb-body">{% if t.direction == 'out' %}<p>Hello{% if t.greeting %} {{ t.greeting }}{% endif %},</p>{% endif %}<p>{{ t.body|urlize|linebreaksbr }}</p>{% if t.direction == 'out' and t.signoff %}<p>Regards,<br>{{ t.signoff }}</p>{% endif %}</div>
+      {% if t.attachments %}
+      <div class="mb-files">
+        <b>{{ t.attachments|length }} attachment{{ t.attachments|length|pluralize }}</b>
+        <ul>{% for f in t.attachments %}<li>{{ f.name }} <span>{{ f.size|filesizeformat }}</span></li>{% endfor %}</ul>
+        <p>Attachments are not kept here. Open the mail account itself to download them.</p>
+      </div>
+      {% endif %}
+    </article>
+    {% endfor %}
+
+    {% if not m.trashed_at %}<p class="mb-after"><a href="{% url 'mailbox_compose' %}?reply={{ m.pk }}" class="mb-compose mb-compose-inline">Reply to this message</a></p>{% endif %}
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+  document.addEventListener('submit', function (e) { var b = e.submitter; if (b && b.dataset.confirm && !window.confirm(b.dataset.confirm)) e.preventDefault(); });
+  (function () { var c = document.querySelector('.mb-msg.is-current'); if (c && document.querySelectorAll('.mb-msg').length > 2) c.scrollIntoView({ block: 'start' }); })();
+</script>
+{% endblock %}
