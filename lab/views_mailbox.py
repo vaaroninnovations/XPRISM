@@ -126,7 +126,7 @@ def mailbox_message(request, pk):
                 messages.error(request, 'Sending is not set up: add EMAIL_HOST to .env.')
             else:
                 with transaction.atomic():
-                    again = mailbox.compose(m.recipients, m.subject, m.body, request.user, m.greeting, m.signoff, m.parent)
+                    again = mailbox.compose(m.recipients, m.subject, m.body, request.user, m.greeting, m.signoff, m.parent, m.body_html)
                     m.delete()
                     audit(request, 'mail_sent', f'#{again.pk} (sent again)', to=again.to)
                 messages.success(request, 'Sent again.')
@@ -162,7 +162,10 @@ def mailbox_compose(request):
     if ref.isdigit():
         parent = MailMessage.objects.filter(pk=int(ref)).first()
     if request.method == 'POST':
-        form = MailComposeForm(request.POST)
+        data = request.POST.copy()
+        if data.get('body_format') == 'html':                       # if the form comes back with an error, the editor is given cleaned markup
+            data['body'] = mailbox.clean_html(data.get('body', ''))
+        form = MailComposeForm(data)
         if not mailbox.can_send():
             form.add_error(None, 'Sending is not set up yet: add EMAIL_HOST and its password to .env, then restart the site.')
         elif form.is_valid():
@@ -172,7 +175,7 @@ def mailbox_compose(request):
                 form.add_error(None, f'The limit of {settings.MAILBOX_MAX_PER_DAY} messages in 24 hours has been reached. Try again later.')
             else:
                 with transaction.atomic():
-                    m = mailbox.compose(cd['to'], cd['subject'], cd['body'], request.user, cd['greeting'], cd['signoff'], parent)
+                    m = mailbox.compose(cd['to'], cd['subject'], cd['body'], request.user, cd['greeting'], cd['signoff'], parent, cd.get('body_html', ''))
                     audit(request, 'mail_sent', f'#{m.pk}', to=m.to, subject=m.subject[:80])
                 messages.success(request, f'Message sent to {m.to}.')
                 return redirect('mailbox_message', pk=m.pk)
@@ -181,7 +184,8 @@ def mailbox_compose(request):
         forward = request.GET.get('forward', '')
         if parent:
             subject = parent.subject if parent.subject.lower().startswith('re:') else f'Re: {parent.subject}'
-            initial.update(to=parent.from_email if parent.direction == MailMessage.IN else parent.to, subject=subject[:255], greeting=parent.from_name if parent.direction == MailMessage.IN else '', body=_quote(parent))
+            initial.update(to=parent.from_email if parent.direction == MailMessage.IN else parent.to, subject=subject[:255], body=_quote(parent),
+                           greeting=f'Dear {parent.from_name},' if parent.direction == MailMessage.IN and parent.from_name else '')
         elif forward.isdigit():
             src = MailMessage.objects.filter(pk=int(forward)).first()
             if src:
@@ -199,7 +203,7 @@ def mailbox_preview(request):
     """The message in the e-mail template, for the preview beside the compose form."""
     p = request.POST
     doc = mailbox.preview_html(p.get('subject', '')[:255], p.get('body', '')[:mailbox.MAX_BODY], p.get('greeting', '')[:120], p.get('signoff', '')[:120],
-                               staticfiles_storage.url('img/xprism-lockup.png'))
+                               staticfiles_storage.url('img/xprism-lockup.png'), rich=p.get('body_format') == 'html')
     return JsonResponse({'html': doc})
 
 

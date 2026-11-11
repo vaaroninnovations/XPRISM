@@ -1,6 +1,6 @@
-{% autoescape off %}Hello{% if greeting %} {{ greeting }}{% endif %},
+{% autoescape off %}{% if greeting %}{{ greeting }}
 
-{{ body }}
+{% endif %}{{ body }}
 
 Regards,
 {{ signoff }}{% if company %}

@@ -15,9 +15,28 @@
       <form method="post" id="mbCompose" class="mb-form" novalidate>{% csrf_token %}
         {% if parent %}<input type="hidden" name="parent" value="{{ parent.pk }}">{% endif %}
         {% if form.non_field_errors %}<div class="mb-alert" role="alert"><p>{{ form.non_field_errors|join:" " }}</p></div>{% endif %}
-        {% for f in form %}
+        {% for f in form.hidden_fields %}{{ f }}{% endfor %}
+        {% for f in form.visible_fields %}
         <div class="mb-field mb-field-{{ f.name }}">
           <label for="{{ f.id_for_label }}">{{ f.label }}{% if not f.field.required %} <span>optional</span>{% endif %}</label>
+          {% if f.name == 'body' %}
+          {# the editor is switched on by the script below; without it the plain text box underneath is used #}
+          <div class="mb-rte" id="mbRte" hidden>
+            <div class="mb-tools" role="toolbar" aria-label="Formatting">
+              <button type="button" data-cmd="bold" title="Bold (Ctrl+B)" aria-label="Bold"><b>B</b></button>
+              <button type="button" data-cmd="italic" title="Italic (Ctrl+I)" aria-label="Italic"><em>I</em></button>
+              <button type="button" data-cmd="underline" title="Underline (Ctrl+U)" aria-label="Underline"><u>U</u></button>
+              <i aria-hidden="true"></i>
+              <button type="button" data-cmd="heading" title="Make this line a heading">Heading</button>
+              <button type="button" data-cmd="insertUnorderedList" title="Bulleted list">&bull; List</button>
+              <button type="button" data-cmd="insertOrderedList" title="Numbered list">1. List</button>
+              <i aria-hidden="true"></i>
+              <button type="button" data-cmd="link" title="Turn the selected words into a link">Link</button>
+              <button type="button" data-cmd="clear" title="Remove the formatting from the selected text">Clear</button>
+            </div>
+            <div class="mb-editor" id="mbEditor" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Message"></div>
+          </div>
+          {% endif %}
           {{ f }}
           {% if f.help_text %}<p>{{ f.help_text }}</p>{% endif %}
           {% for e in f.errors %}<p class="is-bad" role="alert">{{ e }}</p>{% endfor %}
@@ -38,6 +57,57 @@
 {% endblock %}
 {% block scripts %}
 <script>
+  // The message editor. It writes its markup into the "body" field, which the server rebuilds from a short list of tags.
+  (function () {
+    var area = document.getElementById('id_body'), fmt = document.getElementById('id_body_format'), box = document.getElementById('mbRte'),
+        ed = document.getElementById('mbEditor'), form = document.getElementById('mbCompose'), saved = null;
+    if (!area || !fmt || !box || !ed || !form || !document.execCommand) return;
+    function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+    function fromText(t) {                                          // a reply or a forward starts as plain text
+      t = t.replace(/\r\n/g, '\n');
+      var out = /^\n/.test(t) ? '<p><br></p>' : '';
+      t.split(/\n{2,}/).forEach(function (p) { if (p.trim()) out += '<p>' + esc(p.replace(/^\n+|\n+$/g, '')).replace(/\n/g, '<br>') + '</p>'; });
+      return out || '<p><br></p>';
+    }
+    ed.innerHTML = fmt.value === 'html' ? (area.value || '<p><br></p>') : fromText(area.value);
+    fmt.value = 'html'; area.hidden = true; box.hidden = false;
+    try { document.execCommand('defaultParagraphSeparator', false, 'p'); document.execCommand('styleWithCSS', false, false); } catch (e) {}
+    function sync() { area.value = ed.innerHTML; }
+    function state(cmd) { try { return cmd === 'heading' ? /^h2$/i.test(document.queryCommandValue('formatBlock')) : document.queryCommandState(cmd); } catch (e) { return false; } }
+    function marks() { box.querySelectorAll('[data-cmd]').forEach(function (b) { if (!/^(link|clear)$/.test(b.dataset.cmd)) b.setAttribute('aria-pressed', state(b.dataset.cmd) ? 'true' : 'false'); }); }
+    function back() { ed.focus(); if (saved) { var s = document.getSelection(); s.removeAllRanges(); s.addRange(saved); } }
+    function run(cmd) {
+      back();
+      if (cmd === 'heading') document.execCommand('formatBlock', false, state('heading') ? 'p' : 'h2');
+      else if (cmd === 'clear') { document.execCommand('removeFormat'); document.execCommand('unlink'); document.execCommand('formatBlock', false, 'p'); }
+      else if (cmd === 'link') {
+        var url = (window.prompt('Address of the link', 'https://') || '').trim();
+        if (!url || url === 'https://') return;
+        if (!/^(https?:\/\/|mailto:)/i.test(url)) url = (/^[^\s@\/]+@[^\s@\/]+$/.test(url) ? 'mailto:' : 'https://') + url;
+        back();
+        if (document.getSelection().isCollapsed) document.execCommand('insertHTML', false, '<a href="' + esc(url) + '">' + esc(url) + '</a>');
+        else document.execCommand('createLink', false, url);
+      } else document.execCommand(cmd);
+      sync(); marks();
+      ed.dispatchEvent(new Event('input', { bubbles: true }));     // redraws the preview
+    }
+    document.addEventListener('selectionchange', function () {
+      var s = document.getSelection();
+      if (s.rangeCount && ed.contains(s.anchorNode)) { saved = s.getRangeAt(0).cloneRange(); marks(); }
+    });
+    box.querySelectorAll('[data-cmd]').forEach(function (b) {
+      b.addEventListener('mousedown', function (e) { e.preventDefault(); });     // the selection stays in the message
+      b.addEventListener('click', function () { run(b.dataset.cmd); });
+    });
+    ed.addEventListener('paste', function (e) {                    // pasted text takes the message's own look
+      var text = e.clipboardData ? e.clipboardData.getData('text/plain') : '';
+      e.preventDefault();
+      document.execCommand('insertText', false, text);
+    });
+    ed.addEventListener('input', sync);
+    form.addEventListener('submit', sync);
+    sync(); marks();
+  })();
   (function () {
     var form = document.getElementById('mbCompose'), host = document.getElementById('mbPreview');
     if (!form || !host || !host.attachShadow) return;

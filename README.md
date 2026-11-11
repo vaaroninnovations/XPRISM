@@ -89,7 +89,9 @@ Sending needs `EMAIL_HOST` to be set; without it the page refuses to send.
 Super admins have a mailbox under **Platform → Mailbox** for writing to anyone and reading the replies.
 
 - **Writing:** enter the address (up to 20, separated by commas), the subject and the text. The message is sent in the XPRISM
-  e-mail template (`templates/emails/mailbox_message.html`), with an optional name after "Hello" and a sign-off. A preview
+  e-mail template (`templates/emails/mailbox_message.html`), with a greeting line you write yourself (or leave out) and a sign-off. The text can
+  carry bold, italic, underline, a heading, lists and links; `mailbox.clean_html` rebuilds that markup from a short list of
+  tags before anything is stored or sent. A preview
   beside the form shows the finished e-mail as you type. At most `MAILBOX_MAX_PER_DAY` (default 200) go out in 24 hours.
 - **Receiving:** the site reads an ordinary mail account over IMAP. New mail comes in when the inbox is opened (at most every
   five minutes), on **Check for new mail**, and with `manage.py fetch_mail`, which can run from cron. The mail account is only

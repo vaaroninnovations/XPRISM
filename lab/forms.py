@@ -294,8 +294,10 @@ class MailComposeForm(StyledMixin, forms.Form):
     """A message written in the super admins' mailbox. The text goes into the XPRISM e-mail template."""
     to = forms.CharField(label='To', max_length=1200, help_text='One e-mail address, or several separated by commas. Everyone listed sees the other addresses.')
     subject = forms.CharField(label='Subject', max_length=255)
-    greeting = forms.CharField(label='Greeting name', max_length=120, required=False, help_text='Shown as "Hello Asha,". Leave empty for a plain "Hello,".')
-    body = forms.CharField(label='Message', max_length=20000, widget=forms.Textarea(attrs={'rows': 12}), strip=False)
+    greeting = forms.CharField(label='Greeting', max_length=120, required=False, widget=forms.TextInput(attrs={'placeholder': 'Dear Dr Rao,'}),
+                               help_text='The first line, exactly as you type it. Leave it empty to start straight with your message.')
+    body_format = forms.CharField(required=False, widget=forms.HiddenInput)        # "html" when the editor on the page wrote the message
+    body = forms.CharField(label='Message', max_length=60000, widget=forms.Textarea(attrs={'rows': 12}), strip=False, error_messages={'required': 'Write a message.'})
     signoff = forms.CharField(label='Sign-off', max_length=120, required=False, help_text='The line under "Regards,".')
 
     def __init__(self, *a, **kw):
@@ -321,9 +323,12 @@ class MailComposeForm(StyledMixin, forms.Form):
         return subject
 
     def clean_body(self):
-        body = self.cleaned_data['body'].replace('\r\n', '\n').strip('\n')
+        from .mailbox import body_parts
+        body, doc = body_parts(self.cleaned_data['body'].replace('\r\n', '\n'), self.cleaned_data.get('body_format') == 'html')
+        body = body.strip('\n')
         if not body.strip():
             raise forms.ValidationError('Write a message.')
+        self.cleaned_data['body_html'] = doc
         return body
 
     def clean_greeting(self):

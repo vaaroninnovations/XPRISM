@@ -1,10 +1,11 @@
 {% extends 'emails/_layout.html' %}{% load labtags %}
-{# The body of a message written in Platform > Mailbox. The super admin supplies the subject, the text, an optional name and the sign-off. #}
+{# The body of a message written in Platform > Mailbox. The super admin supplies the subject, an optional greeting line, the text and the sign-off. #}
 {% block body %}
 <h1 style="margin:0 0 18px;font-family:Georgia,'Times New Roman',serif;font-size:22px;line-height:1.3;font-weight:600;color:#08193b;">{{ subject }}</h1>
-<p style="margin:0 0 14px;">Hello{% if greeting %} {{ greeting }}{% endif %},</p>
-{% for para in body|paragraphs %}<p style="margin:0 0 14px;">{{ para|urlize|linebreaksbr }}</p>
-{% endfor %}
+{% if greeting %}<p style="margin:0 0 14px;">{{ greeting }}</p>
+{% endif %}{% if body_html %}{{ body_html|safe }}{# built by mailbox.clean_html, never the browser's own markup #}
+{% else %}{% for para in body|paragraphs %}<p style="margin:0 0 14px;">{{ para|urlize|linebreaksbr }}</p>
+{% endfor %}{% endif %}
 <p style="margin:22px 0 0;">Regards,<br><strong style="color:#08193b;">{{ signoff }}</strong>{% if company %}<br><span style="color:#64748b;font-size:13px;">{{ company }}</span>{% endif %}</p>
 {% endblock %}
 {% block footer %}You can reply to this e-mail{% if reply_to %}, or write to <a href="mailto:{{ reply_to }}" style="color:#7e13b5;">{{ reply_to }}</a>{% endif %}.<br>

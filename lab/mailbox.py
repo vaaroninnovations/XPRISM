@@ -25,6 +25,7 @@ import urllib.error
 import urllib.request
 from email import policy
 from email.utils import getaddresses, make_msgid, parseaddr, parsedate_to_datetime
+from html.parser import HTMLParser
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -32,7 +33,7 @@ from django.core.validators import validate_email
 from django.db import connections, transaction
 from django.template.loader import render_to_string
 from django.utils import timezone
-from django.utils.html import strip_tags
+from django.utils.html import strip_tags, urlize
 
 from .emails import LOGO_CID, _message
 from .models import MailMessage
@@ -80,31 +81,155 @@ def sent_today():
     return MailMessage.objects.filter(direction=MailMessage.OUT, created_at__gte=timezone.now() - timezone.timedelta(hours=24)).count()
 
 
+# ---------------------------------------------------------------- formatted text
+# The compose page has a small editor: bold, italic, underline, a heading, lists and links. What it sends is rebuilt
+# here from a short list of tags, each with the style the e-mail needs, and everything else is dropped. Nothing the
+# browser sent reaches a recipient as it came.
+RICH_STYLE = {
+    'p': 'margin:0 0 14px;',
+    'h2': "margin:20px 0 10px;font-family:Georgia,'Times New Roman',serif;font-size:18px;line-height:1.35;font-weight:600;color:#08193b;",
+    'ul': 'margin:0 0 14px;padding-left:24px;list-style:disc;', 'ol': 'margin:0 0 14px;padding-left:24px;list-style:decimal;', 'li': 'margin:0 0 4px;',
+    'blockquote': 'margin:0 0 14px;padding-left:12px;border-left:3px solid #d9d3e8;color:#475569;', 'a': 'color:#7e13b5;',
+}
+RICH_INLINE = {'b': 'strong', 'strong': 'strong', 'i': 'em', 'em': 'em', 'u': 'u'}
+RICH_BLOCK = {'p': 'p', 'div': 'p', 'h1': 'h2', 'h2': 'h2', 'h3': 'h2', 'ul': 'ul', 'ol': 'ol', 'blockquote': 'blockquote'}
+RICH_TEXT_HOLDERS = ('p', 'h2', 'li')
+_BLANK_PARA = r'<p [^>]*>(?:\s|\xa0|<br>)*</p>'
+
+
+class _Rich(HTMLParser):
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.out, self.stack, self.skip = [], [], 0
+
+    def _open(self, tag, attrs=''):
+        self.out.append(f'<{tag}{attrs} style="{RICH_STYLE[tag]}">' if tag in RICH_STYLE else f'<{tag}{attrs}>')
+        self.stack.append(tag)
+
+    def _close(self, tag):
+        """Close the nearest open tag of this kind, and anything left open inside it."""
+        while tag in self.stack:
+            last = self.stack.pop()
+            self.out.append(f'</{last}>')
+            if last == tag:
+                break
+
+    def _holder(self):
+        """Text always sits in a paragraph, a heading or a list item."""
+        if not any(t in RICH_TEXT_HOLDERS for t in self.stack):
+            self._open('p')
+
+    def _list_level(self):
+        return next((t for t in reversed(self.stack) if t in ('ul', 'ol', 'li')), None)
+
+    def handle_starttag(self, tag, attrs):
+        if tag in ('script', 'style'):
+            self.skip += 1
+        elif self.skip:
+            return
+        elif tag == 'br':
+            self._holder()
+            self.out.append('<br>')
+        elif tag in RICH_INLINE:
+            self._holder()
+            self._open(RICH_INLINE[tag])
+        elif tag == 'a':
+            href = (dict(attrs).get('href') or '').strip()
+            if 'a' not in self.stack and re.fullmatch(r'(?i)(https?://|mailto:)[^\s"<>]+', href):
+                self._holder()
+                self._open('a', f' href="{html.escape(href)}"')
+        elif tag == 'li':
+            if self._list_level() == 'li':
+                self._close('li')
+            if self._list_level():
+                self._open('li')
+        elif tag in RICH_BLOCK:
+            kind = RICH_BLOCK[tag]
+            if kind == 'p' and self._list_level() == 'li':          # a line inside a list item stays in the item
+                return
+            self._close('p')
+            self._close('h2')
+            self._open(kind)
+
+    def handle_endtag(self, tag):
+        if tag in ('script', 'style'):
+            self.skip = max(0, self.skip - 1)
+        elif not self.skip:
+            kind = RICH_INLINE.get(tag) or RICH_BLOCK.get(tag) or (tag if tag in ('a', 'li') else '')
+            if kind:
+                self._close(kind)
+
+    def handle_data(self, data):
+        if self.skip or (not data.strip() and not any(t in RICH_TEXT_HOLDERS for t in self.stack)):
+            return
+        self._holder()
+        if 'a' in self.stack:
+            self.out.append(html.escape(data, quote=False))
+        else:                                                       # an address typed as text becomes a link, as in a plain message
+            self.out.append(urlize(data, autoescape=True).replace('<a href=', f'<a style="{RICH_STYLE["a"]}" href='))
+
+
+def clean_html(raw):
+    """The compose editor's markup, rebuilt from the tags a message may use."""
+    parser = _Rich()
+    parser.feed(str(raw or '')[:MAX_BODY])
+    parser.close()
+    while parser.stack:
+        parser.out.append(f'</{parser.stack.pop()}>')
+    doc, before = ''.join(parser.out), None
+    while doc != before:                                            # tags left with nothing in them
+        before = doc
+        doc = re.sub(r'<(p|h2|li|ul|ol|blockquote|strong|em|u|a)( [^>]*)?>\s*</\1>', '', doc)
+    return re.sub(rf'^(?:{_BLANK_PARA})+|(?:{_BLANK_PARA})+$', '', doc)       # empty lines before and after the text
+
+
+def html_to_text(doc):
+    """The same message for mail programs that show text only, and for searching and quoting it here."""
+    def link(m):
+        href, label = html.unescape(m[1]), html.unescape(strip_tags(m[2])).strip()
+        words = m[2].rstrip()
+        return m[2] if not label or href.endswith(label) else f'{words} ({m[1]}){m[2][len(words):]}'
+    doc = re.sub(r'(?s)<a [^>]*?href="([^"]*)"[^>]*>(.*?)</a>', link, doc)
+    doc = re.sub(r'<li[^>]*>', '- ', doc)
+    doc = re.sub(r'</(p|h2|ul|ol|blockquote)>', r'\g<0>\n', doc)
+    return _clean_text(doc, is_html=True)
+
+
+def body_parts(raw, rich=False):
+    """(text, html) of a message being written. Only what the editor sends is read as markup; anything else is plain text."""
+    if not rich:
+        return raw, ''
+    doc = clean_html(raw)
+    return html_to_text(doc), doc
+
+
 # ---------------------------------------------------------------- the template
-def template_context(subject, body, greeting='', signoff=''):
-    return {'subject': subject, 'body': body, 'greeting': greeting.strip(), 'signoff': signoff.strip() or f'The {settings.SITE_NAME} team',
+def template_context(subject, body, greeting='', signoff='', body_html=''):
+    return {'subject': subject, 'body': body, 'body_html': body_html, 'greeting': greeting.strip(), 'signoff': signoff.strip() or f'The {settings.SITE_NAME} team',
             'company': settings.SITE_INSTITUTION, 'reply_to': address()}
 
 
-def preview_html(subject, body, greeting='', signoff='', logo_url=''):
+def preview_html(subject, body, greeting='', signoff='', logo_url='', rich=False):
     """The message as its recipient will see it, with the logo loaded from the site instead of from the e-mail."""
+    text, doc = body_parts(body, rich)
     ctx = {'name': '', 'site_name': settings.SITE_NAME, 'site_full_name': settings.SITE_FULL_NAME, 'support_email': settings.LEGAL['contact_email'],
-           'logo_cid': LOGO_CID, **template_context(subject, body, greeting, signoff)}
+           'logo_cid': LOGO_CID, **template_context(subject, text, greeting, signoff, doc)}
     return render_to_string('emails/mailbox_message.html', ctx).replace(f'cid:{LOGO_CID}', logo_url)
 
 
 # ---------------------------------------------------------------- sending
-def compose(to, subject, body, user, greeting='', signoff='', parent=None):
+def compose(to, subject, body, user, greeting='', signoff='', parent=None, body_html=''):
     """Save an outgoing message and send it once the transaction commits. Returns the MailMessage."""
     host = (address().split('@')[-1] or 'localhost').strip()
     m = MailMessage.objects.create(
         direction=MailMessage.OUT, status=MailMessage.QUEUED, message_id=make_msgid(domain=host), in_reply_to=parent.message_id if parent else '',
         parent=parent, root=(parent.root or parent) if parent else None, from_name=settings.SITE_NAME, from_email=address(), to=', '.join(to),
-        subject=subject[:255], body=body, greeting=greeting.strip()[:120], signoff=signoff.strip()[:120], is_read=True, sent_by=user, date=timezone.now())
+        subject=subject[:255], body=body, body_html=clean_html(body_html) if body_html else '', greeting=greeting.strip()[:120], signoff=signoff.strip()[:120],
+        is_read=True, sent_by=user, date=timezone.now())
 
     def deliver():
         try:
-            msg = _message(to, '', m.subject, 'mailbox_message', template_context(m.subject, m.body, m.greeting, m.signoff))
+            msg = _message(to, '', m.subject, 'mailbox_message', template_context(m.subject, m.body, m.greeting, m.signoff, m.body_html))
             if address():
                 msg.reply_to = [address()]
             msg.extra_headers['Message-ID'] = m.message_id

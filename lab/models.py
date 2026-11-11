@@ -459,7 +459,8 @@ class MailMessage(models.Model):
     to = models.TextField(blank=True)                                  # addresses separated by commas
     subject = models.CharField(max_length=255)
     body = models.TextField(blank=True)                                # plain text only: received HTML is never kept
-    greeting = models.CharField(max_length=120, blank=True)            # sent mail: the name after "Hello"
+    body_html = models.TextField(blank=True)                           # sent mail written with formatting: the markup mailbox.clean_html built
+    greeting = models.CharField(max_length=120, blank=True)            # sent mail: the first line, as its writer typed it ("Dear Dr Rao,")
     signoff = models.CharField(max_length=120, blank=True)             # sent mail: the line after "Regards,"
     attachments = models.JSONField(default=list, blank=True)           # received mail: names and sizes only, the files are not stored
     is_read = models.BooleanField(default=False)

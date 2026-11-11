@@ -593,7 +593,7 @@ class FakeImap:
 @override_settings(IMAP_HOST='imap.xprism.example', IMAP_USER='lab@xprism.example', IMAP_PASSWORD='secret', MAILBOX_ADDRESS='lab@xprism.example')
 class MailboxTests(Base):
     """The super admins' mailbox: writing in the template, receiving over IMAP, folders and replies."""
-    FORM = {'to': 'asha@example.com', 'subject': 'Your demo on Monday', 'greeting': 'Asha', 'body': 'We can meet at 10 am.\n\nThe link is https://xprism.example/demo', 'signoff': 'The XPRISM team'}
+    FORM = {'to': 'asha@example.com', 'subject': 'Your demo on Monday', 'greeting': 'Hello Asha,', 'body': 'We can meet at 10 am.\n\nThe link is https://xprism.example/demo', 'signoff': 'The XPRISM team'}
 
     def setUp(self):
         cache.clear()
@@ -741,7 +741,7 @@ class MailboxTests(Base):
     def test_a_reply_joins_the_conversation(self):
         first = mailbox.store(RAW_MAIL)
         form = self.client.get(f'/platform/mailbox/compose/?reply={first.pk}').context['form']
-        self.assertEqual((form['to'].value(), form['subject'].value(), form['greeting'].value()), ('asha@example.com', 'Re: Demo for our college', 'Asha Rao'))
+        self.assertEqual((form['to'].value(), form['subject'].value(), form['greeting'].value()), ('asha@example.com', 'Re: Demo for our college', 'Dear Asha Rao,'))
         self.assertIn('> Hello team,', form['body'].value())
         self.write(parent=first.pk, subject='Re: Demo for our college')
         reply = MailMessage.objects.get(direction='out')
@@ -780,10 +780,55 @@ class MailboxTests(Base):
         self.assertContains(page, 'Invoice query')
         self.assertNotContains(page, 'Demo for our college')
         self.assertContains(self.client.get('/platform/mailbox/?q=nothing-like-this'), 'Nothing matches')
-        doc = self.client.post('/platform/mailbox/preview/', {'subject': 'Hi <b>', 'body': 'One\n\nTwo', 'greeting': 'Asha', 'signoff': ''}).json()['html']
+        doc = self.client.post('/platform/mailbox/preview/', {'subject': 'Hi <b>', 'body': 'One\n\nTwo', 'greeting': 'Hello Asha,', 'signoff': ''}).json()['html']
         for text in ('Hi &lt;b&gt;', 'Hello Asha,', '>One</p>', '>Two</p>', 'The XPRISM team', '/assets/img/xprism-lockup.png'):
             self.assertIn(text, doc)
         self.assertNotIn('cid:', doc)
+
+    def test_the_greeting_is_the_writers_own_line_or_left_out(self):
+        self.write(greeting='')
+        sent = mail.outbox[0]
+        self.assertNotIn('Hello', sent.alternatives[0][0])
+        self.assertTrue(sent.body.startswith('We can meet at 10 am.'))
+        self.write(greeting='Dear  Dr Rao,', subject='Second')
+        self.assertIn('>Dear Dr Rao,</p>', mail.outbox[1].alternatives[0][0])
+        self.assertTrue(mail.outbox[1].body.startswith('Dear Dr Rao,\n\nWe can meet'))
+        page = self.client.get(f'/platform/mailbox/{MailMessage.objects.get(subject="Second").pk}/')
+        self.assertContains(page, '<p>Dear Dr Rao,</p>')
+        self.assertNotContains(page, 'Hello')
+        self.assertEqual(self.client.get('/platform/mailbox/compose/').context['form']['greeting'].value(), None)
+
+    def test_formatting_is_rebuilt_from_a_short_list_of_tags(self):
+        typed = ('<div>We can <b>meet</b> at <i>10 am</i> and <u>again</u> later.</div><h2 onclick="x()">Agenda</h2>'
+                 '<ul><li>Demo</li><li>Prices <span style="color:red">today</span></li></ul><script>alert(1)</script>'
+                 '<p>See <a href="https://xprism.example/demo" onclick="x()">the page</a>, <a href="javascript:alert(2)">not this</a> or www.xprism.example</p>'
+                 '<img src=x onerror=alert(3)><p><br></p>')
+        self.assertContains(self.client.get('/platform/mailbox/compose/'), 'data-cmd="bold"')
+        self.write(body=typed, body_format='html', greeting='')
+        m = MailMessage.objects.get()
+        doc = mail.outbox[0].alternatives[0][0]
+        for kept in ('<strong>meet</strong>', '<em>10 am</em>', '<u>again</u>', '>Agenda</h2>', '>Demo</li>', '>Prices today</li>', '</ul>',
+                     '<a href="https://xprism.example/demo" style="color:#7e13b5;">the page</a>', 'not this', 'href="http://www.xprism.example"'):
+            self.assertIn(kept, m.body_html)
+            self.assertIn(kept, doc)
+        for dropped in ('script', 'alert', 'onclick', 'javascript', '<img', '<span', 'color:red', '<div'):
+            self.assertNotIn(dropped, m.body_html)
+        self.assertFalse(m.body_html.endswith('<br></p>'))
+        self.assertEqual(m.body, 'We can meet at 10 am and again later.\n\nAgenda\n\n- Demo\n- Prices today\n\n'
+                                 'See the page (https://xprism.example/demo), not this or www.xprism.example')
+        self.assertEqual(mail.outbox[0].body.split('\n\nRegards,')[0], m.body)
+        self.assertEqual(mailbox.clean_html(m.body_html), m.body_html)                 # cleaning what is already clean changes nothing
+        page = self.client.get(f'/platform/mailbox/{m.pk}/')
+        self.assertContains(page, '<div class="mb-rich"><p style="margin:0 0 14px;">We can <strong>meet</strong>')
+        # without the editor's flag the same characters are only text
+        self.write(body='Use <b>bold</b> for names', subject='Plain')
+        plain = MailMessage.objects.get(subject='Plain')
+        self.assertEqual((plain.body, plain.body_html), ('Use <b>bold</b> for names', ''))
+        self.assertIn('Use &lt;b&gt;bold&lt;/b&gt; for names', mail.outbox[1].alternatives[0][0])
+        self.assertContains(self.write(body='<p><br></p><script>x</script>', body_format='html'), 'Write a message.')
+        doc = self.client.post('/platform/mailbox/preview/', {'subject': 'S', 'body': '<p>One <b>two</b></p><script>x()</script>', 'body_format': 'html'}).json()['html']
+        self.assertIn('One <strong>two</strong></p>', doc)
+        self.assertNotIn('x()', doc)
 
     def test_mail_is_erased_with_the_account(self):
         mailbox.store(RAW_MAIL)
