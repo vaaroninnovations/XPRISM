@@ -313,6 +313,14 @@
 .xp-auth.xp-auth-wide { max-width: 42rem; }
 @media (min-width: 900px) { .xp-auth-two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .xp-auth-two .xp-auth-side { display: block; } .xp-auth-form { padding: 40px; } }
 .xp-app main input[type=text], .xp-app main input[type=email], .xp-app main input[type=password], .xp-app main input[type=number], .xp-app main input[type=datetime-local], .xp-app main input[type=date], .xp-app main input:not([type]), .xp-app main select, .xp-app main textarea { border-radius: 8px; }
+.xp-pw { position: relative; }
+.xp-pw input { padding-right: 44px; }
+.xp-pw input::-ms-reveal { display: none; }
+.xp-pw-eye { position: absolute; top: 0; right: 0; bottom: 0; width: 42px; display: flex; align-items: center; justify-content: center; border-radius: 8px; color: #64748b; cursor: pointer; }
+.xp-pw-eye:hover { color: #0f172a; }
+.xp-pw-eye:focus-visible { outline: 2px solid var(--purple); outline-offset: -2px; }
+.xp-pw-eye .xp-pw-off, .xp-pw-eye[aria-pressed=true] .xp-pw-on { display: none; }
+.xp-pw-eye[aria-pressed=true] .xp-pw-off { display: block; }
 
 /* ---------------------------------------------------------------- mailbox (Platform > Mailbox) */
 .mb { display: grid; gap: 20px; align-items: start; }
