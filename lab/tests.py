@@ -593,7 +593,7 @@ class FakeImap:
 @override_settings(IMAP_HOST='imap.xprism.example', IMAP_USER='lab@xprism.example', IMAP_PASSWORD='secret', MAILBOX_ADDRESS='lab@xprism.example')
 class MailboxTests(Base):
     """The super admins' mailbox: writing in the template, receiving over IMAP, folders and replies."""
-    FORM = {'to': 'asha@example.com', 'subject': 'Your demo on Monday', 'greeting': 'Hello Asha,', 'body': 'We can meet at 10 am.\n\nThe link is https://xprism.example/demo', 'signoff': 'The XPRISM team'}
+    FORM = {'to': 'asha@example.com', 'subject': 'Your demo on Monday', 'greeting': 'Hello Asha,', 'body': 'We can meet at 10 am.\n\nThe link is https://xprism.example/demo', 'closing': 'Regards,', 'signoff': 'The XPRISM team'}
 
     def setUp(self):
         cache.clear()
@@ -796,7 +796,26 @@ class MailboxTests(Base):
         page = self.client.get(f'/platform/mailbox/{MailMessage.objects.get(subject="Second").pk}/')
         self.assertContains(page, '<p>Dear Dr Rao,</p>')
         self.assertNotContains(page, 'Hello')
-        self.assertEqual(self.client.get('/platform/mailbox/compose/').context['form']['greeting'].value(), None)
+        form = self.client.get('/platform/mailbox/compose/').context['form']
+        self.assertEqual((form['greeting'].value(), form['closing'].value()), (None, 'Regards,'))
+
+    def test_the_closing_line_can_be_changed_or_left_out(self):
+        self.write()
+        self.assertIn('Regards,<br><strong', mail.outbox[0].alternatives[0][0])
+        self.assertIn('\n\nRegards,\nThe XPRISM team', mail.outbox[0].body)
+        self.write(closing='With  best wishes,', subject='Second')
+        self.assertIn('With best wishes,<br><strong', mail.outbox[1].alternatives[0][0])
+        self.assertIn('\n\nWith best wishes,\nThe XPRISM team', mail.outbox[1].body)
+        self.assertContains(self.client.get(f'/platform/mailbox/{MailMessage.objects.get(subject="Second").pk}/'), '<p>With best wishes,<br>The XPRISM team</p>')
+        self.write(closing='', subject='Third')
+        third = MailMessage.objects.get(subject='Third')
+        self.assertNotIn('Regards', mail.outbox[2].alternatives[0][0])
+        self.assertIn('xprism.example/demo\n\nThe XPRISM team', mail.outbox[2].body)
+        page = self.client.get(f'/platform/mailbox/{third.pk}/')
+        self.assertContains(page, '<p>The XPRISM team</p>')
+        self.assertNotContains(page, 'Regards')
+        doc = self.client.post('/platform/mailbox/preview/', {'subject': 'S', 'body': 'One', 'closing': 'Yours sincerely,'}).json()['html']
+        self.assertIn('Yours sincerely,<br>', doc)
 
     def test_formatting_is_rebuilt_from_a_short_list_of_tags(self):
         typed = ('<div>We can <b>meet</b> at <i>10 am</i> and <u>again</u> later.</div><h2 onclick="x()">Agenda</h2>'

@@ -40,7 +40,7 @@
         <button name="action" value="resend">Send again</button>
       </form>
       {% endif %}
-      <div class="mb-body">{% if t.direction == 'out' and t.greeting %}<p>{{ t.greeting }}</p>{% endif %}{% if t.direction == 'out' and t.body_html %}<div class="mb-rich">{{ t.body_html|safe }}</div>{% else %}<p>{{ t.body|urlize|linebreaksbr }}</p>{% endif %}{% if t.direction == 'out' and t.signoff %}<p>Regards,<br>{{ t.signoff }}</p>{% endif %}</div>
+      <div class="mb-body">{% if t.direction == 'out' and t.greeting %}<p>{{ t.greeting }}</p>{% endif %}{% if t.direction == 'out' and t.body_html %}<div class="mb-rich">{{ t.body_html|safe }}</div>{% else %}<p>{{ t.body|urlize|linebreaksbr }}</p>{% endif %}{% if t.direction == 'out' and t.signoff %}<p>{% if t.closing %}{{ t.closing }}<br>{% endif %}{{ t.signoff }}</p>{% endif %}</div>
       {% if t.attachments %}
       <div class="mb-files">
         <b>{{ t.attachments|length }} attachment{{ t.attachments|length|pluralize }}</b>

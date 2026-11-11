@@ -2,8 +2,8 @@
 
 {% endif %}{{ body }}
 
-Regards,
-{{ signoff }}{% if company %}
+{% if closing %}{{ closing }}
+{% endif %}{{ signoff }}{% if company %}
 {{ company }}{% endif %}
 
 You can reply to this e-mail{% if reply_to %}, or write to {{ reply_to }}{% endif %}.

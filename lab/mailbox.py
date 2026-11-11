@@ -204,32 +204,32 @@ def body_parts(raw, rich=False):
 
 
 # ---------------------------------------------------------------- the template
-def template_context(subject, body, greeting='', signoff='', body_html=''):
-    return {'subject': subject, 'body': body, 'body_html': body_html, 'greeting': greeting.strip(), 'signoff': signoff.strip() or f'The {settings.SITE_NAME} team',
-            'company': settings.SITE_INSTITUTION, 'reply_to': address()}
+def template_context(subject, body, greeting='', signoff='', body_html='', closing=''):
+    return {'subject': subject, 'body': body, 'body_html': body_html, 'greeting': greeting.strip(), 'closing': closing.strip(),
+            'signoff': signoff.strip() or f'The {settings.SITE_NAME} team', 'company': settings.SITE_INSTITUTION, 'reply_to': address()}
 
 
-def preview_html(subject, body, greeting='', signoff='', logo_url='', rich=False):
+def preview_html(subject, body, greeting='', signoff='', logo_url='', rich=False, closing=''):
     """The message as its recipient will see it, with the logo loaded from the site instead of from the e-mail."""
     text, doc = body_parts(body, rich)
     ctx = {'name': '', 'site_name': settings.SITE_NAME, 'site_full_name': settings.SITE_FULL_NAME, 'support_email': settings.LEGAL['contact_email'],
-           'logo_cid': LOGO_CID, **template_context(subject, text, greeting, signoff, doc)}
+           'logo_cid': LOGO_CID, **template_context(subject, text, greeting, signoff, doc, closing)}
     return render_to_string('emails/mailbox_message.html', ctx).replace(f'cid:{LOGO_CID}', logo_url)
 
 
 # ---------------------------------------------------------------- sending
-def compose(to, subject, body, user, greeting='', signoff='', parent=None, body_html=''):
+def compose(to, subject, body, user, greeting='', signoff='', parent=None, body_html='', closing=''):
     """Save an outgoing message and send it once the transaction commits. Returns the MailMessage."""
     host = (address().split('@')[-1] or 'localhost').strip()
     m = MailMessage.objects.create(
         direction=MailMessage.OUT, status=MailMessage.QUEUED, message_id=make_msgid(domain=host), in_reply_to=parent.message_id if parent else '',
         parent=parent, root=(parent.root or parent) if parent else None, from_name=settings.SITE_NAME, from_email=address(), to=', '.join(to),
-        subject=subject[:255], body=body, body_html=clean_html(body_html) if body_html else '', greeting=greeting.strip()[:120], signoff=signoff.strip()[:120],
-        is_read=True, sent_by=user, date=timezone.now())
+        subject=subject[:255], body=body, body_html=clean_html(body_html) if body_html else '', greeting=greeting.strip()[:120], closing=closing.strip()[:120],
+        signoff=signoff.strip()[:120], is_read=True, sent_by=user, date=timezone.now())
 
     def deliver():
         try:
-            msg = _message(to, '', m.subject, 'mailbox_message', template_context(m.subject, m.body, m.greeting, m.signoff, m.body_html))
+            msg = _message(to, '', m.subject, 'mailbox_message', template_context(m.subject, m.body, m.greeting, m.signoff, m.body_html, m.closing))
             if address():
                 msg.reply_to = [address()]
             msg.extra_headers['Message-ID'] = m.message_id

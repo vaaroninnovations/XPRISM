@@ -89,7 +89,7 @@ Sending needs `EMAIL_HOST` to be set; without it the page refuses to send.
 Super admins have a mailbox under **Platform → Mailbox** for writing to anyone and reading the replies.
 
 - **Writing:** enter the address (up to 20, separated by commas), the subject and the text. The message is sent in the XPRISM
-  e-mail template (`templates/emails/mailbox_message.html`), with a greeting line you write yourself (or leave out) and a sign-off. The text can
+  e-mail template (`templates/emails/mailbox_message.html`), with a greeting line and a closing line ("Regards,") you write yourself or leave out, and a sign-off. The text can
   carry bold, italic, underline, a heading, lists and links; `mailbox.clean_html` rebuilds that markup from a short list of
   tags before anything is stored or sent. A preview
   beside the form shows the finished e-mail as you type. At most `MAILBOX_MAX_PER_DAY` (default 200) go out in 24 hours.

@@ -298,7 +298,8 @@ class MailComposeForm(StyledMixin, forms.Form):
                                help_text='The first line, exactly as you type it. Leave it empty to start straight with your message.')
     body_format = forms.CharField(required=False, widget=forms.HiddenInput)        # "html" when the editor on the page wrote the message
     body = forms.CharField(label='Message', max_length=60000, widget=forms.Textarea(attrs={'rows': 12}), strip=False, error_messages={'required': 'Write a message.'})
-    signoff = forms.CharField(label='Sign-off', max_length=120, required=False, help_text='The line under "Regards,".')
+    closing = forms.CharField(label='Closing', max_length=120, required=False, help_text='The line above the sign-off. Change it, or leave it empty to leave it out.')
+    signoff = forms.CharField(label='Sign-off', max_length=120, required=False, help_text='The name the message is signed with.')
 
     def __init__(self, *a, **kw):
         super().__init__(*a, **kw)
@@ -333,6 +334,9 @@ class MailComposeForm(StyledMixin, forms.Form):
 
     def clean_greeting(self):
         return ' '.join(self.cleaned_data['greeting'].split())
+
+    def clean_closing(self):
+        return ' '.join(self.cleaned_data['closing'].split())
 
     def clean_signoff(self):
         return ' '.join(self.cleaned_data['signoff'].split())

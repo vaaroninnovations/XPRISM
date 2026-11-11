@@ -126,7 +126,7 @@ def mailbox_message(request, pk):
                 messages.error(request, 'Sending is not set up: add EMAIL_HOST to .env.')
             else:
                 with transaction.atomic():
-                    again = mailbox.compose(m.recipients, m.subject, m.body, request.user, m.greeting, m.signoff, m.parent, m.body_html)
+                    again = mailbox.compose(m.recipients, m.subject, m.body, request.user, m.greeting, m.signoff, m.parent, m.body_html, m.closing)
                     m.delete()
                     audit(request, 'mail_sent', f'#{again.pk} (sent again)', to=again.to)
                 messages.success(request, 'Sent again.')
@@ -175,12 +175,12 @@ def mailbox_compose(request):
                 form.add_error(None, f'The limit of {settings.MAILBOX_MAX_PER_DAY} messages in 24 hours has been reached. Try again later.')
             else:
                 with transaction.atomic():
-                    m = mailbox.compose(cd['to'], cd['subject'], cd['body'], request.user, cd['greeting'], cd['signoff'], parent, cd.get('body_html', ''))
+                    m = mailbox.compose(cd['to'], cd['subject'], cd['body'], request.user, cd['greeting'], cd['signoff'], parent, cd.get('body_html', ''), cd['closing'])
                     audit(request, 'mail_sent', f'#{m.pk}', to=m.to, subject=m.subject[:80])
                 messages.success(request, f'Message sent to {m.to}.')
                 return redirect('mailbox_message', pk=m.pk)
     else:
-        initial = {'signoff': f'The {settings.SITE_NAME} team', 'to': request.GET.get('to', '')[:300]}
+        initial = {'closing': 'Regards,', 'signoff': f'The {settings.SITE_NAME} team', 'to': request.GET.get('to', '')[:300]}
         forward = request.GET.get('forward', '')
         if parent:
             subject = parent.subject if parent.subject.lower().startswith('re:') else f'Re: {parent.subject}'
@@ -203,7 +203,7 @@ def mailbox_preview(request):
     """The message in the e-mail template, for the preview beside the compose form."""
     p = request.POST
     doc = mailbox.preview_html(p.get('subject', '')[:255], p.get('body', '')[:mailbox.MAX_BODY], p.get('greeting', '')[:120], p.get('signoff', '')[:120],
-                               staticfiles_storage.url('img/xprism-lockup.png'), rich=p.get('body_format') == 'html')
+                               staticfiles_storage.url('img/xprism-lockup.png'), rich=p.get('body_format') == 'html', closing=p.get('closing', '')[:120])
     return JsonResponse({'html': doc})
 
 
