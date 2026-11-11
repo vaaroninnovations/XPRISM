@@ -85,7 +85,8 @@ class PublicTests(Base):
         about = self.client.get('/about/')
         for text in ['XPRISM', 'Experimental Pharmacology Research &amp; Interactive Student Module', 'Dr. Vara Prasad Saka', 'Aaron Innovations', 'drvaraprasadsaka@gmail.com']:
             self.assertContains(about, text)
-        self.assertContains(self.client.get('/'), 'Created by Dr. Vara Prasad Saka')
+        self.assertContains(self.client.get('/'), '© 2026 Aaron Innovations</p>')
+        self.assertNotContains(self.client.get('/'), 'Created by')          # the creator is named on the About page, not in the footer
         self.assertNotContains(self.client.get('/'), 'MyCAL')
 
     def test_home_modules_and_documentation_are_public(self):
