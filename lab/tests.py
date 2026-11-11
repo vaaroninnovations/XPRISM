@@ -638,6 +638,20 @@ class MailboxTests(Base):
         self.assertContains(self.client.get('/platform/mailbox/?folder=sent'), 'Your demo on Monday')
         self.assertTrue(AuditLog.objects.filter(action='mail_sent').exists())
 
+    def test_reply_to_is_always_a_real_address(self):
+        # with Resend the SMTP login is the word "resend", which the IMAP settings inherit: it must never become the Reply-To
+        with override_settings(MAILBOX_ADDRESS='', IMAP_USER='resend', DEFAULT_FROM_EMAIL='XPRISM <admin@xprism.example>'):
+            self.assertEqual(mailbox.address(), 'admin@xprism.example')
+            self.write()
+            self.assertEqual(mail.outbox[0].reply_to, ['admin@xprism.example'])
+            self.assertEqual(MailMessage.objects.get().status, 'sent')
+        with override_settings(MAILBOX_ADDRESS='not an address', IMAP_USER='resend', DEFAULT_FROM_EMAIL='resend'):
+            self.assertEqual(mailbox.address(), '')
+            self.write(subject='No address to reply to')
+            self.assertEqual(mail.outbox[-1].reply_to, [])
+        with override_settings(MAILBOX_ADDRESS='replies@xprism.example', IMAP_USER='resend'):
+            self.assertEqual(mailbox.address(), 'replies@xprism.example')
+
     def test_what_the_form_refuses(self):
         self.assertContains(self.write(to='not-an-address'), 'Not a valid e-mail address')
         self.assertContains(self.write(to=', '.join(f'p{i}@example.com' for i in range(21))), 'At most 20 addresses')

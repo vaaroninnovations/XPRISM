@@ -18,6 +18,8 @@ from email import policy
 from email.utils import getaddresses, make_msgid, parseaddr, parsedate_to_datetime
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.db import connections, transaction
 from django.template.loader import render_to_string
 from django.utils import timezone
@@ -42,8 +44,17 @@ def can_receive():
 
 
 def address():
-    """Where replies should come back to: the mailbox this site reads."""
-    return settings.MAILBOX_ADDRESS or settings.IMAP_USER or parseaddr(settings.DEFAULT_FROM_EMAIL)[1]
+    """Where replies should come back to: MAILBOX_ADDRESS, else the IMAP account, else the address mail is sent from.
+    Only a real e-mail address counts. A sending service's login name (Resend's is just "resend") is not one, and a
+    mail server refuses a message whose Reply-To is not an address."""
+    for candidate in (settings.MAILBOX_ADDRESS, settings.IMAP_USER, parseaddr(settings.DEFAULT_FROM_EMAIL)[1]):
+        candidate = (candidate or '').strip()
+        try:
+            validate_email(candidate)
+        except ValidationError:
+            continue
+        return candidate
+    return ''
 
 
 def sent_today():
@@ -75,7 +86,8 @@ def compose(to, subject, body, user, greeting='', signoff='', parent=None):
     def deliver():
         try:
             msg = _message(to, '', m.subject, 'mailbox_message', template_context(m.subject, m.body, m.greeting, m.signoff))
-            msg.reply_to = [address()]
+            if address():
+                msg.reply_to = [address()]
             msg.extra_headers['Message-ID'] = m.message_id
             if m.in_reply_to:
                 msg.extra_headers['In-Reply-To'] = m.in_reply_to
