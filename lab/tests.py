@@ -651,6 +651,18 @@ class MailboxTests(Base):
             self.assertEqual(mail.outbox[-1].reply_to, [])
         with override_settings(MAILBOX_ADDRESS='replies@xprism.example', IMAP_USER='resend'):
             self.assertEqual(mailbox.address(), 'replies@xprism.example')
+            self.assertContains(self.client.get('/platform/mailbox/compose/'), 'Replies go to <b>replies@xprism.example</b>')
+        with override_settings(MAILBOX_ADDRESS='', IMAP_USER='resend', DEFAULT_FROM_EMAIL='XPRISM <no-reply@localhost>'):
+            self.assertEqual(mailbox.address(), '')              # the built-in default sender is not a place to reply to
+            self.assertContains(self.client.get('/platform/mailbox/compose/'), 'No reply address is set')
+
+    def test_a_comment_after_a_value_in_env_is_not_part_of_the_value(self):
+        from config.settings import env_value
+        self.assertEqual(env_value(' admin@xprism.example   # where replies should go'), 'admin@xprism.example')
+        self.assertEqual(env_value('"XPRISM <admin@xprism.example>"  # sender'), 'XPRISM <admin@xprism.example>')
+        self.assertEqual(env_value("'pass # word'"), 'pass # word')
+        self.assertEqual(env_value('re_abc#123'), 're_abc#123')        # a # inside a key is kept
+        self.assertEqual(env_value(''), '')
 
     def test_what_the_form_refuses(self):
         self.assertContains(self.write(to='not-an-address'), 'Not a valid e-mail address')

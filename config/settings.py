@@ -20,6 +20,16 @@ def env_bool(name, default=False):
     return default if v is None else v.strip().lower() in ('1', 'true', 'yes', 'on')
 
 
+def env_value(raw):
+    """The value part of a KEY=VALUE line. Quotes are removed, and so is a comment after an unquoted value
+    (KEY=value   # note): left in, it becomes part of an address or a key and breaks it without any sign why."""
+    v = raw.strip()
+    if v[:1] in ('"', "'"):
+        end = v.find(v[0], 1)
+        return v[1:end] if end > 0 else v[1:]
+    return re.split(r'\s+#', v, maxsplit=1)[0].strip()
+
+
 # Load KEY=VALUE pairs from a .env file next to manage.py (no extra dependency needed)
 _env_file = BASE_DIR / '.env'
 if _env_file.exists():
@@ -27,7 +37,7 @@ if _env_file.exists():
         _line = _line.strip()
         if _line and not _line.startswith('#') and '=' in _line:
             _k, _v = _line.split('=', 1)
-            os.environ.setdefault(_k.strip(), _v.strip().strip('"').strip("'"))
+            os.environ.setdefault(_k.strip(), env_value(_v))
 
 # Safe by default: debug is OFF unless DJANGO_DEBUG=true (set it only on your own computer).
 DEBUG = env_bool('DJANGO_DEBUG', False)

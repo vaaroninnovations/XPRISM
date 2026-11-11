@@ -71,7 +71,8 @@ def address():
             validate_email(candidate)
         except ValidationError:
             continue
-        return candidate
+        if '.' in candidate.rsplit('@', 1)[-1]:                 # "no-reply@localhost", the built-in default, is not somewhere a reply can go
+            return candidate
     return ''
 
 

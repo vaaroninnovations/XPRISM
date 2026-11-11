@@ -7,7 +7,7 @@
     <header class="mb-head">
       <div>
         <h1 class="text-xl font-bold text-slate-900">{% if parent %}Reply{% else %}Write a message{% endif %}</h1>
-        <p>Your text is placed in the XPRISM e-mail template. Replies come back to {{ address|default:"this mailbox" }}{% if not can_receive %} (the inbox here is not connected yet){% endif %}.</p>
+        <p>Your text is placed in the XPRISM e-mail template. {% if address %}Replies go to <b>{{ address }}</b>{% if not can_receive %} (the inbox here is not connected yet){% endif %}.{% else %}<b>No reply address is set:</b> add <code>MAILBOX_ADDRESS</code> to <code>.env</code> so people can answer.{% endif %}</p>
       </div>
       <a href="{% url 'mailbox' %}" class="mb-back">Back to the inbox</a>
     </header>
