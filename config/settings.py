@@ -197,6 +197,8 @@ MAILBOX_FETCH_DAYS = int(env('MAILBOX_FETCH_DAYS', '30'))
 
 # a free-month application is approved the moment it is made; set to false to have a super admin decide each one
 FREE_MONTH_AUTO_APPROVE = env_bool('FREE_MONTH_AUTO_APPROVE', True)
+# most free-month applications accepted from one network address in an hour (a whole department may apply from one campus)
+FREE_MONTH_MAX_PER_HOUR = int(env('FREE_MONTH_MAX_PER_HOUR', '30'))
 # most invitations sent in 24 hours: mail providers limit daily sending and treat sudden bursts as spam
 FREE_YEAR_INVITES_PER_DAY = int(env('FREE_YEAR_INVITES_PER_DAY', '200'))
 

@@ -50,20 +50,44 @@ def find_account(app):
             or accounts.filter(email__iexact=app.email).order_by('-is_trial_account', 'pk').first())
 
 
-def can_auto_approve(app):
-    """Whether an application can be approved without a person looking at it.
+def auto_plan(app):
+    """How an application can be approved without a person looking at it: 'college', 'individual', or None to wait.
 
-    A new account or a new college harms nobody. Anything that would change something that already exists and
-    that the applicant has not shown is theirs waits for a super admin: an existing college (by name, or the
-    applicant's own), and an account that has been deactivated."""
+    A new college is created with its College Admin. Where that would touch a college that already exists (the same
+    name is on XPRISM, or the applicant already belongs to one) nobody has shown the college is theirs, so the month
+    goes to the applicant alone, which harms nobody. Only a deactivated account waits for a super admin."""
     account = find_account(app)
     if account is not None and not account.is_active:
-        return False
+        return None
     if app.kind == FreeYearApplication.INDIVIDUAL:
-        return True
-    if account is not None and account.college_id:
+        return FreeYearApplication.INDIVIDUAL
+    if (account is not None and account.college_id) or College.objects.filter(name__iexact=app.institution.strip()).exists():
+        return FreeYearApplication.INDIVIDUAL
+    return FreeYearApplication.COLLEGE
+
+
+def auto_approve(request, app):
+    """Award the month without a super admin and tell the applicant. Returns False if this one has to wait.
+    Nothing here is taken from the request, so a visitor cannot point the award at a college that already exists."""
+    from .emails import send_free_year_approved, send_free_year_auto_approved, set_password_url
+    from .permissions import audit
+    plan = auto_plan(app)
+    if plan is None:
         return False
-    return not College.objects.filter(name__iexact=app.institution.strip()).exists()
+    note = 'Approved automatically.'
+    if plan == FreeYearApplication.COLLEGE:
+        college, admin = award_college(app)
+        send_free_year_approved(app, username=admin.username, college=college, set_password_url=set_password_url(admin, request), request=request)
+    else:
+        account, created = award_individual(app)
+        send_free_year_approved(app, username=account.username, set_password_url=set_password_url(account, request) if created else None, request=request)
+        if app.kind == FreeYearApplication.COLLEGE:
+            note = 'Approved automatically for the applicant only: this college is already on XPRISM.'
+    app.status, app.reviewed_at, app.review_note = FreeYearApplication.APPROVED, timezone.now(), note
+    app.save()
+    audit(request, 'free_year_auto_approved', f'#{app.pk} {app.email}', college=app.awarded_college, until=str(app.awarded_until or ''))
+    send_free_year_auto_approved(app, request)
+    return True
 
 
 def _new_account(app, username, **fields):

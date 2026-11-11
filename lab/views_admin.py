@@ -253,6 +253,16 @@ def _award_free_year(request, app):
 @_platform
 def free_year_applications(request):
     """Applications from the free-year pop-up: approve to award one month, or decline."""
+    if request.method == 'POST' and request.POST.get('decision') == 'approve_waiting':
+        done = 0
+        for pk in list(FreeYearApplication.objects.filter(status=FreeYearApplication.PENDING).order_by('created_at').values_list('pk', flat=True)):
+            with transaction.atomic():
+                app = FreeYearApplication.objects.select_for_update().filter(pk=pk, status=FreeYearApplication.PENDING).first()
+                if app and free_year.auto_approve(request, app):
+                    done += 1
+        left = FreeYearApplication.objects.filter(status=FreeYearApplication.PENDING).count()
+        messages.success(request, f'{done} application{"s" if done != 1 else ""} approved.' + (f' {left} still need{"s" if left == 1 else ""} your decision (a deactivated account).' if left else ''))
+        return redirect('free_year_applications')
     if request.method == 'POST':
         with transaction.atomic():
             app = get_object_or_404(FreeYearApplication.objects.select_for_update(), pk=request.POST.get('id'))

@@ -1118,6 +1118,7 @@ class FreeYearTests(Base):
         self.apply()
         self.assertEqual(FreeYearApplication.objects.filter(status=FreeYearApplication.PENDING).count(), 1)
 
+    @override_settings(FREE_MONTH_MAX_PER_HOUR=5)
     def test_rate_limit_per_network(self):
         for i in range(5):
             self.assertEqual(self.apply(email=f'a{i}@example.com').status_code, 200)
@@ -1297,16 +1298,19 @@ class FreeMonthAutoApprovalTests(Base):
         self.assertEqual(college.subscription_until, one_month_after(timezone.localdate()))
         self.assertIn(admin.username, mail.outbox[0].body)
 
-    def test_existing_college_waits_for_a_super_admin(self):
+    def test_existing_college_is_left_alone_and_the_applicant_gets_the_month(self):
         until = self.c1.subscription_until
         self.apply(kind='college', institution='  college one ', college=str(self.c1.pk))
         app = FreeYearApplication.objects.get()
-        self.assertEqual(app.status, FreeYearApplication.PENDING)
+        self.assertEqual((app.status, app.awarded_college), (FreeYearApplication.APPROVED, None))
+        self.assertIn('applicant only', app.review_note)
         self.c1.refresh_from_db()
         self.assertEqual(self.c1.subscription_until, until)
         self.assertEqual(College.objects.filter(name__iexact='college one').count(), 1)
-        self.assertEqual([m.to for m in mail.outbox], [['owner@example.com'], ['asha@example.com']])
-        self.assertIn('waiting for your review', mail.outbox[0].body)
+        u = User.objects.get(username='asha@example.com')
+        self.assertTrue(u.has_full_access)
+        self.assertIsNone(u.college)
+        self.assertEqual([m.to for m in mail.outbox], [['asha@example.com'], ['owner@example.com']])
 
     def test_a_posted_college_id_cannot_redirect_the_award(self):
         self.apply(kind='college', institution='Brand New College', college=str(self.c2.pk))
@@ -1314,15 +1318,53 @@ class FreeMonthAutoApprovalTests(Base):
         self.c2.refresh_from_db()
         self.assertIsNone(self.c2.subscription_until)
 
-    def test_member_of_a_college_applying_for_it_waits(self):
+    def test_member_of_a_lapsed_college_gets_the_month_personally(self):
         self.c1.subscription_active = False
         self.c1.save()
         self.st.email = 'bp001@example.com'
         self.st.save()
         self.login(self.st)
         self.apply(kind='college', institution='Some Other Name')
-        self.assertEqual(FreeYearApplication.objects.get().status, FreeYearApplication.PENDING)
+        self.assertEqual(FreeYearApplication.objects.get().status, FreeYearApplication.APPROVED)
         self.assertFalse(College.objects.filter(name='Some Other Name').exists())
+        self.st.refresh_from_db()
+        self.assertTrue(self.st.has_full_access)
+        self.assertFalse(User.objects.get(pk=self.st2.pk).has_full_access)       # the rest of the college is unchanged
+
+    def test_someone_still_waiting_is_approved_when_they_apply_again(self):
+        with override_settings(FREE_MONTH_AUTO_APPROVE=False):
+            self.apply()
+        app = FreeYearApplication.objects.get()
+        self.assertEqual(app.status, FreeYearApplication.PENDING)
+        mail.outbox.clear()
+        self.apply()
+        app.refresh_from_db()
+        self.assertEqual((app.status, FreeYearApplication.objects.count()), (FreeYearApplication.APPROVED, 1))
+        self.assertTrue(User.objects.get(username='asha@example.com').has_full_access)
+        self.assertEqual(mail.outbox[0].to, ['asha@example.com'])
+
+    def test_super_admin_clears_the_waiting_list_in_one_step(self):
+        with override_settings(FREE_MONTH_AUTO_APPROVE=False):
+            self.apply()
+            self.apply(email='ravi@example.com', name='Ravi Kumar', kind='college', institution='Kumar College of Pharmacy')
+            mkuser('gone@example.com', Role.STUDENT, is_trial_account=True, email='gone@example.com', is_active=False)
+            self.apply(email='gone@example.com')
+        self.login(self.sa)
+        self.assertContains(self.client.get('/platform/free-year/'), 'Approve all 3 waiting')
+        with self.captureOnCommitCallbacks(execute=True):
+            r = self.client.post('/platform/free-year/', {'decision': 'approve_waiting'}, follow=True)
+        self.assertContains(r, '2 applications approved. 1 still needs your decision')
+        self.assertEqual(sorted(FreeYearApplication.objects.values_list('status', flat=True)), ['approved', 'approved', 'pending'])
+        self.assertTrue(College.objects.filter(name='Kumar College of Pharmacy').exists())
+        self.login(self.fac)
+        self.assertEqual(self.client.post('/platform/free-year/', {'decision': 'approve_waiting'}).status_code, 403)
+
+    def test_a_whole_department_can_apply_from_one_network(self):
+        for i in range(12):
+            self.assertEqual(self.apply(email=f'faculty{i}@example.com').json().get('ok'), True)
+        self.assertEqual(FreeYearApplication.objects.filter(status=FreeYearApplication.APPROVED).count(), 12)
+        with override_settings(FREE_MONTH_MAX_PER_HOUR=12):
+            self.assertEqual(self.apply(email='one-more@example.com').status_code, 429)
 
     def test_deactivated_account_waits(self):
         mkuser('asha@example.com', Role.STUDENT, is_trial_account=True, email='asha@example.com', is_active=False)
