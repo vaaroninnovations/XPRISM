@@ -7,3 +7,19 @@
   {% block side %}{% endblock %}
 </div>
 {% endblock %}
+{% block scripts %}
+<script>
+document.querySelectorAll('[data-pw-toggle]').forEach(function (btn) {
+  var input = document.getElementById(btn.getAttribute('data-pw-toggle'));
+  if (!input) { btn.hidden = true; return; }
+  btn.addEventListener('click', function () {
+    var show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    btn.setAttribute('aria-pressed', show ? 'true' : 'false');
+    var label = show ? 'Hide password' : 'Show password';
+    btn.setAttribute('aria-label', label); btn.title = label;
+  });
+  if (input.form) input.form.addEventListener('submit', function () { input.type = 'password'; });
+});
+</script>
+{% endblock %}
