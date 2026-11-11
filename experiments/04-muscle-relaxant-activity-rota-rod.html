@@ -854,7 +854,7 @@
       const rear = o.rear || 0, grm = o.groom || 0, st = o.step || 0;
       const sx = 1 - 0.28 * rear, rot = grm ? Math.sin(S.t * 3) * 6 : 0;
       const head = m && m.num && MARKS[m.num].s.some(s => s[0] === 22) ? '<ellipse cx="17" cy="0" rx="4" ry="3.4" fill="url(#picric)" opacity=".92"/>' : '';
-      return `<g transform="translate(${st * .4} 0) scale(${sx} 1) rotate(${rot})"><g transform="scale(1.5)">${animalTopArt({ kind: 'mouse' })}</g>
+      return `<g transform="translate(${st * .4} 0) scale(${sx} 1) rotate(${rot})"><g transform="scale(1.5)">${animalTopArt({ kind: 'mouse', noTail: o.noTail })}</g>
         <g opacity=".9">${markSpots(m && m.num, false)}</g>${head}</g>`;
     }
     // side view (in a cage / beaker)
@@ -862,12 +862,16 @@
       return `<g transform="scale(${flip ? -1 : 1} 1)">${animalSideArt({ kind: 'mouse' })}<g opacity=".9">${markSpots(m && m.num, true)}</g></g>`;
     }
     // gloved hand holding the mouse by the tail: a photo render, mirrored so the wrist leaves to the right, clear of the charts
+    // The tail of the mouse in the hand. It is held near its base: up from the rump, through the fist along the gap
+    // the render leaves between the fingers, and out above it, tapering to the tip.
+    const heldTail = () => tailArt('M0 27 C0.4 24 0.3 20 0 16 C-1.8 2 -3.6 -12 -5.3 -25.5 C-6.4 -34 -9 -41 -13 -48', 5.2, 2.2);
     function handHeld(x, y) {
       const m = held(); if (!m) return '';
       return `<g class="hot" data-act="hand" transform="translate(${x} ${y})" filter="url(#sh)">
-        <g transform="translate(0 112) rotate(90) scale(1.35)">${topMouse(m, { tailCurve: 0 })}</g>
+        <g transform="translate(0 74) rotate(90) scale(1.35)">${topMouse(m, { noTail: true })}</g>
+        ${heldTail()}
         <g transform="scale(-1 1)">${handArt('tail', -84, -43, 96)}</g>
-        ${tag(62, 36, m.num ? 'No. ' + m.num + ' in hand' : 'mouse in hand')}
+        ${tag(66, 40, m.num ? 'No. ' + m.num + ' in hand' : 'mouse in hand')}
       </g>`;
     }
     // polycarbonate cage with wire lid (front view); slots: list of mice to draw

@@ -5,8 +5,8 @@ Photo-style renders of a blue nitrile glove, laid over the animal a bench draws.
 | File | Used in | Pose |
 |---|---|---|
 | `scruff.webp` | Exp 01, routes of administration | Thumb and index finger lifting the scruff |
-| `tail.webp` | Exp 04 Rota-Rod and Exp 09 actophotometer | A fist with the tail running through it (drawn mirrored) |
-| `hold.webp` | Exp 21, paw oedema | Thumb behind the neck, fingers round the chest |
+| `tail.webp` | Exp 04 Rota-Rod and Exp 09 actophotometer | A fist, drawn mirrored. The bench draws the tail itself, through the gap between the fingers |
+| `hold.webp` | Exp 21, paw oedema | Thumb behind the neck, fingers round the chest (drawn mirrored, because the rat faces right) |
 
 They are drawn by `handArt()` in `static/assets/js/animal-art.js`.
 

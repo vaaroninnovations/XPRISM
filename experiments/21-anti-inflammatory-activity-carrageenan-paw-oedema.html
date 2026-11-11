@@ -854,8 +854,9 @@
     }
     // gloved hand (for held-animal views)
     function handMarkup() {
-      // a photo render in the units of #hrHand: the thumb rests behind the neck and the fingers close round the chest
-      return handArt('hold', -66, -84, 236);
+      // a photo render in the units of #hrHand, mirrored because the rat faces right: the hand comes from behind,
+      // the thumb rests behind the neck and the fingers close round the chest
+      return `<g transform="scale(-1 1)">${handArt('hold', -62, -70, 236)}</g>`;
     }
 
     // ------------------------------------------------ stations, click routing, checklist + hints
