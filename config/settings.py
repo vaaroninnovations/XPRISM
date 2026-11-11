@@ -183,8 +183,8 @@ LEGAL = {
     'hosting_location': env('LEGAL_HOSTING_LOCATION', 'India'),
 }
 # Bump when the Privacy Policy / Terms change: every user is asked to accept again.
-POLICY_VERSION = '2026-11-03b'
-POLICY_EFFECTIVE = '3 November 2026'
+POLICY_VERSION = '2026-11-11'
+POLICY_EFFECTIVE = '11 November 2026'
 # Trial rules & animal-ethics agreement shown as a pop-up after sign-in (bump to ask everyone again)
 ETHICS_VERSION = '2026-11-02'
 # a free-trial visit ends when the user returns to the lab index / a dashboard, opens another module, or after this many hours
