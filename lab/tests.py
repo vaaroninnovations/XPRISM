@@ -782,6 +782,92 @@ class MailboxTests(Base):
         self.assertEqual(list(MailMessage.objects.values_list('from_email', flat=True)), ['someone@else.example'])
 
 
+RESEND_MAIL = {
+    'object': 'email', 'id': 'e-1', 'to': ['admin@xprism.example'], 'from': 'asha@example.com', 'created_at': '2026-11-02T04:30:00.000Z', 'subject': 'Demo for our college',
+    'html': '<p>Hello team,</p><script>alert(1)</script><p>Can we book a <b>demo</b>?</p>', 'text': None, 'message_id': '<rs-1@example.com>',
+    'headers': {'from': 'Asha Rao <Asha@Example.com>', 'mime-version': '1.0'},
+    'attachments': [{'id': 'a-1', 'filename': 'syllabus.pdf', 'content_type': 'application/pdf', 'size': 13264}],
+}
+
+
+@override_settings(RESEND_RECEIVE=True, RESEND_API_KEY='re_test', RESEND_WEBHOOK_SECRET='whsec_' + 'c2VjcmV0LWtleS1mb3ItdGVzdHM=', IMAP_HOST='', MAILBOX_ADDRESS='admin@xprism.example')
+class ResendReceivingTests(Base):
+    """Mail received through Resend, which has no IMAP: read from its Receiving API, at once when its webhook calls."""
+
+    def setUp(self):
+        cache.clear()
+        self.mails, self.calls, self.error = [dict(RESEND_MAIL)], [], None
+        patcher = mock.patch('lab.mailbox._resend', self.api)          # no test may reach Resend
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        self.login(self.sa)
+
+    def api(self, path):
+        self.calls.append(path)
+        if self.error:
+            raise self.error
+        if path.startswith('/emails/receiving?'):
+            return {'object': 'list', 'has_more': False, 'data': [{k: v for k, v in m.items() if k not in ('html', 'text', 'headers')} for m in self.mails]}
+        return next(m for m in self.mails if path.endswith('/' + m['id']))
+
+    def sign(self, body, secret=None, stamp=None, msg_id='msg_1'):
+        import base64, hashlib, hmac, time
+        stamp = str(int(stamp or time.time()))
+        key = base64.b64decode((secret or settings.RESEND_WEBHOOK_SECRET).split('_', 1)[1])
+        sig = base64.b64encode(hmac.new(key, f'{msg_id}.{stamp}.'.encode() + body, hashlib.sha256).digest()).decode()
+        return {'HTTP_SVIX_ID': msg_id, 'HTTP_SVIX_TIMESTAMP': stamp, 'HTTP_SVIX_SIGNATURE': f'v1,wrong v1,{sig}'}
+
+    def test_mail_comes_in_from_resend_as_text_only(self):
+        r = self.client.post('/platform/mailbox/', {'action': 'check'}, follow=True)
+        self.assertContains(r, '1 new message.')
+        m = MailMessage.objects.get()
+        self.assertEqual((m.direction, m.from_name, m.from_email, m.to, m.subject, m.message_id), ('in', 'Asha Rao', 'asha@example.com', 'admin@xprism.example', 'Demo for our college', '<rs-1@example.com>'))
+        self.assertIn('Can we book a demo?', m.body)
+        self.assertNotIn('alert(1)', m.body)
+        self.assertEqual(m.attachments, [{'name': 'syllabus.pdf', 'size': 13264}])
+        self.assertEqual(self.calls[:2], ['/emails/receiving?limit=100', '/emails/receiving/e-1'])
+        self.calls.clear()
+        self.assertContains(self.client.post('/platform/mailbox/', {'action': 'check'}, follow=True), 'No new mail.')
+        self.assertEqual(set(self.calls), {'/emails/receiving?limit=100'})   # a message already here is not downloaded again
+        self.assertContains(self.client.get('/platform/mailbox/'), 'Check for new mail')
+
+    def test_an_answer_through_resend_joins_our_message(self):
+        with self.captureOnCommitCallbacks(execute=True):
+            self.client.post('/platform/mailbox/compose/', {'to': 'asha@example.com', 'subject': 'Your demo', 'body': 'Monday at 10?', 'signoff': ''})
+        ours = MailMessage.objects.get()
+        self.assertEqual(mail.outbox[0].reply_to, ['admin@xprism.example'])
+        self.mails = [{**RESEND_MAIL, 'id': 'e-2', 'message_id': '<rs-2@example.com>', 'subject': 'Re: Your demo', 'text': 'Monday works.', 'html': None,
+                       'headers': {'From': 'Asha Rao <asha@example.com>', 'In-Reply-To': ours.message_id}}]
+        mailbox.fetch()
+        answer = MailMessage.objects.get(direction='in')
+        self.assertEqual((answer.parent, answer.root, answer.body), (ours, ours, 'Monday works.'))
+
+    def test_a_key_that_cannot_read_mail_is_explained(self):
+        import urllib.error
+        self.error = urllib.error.HTTPError('https://api.resend.com/emails/receiving', 401, 'Unauthorized', {}, None)
+        self.assertContains(self.client.post('/platform/mailbox/', {'action': 'check'}, follow=True), 'Create a key with full access')
+        self.error = OSError('timed out')
+        self.assertContains(self.client.post('/platform/mailbox/', {'action': 'check'}, follow=True), 'Could not reach Resend')
+        with override_settings(RESEND_RECEIVE=False):
+            self.assertContains(self.client.get('/platform/mailbox/'), 'The inbox is not connected yet')
+
+    def test_webhook_brings_mail_in_only_when_resend_signed_it(self):
+        self.client.logout()
+        body = json.dumps({'type': 'email.received', 'data': {'email_id': 'e-1'}}).encode()
+        post = lambda **headers: self.client.post('/api/resend/inbound', data=body, content_type='application/json', **headers)
+        self.assertEqual(post().status_code, 401)
+        self.assertEqual(post(**self.sign(body, secret='whsec_' + 'b3RoZXItc2VjcmV0')).status_code, 401)
+        self.assertEqual(post(**self.sign(body, stamp=1_000_000)).status_code, 401)              # an old request replayed
+        self.assertEqual(post(**self.sign(b'{"type": "something else"}')).status_code, 401)      # signed for a different body
+        self.assertFalse(MailMessage.objects.exists())
+        r = post(**self.sign(body))
+        self.assertEqual((r.status_code, r.json()), (200, {'ok': True, 'new': 1}))
+        self.assertEqual(MailMessage.objects.get().subject, 'Demo for our college')
+        self.assertEqual(self.client.get('/api/resend/inbound').status_code, 405)
+        with override_settings(RESEND_WEBHOOK_SECRET=''):
+            self.assertEqual(post(**self.sign(body, secret='whsec_' + 'c2VjcmV0LWtleS1mb3ItdGVzdHM=')).status_code, 404)
+
+
 class EnrolmentTests(Base):
     def test_csv_upload_and_credentials_once(self):
         self.login(self.fac)

@@ -87,6 +87,7 @@ urlpatterns = [
     path('platform/colleges/<int:pk>/', adm.college_form, name='college_edit'),
     path('platform/experiments/', adm.platform_experiments, name='platform_experiments'),
     path('platform/contact/', adm.contact_requests, name='contact_requests'),
+    path('api/resend/inbound', mb.resend_inbound, name='resend_inbound'),
     path('platform/mailbox/', mb.mailbox_list, name='mailbox'),
     path('platform/mailbox/compose/', mb.mailbox_compose, name='mailbox_compose'),
     path('platform/mailbox/preview/', mb.mailbox_preview, name='mailbox_preview'),

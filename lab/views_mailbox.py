@@ -6,10 +6,11 @@ from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from . import mailbox
@@ -200,3 +201,16 @@ def mailbox_preview(request):
     doc = mailbox.preview_html(p.get('subject', '')[:255], p.get('body', '')[:mailbox.MAX_BODY], p.get('greeting', '')[:120], p.get('signoff', '')[:120],
                                staticfiles_storage.url('img/xprism-lockup.png'))
     return JsonResponse({'html': doc})
+
+
+@csrf_exempt
+@require_POST
+def resend_inbound(request):
+    """Resend calls this when an e-mail arrives. The call only says "look now": the mail itself is then read from
+    Resend with the API key, so nothing in the request body is trusted or stored."""
+    if not (settings.RESEND_WEBHOOK_SECRET and mailbox.via_resend()):
+        raise Http404
+    if not mailbox.webhook_is_genuine(request.headers, request.body):
+        return JsonResponse({'error': 'Signature not valid.'}, status=401)
+    new, error = mailbox.fetch()
+    return JsonResponse({'ok': not error, 'new': new}, status=502 if error else 200)

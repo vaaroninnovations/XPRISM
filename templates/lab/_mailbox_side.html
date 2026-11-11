@@ -11,7 +11,7 @@
     <button name="action" value="check" class="mb-check">Check for new mail</button>
   </form>
   {% else %}
-  <p class="mb-hint"><b>Receiving is off.</b> Add <code>IMAP_HOST</code> to <code>.env</code> to bring replies into this inbox.</p>
+  <p class="mb-hint"><b>Receiving is off.</b> Add <code>RESEND_RECEIVE=true</code> (with Resend) or <code>IMAP_HOST</code> to <code>.env</code> to bring replies into this inbox.</p>
   {% endif %}
   {% if not can_send %}<p class="mb-hint"><b>Sending is off.</b> Add <code>EMAIL_HOST</code> to <code>.env</code> first.</p>{% endif %}
 </aside>

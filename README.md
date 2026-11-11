@@ -101,8 +101,21 @@ Super admins have a mailbox under **Platform → Mailbox** for writing to anyone
   but not stored, so open the mail account itself to download one. Mail to and from an address is erased when that person's
   account is deleted.
 
-Sending uses the `EMAIL_*` settings. To receive, set `IMAP_HOST` in `.env`; `IMAP_USER` and `IMAP_PASSWORD` default to the
-sending account. Set `MAILBOX_ADDRESS` if replies should go to a different address from the one the site reads.
+Sending uses the `EMAIL_*` settings. Receiving needs one of the two set-ups below, in `.env`. `MAILBOX_ADDRESS` is the
+address replies are sent to; without it the site uses the address mail is sent from.
+
+**Receiving with an ordinary mail account (IMAP).** Set `IMAP_HOST`; `IMAP_USER` and `IMAP_PASSWORD` default to the sending
+account. With Gmail or Google Workspace use `imap.gmail.com` and an app password.
+
+**Receiving with Resend.** Resend has no IMAP, so the site reads its Receiving API.
+
+1. In Resend, open **Domains**, choose the domain you send from and switch on **Receiving**. Add the MX record it shows to
+   your DNS. All mail to that domain then goes to Resend, so use a subdomain if the domain already has mailboxes elsewhere.
+2. In Resend, create an API key with **full access** (a "sending access" key cannot read received mail).
+3. In `.env`: `RESEND_RECEIVE=true`, `RESEND_API_KEY=<that key>` and `MAILBOX_ADDRESS=<an address at that domain>`. Restart.
+4. Optional, for mail to appear at once: in Resend add a **webhook** to `https://<your site>/api/resend/inbound` for the
+   event `email.received`, and put its signing secret in `RESEND_WEBHOOK_SECRET`. Without a webhook, mail arrives when the
+   inbox is opened, on **Check for new mail**, or from cron with `manage.py fetch_mail`.
 
 ## Public demo logins
 

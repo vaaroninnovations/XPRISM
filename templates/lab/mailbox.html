@@ -56,7 +56,7 @@
     {% elif q %}
     <p class="xp-empty"><b>Nothing matches “{{ q }}”</b>Search looks at the subject, the addresses and the text of each message in this folder.</p>
     {% elif folder == 'inbox' and not can_receive %}
-    <div class="xp-empty"><b>The inbox is not connected yet</b>Sent messages work as soon as <code>EMAIL_HOST</code> is set. To receive replies here, add <code>IMAP_HOST</code> (and, if they differ from the sending account, <code>IMAP_USER</code> and <code>IMAP_PASSWORD</code>) to <code>.env</code> and restart the site.</div>
+    <div class="xp-empty"><b>The inbox is not connected yet</b>Sent messages work as soon as <code>EMAIL_HOST</code> is set. To receive replies here, add <code>RESEND_RECEIVE=true</code> if you send with Resend, or <code>IMAP_HOST</code> for an ordinary mail account, to <code>.env</code> and restart the site. The README has the steps.</div>
     {% elif folder == 'inbox' %}
     <p class="xp-empty"><b>No mail yet</b>New mail arrives when you open this page or press “Check for new mail”.</p>
     {% elif folder == 'sent' %}

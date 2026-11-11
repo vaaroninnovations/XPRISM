@@ -189,6 +189,12 @@ IMAP_USER = env('IMAP_USER', '') or (EMAIL_HOST_USER if env('EMAIL_HOST') else '
 IMAP_PASSWORD = env('IMAP_PASSWORD', '') or (EMAIL_HOST_PASSWORD if env('EMAIL_HOST') else '')
 IMAP_FOLDER = env('IMAP_FOLDER', 'INBOX')
 IMAP_TIMEOUT = int(env('IMAP_TIMEOUT', '12'))
+# Receiving through Resend, which has no IMAP: the site reads Resend's Receiving API. The key defaults to the SMTP password
+# when mail is sent through Resend, but it must be a key with full access (a "sending access" key cannot read mail).
+RESEND_RECEIVE = env_bool('RESEND_RECEIVE', False)
+RESEND_API_KEY = env('RESEND_API_KEY', '') or (EMAIL_HOST_PASSWORD if env('EMAIL_HOST', '').endswith('resend.com') else '')
+# optional: the signing secret of a Resend webhook for "email.received" pointing at /api/resend/inbound, so mail arrives at once
+RESEND_WEBHOOK_SECRET = env('RESEND_WEBHOOK_SECRET', '')
 # the address replies should come back to; defaults to the IMAP account
 MAILBOX_ADDRESS = env('MAILBOX_ADDRESS', '')
 # most messages the mailbox will send in 24 hours, and how far back the first check of the inbox looks
