@@ -657,8 +657,8 @@
 
     // Nitrile-gloved hand pinching the scruff between index finger and thumb (local mouse coordinates)
     function glovedHand() {
-      // a photo render: thumb and index finger meet over the shoulders, behind the ear, the wrist fades out to the upper right
-      return `<g class="hand" transform="rotate(-24 5 -25)">${handArt('scruff', -10, -90, 112)}</g>`;
+      // a photo render: thumb and index finger meet over the shoulders, behind the ear, on the fold of skin they lift, the wrist fades out to the upper right
+      return `<path d="M -5 -18 Q 5 -33 15 -18 Z" fill="url(#furGrad)" stroke="#e2dbd8" stroke-width="0.4"/><g class="hand" transform="rotate(-24 5 -25)">${handArt('scruff', -10, -87.5, 112)}</g>`;
     }
 
     // Perspex restrainer for tail-vein injection (tail exits through the rear plug)

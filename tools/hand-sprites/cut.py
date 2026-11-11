@@ -75,7 +75,7 @@ rgb, lab, keep, c = load('b')
 middle = rgb.shape[0] * 0.58
 save('hold', rgb, np.isin(lab, [i for i in keep if c[i][0] < middle]), fade='right', over=0.2)
 
-# d: a fist with the tail running through it. The stretch of tail that crosses the fingers stays in the sprite,
-# so the bench only has to bring its own tail up to the bottom of the fist.
-rgb, lab, keep, c = load('d', bridge=30)
-save('tail', rgb, lab == max(keep, key=lambda i: (lab == i).sum()), fade='left', over=0.08)
+# d: a fist with the tail running through it. Only the glove is kept, in the two or three pieces the tail
+# divides it into: the bench draws its own tail behind the sprite, and it shows through that gap.
+rgb, lab, keep, c = load('d')
+save('tail', rgb, np.isin(lab, keep), fade='left', over=0.08)

@@ -37,6 +37,7 @@
   }
 
   // tapered, ringed tail built from an SVG cubic chain
+  // A tapering, ringed tail along a path of cubic curves, w0 wide at its start and w1 at its tip
   function tailArt(d, w0, w1) {
     const n = (d.match(/-?\d*\.?\d+/g) || []).map(Number), P = [[n[0], n[1]]];
     for (let i = 2; i + 5 < n.length; i += 6) {
@@ -326,7 +327,7 @@
 
   // Photo renders of a blue nitrile glove, cut out by tools/hand-sprites and laid over the animal a bench draws.
   // name: scruff | tail | hold. (x, y) is the top left corner and w the width, in the caller's units.
-  const HAND_VER = 2, HAND_BASE = new URL('../img/hands/', document.currentScript.src).href;
+  const HAND_VER = 3, HAND_BASE = new URL('../img/hands/', document.currentScript.src).href;
   const HAND_SIZE = { scruff: [640, 415], tail: [640, 413], hold: [640, 434] };
   function handArt(name, x, y, w, attrs = '') {
     const [pw, ph] = HAND_SIZE[name], url = `${HAND_BASE}${name}.webp?v=${HAND_VER}`;
@@ -334,5 +335,5 @@
     return `<image x="${f2(x)}" y="${f2(y)}" width="${f2(w)}" height="${f2(w * ph / pw)}" preserveAspectRatio="none" decoding="sync" ${attrs} href="${url}"/>`;
   }
 
-  Object.assign(global, { handArt, ANI_DEFS, animalSideArt, animalTopArt, realRabbitHead, realRabbitEye, realRabbitLid, realRabbitEyeView, rabbitPose, animateRabbit, guineaPigPose, realGuineaPig, realFrogBody, realFrogLeg, frogVentralArt, frogPlate, frogPlateUrl, openFrogAnatomy });
+  Object.assign(global, { handArt, tailArt, ANI_DEFS, animalSideArt, animalTopArt, realRabbitHead, realRabbitEye, realRabbitLid, realRabbitEyeView, rabbitPose, animateRabbit, guineaPigPose, realGuineaPig, realFrogBody, realFrogLeg, frogVentralArt, frogPlate, frogPlateUrl, openFrogAnatomy });
 })(window);
