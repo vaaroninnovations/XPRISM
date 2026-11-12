@@ -1938,6 +1938,15 @@ class SiteTagTests(Base):
             self.assertNotContains(modules, 'data-cookie="granted"')
             self.assertNotContains(modules, 'googletagmanager')
 
+    def test_tag_manager_container_reaches_only_public_pages(self):
+        with self.settings(GOOGLE_TAG_MANAGER_ID='GTM-ABC1234'):
+            home = self.client.get('/')
+            self.assertContains(home, '"gtm": "GTM-ABC1234"')
+            self.assertContains(home, 'data-cookie="granted"')
+            self.assertNotContains(self.client.get('/accounts/login/'), 'GTM-ABC1234')
+            self.login(self.st)
+            self.assertNotContains(self.client.get('/modules/'), 'GTM-ABC1234')
+
     def test_experiment_pages_have_no_banner(self):
         self.login(self.sa)
         self.assertNotContains(self.client.get(Experiment.objects.get(no=1).url), 'cookieBanner')
