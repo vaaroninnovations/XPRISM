@@ -93,7 +93,7 @@ class PublicTests(Base):
         for text in ['Replacement', 'Reduction', 'Refinement', 'Explore our 3Rs commitment', '/accounts/trial/', '/accounts/signup/', '/accounts/login/', '/modules/', '/documentation/']:
             self.assertContains(home, text)
         self.assertContains(home, 'class="expCard', count=6)
-        self.assertContains(self.client.get('/modules/'), 'class="expCard', count=43)
+        self.assertContains(self.client.get('/modules/'), 'class="expCard', count=44)
         docs = self.client.get('/documentation/')
         self.assertContains(docs, 'id="exp-18"')
         self.assertContains(docs, 'Exam mode')
@@ -136,7 +136,7 @@ class PublicTests(Base):
             self.assertContains(r, 'mysteryKey')
 
     def test_modules_page_is_grouped_by_level(self):
-        expected = {no: 'Research' if no in (26, 27, 35, 37, 39, 40, 43) else 'Advanced' if 28 <= no <= 36 and no != 30 else 'Basic' for no in range(1, 44)}
+        expected = {no: 'Research' if no in (26, 27, 35, 37, 39, 40, 43) else 'Advanced' if 28 <= no <= 36 and no != 30 else 'Basic' for no in range(1, 45)}
         self.assertEqual(dict(Experiment.objects.values_list('no', 'level')), expected)
         page = self.client.get('/modules/').content.decode()
         positions = [page.index(f'<section class="xh-level levelSection" data-level="{level}">') for level in ('Basic', 'Advanced', 'Research')]
@@ -163,7 +163,7 @@ class PublicTests(Base):
 
     def test_foundation_and_docking_modules_open(self):
         self.login(self.st)
-        for no, title, cat in ((41, 'Rota-rod', 'Laboratory foundations'), (42, 'Tyrode', 'Laboratory foundations'), (43, 'RMSD', 'In silico')):
+        for no, title, cat in ((41, 'Rota-rod', 'Laboratory foundations'), (42, 'Tyrode', 'Laboratory foundations'), (43, 'RMSD', 'In silico'), (44, 'Cardiac puncture', 'Laboratory foundations')):
             e = Experiment.objects.get(no=no)
             self.assertEqual(e.category, cat)
             self.assertContains(self.client.get(e.url), title)
@@ -958,7 +958,7 @@ class FreeYearInvitationTests(Base):
         self.invite('a@college.edu')
         msg = mail.outbox[0]
         html = msg.alternatives[0][0]
-        for text in ('The Management and Administration', 'About XPRISM', 'Modules in XPRISM (42)', 'Isolated tissue experiments', 'Aaron Innovations', 'Kolkata, India', 'developed by Dr. Vara Prasad Saka', self.e14.title):
+        for text in ('The Management and Administration', 'About XPRISM', 'Modules in XPRISM (43)', 'Isolated tissue experiments', 'Aaron Innovations', 'Kolkata, India', 'developed by Dr. Vara Prasad Saka', self.e14.title):
             self.assertIn(text, html)
         self.assertNotIn('New Delhi', html)
         self.assertNotIn('Castor Oil', html)
