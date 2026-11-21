@@ -342,5 +342,13 @@
   "title": "Molecular Docking and Binding Affinity",
   "slug": "43-molecular-docking-binding-affinity",
   "description": "M.Pharm. Plan and validate a docking run, then interpret binding energies for a fictional target."
+ },
+ {
+  "no": 44,
+  "level": "Basic",
+  "cat": "Laboratory foundations",
+  "title": "Blood Collection Techniques",
+  "slug": "44-blood-collection-techniques",
+  "description": "Choose the right sampling site for each species, calculate safe blood volumes, pick the correct tube and anticoagulant, and refine your technique."
  }
 ]

@@ -6,6 +6,8 @@
  * Tails, whiskers, frog legs and side-view eyes stay vector so they can pose
  * and animate.
  *
+ * The side-view rat is a photograph of an albino Wistar rat (rat-side-photo.webp) with a posable tail.
+ *
  * The coordinates are shared with the experiments and must not move: side views
  * face +x, top views have the head at +x, origin = body centre, side-view eye at
  * (34,-4.8) (cage overlays draw a closed lid there).
@@ -75,7 +77,18 @@
       <radialGradient id="aniEye" cx=".36" cy=".3" r=".78"><stop offset="0" stop-color="#c62e49"/><stop offset=".42" stop-color="#7a0e22"/><stop offset=".82" stop-color="#34040d"/><stop offset="1" stop-color="#180206"/></radialGradient>
       <radialGradient id="aniEar" cx=".5" cy=".62" r=".65"><stop offset="0" stop-color="#fcd7df"/><stop offset=".7" stop-color="#f2adbf"/><stop offset="1" stop-color="#e48fa6"/></radialGradient>
       <linearGradient id="aniPaw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6bcc8"/><stop offset="1" stop-color="#e395a8"/></linearGradient>
-      <clipPath id="aniClipB"><rect x="-70" y="-40" width="97" height="80"/></clipPath><clipPath id="aniClipH"><rect x="24" y="-40" width="40" height="80"/></clipPath>`;
+      <clipPath id="aniClipB"><rect x="-70" y="-40" width="97" height="80"/></clipPath><clipPath id="aniClipH"><rect x="24" y="-40" width="40" height="80"/></clipPath>
+      <filter id="aniRatFeather" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="7"/></filter>
+      <mask id="aniRatNT" maskUnits="userSpaceOnUse" x="0" y="0" width="1193" height="616"><path fill="#fff" filter="url(#aniRatFeather)" d="M0 0H1193V616H384V530H262L252 352H0Z"/></mask>
+      <mask id="aniRatNTs" maskUnits="userSpaceOnUse" x="0" y="0" width="1193" height="616"><path fill="#fff" filter="url(#aniRatFeather)" d="M0 0H1193V616H384V530H262L236 436L212 428L204 404L222 382L252 352H0Z"/></mask>
+      <clipPath id="aniRatB" clipPathUnits="userSpaceOnUse"><rect x="0" y="0" width="770" height="616"/></clipPath>
+      <clipPath id="aniRatH" clipPathUnits="userSpaceOnUse"><path clip-rule="evenodd" d="M752 0H1193V616H752Z M784,152 794 123 815 114 839 123 851 152 849 195 837 216 802 216 787 195Z"/></clipPath>
+      <clipPath id="aniRatEar" clipPathUnits="userSpaceOnUse"><polygon points="778,150 790,116 815,106 842,116 856,150 854,200 840,224 800,224 782,200"/></clipPath>
+      <linearGradient id="aniRatTailG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e6c2a6"/><stop offset=".45" stop-color="#cf9f83"/><stop offset="1" stop-color="#a8735d"/></linearGradient>
+      <mask id="aniRatNF" maskUnits="userSpaceOnUse" x="0" y="0" width="1193" height="616"><path fill="#fff" filter="url(#aniRatFeather)" d="M0 0H1193V398L1000 400L860 404L780 418L700 434L560 444L420 446L330 438L240 420L0 418Z"/></mask>
+      <mask id="aniRatNTF" maskUnits="userSpaceOnUse" x="0" y="0" width="1193" height="616"><path fill="#fff" filter="url(#aniRatFeather)" d="M0 0H1193V398L1000 400L860 404L780 418L700 434L560 444L420 446L330 438L264 424L252 352H0Z"/></mask>
+      <clipPath id="aniRatPaw" clipPathUnits="userSpaceOnUse"><rect x="372" y="440" width="176" height="72"/></clipPath>
+      <clipPath id="aniRatNP" clipPathUnits="userSpaceOnUse"><path clip-rule="evenodd" d="M0 0H1193V616H0Z M372 440H548V512H372Z"/></clipPath>`;
 
   const memo = {};
   const once = (key, fn) => memo[key] || (memo[key] = fn());
@@ -83,7 +96,117 @@
 
   // ---- side view. o: {sw (paw swelling 0..1), ink, kind:'rat'|'mouse', noTail, noFeet (caller poses the legs),
   //      headGroup (wrap the head in <g class="head"> so it can turn)}  Returns art only (no marks).
+  // ---- side view. o: {sw (paw swelling 0..1), ink, kind:'rat'|'mouse', noTail, noFeet (caller poses the legs),
+  //      headGroup (wrap the head in <g class="head"> so it can turn),
+  //      life ('breath' = asleep or anaesthetised, 'none' = dead), rat only: tail ('rest' | 'straight' | 'up' | 'curl' |
+  //      'droop' | {p0, dp, b0, db, A, L}), sway (0..1 tail movement)}  Returns art only (no marks).
+  // The side-view rat is a real photograph of an albino Wistar rat (rat-side-photo.webp, 1193 x 616, made from
+  // wistar_rat_side_view_transparent.png with the studio floor removed). RAT_MAP puts its eye on (34,-4.8) and its
+  // body on the old silhouette (rump about -27, back -14.5, belly 15.5, feet 21, nose 46). The photo's own tail is
+  // masked off and replaced by a posable tail in the photo's colours, so it can lie, hang, rise or curl and move.
+  const RAT_MAP = 'translate(-50.82 -21.04) scale(.092 .082)';
+  // The tail is modelled in 3D and drawn in side view: h = height above the floor, z = depth towards the viewer
+  // (seen as a little lower on screen, like the photo's tail curling on the floor in front of the rat).
+  // the root sits inside the rump, under the fur, so the tail grows out of the body instead of stopping short of it
+  const RAT_TAIL_ROOT = [-20.5, 9.6], RAT_ROOT_IN = 9, RAT_FLOOR = 20.6, RAT_DEPTH = .17;
+  // p0: pitch at the root (deg, + up), dp: pitch change per unit (deg); b0/db: turn on the floor towards the viewer
+  // (deg, per unit); A: sway (deg); L: length
+  const RAT_TAILS = {
+    rest: { p0: -24, dp: -1.2, b0: 0, db: 1.25, A: 16, L: 62 },        // drops to the floor and lies in a loose curve
+    straight: { p0: -3, dp: -.2, b0: 0, db: 0, A: 5, L: 62 },         // held out straight back (restrainer, tail vein)
+    up: { p0: 58, dp: -1.75, b0: 0, db: 0, A: 6, L: 50, air: 1 },     // raised and arched over (Straub tail, alarm)
+    curl: { p0: -32, dp: -2, b0: 8, db: 3.9, A: 10, L: 62 },          // curled round in front of the body
+    droop: { p0: -78, dp: 0, b0: 0, db: 1.2, A: 8, L: 62 }            // hanging straight down, e.g. a rat being lifted
+  };
+  const ratTailPose = p => typeof p === 'object' && p ? { ...RAT_TAILS.rest, ...p } : RAT_TAILS[p] || RAT_TAILS.rest;
+  // centre line of the tail on screen; t (s) and ph drive the sway, amp scales it (0 = still), lift raises the tip
+  function ratTailPts(pose, t = 0, ph = 0, amp = 0, lift = 0) {
+    const P = ratTailPose(pose), N = 36, L = (P.L || 62) + RAT_ROOT_IN, ds = L / N, R = Math.PI / 180;
+    let x = RAT_TAIL_ROOT[0], h = RAT_FLOOR - RAT_TAIL_ROOT[1], z = 0, pitch = P.p0, turn = P.b0;
+    const pts = [[x, RAT_TAIL_ROOT[1]]];
+    for (let i = 1; i <= N; i++) {
+      const s = i * ds, u = s / L, wave = amp * P.A * Math.pow(u, 1.3) * Math.sin(6.2832 * .45 * t - s * .1 + ph);
+      // the hidden part inside the rump runs straight back; the pose starts where the tail leaves the body
+      const out = s > RAT_ROOT_IN;
+      if (out) { pitch += P.dp * ds; turn += P.db * ds; }
+      // ease onto the floor instead of kinking: the closer to the floor, the flatter the descent
+      // inside the rump the tail already points the way the pose leaves (so it runs on from the photo's own tail base)
+      const pe = !out ? Math.max(-30, Math.min(12, P.p0)) : pitch < 0 ? pitch * Math.min(1, h / 7) : pitch;
+      const pp = (pe + (P.air ? wave : 0)) * R, tt = (turn + wave) * R;
+      x -= Math.cos(tt) * Math.cos(pp) * ds; z += Math.sin(tt) * Math.cos(pp) * ds; h += Math.sin(pp) * ds;
+      if (h < 0) { h = 0; if (pitch < 0) pitch = 0; }
+      let hh = h;
+      if (u > .7 && lift) hh += lift * ((u - .7) / .3) ** 2 * 2.2;
+      pts.push([x, RAT_FLOOR - hh + z * RAT_DEPTH]);
+    }
+    return pts;
+  }
+  // point and direction at fraction u along the tail (pose at rest), for scenes that sample from the tail
+  function ratTailPoint(pose, u) {
+    const p = ratTailPts(pose), i = Math.max(1, Math.min(p.length - 1, Math.round(u * (p.length - 1))));
+    return { x: p[i][0], y: p[i][1], ang: Math.atan2(p[i][1] - p[i - 1][1], p[i][0] - p[i - 1][0]) * 57.2958 };
+  }
+  function ratTailD(all, from = 0) {
+    const pts = all.slice(from), n0 = all.length - 1;
+    // a rat's tail is thick and conical at the root (about a tenth of the body length), tapering to a fine, rounded tip
+    const n = pts.length - 1, W = i => { const u = (i + from) / n0; return (.5 + 4.1 * Math.pow(1 - u, 1.1)) / 2; };
+    const N = pts.map((p, i) => { const a = pts[Math.max(0, i - 1)], b = pts[Math.min(n, i + 1)], dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1; return [-dy / l, dx / l]; });
+    const edge = (off, sc) => {
+      const q = (i, sg) => `${f2(pts[i][0] + N[i][0] * W(i) * (off + sg * sc))} ${f2(pts[i][1] + N[i][1] * W(i) * (off + sg * sc))}`;
+      // rounded tip: a small arc between the two sides at the end
+      const tip = pts[n], tw = W(n) * sc;
+      return 'M' + pts.map((_, i) => q(i, 1)).join('L') + `A${f2(tw)} ${f2(tw)} 0 0 1 ` + q(n, -1) + 'L' + pts.map((_, i) => q(n - i, -1)).join('L') + 'Z' + (tip ? '' : '');
+    };
+    // scales: fine rings every other point, fading towards the tip
+    let rings = '';
+    for (let i = 2; i < n - 1; i += 1) { const k = .82; rings += `M${f2(pts[i][0] + N[i][0] * W(i) * k)} ${f2(pts[i][1] + N[i][1] * W(i) * k)}L${f2(pts[i][0] - N[i][0] * W(i) * k)} ${f2(pts[i][1] - N[i][1] * W(i) * k)}`; }
+    return [edge(0, 1), edge(.5, .5), edge(-.42, .3), rings];
+  }
+  // from: first point drawn (the front copy of a tail curling in front of the body starts outside the rump)
+  const RAT_TAIL_FRONT_FROM = 8;
+  function ratTailSVG(pose, from = 0) {
+    const [b, sh, li, rg] = ratTailD(ratTailPts(pose), from);
+    // soft, rounded shading: a darker underside and a blurred highlight along the top, like the photo's tail
+    return `<path class="tB" d="${b}" fill="#d9a98c"/><path class="tS" d="${sh}" fill="#a26c57" opacity=".38" filter="url(#aniSoft)"/><path class="tL" d="${li}" fill="#f7e0cf" opacity=".55" filter="url(#aniSoft)"/><path class="tR" d="${rg}" fill="none" stroke="#9a6552" stroke-width=".06" opacity=".16"/>`;
+  }
+  // where the tail leaves the body: a soft shadow on the tail under the rump, and fur from the rump lying over its base
+  const RAT_TAIL_EXIT = [-28.2, 10.6];
+  const ratTailShadow = () => `<ellipse cx="${RAT_TAIL_EXIT[0] + .6}" cy="${RAT_TAIL_EXIT[1] + .3}" rx="2.6" ry="3.1" fill="#5b3a2c" opacity=".32" filter="url(#aniSoft)"/>`;
+  function ratSideArt(o) {
+    const sw = o.sw || 0, url = `${BASE}rat-side-photo.webp?v=${ANI_VER}`;
+    if (!held.has('ratPhoto')) { const im = new Image(); im.src = url; held.set('ratPhoto', im); }
+    // the photo's tail is always masked off (a posable tail replaces it); without feet the legs fade under the belly
+    // a tail leaving downwards keeps the photo's own tail base (the real join with the fur) and runs on from it
+    const stub = !o.noTail && !o.noFeet && ratTailPose(o.tail || 'rest').p0 < -10;
+    const mask = o.noFeet ? 'aniRatNTF' : stub ? 'aniRatNTs' : 'aniRatNT';
+    const img = (clip, extra = '') => `<g transform="${RAT_MAP}"><g mask="url(#${mask})">${sw && !o.noFeet ? '<g clip-path="url(#aniRatNP)">' : ''}<image width="1193" height="616" preserveAspectRatio="none" decoding="sync" href="${url}" clip-path="url(#${clip})"${extra}/>${sw && !o.noFeet ? '</g>' : ''}</g></g>`;
+    const ear = `<g transform="${RAT_MAP}"><image width="1193" height="616" preserveAspectRatio="none" href="${url}" clip-path="url(#aniRatEar)"/></g>`;
+    const wh = once('whR', () => whiskerPaint(WHISK_D(43, .7, 1, .62), .16));
+    const tail = o.noTail ? '' : `<g class="lvTail" data-pose="${typeof o.tail === 'object' ? JSON.stringify(o.tail).replace(/"/g, '&quot;') : (o.tail || 'rest')}" data-sway="${o.sway ?? 1}">${ratTailSVG(o.tail || 'rest')}</g>`;
+    // swollen hind paw: the photo's own paw, enlarged about its centre (-8.5, 18.4), with inflamed colour
+    const paw = sw && !o.noFeet ? `<g class="lvPaw" data-sw="${sw}"><g transform="translate(-8.5 18.4) scale(${f2(1 + sw * .5)} ${f2(1 + sw * .85)}) translate(8.5 -18.4)"><g transform="${RAT_MAP}"><image width="1193" height="616" preserveAspectRatio="none" href="${url}" clip-path="url(#aniRatPaw)"/></g></g><ellipse cx="-8.5" cy="18.6" rx="${f2(8 + sw * 3.6)}" ry="${f2(2.3 + sw * 1.9)}" fill="#d43f52" opacity="${f2(sw * .42)}" filter="url(#aniSoft)"/></g>` : '<g class="lvPaw" data-sw="0"></g>';
+    // the tail always grows from under the rump fur (drawn behind the body); a tail curving round on the floor towards
+    // the viewer also passes in front of the legs, so its outer part is drawn again in front
+    const tailFront = !o.noTail && ratTailPose(o.tail || 'rest').db >= .5 ? `<g class="lvTailF" data-from="${RAT_TAIL_FRONT_FROM}">${ratTailSVG(o.tail || 'rest', RAT_TAIL_FRONT_FROM)}</g>` : '';
+    // body and head are separate pieces of the same photo (overlapping at the neck), so the head can sniff and turn
+    // origin's rodentLife breathes and blinks every .lvBreath; ratLife below adds the rat's own movements
+    const live = o.life === 'none' ? '' : ` class="lvBreath lvRat" data-sp="rat"${o.life ? ` data-life="${o.life}"` : ''}`;
+    return `<g${live}>
+        <ellipse cx="6" cy="${o.noFeet ? 17.5 : 21.5}" rx="34" ry="2.6" fill="#000" opacity=".26" filter="url(#aniBlur)"/>
+        ${tail}${o.noTail || stub ? '' : ratTailShadow()}
+        ${img('aniRatB')}${tailFront}
+        <g${o.headGroup ? ' class="head"' : ''}><g class="lvSniff">${img('aniRatH')}
+          <g class="lvEar"><g class="lvEarS">${ear}</g></g>
+          <ellipse class="lvLid" cx="34.6" cy="-4.6" rx="2.7" ry="1.7" fill="#efe4dd" opacity="0"/>
+          <g class="lvWhisk"><g class="lvWhiskS" opacity=".4">${wh}</g></g>
+        </g></g>
+        ${paw}
+        ${o.ink ? `<line x1="-16" y1="17" x2="-8" y2="17" stroke="#1e3a8a" stroke-width="1.1"/>` : ''}
+        </g>`;
+  }
+
   function animalSideArt(o = {}) {
+    if (o.kind !== 'mouse') return ratSideArt(o);
     const kind = o.kind === 'mouse' ? 'mouse' : 'rat', mouse = kind === 'mouse', sc = mouse ? .47 : 1, sw = o.sw || 0;
     const earRot = mouse ? -12 : -20, earS = mouse ? 1.42 : .94, eR = mouse ? 1.06 : .84;
     const tail = o.noTail ? '' : once('tail' + kind, () => tailArt(TAILS[kind], mouse ? 4.2 : 3.6, mouse ? 1.2 : .95));
@@ -282,6 +405,38 @@
         if (wh) wh.setAttribute('transform', `rotate(${f2(tw * 4)} 25 0)`);
       });
     }
+    // The photo rat's own movements, on top of the breathing and blinks above: sniffing bouts with whisking, a quick
+    // ear flick now and then, and a living tail (slow sway, tip twitches, an occasional flick). Asleep rats only breathe.
+    const ratSlots = new WeakMap();
+    function ratLife(dt) {
+      const T = clock;
+      document.querySelectorAll('.lvRat').forEach(r => {
+        if (r.dataset.life) return;
+        let s = ratSlots.get(r);
+        if (!s) { s = { ph: Math.random() * TAU, sniffAt: T + .5 + Math.random() * 3, sniffEnd: 0, earAt: T + 2 + Math.random() * 6, earEnd: 0, flickAt: T + 3 + Math.random() * 6, flick: 0, twAt: T + 1 + Math.random() * 3, tw: 0 }; ratSlots.set(r, s); }
+        if (T > s.sniffAt) { s.sniffEnd = T + .6 + Math.random() * 1.4; s.sniffAt = s.sniffEnd + 1.5 + Math.random() * 4.5; }
+        const sniff = T < s.sniffEnd;
+        const head = sniff ? 1.1 * Math.sin(TAU * 7 * T) + .6 : 1.4 * Math.sin(T * .7 + s.ph);
+        const sn = r.querySelector('.lvSniff'); if (sn) sn.setAttribute('transform', `rotate(${f2(head)} 20 -0.5)`);
+        const wk = r.querySelector('.lvWhiskS'); if (wk) wk.setAttribute('transform', `rotate(${f2(sniff ? 8 * Math.sin(TAU * 8 * T + 1) : 1.2 * Math.sin(T * 1.3 + s.ph))} 43 .7)`);
+        if (T > s.earAt) { s.earEnd = T + .28; s.earAt = T + 2.5 + Math.random() * 7; }
+        const ear = r.querySelector('.lvEarS'); if (ear) ear.setAttribute('transform', `rotate(${f2(T < s.earEnd ? -7 * Math.sin(Math.PI * (1 - (s.earEnd - T) / .28)) : 0)} 24.4 -3.3)`);
+        const tl = r.querySelector('.lvTail');
+        if (!tl) return;
+        if (T > s.flickAt) { s.flickAt = T + 4 + Math.random() * 8; s.flick = 1; }
+        if (T > s.twAt) { s.twAt = T + 1.2 + Math.random() * 3; s.tw = 1; }
+        s.flick *= Math.pow(.2, dt); s.tw *= Math.pow(.05, dt);
+        const sway = tl.dataset.sway === undefined ? 1 : +tl.dataset.sway;
+        let pose = tl.dataset.pose; if (pose && pose[0] === '{') { try { pose = JSON.parse(pose); } catch (e) { pose = 'rest'; } }
+        const pts = ratTailPts(pose, T, s.ph, sway * (1 + 2.2 * s.flick), sway * (1.6 * s.tw + 2.4 * s.flick) * (.6 + .4 * Math.sin(T * 9)));
+        const paint = (g, from) => {
+          const d = ratTailD(pts, from), [b, sh, li, rg] = ['.tB', '.tS', '.tL', '.tR'].map(q => g.querySelector(q));
+          if (b) { b.setAttribute('d', d[0]); sh.setAttribute('d', d[1]); li.setAttribute('d', d[2]); rg.setAttribute('d', d[3]); }
+        };
+        paint(tl, 0);
+        const tf = r.querySelector('.lvTailF'); if (tf) paint(tf, +tf.dataset.from || 0);
+      });
+    }
     function frame(ts) {
       requestAnimationFrame(frame);
       if (last === null) last = ts;
@@ -293,9 +448,10 @@
       if (slowFor > 2) low = true;
       clock += dt; since += dt;
       if (since < (low ? 1 / 12 : 1 / 30)) return;
-      since = 0;
+      const step = since; since = 0;
       if (typeof LiveRodent === 'undefined') sideView();                                               // Exp 4 and 21 drive their own side view
       topView();
+      ratLife(step);
     }
     requestAnimationFrame(frame);
   })();
@@ -335,5 +491,5 @@
     return `<image x="${f2(x)}" y="${f2(y)}" width="${f2(w)}" height="${f2(w * ph / pw)}" preserveAspectRatio="none" decoding="sync" ${attrs} href="${url}"/>`;
   }
 
-  Object.assign(global, { handArt, tailArt, ANI_DEFS, animalSideArt, animalTopArt, realRabbitHead, realRabbitEye, realRabbitLid, realRabbitEyeView, rabbitPose, animateRabbit, guineaPigPose, realGuineaPig, realFrogBody, realFrogLeg, frogVentralArt, frogPlate, frogPlateUrl, openFrogAnatomy });
+  Object.assign(global, { handArt, tailArt, ANI_DEFS, animalSideArt, ratTailPoint, RAT_MAP, animalTopArt, realRabbitHead, realRabbitEye, realRabbitLid, realRabbitEyeView, rabbitPose, animateRabbit, guineaPigPose, realGuineaPig, realFrogBody, realFrogLeg, frogVentralArt, frogPlate, frogPlateUrl, openFrogAnatomy });
 })(window);
