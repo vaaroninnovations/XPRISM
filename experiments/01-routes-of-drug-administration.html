@@ -289,7 +289,7 @@
             <g id="holdCage"></g>
 
             <!-- Heat lamp (only for i.v.) -->
-            <g id="heatLamp" style="display:none">
+            <g id="heatLamp" style="display:none" transform="translate(-80 8)">
               <ellipse cx="168" cy="452" rx="26" ry="6" fill="#111827"/>
               <rect x="165" y="262" width="7" height="190" fill="url(#steel)"/>
               <path d="M 168 268 L 236 300" stroke="#9ca3af" stroke-width="5" stroke-linecap="round"/>
@@ -648,29 +648,9 @@
       return e;
     }
 
-    // Side-view albino mouse facing right; origin at the body centre
-    function mouseSide(opts = {}) {
-      let art = animalSideArt({ kind: 'mouse' });
-      if (opts.straightTail) art = art.split('M-30 3 C-48 5 -58 -2 -70 5 C-80 10 -90 8 -96 14').join('M-30 3 L-112 6');
-      return `<g transform="scale(2.7)">${art}</g>`;
-    }
-
-    // Nitrile-gloved hand pinching the scruff between index finger and thumb (local mouse coordinates)
-    function glovedHand() {
-      // a photo render: thumb and index finger meet over the shoulders, behind the ear, on the fold of skin they lift, the wrist fades out to the upper right
-      return `<path d="M -5 -18 Q 5 -33 15 -18 Z" fill="url(#furGrad)" stroke="#e2dbd8" stroke-width="0.4"/><g class="hand" transform="rotate(-24 5 -25)">${handArt('scruff', -10, -87.5, 112)}</g>`;
-    }
-
-    // Perspex restrainer for tail-vein injection (tail exits through the rear plug)
-    function restrainer() {
-      return `
-        <g class="restrainer">
-          <rect x="-44" y="-30" width="112" height="52" rx="24" fill="url(#tubeGrad)" stroke="#7dd3fc" stroke-width="1.4"/>
-          <rect x="62" y="-30" width="10" height="52" rx="4" fill="#94a3b8" opacity="0.85"/>
-          <circle cx="67" cy="-10" r="1.6" fill="#334155"/><circle cx="67" cy="0" r="1.6" fill="#334155"/><circle cx="67" cy="10" r="1.6" fill="#334155"/>
-          <path d="M -36 -24 L 56 -24" stroke="#fff" stroke-width="2" opacity="0.7"/>
-          <path d="M -50 -16 L -40 -16 L -40 0 L -36 0 L -36 10 L -40 10 L -40 16 L -50 16 Z" fill="#cbd5e1" stroke="#64748b" stroke-width="0.6"/>
-        </g>`;
+    // Side-view albino mouse facing right (the photographed mouse in animal-art.js); origin at the body centre
+    function mouseSide() {
+      return `<g transform="scale(3.1)">${animalSideArt({ kind: 'mouse' })}</g>`;
     }
 
     // Small resting mouse for observation cages (side view, facing right)
@@ -678,11 +658,12 @@
       return `
         <g class="cm">
           <g class="cmBody">
-            ${animalSideArt({ kind: 'mouse' })}
+            <g class="cmAwake">${animalSideArt({ kind: 'mouse', photo: true })}</g>
+            <g class="cmAsleep" style="display:none">${animalSideArt({ kind: 'mouse', photo: true, noFeet: true, life: 'breath' })}</g>
             <g class="cmEye"></g>
             <g class="cmEyeShut" style="display:none"><ellipse cx="16" cy="-2.3" rx="1.6" ry="1.3" fill="#f4eeeb"/><path d="M14.7 -2.2 Q16 -1.3 17.4 -2.2" stroke="#a07a7a" stroke-width=".5" fill="none"/></g>
             <g class="cmLegs"></g>
-            <g class="cmLegsOut" style="display:none" stroke="#e8a6b6" stroke-width="1.4" stroke-linecap="round"><line x1="6" y1="6" x2="10" y2="11"/><line x1="-7" y1="6" x2="-11" y2="11"/></g>
+            <g class="cmLegsOut" style="display:none"></g>
           </g>
           <text y="-13" text-anchor="middle" font-family="JetBrains Mono" font-size="6" font-weight="700" fill="#334155">${label}</text>
         </g>`;
@@ -698,7 +679,6 @@
       { conc: 20, x: 760, use: "i.m." }
     ];
     const VIAL_TOP = 488;          // top of the crimp cap (needle entry point)
-    const MOUSE_S = 2.0;
     const SHARPS_SLOT = [603, 262];
 
     function vialMarkup(v, i) {
@@ -924,33 +904,49 @@
     }
 
     // --- RESTRAINT POSES ---
-    // site: injection point (mouse-local); ang: needle direction in mouse-local degrees; depth: insertion (px)
+    // Each restraint is a photograph of the real hold (tools/animal-photos: hold-*), w x h in the photo's own pixels,
+    // drawn with its top left at (x, y) and s scene px per photo px. site: injection point in photo pixels;
+    // ang: needle direction on screen (degrees); depth: insertion (scene px); tx, ty: the animal's centre on screen;
+    // shadow: contact shadow on the pad [cx, cy, rx]; cut: where the glove meets the photo's edge, in photo pixels
+    // [ax, ay, bx, by, dx, dy, length] (the two ends of the wrist, the direction the forearm leaves and how far the
+    // sleeve runs before it fades), covered by a coat sleeve
     const POSES = {
-      iv:   { tx: 430, ty: 506, rot: 0, site: [-92, 5.5], ang: 8, depth: 7, hand: false, tube: true, straightTail: true, syr: "hypo" },
-      ip:   { tx: 330, ty: 462, rot: 26, site: [-6, 12], ang: -32, depth: 9, hand: true, syr: "hypo" },
-      im:   { tx: 330, ty: 506, rot: 0, site: [-27, 4], ang: 25, depth: 7, hand: true, syr: "hypo" },
-      sc:   { tx: 300, ty: 506, rot: 0, site: [6, -25], ang: 18, depth: 10, hand: true, tent: true, syr: "hypo" },
-      oral: { tx: 280, ty: 478, rot: -72, site: [56, -1], ang: 172, depth: 50, hand: true, gavage: true, syr: "gavage", behind: true }
+      iv:   { img: 'hold-restrainer', w: 2000, h: 667, x: 35, y: 400, s: .29, site: [300, 371], ang: 4, depth: 7, syr: "hypo", tx: 330, ty: 470, shadow: [330, 576, 160] },
+      ip:   { img: 'hold-scruff-tilt', w: 1756, h: 896, x: 50, y: 270, s: .33, site: [684, 628], ang: -48, depth: 9, syr: "hypo", tx: 260, ty: 440, shadow: [260, 586, 90], cut: [1520, 0, 1702, 206, .82, -.57, 380] },
+      im:   { img: 'hold-scruff-im', w: 2000, h: 707, x: 30, y: 352, s: .3, site: [800, 586], ang: 28, depth: 7, syr: "hypo", tx: 330, ty: 500, shadow: [340, 560, 150], cut: [1739, 0, 2000, 92, .85, -.53] },
+      sc:   { img: 'hold-scruff-sc', w: 1863, h: 844, x: 20, y: 296, s: .33, site: [1075, 492], ang: 16, depth: 10, syr: "hypo", tx: 300, ty: 490, shadow: [300, 562, 150], cut: [1360, 0, 1688, 0, .62, -.78] },
+      oral: { img: 'hold-scruff-upright', w: 1024, h: 1536, x: 190, y: 232, s: .24, site: [815, 382], ang: 110, depth: 50, gavage: true, syr: "gavage", behind: true, tx: 300, ty: 400, shadow: [300, 588, 45], cut: [72, 56, 334, 56, -.12, -.99] }
     };
-    const worldAng = p => p.ang + p.rot;
-
-    function poseToWorld(p, lx, ly) {
-      const r = p.rot * Math.PI / 180, s = MOUSE_S;
-      return [p.tx + s * (lx * Math.cos(r) - ly * Math.sin(r)), p.ty + s * (lx * Math.sin(r) + ly * Math.cos(r))];
-    }
+    const worldAng = p => p.ang;
+    const poseToWorld = (p, lx, ly) => [p.x + p.s * lx, p.y + p.s * ly];
 
     function drawProcMouse(routeKey) {
       const p = POSES[routeKey];
       const m = document.getElementById('procMouse');
-      m.setAttribute('transform', `translate(${p.tx} ${p.ty}) rotate(${p.rot}) scale(${MOUSE_S})`);
-      m.innerHTML = mouseSide({ straightTail: p.straightTail }) +
-        (p.tent ? `<path d="M 3 -21 Q 12 -35 21 -21" fill="url(#furGrad)" stroke="#e2dbd8" stroke-width="0.5"/>` : '') +
-        (p.tube ? restrainer() : '') + (p.hand ? glovedHand() : '');
+      m.setAttribute('transform', `translate(${p.x} ${p.y}) scale(${p.s})`);
+      m.innerHTML = `<image width="${p.w}" height="${p.h}" preserveAspectRatio="none" decoding="sync" href="../assets/img/animals/${p.img}.webp?v=1"/>${p.cut ? coatSleeve(p.cut) : ''}`;
       const sh = document.getElementById('procShadow');
-      sh.setAttribute('cx', p.tx);
-      sh.setAttribute('cy', routeKey === "ip" || routeKey === "oral" ? 580 : 566);
-      sh.setAttribute('rx', routeKey === "oral" ? 70 : 130);
+      sh.setAttribute('cx', p.shadow[0]);
+      sh.setAttribute('cy', p.shadow[1]);
+      sh.setAttribute('rx', p.shadow[2]);
     }
+    // A white lab-coat sleeve over the glove's wrist, running off along the forearm and fading out (photo pixels)
+    function coatSleeve([ax, ay, bx, by, dx, dy, L = 620]) {
+      const w = Math.hypot(bx - ax, by - ay), nx = (bx - ax) / w, ny = (by - ay) / w, fl = w * .1, P = (x, y) => `${x.toFixed(1)} ${y.toFixed(1)}`;
+      const at = (u, v) => [ax + dx * u + nx * v, ay + dy * u + ny * v];      // u along the arm, v across the wrist from A
+      const body = [at(-26, -10), at(-26, w + 10), at(L, w + fl), at(L, -fl)].map(q => P(...q)).join(' L');
+      const cuff = [at(-26, -12), at(-26, w + 12), at(46, w + 14), at(46, -14)].map(q => P(...q)).join(' L');
+      const fold = (u0, u1, k) => { const a = at(u0, w * k), b = at((u0 + u1) / 2, w * (k + .06)), c = at(u1, w * k); return `<path d="M${P(...a)} Q${P(...b)} ${P(...c)}" stroke="#9aa5b1" stroke-opacity=".35" stroke-width="7" fill="none" stroke-linecap="round" filter="url(#realBlur)"/>`; };
+      const [g0, g1] = [at(0, 0), at(0, w)], [f0, f1] = [at(L * .3, 0), at(L, 0)];
+      return `<defs><linearGradient id="slvG" gradientUnits="userSpaceOnUse" x1="${g0[0]}" y1="${g0[1]}" x2="${g1[0]}" y2="${g1[1]}"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#f1f4f7"/><stop offset="1" stop-color="#c9d1da"/></linearGradient>
+          <linearGradient id="slvF" gradientUnits="userSpaceOnUse" x1="${f0[0]}" y1="${f0[1]}" x2="${f1[0]}" y2="${f1[1]}"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+          <mask id="slvM" maskUnits="userSpaceOnUse" x="-3000" y="-3000" width="8000" height="8000"><rect x="-3000" y="-3000" width="8000" height="8000" fill="url(#slvF)"/></mask></defs>
+        <g mask="url(#slvM)" pointer-events="none"><path d="M${body}Z" fill="url(#slvG)" stroke="#b3bdc7" stroke-width="3"/>
+          ${fold(110, 420, .3)}${fold(180, 560, .65)}${fold(90, 330, .85)}
+          <path d="M${cuff}Z" fill="url(#slvG)" stroke="#a9b3be" stroke-width="3"/><path d="M${P(...at(46, -14))} L${P(...at(46, w + 14))}" stroke="#9aa5b1" stroke-width="3"/></g>`;
+    }
+    // load the hold photographs ahead, so a pose shows at once when a mouse is restrained
+    Object.values(POSES).forEach(p => { const im = new Image(); im.src = `../assets/img/animals/${p.img}.webp?v=1`; });
 
     function previewPose() {
       const show = S.restrained;
@@ -1338,13 +1334,15 @@
         } else if (st === "ataxic") {
           tr = `translate(${a.x} 1) rotate(${Math.sin(T * 3 + a.ph) * 9}) scale(1 0.92)`;
         } else if (st === "asleep") {
-          tr = `translate(${a.x} 3) scale(1 ${0.74 + Math.sin(T * 2.2 + a.ph) * 0.02})`;
+          // asleep (righting reflex lost): lying low with the legs tucked under, eyes shut, breathing slowly
+          tr = `translate(${a.x} 1.6) scale(1 ${0.94 + Math.sin(T * 2.2 + a.ph) * 0.015})`;
         }
         node.setAttribute('transform', tr);
         const asleep = st === "asleep";
         node.querySelector('.cmEye').style.display = asleep ? "none" : "";
         node.querySelector('.cmEyeShut').style.display = asleep ? "" : "none";
-        node.querySelector('.lvBreath').dataset.life = asleep ? 'breath' : '';
+        node.querySelector('.cmAwake').style.display = asleep ? "none" : "";
+        node.querySelector('.cmAsleep').style.display = asleep ? "" : "none";
         node.querySelector('.cmLegs').style.display = asleep ? "none" : "";
         node.querySelector('.cmLegsOut').style.display = asleep ? "" : "none";
       });
