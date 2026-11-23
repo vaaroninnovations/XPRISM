@@ -10,7 +10,7 @@ from PIL import Image
 
 HERE = Path(__file__).parent
 OUT = HERE.parent.parent / 'static' / 'assets' / 'img' / 'animals'
-JOBS = {'mouse-side-r': ('mouse-side', .7), 'mouse-top': ('mouse-top-photo', .6), 'rat-top': ('rat-top-photo', .6),
+JOBS = {'mouse-side-r': ('mouse-side', .7), 'mouse-top': ('mouse-top-photo', .6), 'rat-top': ('rat-top-photo', .6), 'mouse-front': ('mouse-front-photo', .5),
         # photographs of the handling holds, for the restraint and handling scenes (hold-scruff-upright-b is a spare)
         'hold-scruff-sc': ('hold-scruff-sc', .55), 'hold-scruff-im': ('hold-scruff-im', .5), 'hold-scruff-tilt': ('hold-scruff-tilt', .55),
         'hold-scruff-upright': ('hold-scruff-upright', .6), 'hold-restrainer': ('hold-restrainer', .5), 'hold-tail': ('hold-tail', .35)}

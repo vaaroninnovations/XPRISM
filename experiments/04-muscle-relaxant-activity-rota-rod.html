@@ -1407,12 +1407,42 @@
       <radialGradient id="btnA" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fde68a"/><stop offset=".55" stop-color="#d97706"/><stop offset="1" stop-color="#78350f"/></radialGradient>
       <radialGradient id="knobG" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#6b7280"/><stop offset=".6" stop-color="#1f2937"/><stop offset="1" stop-color="#030712"/></radialGradient>
       <clipPath id="chClip"><rect x="70" y="64" width="820" height="262" rx="4"/></clipPath><clipPath id="rodClip"><rect x="84" y="135" width="792" height="30"/></clipPath></defs>`;
-    function rodMouse(m) {   // albino mouse (kit side view) standing on the rod; origin = feet on rod top
-      const mk = markSpots(m.num, true);
-      return `<g class="tailCurl" style="display:none"></g><g class="bob"><g class="head"><g transform="translate(0 -10.5) scale(1.45)">${animalSideArt({ kind: 'mouse' })}<g opacity=".9">${mk}</g></g></g></g><g class="pawL"></g><g class="pawR"></g>`;
+    // The mouse on the rod stands across it, facing the front of the apparatus, and walks forward to keep up with the
+    // rod: the photographed mouse seen from the front (tools/animal-photos: mouse-front), 1536 x 1024 px, with its four
+    // legs as separate pieces so they can step. Origin = feet on the rod top; RM_K local units per photo pixel.
+    const RM_K = .046, RM_IMG = '../assets/img/animals/mouse-front-photo.webp?v=1';
+    const RM_MAP = `translate(${-550 * RM_K} ${-925 * RM_K + 3.2}) scale(${RM_K})`;   // toes 3 units over the rod's front edge, gripping it
+    const RM_LEGS = { FL: [350, 690, 160, 245, 783], FR: [600, 690, 140, 245, 783], HL: [178, 600, 190, 210, 610], HR: [712, 600, 188, 220, 610] };   // x, y, w, h, top of the moving piece (photo px)
+    // each moving piece is the lower part of its leg; the same feathered shape is cut out of the body, so body and legs
+    // add up to the photo exactly while the paws are down
+    const rmCut = ([x, y, w, hh, top]) => `<rect x="${x}" y="${top}" width="${w}" height="${y + hh - top + 30}" rx="40"/>`;
+    const RM_DEFS = `<defs><filter id="rmFeather" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="12"/></filter>
+      ${Object.entries(RM_LEGS).map(([k, L]) => `<mask id="rmM${k}" maskUnits="userSpaceOnUse" x="0" y="0" width="1536" height="1024"><g fill="#fff" filter="url(#rmFeather)">${rmCut(L)}</g></mask>`).join('')}
+      <mask id="rmBody" maskUnits="userSpaceOnUse" x="0" y="0" width="1536" height="1024"><rect width="1536" height="1024" fill="#fff"/>
+        <g fill="#000" filter="url(#rmFeather)"><rect x="849" y="446" width="560" height="170" rx="30"/>${Object.values(RM_LEGS).map(rmCut).join('')}</g></mask></defs>`;
+    // picric marks as they show from the front: head, neck and back on top of the head, limbs on their own leg (the mouse's
+    // right side is on the viewer's left, so it moves with that leg); a tail-base mark is out of sight behind the rod
+    const RM_MARK = ([x, y]) => y > 5 ? (x > 0 ? ['FL', 434, 808] : ['HL', 262, 740]) : y < -5 ? (x > 0 ? ['FR', 666, 808] : ['HR', 812, 752])
+      : x >= 18 ? ['body', 550, 395] : x >= 8 ? ['body', 550, 250] : x >= -10 ? ['body', 550, 150] : null;
+    function rodMouse(m) {
+      const marks = m.num ? MARKS[m.num].s.map(RM_MARK).filter(Boolean) : [];
+      const spots = part => marks.filter(q => q[0] === part).map(([, x, y]) => `<ellipse cx="${x}" cy="${y}" rx="60" ry="44" fill="url(#picric)" opacity=".85"/>`).join('');
+      const img = mask => `<image width="1536" height="1024" preserveAspectRatio="none" decoding="sync" href="${RM_IMG}" mask="url(#${mask})"/>`;
+      // On the narrow rod the hind feet stand on it too, just behind the fore feet (in the photo they rest on the floor
+      // further back, higher up): the lower hind legs reach down from the haunch, drawn in slightly, onto the rod top
+      // (each hind piece starts up on the haunch and is stretched down from that edge, so it never parts from the body)
+      const hy = (610 - 925) * RM_K + 3.2, HS = `translate(0 ${hy}) scale(1 1.42) translate(0 ${-hy})`;
+      const HIND = { HL: HS, HR: HS };
+      const leg = k => `<g class="leg${k}"><g transform="${HIND[k] || ''}"><g transform="${RM_MAP}">${img('rmM' + k)}${spots(k)}</g></g></g>`;
+      // contact: the paws' shadow on the rod's top, and the rod's own shading over the far side of each gripping hind paw
+      const grip = `<ellipse cx="0" cy="1.4" rx="15" ry="2.2" fill="#0f172a" opacity=".32" filter="url(#aniBlur)"/>`;
+      return `<g class="tailCurl" style="display:none"></g><g class="bob">${grip}${leg('HL')}${leg('HR')}<g class="head"><g transform="${RM_MAP}">${img('rmBody')}${spots('body')}</g></g>${leg('FL')}${leg('FR')}</g>`;
     }
+    // its tail hangs down behind the rod (drawn in #behind, under the rod), swinging a little as the mouse walks
+    const rodTail = sw => `<g filter="url(#aniMouseTail)">${photoTailSVG(`M1 -16 C1 -6 ${f2s(1 + sw)} 6 ${f2s(2 + sw * 2)} 18 C${f2s(3 + sw * 3)} 28 ${f2s(1 + sw * 4)} 36 ${f2s(-2 + sw * 4)} 42`, .62)}</g>`;
+    const f2s = v => (Math.round(v * 100) / 100).toString();
     function scene3() {
-      const r = S.rr; let s = room(470) + ROD_DEFS;
+      const r = S.rr; let s = room(470) + ROD_DEFS + RM_DEFS;
       let a = `<g transform="translate(${APP.x} ${APP.y}) scale(${APP.s})">
         <path d="M 948 470 C 990 480, 985 520, 1010 536" fill="none" stroke="#0b0f14" stroke-width="6"/>
         <polygon points="30,24 930,24 952,6 52,6" fill="#e5e9ef" stroke="#8b95a3"/><polygon points="930,24 952,6 952,512 930,530" fill="#8b95a3"/>
@@ -1425,10 +1455,10 @@
       for (let i = 0; i < 6; i++) {
         const cx = laneC(i);
         a += `<g class="hot" data-act="lane:${i}"><rect x="${cx - 64}" y="64" width="128" height="262" fill="#000" opacity="0"/>
-          <circle cx="${cx}" cy="94" r="11" fill="#681197"/><text x="${cx}" y="98" text-anchor="middle" font-family="JetBrains Mono" font-size="12" font-weight="700" fill="#fff">${i + 1}</text>
+          <circle cx="${cx}" cy="78" r="11" fill="#681197"/><text x="${cx}" y="82" text-anchor="middle" font-family="JetBrains Mono" font-size="12" font-weight="700" fill="#fff">${i + 1}</text>
           <g id="plate${i}"><polygon points="${cx - 56},${RR.PLATE + 2} ${cx + 56},${RR.PLATE + 2} ${cx + 49},${RR.PLATE - 9} ${cx - 49},${RR.PLATE - 9}" fill="url(#plateTop)" stroke="#6b7583" stroke-width=".6"/><rect x="${cx - 56}" y="${RR.PLATE + 2}" width="112" height="7" fill="#6b7280"/></g></g>`;
       }
-      a += `<g id="behind"></g><rect x="84" y="135" width="792" height="30" fill="#bcc4ce"/><rect id="knurlRect" x="84" y="135" width="792" height="30" fill="url(#knurl)"/><g id="rodRidges" clip-path="url(#rodClip)">${'<line x1="84" x2="876" y1="150" y2="150" stroke="#2f3640" stroke-width="1"/>'.repeat(28)}</g>
+      a += `<g id="behind">${Array.from({ length: 6 }, (_, i) => `<g id="rtail${i}"></g>`).join('')}</g><rect x="84" y="135" width="792" height="30" fill="#bcc4ce"/><rect id="knurlRect" x="84" y="135" width="792" height="30" fill="url(#knurl)"/><g id="rodRidges" clip-path="url(#rodClip)">${'<line x1="84" x2="876" y1="150" y2="150" stroke="#2f3640" stroke-width="1"/>'.repeat(28)}</g>
         <rect x="84" y="135" width="792" height="30" fill="url(#rodShade)"/><rect x="70" y="128" width="18" height="44" rx="3" fill="url(#collarGrad)"/><rect x="872" y="128" width="18" height="44" rx="3" fill="url(#collarGrad)"/>`;
       for (let b = 0; b <= 6; b++) { const x = RR.X0 + RR.LW * b; a += `<ellipse cx="${x}" cy="150" rx="6.5" ry="84" fill="url(#discGrad)"/><ellipse cx="${x}" cy="150" rx="9.5" ry="19" fill="url(#collarGrad)"/>`; }
       for (let i = 0; i < 6; i++) a += `<g class="hot" data-act="lane:${i}"><g id="rt${i}"></g><g id="rm${i}"></g></g>`;
@@ -1559,7 +1589,8 @@
     function ataxiaHill(x) { const h = v => Math.pow(v, 3) / (Math.pow(.65, 3) + Math.pow(v, 3)); return h(x) / h(1); }
     function animLane(l, i, dtR, t) {
       const g = $('rm' + i), tg = $('rt' + i);
-      if (l.m === null) { if (g.dataset.m) { g.innerHTML = ''; tg.innerHTML = ''; g.dataset.m = ''; } return; }
+      const tl = $('rtail' + i);
+      if (l.m === null) { if (g.dataset.m) { g.innerHTML = ''; tg.innerHTML = ''; g.dataset.m = ''; } if (tl) tl.innerHTML = ''; return; }
       const m = M(l.m);
       if (g.dataset.m !== String(l.m)) { g.dataset.m = l.m; g.innerHTML = rodMouse(m); tg.innerHTML = ''; }
       const sc = 1.22 * Math.cbrt(m.wt / 24), walking = S.rr.rpmCur > 0.5;
@@ -1577,9 +1608,21 @@
       const onRod = ['onrod', 'cut', 'idle', 'placing'].includes(l.state);
       tg.style.display = onRod ? '' : 'none'; if (onRod) tg.setAttribute('transform', `translate(${x + dx} ${l.y}) rotate(${-l.rot * .4}) scale(${sc})`);
       g.setAttribute('transform', `translate(${x + dx} ${l.y}) rotate(${l.rot}) scale(${sc} ${sc * sy})`);
-      const step = walking && onRod ? Math.sin(t * (4 + S.rr.rpmCur * .35) * Math.PI + l.ph) * 1.5 : 0;
-      g.querySelector('.pawL').setAttribute('transform', `translate(0 ${-Math.max(0, step)})`); g.querySelector('.pawR').setAttribute('transform', `translate(0 ${-Math.max(0, -step)})`);
-      g.querySelector('.head').setAttribute('transform', `rotate(${headRot} 0 -12)`);
+      // Gait locked to the rod: the mouse walks forward as fast as the rod's surface runs back under it (3 cm rod, about
+      // 2.5 cm stride), so one stride per 2.5 cm of surface; diagonal pairs (near fore + far hind) step together.
+      // An ataxic mouse loses the rhythm: its steps drift and it lifts its paws less.
+      const r = S.rr, ax = +g.dataset.sed || 0;
+      const ph = onRod && walking ? r.rodAngle * 1.5 / 2.5 * 2 * Math.PI + l.ph + ax * 2.2 * Math.sin(t * 2.3 + l.ph) : 0;
+      const lift = (k, o) => { const v = Math.max(0, Math.sin(ph + o)); return walking && onRod ? v * (1 - .55 * ax) : 0; };
+      const legT = (k, o, up) => { const v = lift(k, o); const e = g.querySelector('.leg' + k); if (e) e.setAttribute('transform', `translate(0 ${(-up * v).toFixed(2)})`); };
+      legT('FL', 0, 3); legT('HR', 0, 1.6); legT('FR', Math.PI, 3); legT('HL', Math.PI, 1.6);
+      const bob = g.querySelector('.bob'); if (bob) bob.setAttribute('transform', `translate(0 ${(walking && onRod ? -.5 * Math.abs(Math.sin(ph)) : 0).toFixed(2)})`);
+      g.querySelector('.head').setAttribute('transform', `rotate(${headRot} 0 -20)`);
+      if (tl) {
+        const show = onRod || l.state === 'slip';
+        tl.style.display = show ? '' : 'none';
+        if (show) { tl.innerHTML = rodTail(walking ? .6 * Math.sin(ph) : 0); tl.setAttribute('transform', `translate(${x + dx} ${l.y}) rotate(${l.rot * .5}) scale(${sc})`); }
+      }
     }
     function ctx3() {
       const r = S.rr, m = held();
