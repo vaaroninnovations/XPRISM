@@ -289,7 +289,7 @@
             <g id="holdCage"></g>
 
             <!-- Heat lamp (only for i.v.) -->
-            <g id="heatLamp" style="display:none" transform="translate(-80 8)">
+            <g id="heatLamp" style="display:none" transform="translate(-40 4)">
               <ellipse cx="168" cy="452" rx="26" ry="6" fill="#111827"/>
               <rect x="165" y="262" width="7" height="190" fill="url(#steel)"/>
               <path d="M 168 268 L 236 300" stroke="#9ca3af" stroke-width="5" stroke-linecap="round"/>
@@ -911,7 +911,7 @@
     // [ax, ay, bx, by, dx, dy, length] (the two ends of the wrist, the direction the forearm leaves and how far the
     // sleeve runs before it fades), covered by a coat sleeve
     const POSES = {
-      iv:   { img: 'hold-restrainer', w: 2000, h: 667, x: 35, y: 400, s: .29, site: [300, 371], ang: 4, depth: 7, syr: "hypo", tx: 330, ty: 470, shadow: [330, 576, 160] },
+      iv:   { img: 'hold-restrainer', w: 2000, h: 667, x: 95, y: 411, s: .27, site: [415, 356], ang: 10, depth: 7, syr: "hypo", tx: 370, ty: 480, shadow: [380, 578, 150] },
       ip:   { img: 'hold-scruff-tilt', w: 1756, h: 896, x: 50, y: 270, s: .33, site: [684, 628], ang: -48, depth: 9, syr: "hypo", tx: 260, ty: 440, shadow: [260, 586, 90], cut: [1520, 0, 1702, 206, .82, -.57, 380] },
       im:   { img: 'hold-scruff-im', w: 2000, h: 707, x: 30, y: 352, s: .3, site: [800, 586], ang: 28, depth: 7, syr: "hypo", tx: 330, ty: 500, shadow: [340, 560, 150], cut: [1739, 0, 2000, 92, .85, -.53] },
       sc:   { img: 'hold-scruff-sc', w: 1863, h: 844, x: 20, y: 296, s: .33, site: [1075, 492], ang: 16, depth: 10, syr: "hypo", tx: 300, ty: 490, shadow: [300, 562, 150], cut: [1360, 0, 1688, 0, .62, -.78] },
