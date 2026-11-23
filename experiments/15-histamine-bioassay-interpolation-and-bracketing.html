@@ -91,6 +91,7 @@
       header, #subHeader, #viewTask, #viewExperiment, .no-print { display: none !important; }
       #viewObservation { display: flex !important; box-shadow: none; border: none; }
     }
+    .xb-nbk { padding: 10px 12px; background: #fff; border-top: 1px solid #e2e8f0; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col bg-slate-100 overflow-x-hidden">
@@ -235,18 +236,18 @@
           <div style="display:flex;align-items:center;gap:8px"><span id="feedbackIcon" style="color:#2dd4bf;font-weight:700">ℹ</span><span id="feedbackText">Ready.</span></div>
           <span id="phaseIndicator" class="mono" style="font-size:11px;color:#94a3b8"></span>
         </div>
-      </div>
-
-      <aside class="xb-side">
-        <div class="xb-now" id="nowBox"></div>
-        <div class="xb-card"><div class="xb-h"><span id="ctxTitle">Bench</span></div><div class="xb-ctx" id="ctx"></div></div>
-        <div class="xb-card">
+        <div class="xb-nbk">
           <div class="xb-h"><span>Lab notebook: responses</span><span id="nbCount" style="font-weight:600;text-transform:none;letter-spacing:0"></span></div>
           <div style="max-height:220px;overflow-y:auto">
             <table class="xb-tbl"><thead><tr><th>#</th><th>Syringe</th><th>Dose µg</th><th>Ht mm</th><th></th></tr></thead><tbody id="nbBody"></tbody></table>
           </div>
           <p style="font-size:10.5px;color:#64748b;margin:6px 0 0">Standard dose (µg) = volume × concentration of the tube you drew from. Test doses are recorded as volumes. Height: measure on the record with the ruler.</p>
         </div>
+      </div>
+
+      <aside class="xb-side">
+        <div class="xb-now" id="nowBox"></div>
+        <div class="xb-card"><div class="xb-h"><span id="ctxTitle">Bench</span></div><div class="xb-ctx" id="ctx"></div></div>
         <div class="xb-card">
           <div class="xb-h"><span>Protocol checklist</span><label class="tgl"><input type="checkbox" id="hintToggle" checked onchange="HINTS=this.checked;refreshHints()"> highlight next</label></div>
           <ul class="xb-steps" id="checklist"></ul>
