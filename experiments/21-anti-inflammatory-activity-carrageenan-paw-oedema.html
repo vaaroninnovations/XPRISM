@@ -852,12 +852,6 @@
         <rect x="${x - 6}" y="${y - 11}" width="6" height="22" rx="2" fill="#f1f5f9" stroke="#94a3b8"/>
       </g>`;
     }
-    // gloved hand (for held-animal views)
-    function handMarkup() {
-      // a photo render in the units of #hrHand, mirrored because the rat faces right: the hand comes from behind,
-      // the thumb rests behind the neck and the fingers close round the chest
-      return `<g transform="scale(-1 1)">${handArt('hold', -62, -70, 236)}</g>`;
-    }
 
     // ------------------------------------------------ stations, click routing, checklist + hints
     function goStation(n) {
@@ -1277,7 +1271,7 @@
         <path d="M ${REF.x + 4} ${REF.top - 14} C ${REF.x + 4} ${REF.top - 30}, ${REF.x + 56} ${REF.top - 22}, ${REF.x + 68} 352" stroke="#b91c1c" stroke-width="2.4" fill="none"/>`;
       // measuring cell (back wall), held rat, fluid + front wall
       s += `<rect x="${CELL_X - CELL_RX}" y="${CELL_TOP}" width="${CELL_RX * 2}" height="${CELL_BOT - CELL_TOP}" fill="#e0f2fe" fill-opacity="0.12"/>
-        <g id="heldRat" style="display:none"><path id="hrTail" stroke="#e7b0b8" stroke-width="4" fill="none" stroke-linecap="round"/><g id="hrBody"><g class="rm"></g></g><g id="hrLeg"></g><g id="hrHand"></g></g>
+        ${LEG_DEFS}${HOLD_DEFS}<g id="heldRat" style="display:none"><g id="hrTail"></g><g id="hrBody"><g class="rm"></g></g><g id="hrLeg"></g><g id="hrHand"></g></g>
         <clipPath id="cellClip"><rect x="${CELL_X - CELL_RX}" y="${CELL_TOP}" width="${CELL_RX * 2}" height="${CELL_BOT - CELL_TOP}"/></clipPath>
         <g clip-path="url(#cellClip)" id="cellFluid"></g>
         <g class="hot" data-act="cell"><rect x="${CELL_X - CELL_RX}" y="${CELL_TOP}" width="${CELL_RX * 2}" height="${CELL_BOT - CELL_TOP}" fill="url(#cellGlass)" stroke="#e0f2fe" stroke-width="1.6"/></g>
@@ -1339,11 +1333,6 @@
       $('board').innerHTML = h;
     }
     // ---------------------------------------------------------------- measuring
-    function heldGeom(tipY) {
-      const hip = { x: CELL_X, y: tipY - LEG }, a = ROT * Math.PI / 180, ca = Math.cos(a), sa = Math.sin(a);
-      const hx = -31 * ca - 4 * sa, hy = -31 * sa + 4 * ca, C = { x: hip.x - hx * RS, y: hip.y - hy * RS };
-      return { hip, C, rump: { x: C.x + (-50 * ca - 4 * sa) * RS, y: C.y + (-50 * sa + 4 * ca) * RS } };
-    }
     function pawReading() {
       const m = S.meas; if (!m) return 0;
       const x = (m.tipY - WY) / LM; if (x <= 0) return 0;
@@ -1358,20 +1347,9 @@
       const V = trueVol(r, S.t) * (1 + gauss() * 0.012);
       S.meas = { r, k: sl.k, h: sl.h, V, tipY: TIP_START, removing: 0, ph: Math.random() * 6, men: S.pl.wet ? 0 : gauss() * 0.035 };
       S.hand = null; $('heldRat').style.display = ''; $('heldRat').style.opacity = 1; $('magnifier').style.display = '';
-      const rm = document.querySelector('#hrBody .rm'); rm.innerHTML = heldRatMarkup(r);
-      $('hrHand').innerHTML = handMarkup(); beep('click'); drawDyn(); renderCtx();
+      $('hrHand').innerHTML = ''; $('hrLeg').innerHTML = ''; buildHold(S.meas);
+      beep('click'); drawDyn(); renderCtx();
       say(`R${r.id} held over the cell for the <b>${TP[sl.k]}</b> reading. Lower the paw until ${r.ink ? 'the ink mark meets the meniscus' : 'the malleolus is at the surface (no ink mark!)'}, then press the HOLD pedal.`, !r.ink);
-    }
-    // side-view rat for the held (hanging) position: legs drawn separately (from the original page)
-    function heldRatMarkup(r) {
-      const leg = (cls, near) => `<path class="${cls}" stroke="${near ? '#f0a3b4' : '#d98fa2'}" stroke-width="${near ? 3.6 : 3}" stroke-linecap="round" fill="none"/><ellipse class="${cls}p" rx="3.6" ry="1.8" fill="${near ? '#f0a3b4' : '#d98fa2'}"/>`;
-      const spots = r.id ? MARK_CODE[r.id].map(p => `<ellipse cx="${MARK_POS[p][0] * 1.3}" cy="${MARK_POS[p][1] * 1.5}" rx="8" ry="5" fill="#facc15" opacity=".85"/>`).join('') : '';
-      const html = `<g class="far">${leg('lf1')}${leg('lf2')}</g><g class="near">${leg('ln1', true)}</g>
-        <g transform="translate(3 -8) scale(1.6)">${animalSideArt({ kind: 'rat', noFeet: true, noTail: true })}</g>${spots}`;
-      const g = document.createElementNS(svgNS, 'g'); g.innerHTML = html;
-      const setLeg = (cls, jx, jy, px, py, bend) => { g.querySelector('.' + cls).setAttribute('d', `M ${jx} ${jy} Q ${(jx + px) / 2 + bend} ${(jy + py) / 2} ${px} ${py}`); const pw = g.querySelector('.' + cls + 'p'); pw.setAttribute('cx', px); pw.setAttribute('cy', py); };
-      setLeg('ln1', 22, 6, 30, 14, 2); setLeg('lf1', 18, 6, 26, 15, 2); setLeg('lf2', -32, 10, -28, 20, -2);
-      return g.innerHTML;
     }
     function nudgeDip(d) { if (!S.meas || S.meas.removing) { say('Place a rat on the cell first.', true); return; } S.meas.tipY = clamp(S.meas.tipY + d, TIP_MIN, TIP_MAX); }
     function holdReading() {
@@ -1395,27 +1373,72 @@
       setTimeout(() => { if (S.meas === m) { S.meas = null; $('heldRat').style.display = 'none'; $('magnifier').style.display = 'none'; drawDyn(); renderCtx(); refreshChecklist(); } }, 700);
       renderNotebook(); renderCtx();
     }
+    // filters shared by the held rat's paw
+    const LEG_DEFS = `<defs><filter id="legEdge" x="-20%" y="-10%" width="140%" height="120%"><feGaussianBlur stdDeviation=".3"/></filter></defs>`;
+    // The rat over the cell is a photograph of the real hold (tools/animal-photos): held upright round the chest by one
+    // gloved hand, one hind leg hanging straight down, toes first. n: a normal paw (ankle 1097, toe tip 1327 in its
+    // pixels); s: the same hold with an oedematous paw, shown once the paw has swollen. Each photo is anchored on the
+    // scene at its ink-mark height, so the mark meets the meniscus whichever paw is shown. Its own tail would hang
+    // into the cell, so the tail below tailCut is masked and runs on curving away from the cell.
+    const HOLDS = {
+      n: { src: '../assets/img/animals/hold-rat-dip.webp?v=1', w: 1024, h: 1536, px: 470, ank: 1097, mark: 1081, tailCut: 1080, tx: 690, k: 1,
+        spots: { head: [345, 92], neck: [430, 255], back: [575, 690], rump: [585, 860], tail: [668, 905] } },
+      s: { src: '../assets/img/animals/hold-rat-dip-swollen.webp?v=1', w: 1036, h: 1518, px: 471, ank: 1100, mark: 1086, tailCut: 1095, tx: 688, k: .94,
+        spots: { head: [338, 82], neck: [428, 255], back: [580, 712], rump: [591, 892], tail: [680, 940] } }
+    };
+    const HOLD_S = PAW_L / (1327 - 1097);      // scene px per photo px, from the normal photo's paw
+    const SWOLLEN_AT = .15;                    // fractional increase in paw volume at which the swollen photo is shown
+    const HOLD_DEFS = `<defs>${Object.entries(HOLDS).map(([v, H]) => `<linearGradient id="hdPawF${v}" gradientUnits="userSpaceOnUse" x1="0" y1="${H.ank - 70}" x2="0" y2="${H.ank - 10}"><stop offset="0" stop-color="#000"/><stop offset="1" stop-color="#fff"/></linearGradient>
+      <mask id="hdPawM${v}" maskUnits="userSpaceOnUse" x="360" y="${H.ank - 70}" width="220" height="420"><rect x="360" y="${H.ank - 70}" width="220" height="420" fill="url(#hdPawF${v})"/></mask>
+      <linearGradient id="hdTailF${v}" gradientUnits="userSpaceOnUse" x1="0" y1="${H.tailCut - 40}" x2="0" y2="${H.tailCut}"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient>
+      <mask id="hdMain${v}" maskUnits="userSpaceOnUse" x="0" y="0" width="${H.w}" height="${H.h}"><rect width="${H.w}" height="${H.h}" fill="#fff"/><rect x="600" y="${H.tailCut - 40}" width="200" height="${H.h - H.tailCut + 40}" fill="url(#hdTailF${v})"/></mask>`).join('')}
+      <filter id="hdRed" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="1 0 0 0 0  0 .8 0 0 0  0 0 .78 0 0  0 0 0 1 0"/></filter></defs>`;
+    // the photo in its own pixel units, with the rat's picric marks
+    function holdPhoto(r, v) {
+      const H = HOLDS[v];
+      const spots = r.id ? MARK_CODE[r.id].map(p => `<ellipse cx="${H.spots[p][0]}" cy="${H.spots[p][1]}" rx="42" ry="30" fill="#facc15" opacity=".82"/>`).join('') : '';
+      return `<image width="${H.w}" height="${H.h}" preserveAspectRatio="none" decoding="sync" href="${H.src}" mask="url(#hdMain${v})"/>${spots}
+        <g class="hdPaw"><image width="${H.w}" height="${H.h}" preserveAspectRatio="none" decoding="sync" href="${H.src}" mask="url(#hdPawM${v})"/></g><g class="hdInk"></g>`;
+    }
+    // where a photo sits for a paw tip at tip: its scale, and its ink-mark height on the scene's mark line
+    function holdPlace(v, tip, rot) {
+      const H = HOLDS[v], s = HOLD_S * H.k, ox = CELL_X - H.px * s, oy = (tip - LM) - H.mark * s;
+      return { s, ox, oy, t: `translate(${ox.toFixed(2)} ${oy.toFixed(2)}) scale(${s.toFixed(5)}) rotate(${rot.toFixed(2)} 600 460)` };
+    }
+    const holdVariant = m => (m.V - m.r.V0) / m.r.V0 >= SWOLLEN_AT ? 's' : 'n';
+    function buildHold(m) {
+      const v = holdVariant(m); m.hv = v;
+      document.querySelector('#hrBody .rm').innerHTML = holdPhoto(m.r, v);
+      $('magLeg').innerHTML = `<g class="mgT">${holdPhoto(m.r, v)}</g><text class="mgInkT" x="${MAG.x - MAG.r + 6}" font-family="JetBrains Mono" font-size="7" font-weight="700" fill="#1e3a8a"></text>`;
+    }
+    // The paw follows the measured swelling: the normal paw widens a little and reddens until the swollen photo takes
+    // over; the swollen paw is narrowed back towards the normal width for a moderate oedema.
+    function setHoldPaw(g, v, e, red, ink) {
+      const H = HOLDS[v], pw = g.querySelector('.hdPaw');
+      const k = v === 'n' ? 1 + e * 1.1 : .8 + .2 * Math.min(1, (e - SWOLLEN_AT) / .45);
+      pw.setAttribute('transform', `translate(${H.px} ${H.ank}) scale(${k.toFixed(3)} 1) translate(${-H.px} ${-H.ank})`);
+      if (v === 'n' && red > .05) pw.setAttribute('filter', 'url(#hdRed)'); else pw.removeAttribute('filter');
+      const hw = v === 'n' ? 28 + e * 18 : 34;
+      g.querySelector('.hdInk').innerHTML = (v === 'n' && red > .05 ? `<ellipse cx="${H.px}" cy="${(H.ank + 1327) / 2}" rx="${(24 * k).toFixed(1)}" ry="115" fill="#e0465a" opacity="${(red * .3).toFixed(2)}" filter="url(#legEdge)"/>` : '')
+        + (ink ? `<path d="M ${H.px - hw} ${H.mark} Q ${H.px} ${H.mark + 10} ${H.px + hw} ${H.mark}" stroke="#1e3a8a" stroke-width="11" fill="none" opacity=".9"/>` : '');
+    }
     function drawHeld(dtR) {
       const m = S.meas; if (!m) return;
       const T = performance.now() / 1000 + m.ph;
       if (m.removing) { m.removing += dtR; m.tipY -= dtR * 240; $('heldRat').style.opacity = Math.max(0, 1 - m.removing * 1.5); }
-      const tip = m.tipY, G = heldGeom(tip);
-      $('hrBody').setAttribute('transform', `translate(${G.C.x} ${G.C.y}) rotate(${ROT + Math.sin(T * 1.3) * 1.5}) scale(${RS})`);
-      $('hrHand').setAttribute('transform', `translate(${G.C.x} ${G.C.y}) scale(0.7)`);
-      const R = G.rump, sw = Math.sin(T * 1.4) * 6;
-      $('hrTail').setAttribute('d', `M ${R.x} ${R.y} C ${R.x - 8} ${R.y + 22}, ${R.x - 40 + sw} ${R.y + 26}, ${R.x - 46 + sw} ${R.y + 60} S ${R.x - 36} ${R.y + 92}, ${R.x - 50 + sw} ${R.y + 108}`);
-      const e = Math.max(0, (m.V - m.r.V0) / m.r.V0), k = 1 + e * 1.1, red = Math.min(1, e / 0.5);
-      const col = `rgb(${Math.round(242 - 18 * red)},${Math.round(167 - 75 * red)},${Math.round(182 - 76 * red)})`;
-      const x = CELL_X, hy = G.hip.y, ank = tip - PAW_L, mark = tip - LM;
-      const pawPath = (X, A, Tp, s, w) => `M ${X - 3.5 * s * w} ${A} C ${X - 6 * s * w} ${A + 8 * s}, ${X - 6.5 * s * w} ${Tp - 10 * s}, ${X - 5 * s * w} ${Tp - 3 * s} Q ${X} ${Tp + 1.5 * s} ${X + 5 * s * w} ${Tp - 3 * s} C ${X + 6.5 * s * w} ${Tp - 10 * s}, ${X + 6 * s * w} ${A + 8 * s}, ${X + 3.5 * s * w} ${A} Z`;
-      $('hrLeg').innerHTML = `<path d="M ${x} ${hy + 14} L ${x} ${ank + 2}" stroke="#ede7e3" stroke-width="${7 + e * 3}" stroke-linecap="round"/>
-        <ellipse cx="${x + 1}" cy="${hy + 8}" rx="10" ry="18" fill="url(#furGrad)" stroke="#e0d8d4" stroke-width="0.5"/>
-        <path d="${pawPath(x, ank, tip, 1, k)}" fill="${col}" stroke="#c97f8f" stroke-width="0.6"/>
-        ${m.r.ink ? `<path d="M ${x - 5.5 - e * 2} ${mark} Q ${x} ${mark + 1.4} ${x + 5.5 + e * 2} ${mark}" stroke="#1e3a8a" stroke-width="1.6" fill="none"/>` : ''}`;
-      const kx = MAG.k, my = y => MAG.y + (y - WY) * kx;
-      $('magLeg').innerHTML = `<rect x="${MAG.x - (3.5 + e * 1.5) * kx}" y="${MAG.y - MAG.r - 4}" width="${(7 + e * 3) * kx}" height="${Math.max(0, my(ank + 2) - MAG.y + MAG.r + 4)}" fill="#ede7e3" stroke="#d6cec9"/>
-        <path d="${pawPath(MAG.x, my(ank), my(tip), kx, k)}" fill="${col}" stroke="#c97f8f"/>
-        ${m.r.ink ? `<path d="M ${MAG.x - (5.5 + e * 2) * kx} ${my(mark)} Q ${MAG.x} ${my(mark) + 4} ${MAG.x + (5.5 + e * 2) * kx} ${my(mark)}" stroke="#1e3a8a" stroke-width="3.5" fill="none"/><text x="${MAG.x - MAG.r + 6}" y="${my(mark) - 4}" font-family="JetBrains Mono" font-size="7" font-weight="700" fill="#1e3a8a">ink mark</text>` : ''}`;
+      const tip = m.tipY, x = CELL_X, mark = tip - LM;
+      if (m.hv !== holdVariant(m)) buildHold(m);
+      const v = m.hv, H = HOLDS[v], P = holdPlace(v, tip, Math.sin(T * 1.3) * .8);
+      $('hrBody').setAttribute('transform', P.t);
+      const e = Math.max(0, (m.V - m.r.V0) / m.r.V0), red = Math.min(1, e / 0.5);
+      setHoldPaw(document.querySelector('#hrBody .rm'), v, e, red, m.r.ink);
+      // the tail: the photo's own tail down to just above the cell rim, then on outside the cell, swinging a little
+      const sw = Math.sin(T * 1.4) * 4, tx = P.ox + H.tx * P.s, ty = P.oy + (H.tailCut - 60) * P.s;
+      $('hrTail').innerHTML = '<g filter="url(#aniMouseTail)">' + photoTailSVG(`M ${tx.toFixed(1)} ${ty.toFixed(1)} C ${(tx + 2).toFixed(1)} ${(ty + 10).toFixed(1)}, ${(tx + 10 + sw).toFixed(1)} ${(ty + 22).toFixed(1)}, ${(tx + 22 + sw).toFixed(1)} ${(ty + 34).toFixed(1)} C ${(tx + 34 + sw).toFixed(1)} ${(ty + 46).toFixed(1)}, ${(tx + 40 + sw).toFixed(1)} ${(ty + 60).toFixed(1)}, ${(tx + 36 + sw * 1.5).toFixed(1)} ${(ty + 72).toFixed(1)}`, 1.3) + '</g>';
+      // the magnifier shows the same photo, enlarged about the meniscus
+      const mg = $('magLeg').querySelector('.mgT');
+      if (mg) { mg.setAttribute('transform', `translate(${MAG.x} ${MAG.y}) scale(${MAG.k}) translate(${-x} ${-WY}) ${P.t}`); setHoldPaw(mg, v, e, red, m.r.ink); }
+      const mt = $('magLeg').querySelector('.mgInkT'); if (mt) { mt.textContent = m.r.ink ? 'ink mark' : ''; mt.setAttribute('y', (MAG.y + (mark - WY) * MAG.k - 6).toFixed(1)); }
       const d = markDelta(m), t = $('magText');
       if (m.removing) t.textContent = '';
       else if (!m.r.ink) { t.textContent = 'no ink mark: guess depth'; t.setAttribute('fill', '#fbbf24'); }
@@ -1528,7 +1551,7 @@
     }
     function buildScene() {
       $('scene').innerHTML = DEFS + (S.station === 1 ? sceneAnimals() : S.station === 2 ? sceneSolutions() : sceneBench());
-      if (S.station === 3 && S.meas) { $('heldRat').style.display = ''; $('magnifier').style.display = ''; document.querySelector('#hrBody .rm').innerHTML = heldRatMarkup(S.meas.r); $('hrHand').innerHTML = handMarkup(); }
+      if (S.station === 3 && S.meas) { $('heldRat').style.display = ''; $('magnifier').style.display = ''; $('hrHand').innerHTML = ''; buildHold(S.meas); }
       drawDyn();
     }
     function drawDyn() { S._sceneV++; dyn1(); dyn2(); dyn3(); updClocks(); refreshHints(); }
