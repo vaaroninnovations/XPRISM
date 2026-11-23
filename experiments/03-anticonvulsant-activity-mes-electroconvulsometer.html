@@ -732,8 +732,8 @@
         <polygon points="12,${h - 22} ${w - 12},${h - 22} ${w - 8},${h} 8,${h}" filter="url(#beddingF)"/>
         ${o.food ? `<path d="M12 14 L60 14 L52 52 L20 52 Z" fill="#6b7280" opacity=".8" stroke="#374151"/>${Array.from({ length: 12 }, (_, i) => `<ellipse cx="${22 + (i % 4) * 9}" cy="${22 + Math.floor(i / 4) * 9}" rx="5" ry="3.4" fill="#a16207" stroke="#713f12" stroke-width=".5"/>`).join('')}` : ''}
         ${inner || ''}
-        <polygon points="0,12 ${w},12 ${w - 8},${h} 8,${h}" fill="url(#cageTub)" stroke="#cbd5e1" stroke-width="1.2"/>
-        <line x1="6" y1="16" x2="12" y2="${h - 4}" stroke="#fff" stroke-width="2.5" opacity=".35"/>
+        <polygon points="0,12 ${w},12 ${w - 8},${h} 8,${h}" fill="url(#cageTub)" stroke="#cbd5e1" stroke-width="1.2" pointer-events="none"/>
+        <line x1="6" y1="16" x2="12" y2="${h - 4}" stroke="#fff" stroke-width="2.5" opacity=".35" pointer-events="none"/>
         <rect x="-6" y="2" width="${w + 12}" height="12" rx="3" fill="url(#steelH)" stroke="#6b7280" stroke-width="0.8"/>${bars}
         ${title ? `<rect x="${w - 96}" y="18" width="88" height="28" rx="2" fill="#fef3c7" stroke="#d97706" stroke-width="0.8"/>${lbl(w - 52, 29, title, { s: 7.5, w: 800, c: '#7c2d12' })}${lbl(w - 52, 40, sub || '', { s: 6.5, c: '#451a03', w: 600, f: 'JetBrains Mono' })}` : ''}
       </g>`;
