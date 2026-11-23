@@ -935,13 +935,19 @@
       <linearGradient id="cylGlass" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#bae6fd" stop-opacity="0.5"/><stop offset="0.1" stop-color="#ffffff" stop-opacity="0.45"/><stop offset="0.22" stop-color="#e0f2fe" stop-opacity="0.08"/><stop offset="0.8" stop-color="#e0f2fe" stop-opacity="0.08"/><stop offset="0.9" stop-color="#ffffff" stop-opacity="0.35"/><stop offset="1" stop-color="#7dd3fc" stop-opacity="0.5"/></linearGradient>
       <linearGradient id="watchBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#64748b"/><stop offset="1" stop-color="#0f172a"/></linearGradient>`;
     const CYL_X = 525, PLATE_Y = 294, MS = 1.1, SET_OK = 55;
+    // the photographed mouse with its own legs as movable pieces (animal-art.js: .legF, .legH)
     function mouseMarkup(st) {
-      const L = (cls, near, d) => `<path class="${cls}" d="${st ? d : ''}" stroke="${near ? '#f2a6b8' : '#dc93a6'}" stroke-width="${near ? 3 : 2.6}" stroke-linecap="round" fill="none"/>`;
-      return `<g>${L('lf1', 0, 'M 12 4 Q 15 11 15 18')}${L('lf2', 0, 'M -24 7 Q -27 13 -26 20')}${L('ln1', 1, 'M 16 4 Q 19 11 20 18')}${L('ln2', 1, 'M -20 7 Q -23 13 -22 20')}</g>
-        <g transform="translate(8 -2) scale(2.21)">${animalSideArt({ kind: 'mouse', noFeet: true, headGroup: true })}</g>`;
+      return `<g transform="translate(8 -2) scale(2.21)">${animalSideArt({ kind: 'mouse', noFeet: true, legs: true, headGroup: true })}</g>`;
     }
     const sideAnimalStatic = () => mouseMarkup(true);
-    function setLeg(m, cls, jx, jy, px, py, bend) { const p = m.querySelector('.' + cls); if (p) p.setAttribute('d', `M ${jx} ${jy} Q ${(jx + px) / 2 + bend} ${(jy + py) / 2} ${px} ${py}`); }
+    // Swing a photo leg about its shoulder or hip (jx, jy) so that its paw, at rest on (rx, ry), points at (px, py);
+    // all in this scene's units, which are the art's units x 1.0387 offset by (8, -2)
+    function setLeg(m, cls, jx, jy, rx, ry, px, py) {
+      const g = m.querySelector('.' + cls); if (!g) return;
+      const u = v => v / 1.0387, ux = u(jx - 8), uy = u(jy + 2);
+      const a = Math.atan2(py - jy, px - jx) - Math.atan2(ry - jy, rx - jx), k = Math.max(.75, Math.min(1.3, Math.hypot(px - jx, py - jy) / Math.hypot(rx - jx, ry - jy)));
+      g.setAttribute('transform', `translate(${ux.toFixed(2)} ${uy.toFixed(2)}) rotate(${(a * 57.3).toFixed(1)}) scale(${k.toFixed(3)}) translate(${(-ux).toFixed(2)} ${(-uy).toFixed(2)})`);
+    }
     function freshApp() { return { power: false, set: 50.0, T: 26.0, stable: 0, trial: null, sw: { run: false, t: 0 } }; }
     function appMakeReady() { Object.assign(S.app, { power: true, set: SET_OK, T: SET_OK, stable: 120 }); }
     const appReady = () => S.app.power && Math.abs(S.app.set - SET_OK) < 0.05 && Math.abs(S.app.T - SET_OK) <= 0.5 && S.app.stable > 30;
@@ -1108,9 +1114,10 @@
         if (tr.jump && r < 0.7) { y -= Math.sin(r / 0.7 * Math.PI) * 80; fN = [26, 20]; fF = [22, 21]; hN = [-26, 22]; hF = [-30, 22]; rot = -10; }
         else { rot = -26; y -= 4; headRot = 42; hN = [8, 6 + Math.sin(T * 14) * 2]; fN = [16, 10]; fF = [12, 12]; }
       }
-      setLeg(mm, 'ln1', 16, 4, fN[0], fN[1], 3); setLeg(mm, 'lf1', 12, 4, fF[0], fF[1], 3);
-      setLeg(mm, 'ln2', -20, 7, hN[0], hN[1], -3); setLeg(mm, 'lf2', -24, 7, hF[0], hF[1], -3);
-      mm.querySelector('.head').setAttribute('transform', `rotate(${headRot} 22 -4)`);
+      // the photo's fore legs follow the near forepaw, its hind legs the near hind paw; the head turns at the neck
+      setLeg(mm, 'legF', 26, 7, 22, 15, fN[0], fN[1]);
+      setLeg(mm, 'legH', -12, 7, -18, 15, hN[0], hN[1]);
+      mm.querySelector('.head').setAttribute('transform', `rotate(${headRot} 16 -3)`);
       node.setAttribute('transform', `translate(${x} ${y}) rotate(${rot} -20 15) scale(${MS})`);
     }
     function ctx3() {
