@@ -868,7 +868,6 @@
 
     window.addEventListener('DOMContentLoaded', () => { const d = $('lblInferenceDetail'); if (!d) return; const def = d.innerHTML, orig = renderObservation; renderObservation = function () { d.innerHTML = def; return orig.apply(this, arguments); }; });
   </script>
-  <script src="../assets/js/animal-3d.js" data-animals="rat"></script>
   <script src="../assets/js/viva.js"></script>
 </body>
 </html>
