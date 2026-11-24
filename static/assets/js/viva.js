@@ -58,3 +58,18 @@
     };
   }
 })();
+
+/* Every module opens on its Task Description, so students read the objective, principle and requirements before the
+   bench. The bench is built first, while it is still visible (some benches measure themselves as they start), and the
+   page then switches tab: this runs after the page's own start-up, whose DOMContentLoaded handlers were added before
+   this script. A link ending in #bench (or ?tab=bench) still opens straight on the bench. */
+(function () {
+  const wantsBench = /(^|[#&?])(bench|tab=bench)\b/.test(location.hash + location.search);
+  function openTask() {
+    if (wantsBench || typeof switchTab !== 'function' || !document.getElementById('viewTask')) return;
+    try { switchTab('task'); window.scrollTo(0, 0); } catch (e) { }
+  }
+  // on window, not document: window's DOMContentLoaded handlers run after document's, so this comes after every page's
+  // own start-up wherever that is registered (Exp 19 and 20 start on window and switch to the bench as they do)
+  if (document.readyState === 'loading') window.addEventListener('DOMContentLoaded', openTask); else openTask();
+})();
