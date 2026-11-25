@@ -923,47 +923,94 @@
   </script>
   <script>
     // =====================================================================
-    // Clinical observation poses for a mouse seen from above (neutral, non-graphic).
-    // States: normal, twitch, jerks, forelimb, flex, ext, clon, stupor, rec, dead.
-    // Built once per state change; pzAnim() then only moves transforms each frame.
+    // MES seizure poses: photographs of the albino mouse seen from above (on the tray) and from the side (bench
+    // camera), one per clinical state (tools/animal-photos/src/mes-*). Coordinates are in each photo's ORIGINAL
+    // crop pixels (the web sprites are smaller and drawn stretched back to that size).
+    //   top:  a = midway between the ears (anchor), c = trunk centre (breathing pivot), ears = ear-clip sites
+    //   side: a = the eye, fl = floor line, c = trunk centre
+    // Micro-animations per state: quiet breathing and exploring; breathing stops in the tonic phase (apnoea) with
+    // a fine tremor; the hind limbs stretch out at the start of extension; rhythmic clonic jerks that slow down as
+    // clonus wears off; slow deep post-ictal breaths; the roll back on to the feet when the righting reflex returns.
     // =====================================================================
     const PZ_LABEL = {
-      normal: 'Normal behaviour', twitch: 'Facial / ear twitching', jerks: 'Myoclonic jerks', forelimb: 'Forelimb clonus, rearing', flex: 'Tonic flexion',
-      ext: 'Tonic hind-limb extension (HTE)', clon: 'Clonic movements', clonL: 'Generalised clonus, righting lost', stupor: 'Post-ictal: motionless, no righting', rec: 'Righting reflex regained',
-      dead: 'No movement/respiration: mortality'
+      normal: 'Normal behaviour', twitch: 'Facial / ear twitching', flex: 'Tonic flexion', ext: 'Tonic hind-limb extension (HTE)',
+      clon: 'Clonic movements', stupor: 'Post-ictal: motionless, no righting', rec: 'Righting reflex regained'
     };
-    const PZ_BASE = [[8, -5.5], [8, 5.5], [-6, -6.2], [-6, 6.2]];
-    const pzTail = d => `<path d="${d}" fill="none" stroke="url(#aniTail)" stroke-width="1.7" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#b97585" stroke-width="1.7" stroke-linecap="round" stroke-dasharray=".4 1.1" opacity=".6"/>`;
-    const PZ_TAILS = { n: 'M-14 0 C-22 3 -28 -3 -36 2 C-41 5 -44 2 -47 4', st: 'M-14 0 L-52 0', fl: 'M-14 0 C-19 6 -24 8 -28 4 C-30 2 -27 -1 -24 1', lo: 'M-14 1 C-24 5 -30 9 -38 7 C-44 6 -47 10 -50 9' };
-    function pzLimb(k, x2, y2, w = 2.5, paw = true) { // tapered fur limb from base k to (x2,y2) with a small toed paw
-      const [bx, by] = PZ_BASE[k], dx = x2 - bx, dy = y2 - by, L = Math.hypot(dx, dy), nx = -dy / L, ny = dx / L, w0 = w * 0.62, w1 = w * 0.3, a = Math.atan2(dy, dx) * 57.3;
-      const f = v => v.toFixed(2), P = (x, y) => `${f(x)},${f(y)}`;
-      const toes = [-.5, 0, .5].map(o => `<line x1="${x2}" y1="${y2}" x2="${f(x2 + Math.cos(a / 57.3 + o) * 2.1)}" y2="${f(y2 + Math.sin(a / 57.3 + o) * 2.1)}" stroke="#d58a9c" stroke-width=".45" stroke-linecap="round"/>`).join('');
-      return `<g id="#ID#L${k}" data-b="${bx} ${by}"><polygon points="${P(bx + nx * w0, by + ny * w0)} ${P(x2 + nx * w1, y2 + ny * w1)} ${P(x2 - nx * w1, y2 - ny * w1)} ${P(bx - nx * w0, by - ny * w0)}" fill="#f6f1ee" stroke="#d3c8c3" stroke-width=".35"/>
-        <line x1="${f(bx + nx * w0 * .5)}" y1="${f(by + ny * w0 * .5)}" x2="${f(x2 + nx * w1 * .4)}" y2="${f(y2 + ny * w1 * .4)}" stroke="#fff" stroke-width=".5" opacity=".7"/>
-        ${paw ? `${toes}<ellipse cx="${x2}" cy="${y2}" rx="1.5" ry=".95" fill="url(#aniPaw)" stroke="#d58a9c" stroke-width=".25" transform="rotate(${a.toFixed(0)} ${x2} ${y2})"/>` : ''}</g>`;
+    const MES_IMG = '../assets/img/animals/', MES_V = 1;
+    const MES_TOP = {
+      flex: { w: 262, h: 731, a: [126, 128], c: [130, 290], ears: [[78, 128], [175, 128]] },
+      ext: { w: 266, h: 752, a: [138, 118], c: [136, 300], ears: [[96, 118], [180, 118]] },
+      clon: { w: 323, h: 751, a: [190, 118], c: [180, 290], ears: [[144, 120], [237, 112]] },
+      rest: { w: 225, h: 763, a: [109, 115], c: [112, 290], ears: [[64, 115], [154, 115]] }
+    };
+    const MES_SIDE = {
+      flex: { w: 596, h: 374, a: [48, 212], fl: 275, c: [290, 170] },
+      ext: { w: 808, h: 271, a: [50, 160], fl: 250, c: [300, 150] },
+      clon: { w: 677, h: 375, a: [60, 215], fl: 340, c: [290, 190] },
+      rest: { w: 741, h: 317, a: [68, 202], fl: 252, c: [300, 170] }
+    };
+    // post-ictal stupor keeps the splayed clonic posture, lying still
+    const MES_POSE = { normal: 'rest', twitch: 'rest', flex: 'flex', ext: 'ext', clon: 'clon', stupor: 'clon', rec: 'rest' };
+    const mesHeld = {};
+    function mesImg(v, k) {
+      const n = `mes-${v}-${k}`, u = `${MES_IMG}${n}.webp?v=${MES_V}`, P = (v === 'top' ? MES_TOP : MES_SIDE)[k];
+      if (!mesHeld[n]) { mesHeld[n] = new Image(); mesHeld[n].src = u; }
+      return `<image width="${P.w}" height="${P.h}" preserveAspectRatio="none" decoding="sync" href="${u}"/>`;
     }
-    function pzMouse(id, state, k, rot, opt = {}) {
-      let art = animalTopArt({ kind: 'mouse', noTail: true, life: 'none' }), tail = PZ_TAILS.n, limbs = '', tf = '';
-      if (state === 'flex') { tf = 'scale(.86 1.14)'; tail = PZ_TAILS.fl; limbs = pzLimb(0, 12, -2.6, 2.6) + pzLimb(1, 12, 2.6, 2.6) + pzLimb(2, -1, -4, 2.8) + pzLimb(3, -1, 4, 2.8); }
-      else if (state === 'ext') { tail = PZ_TAILS.st; limbs = pzLimb(2, -38, -4.2, 2.3) + pzLimb(3, -38, 4.2, 2.3) + pzLimb(0, 21, -9.5, 2.1) + pzLimb(1, 21, 9.5, 2.1); }
-      else if (state === 'forelimb') { tf = 'scale(.94 1)'; limbs = pzLimb(0, 17, -7, 2.1) + pzLimb(1, 17, 7, 2.1); }
-      else if (state === 'clon' || state === 'clonL') { tf = 'scale(1.02 .92)'; tail = PZ_TAILS.lo; limbs = pzLimb(0, 16, -9, 2.2) + pzLimb(1, 16, 9, 2.2) + pzLimb(2, -17, -9.5, 2.3) + pzLimb(3, -17, 9.5, 2.3); }
-      else if (state === 'stupor' || state === 'dead') { tf = 'scale(1.05 .9)'; tail = PZ_TAILS.lo; limbs = pzLimb(0, 14, -9.5, 2.1) + pzLimb(1, 14, 9.5, 2.1) + pzLimb(2, -13, -10, 2.3) + pzLimb(3, -13, 10, 2.3); }
-      return `<g transform="translate(${opt.x || 0} ${opt.y || 0}) rotate(${rot}) scale(${k})" ${state === 'dead' ? 'opacity=".93"' : ''}><g id="${id}A">${pzTail(tail)}<g transform="${tf}">${art}</g>${limbs.replace(/#ID#/g, id)}</g></g>`;
+    ['top', 'side'].forEach(v => Object.keys(MES_TOP).forEach(k => mesImg(v, k)));   // preload all eight poses
+
+    // one pose layer, drawn with its anchor at the origin (mir: mirrored about the body axis, top view only)
+    function mesLayer(v, k, cls, mir) {
+      const P = (v === 'top' ? MES_TOP : MES_SIDE)[k], ay = v === 'top' ? P.a[1] : P.fl;
+      const sh = v === 'top' ? `<ellipse cx="${P.c[0]}" cy="${P.c[1] + 10}" rx="${Math.min(P.w * .36, 95)}" ry="${P.h * .2}" fill="#000" opacity=".22" filter="url(#blur3)"/>`
+        : `<ellipse cx="${P.c[0]}" cy="${P.fl}" rx="${P.w * .34}" ry="14" fill="#000" opacity=".35" filter="url(#blur3)"/>`;
+      return `<g class="${cls}"><g transform="scale(${mir ? -1 : 1} 1) translate(${-P.a[0]} ${-ay})"><g class="mBr" data-c="${P.c[0]} ${P.c[1]}">${sh}${mesImg(v, k)}</g></g></g>`;
     }
-    // per-frame motion (t = real seconds); returns nothing
-    function pzAnim(id, state, t, phase = 0) {
-      const A = document.getElementById(id + 'A'); if (!A) return;
-      t += phase; let tx = 0, ty = 0, r = 0, lim = 0, fore = false;
-      const step = (v, p) => Math.max(0, Math.sin(v)) ** p;
-      if (state === 'twitch') { const s = step(t * 1.1, 6); r = s * 1.2 * Math.sin(t * 38); }
-      else if (state === 'jerks') { const s = step(t * 1.7, 14); tx = s * 1.3 * Math.sin(t * 41); r = s * 5 * Math.sin(t * 33); }
-      else if (state === 'forelimb') { r = 1.6 * Math.sin(t * 9); lim = 24; fore = true; }
-      else if (state === 'ext') { tx = .15 * Math.sin(t * 52); }
-      else if (state === 'clon' || state === 'clonL') { tx = 1.3 * Math.sin(t * 17); ty = 1.0 * Math.sin(t * 23); r = 5 * Math.sin(t * 15); lim = 30; }
-      A.setAttribute('transform', `translate(${tx.toFixed(2)} ${ty.toFixed(2)}) rotate(${r.toFixed(2)})`);
-      if (lim) for (let k = 0; k < 4; k++) { const g = document.getElementById(id + 'AL' + k) || document.getElementById(id + 'L' + k); if (!g || (fore && k > 1)) continue; const a = lim * Math.sin(t * (fore ? 10 : 13) + k * 1.7); g.setAttribute('transform', `rotate(${a.toFixed(1)} ${g.dataset.b})`); }
+    let _mes = null; // {uid, st, prev, t0 (real s at the change of state)}
+    function mesBuild(m, st) {
+      const prev = _mes && _mes.uid === m.uid && _mes.st !== st ? _mes.st : null, k = MES_POSE[st], pk = prev && MES_POSE[prev] !== k ? MES_POSE[prev] : null;
+      _mes = { uid: m.uid, st, prev: pk, t0: performance.now() / 1000 };
+      $('arenaMouse').innerHTML = `<g transform="translate(${MX} ${MY}) scale(1 .9) rotate(90) scale(${MK})"><g id="mmT">${mesLayer('top', k, 'mL0')}${k === 'clon' ? mesLayer('top', k, 'mL2', true) : ''}${pk ? mesLayer('top', pk, 'mL1') : ''}</g></g>`;
+      $('sideCam').innerHTML = `<g transform="translate(${SC_X} ${SC_Y}) scale(${-SC_K} ${SC_K})"><g id="mmS">${mesLayer('side', k, 'mL0')}${pk ? mesLayer('side', pk, 'mL1') : ''}</g></g>`;
+    }
+    // electrode sites in scene coordinates for the pose on the tray: [upper, lower]
+    function mesSites(st, elec) {
+      const P = MES_TOP[MES_POSE[st] || 'rest'];
+      if (elec !== 'ear') return [-1, 1].map(s => [MX + 55 * MK, MY + s * 27 * MK * .9]);
+      return P.ears.map(([x, y]) => [MX - (y - P.a[1]) * MK, MY + (x - P.a[0]) * MK * .9]);
+    }
+    function mesTick(ts) {
+      if (!_mes || S.station !== 4) return;
+      const T = $('mmT'), D = $('mmS'); if (!T || !D) return;
+      const t = ts / 1000, u = t - _mes.t0, st = _mes.st, m = S.mice[_mes.uid], tl = m && m.test ? m.test.tl : null, ss = tl ? S.t - m.test.t : 0;
+      let tx = 0, ty = 0, r = 0, br = 0, brF = 2.6, sy = 1, alt = 0, dx = 0, dy = 0, dr = 0;
+      const fade = Math.min(1, u / (st === 'rec' ? .8 : st === 'ext' ? .35 : .25));
+      if (st === 'normal' || st === 'rec' || st === 'twitch') {                  // quiet breathing, small exploring shifts
+        br = .016; tx = 4 * Math.sin(t * .55) + 1.2 * Math.sin(t * 1.9); r = 3 * Math.sin(t * .37); dx = 2.5 * Math.sin(t * .55);
+        if (st === 'twitch') { const s = Math.max(0, 1 - u / 1.2); r += s * 7 * Math.sin(u * 42); dr = s * 3 * Math.sin(u * 42); }
+        if (st === 'rec' && u < .9) { const k = (1 - u / .9) ** 2; r += 16 * k; dr = -10 * k; dy = 18 * k; }   // rolls back on to its feet
+      } else if (st === 'flex') {                                                    // tonic: no breathing, fine tremor, body drawn in
+        tx = 1.1 * Math.sin(t * 157); ty = .8 * Math.sin(t * 131); dx = .8 * Math.sin(t * 149);
+        if (u < .3) { const k = Math.sin(u / .3 * Math.PI); sy = 1 - .07 * k; r = 4 * k; }
+      } else if (st === 'ext') {                                                     // hind limbs shoot back and stay rigid
+        tx = .7 * Math.sin(t * 171); ty = .6 * Math.sin(t * 143); dx = .6 * Math.sin(t * 163);
+        if (u < .35) sy = .9 + .1 * (u / .35); else sy = 1 + .006 * Math.sin(t * 9);
+      } else if (st === 'clon') {                                                    // rhythmic jerks, 6 Hz slowing to ~2.5 Hz
+        const D0 = Math.max(1, tl.tS - tl.tC), tau = Math.max(0, ss - tl.tC), ph = 2 * Math.PI * (6 * tau - 3.5 * tau * tau / (2 * D0));
+        const j = Math.max(0, Math.sin(ph)) ** 3, sg = Math.floor(ph / (2 * Math.PI)) % 2 ? 1 : -1;
+        alt = sg > 0 ? 1 : 0; tx = 9 * j * sg; ty = 4 * j; r = 7 * j * sg; dy = -9 * j; dr = 4 * j * sg; dx = 3 * j; br = .01; brF = 1.6;
+      } else if (st === 'stupor') {                                                  // slow, deep post-ictal breaths; a few residual twitches
+        br = .032; brF = 1.05; const s = Math.max(0, 1 - u / 2); r = s * 2.5 * Math.max(0, Math.sin(u * 9)) ** 6;
+      }
+      const b = br * Math.sin(2 * Math.PI * brF * t), f2 = v => v.toFixed(2);
+      T.setAttribute('transform', `translate(${f2(tx)} ${f2(ty)}) rotate(${f2(r)}) scale(1 ${f2(sy)})`);
+      D.setAttribute('transform', `translate(${f2(dx * 4)} ${f2(dy)}) rotate(${f2(dr)}) scale(${f2(sy)} 1)`);
+      [T, D].forEach((G, i) => {
+        G.querySelectorAll('.mBr').forEach(e => { const [cx, cy] = e.dataset.c.split(' '); e.setAttribute('transform', `translate(${cx} ${cy}) scale(${f2(1 + b)} ${f2(1 + b * (i ? 1 : .25))}) translate(${-cx} ${-cy})`); });
+        const L0 = G.querySelector('.mL0'), L1 = G.querySelector('.mL1'), L2 = G.querySelector('.mL2');
+        if (L1) L1.setAttribute('opacity', f2(1 - fade));
+        if (L2) { L2.setAttribute('opacity', alt); L0.setAttribute('opacity', 1 - alt); }   // clonus: flip between the two limb patterns
+      });
     }
   </script>
   <script>
@@ -1314,7 +1361,8 @@
   <script>
     // ================================================================ STATION 4 (scene): electroconvulsometer bench
     CFG.extra = st => { st.app = { on: false, I: 20, T: 0.1, elec: 'ear', wetT: -1e9, clips: false, anaes: false, z: null, ledD: 0, led: '' }; st.plat = null; st.seiz = null; };
-    const MX = 722, MY = 200, MK = 4.5;
+    const MX = 790, MY = 200, MK = .5;           // tray pose: ear midpoint and photo scale
+    const SC_X = 182, SC_Y = 78, SC_K = .21;     // side camera: eye x, floor line, photo scale (head to the right)
     function instrument() {
       const sock = (y, c) => `<circle cx="414" cy="${y}" r="9" fill="#111827" stroke="#9ca3af" stroke-width="2"/><circle cx="414" cy="${y}" r="5" fill="${c}"/><circle cx="414" cy="${y}" r="2" fill="#1f2937"/>`;
       const arrow = (x, y, act, up) => `<g class="hot" data-act="${act}"><rect x="${x}" y="${y}" width="46" height="24" rx="5" fill="#3b4656" stroke="#111827"/><rect x="${x + 1}" y="${y + 1}" width="44" height="10" rx="4" fill="#fff" opacity=".12"/><path d="M${x + 15} ${y + (up ? 17 : 7)} L${x + 23} ${y + (up ? 7 : 17)} L${x + 31} ${y + (up ? 17 : 7)}Z" fill="#e5e7eb"/></g>`;
@@ -1356,7 +1404,11 @@
       s += bottle(484, 350, { act: 'wet', title: '0.9% NaCl', sub: 'electrode wetting', cap: '#16a34a', kind: 'glass', liq: 'url(#liquid)', level: .7, w: 50, h: 74, ts: 6 }) + lbl(509, 450, 'Saline for electrodes', { c: '#cbd5e1', s: 9 });
       s += `<g class="hot" data-act="wet"><ellipse cx="590" cy="418" rx="38" ry="10" fill="#e5e7eb" stroke="#9ca3af"/><ellipse cx="590" cy="414" rx="30" ry="7" fill="#f8fafc"/><g id="gauze"></g></g>${lbl(590, 450, 'Saline gauze', { c: '#cbd5e1', s: 9 })}`;
       s += `<g id="clipTray"></g><g id="clipsG"></g>`;
-      s += bottle(822, 356, { act: 'anaes', title: 'PROPARACAINE', sub: '0.5% eye drops', cap: '#7c3aed', kind: 'glass', liq: 'url(#liquid)', level: .6, w: 36, h: 66, ts: 4.8, ss: 4.6 }) + lbl(826, 450, 'Eye drops (corneal)', { c: '#cbd5e1', s: 8.5 });
+      s += bottle(874, 356, { act: 'anaes', title: 'PROPARACAINE', sub: '0.5% eye drops', cap: '#7c3aed', kind: 'glass', liq: 'url(#liquid)', level: .6, w: 36, h: 66, ts: 4.8, ss: 4.6 }) + lbl(930, 400, 'Eye drops', { c: '#cbd5e1', s: 8.5, a: 'start' }) + lbl(930, 411, '(corneal)', { c: '#cbd5e1', s: 8.5, a: 'start' });
+      // side camera on the bench: the same mouse seen from the side, so flexion and hind-limb extension are easy to judge
+      s += `<g filter="url(#sh)"><rect x="628" y="338" width="216" height="98" rx="6" fill="#111827" stroke="#475569" stroke-width="2"/><rect x="634" y="344" width="204" height="86" rx="3" fill="#3f4c5c"/><rect x="634" y="344" width="204" height="86" rx="3" fill="url(#spot)" opacity=".5"/><rect x="634" y="414" width="204" height="16" fill="#2b3644"/></g>
+        <svg x="634" y="344" width="204" height="86" viewBox="0 0 204 86" overflow="hidden"><g id="sideCam"></g></svg>
+        <circle cx="642" cy="351" r="2.4" fill="#ef4444"/>${lbl(648, 353.5, 'SIDE CAMERA', { s: 6.5, c: '#e2e8f0', a: 'start', w: 800 })}`;
       s += cageSide(880, 440, 108, 70, 'ret', 'RECOVERY', 'return here', '', {}) + lbl(934, 534, 'Recovery cage', { c: '#cbd5e1', s: 9 });
       return s;
     }
@@ -1366,10 +1418,9 @@
       if (S.station !== 4) return;
       const A = S.app, m = S.plat === null ? null : S.mice[S.plat], tt = m && m.test ? S.t - m.test.t : null;
       const st = m && m.test ? mesState(m.test.tl, tt) : 'normal';
-      const key = (m ? m.uid : '-') + st + A.elec + A.clips;
-      if (key !== _mesPose) { _mesPose = key; $('arenaMouse').innerHTML = m ? `<g transform="translate(0 0)"><g transform="translate(${MX} ${MY}) scale(1 .9)">${pzMouse('mm', st, MK, 0)}</g></g>` : ''; }
-      const ear = [[MX + 10.4 * MK, MY - 4.6 * MK * .9], [MX + 10.4 * MK, MY + 4.6 * MK * .9]], eye = [[MX + 15.4 * MK, MY - 2.2 * MK * .9], [MX + 15.4 * MK, MY + 2.2 * MK * .9]];
-      const pts = A.elec === 'ear' ? ear : eye;
+      const key = m ? m.uid + st : '-';
+      if (key !== _mesPose) { _mesPose = key; if (m) mesBuild(m, st); else { $('arenaMouse').innerHTML = ''; $('sideCam').innerHTML = ''; _mes = null; } }
+      const pts = mesSites(st, A.elec);
       let lead = '', clips = '';
       const tray = [[606, 472], [652, 486]];
       [318, 342].forEach((sy, i) => {
@@ -1390,7 +1441,7 @@
       const mk = m && m.test ? m.test.marks : {}, nm = { flex: 'Flexion onset', ext: 'Extension onset', clon: 'Clonus onset', stup: 'Clonus ends', rec: 'Righting regained' };
       $('markLog').innerHTML = Object.keys(nm).map((k, i) => lbl(12, 38 + i * 10.5, `${nm[k]}:`, { s: 7.6, a: 'start', c: '#475569', w: 600 }) + lbl(150, 38 + i * 10.5, mk[k] !== undefined ? mk[k].toFixed(1) + ' s' : '—', { s: 8, a: 'start', c: mk[k] !== undefined ? '#1d4ed8' : '#94a3b8', f: 'JetBrains Mono', w: 700 })).join('');
     }
-    function pzTick(ts) { if (S && S.station === 4 && S.plat !== null) { const m = S.mice[S.plat]; const st = m.test ? mesState(m.test.tl, S.t - m.test.t) : 'normal'; pzAnim('mm', st, ts / 1000); } }
+    function pzTick(ts) { if (S && S.station === 4 && S.plat !== null) mesTick(ts); }
   </script>
   <script>
     // ================================================================ STATION 4 (logic): set the stimulator, apply the stimulus, score phases by time
