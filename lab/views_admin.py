@@ -1,11 +1,13 @@
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.utils.safestring import mark_safe
 from django.views.decorators.http import require_POST
 
 from . import free_year
@@ -14,7 +16,7 @@ from .forms import BrandingForm, CollegeCreateForm, CollegeForm, StaffUserForm, 
 import datetime
 
 from .contact import TOPIC_CHOICES
-from .models import Attempt, AuditLog, Batch, College, ContactRequest, DataRequest, Experiment, FreeYearApplication, FreeYearInvitation, Role, TrialVisit, User
+from .models import Attempt, AuditLog, Batch, College, ContactRequest, DataRequest, Experiment, FreeYearApplication, FreeYearInvitation, ReportBranding, Role, TrialVisit, User
 from .permissions import audit, role_required
 from .views_auth import anonymise_user
 
@@ -420,3 +422,45 @@ def contact_requests(request):
         qs = qs.filter(Q(name__icontains=q) | Q(email__icontains=q) | Q(institution__icontains=q) | Q(message__icontains=q))
     page = Paginator(qs, 25).get_page(request.GET.get('page'))
     return render(request, 'lab/contact_requests.html', {'page': page, 'status': status, 'topic': topic, 'q': q, 'statuses': ContactRequest.STATUSES, 'topics': TOPIC_CHOICES})
+
+
+def _branding_page(request, owner, *, scope, back, show_institute, help_text):
+    from .branding import ReportBrandingForm, header_html, resolve
+    inst = ReportBranding.objects.filter(**{scope: owner}).first() or ReportBranding(**{scope: owner})
+    form = ReportBrandingForm(request.POST or None, request.FILES or None, instance=inst, show_institute=show_institute)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        audit(request, f'report_branding_{scope}', owner, college=owner if scope == 'college' else owner.college)
+        messages.success(request, 'Report branding saved. It appears at the top of every report printed from now on.')
+        return redirect(request.get_full_path())
+    preview_user = request.user if scope == 'user' else None
+    if scope == 'college':
+        b = {'institute_name': inst.institute_name or owner.name, 'department': inst.department, 'address_line': inst.address_line, 'logo': inst.logo_data_uri}
+    else:
+        b = resolve(preview_user)
+    return render(request, 'lab/report_branding.html', {'form': form, 'inst': inst, 'back': back, 'help': help_text,
+                                                        'title': 'College report branding' if scope == 'college' else 'My report branding',
+                                                        'preview': mark_safe(header_html(b))})
+
+
+@role_required(Role.COLLEGE_ADMIN)
+def college_branding(request):
+    c = _college(request)
+    if c is None:
+        raise PermissionDenied
+    return _branding_page(request, c, scope='college', back='/college/', show_institute=True,
+                          help_text=f'Shown at the top of every report printed by anyone at {c.name}, beside the AltVivo and XPRISM marks. '
+                                    'Faculty can add their own department and logo on top of this.')
+
+
+@login_required
+def my_branding(request):
+    from .branding import can_brand_self
+    u = request.user
+    if not can_brand_self(u):
+        raise PermissionDenied
+    in_college = u.college_id is not None
+    return _branding_page(request, u, scope='user', back='/home/', show_institute=not in_college,
+                          help_text=('Your own department, line and logo replace your college\'s on reports you print and on reports your students '
+                                     'print for assignments you set. Leave a field blank to use the college\'s.') if in_college else
+                                    'Shown at the top of every report you print, beside the AltVivo and XPRISM marks.')

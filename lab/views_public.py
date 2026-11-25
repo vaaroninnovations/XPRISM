@@ -14,7 +14,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
 
-from . import access
+from . import access, branding
 from .contact import TOPICS
 from .context import PUBLIC_PAGES
 from . import free_year
@@ -262,6 +262,7 @@ def _closed(attempt_qs, a):
     return None
 
 
+REPORT_TOP = re.compile(r'<div id="viewObservation"[^>]*>\s*<div class="space-y-6">')   # the report: the observation sheet
 EXP_ASSET = re.compile(r'(?<=["\'])(?:\.\.)?/assets/((?:css|js)/[\w.-]+)(?=["\'])')
 
 
@@ -271,6 +272,7 @@ def experiment_page(request, slug):
     if not path.exists():
         raise Http404
     u = request.user
+    setter = None   # the faculty member whose assignment a student is doing: their branding heads the report
     ctx = {'expNo': exp.no, 'title': exp.title, 'csrf': get_token(request), 'home': reverse('home') if u.is_authenticated else reverse('landing'),
            'login': reverse('login') + f'?next={request.get_full_path()}', 'feedbackUrl': reverse('api_feedback', args=[exp.slug]),
            'canRate': u.is_authenticated and u.role == Role.STUDENT and not u.is_shared_demo}
@@ -288,7 +290,8 @@ def experiment_page(request, slug):
                 return redirect(f'{reverse("subscribe")}?exp={exp.slug}')
             ctx.update(mode='trial', visitStarted=visit.started_at.isoformat(), maxHours=settings.TRIAL_VISIT_MAX_HOURS)
         elif u.role == Role.STUDENT and a_id and a_id.isdigit():
-            a = get_object_or_404(Assignment.objects.select_related('batch'), pk=int(a_id), experiment=exp, batch__enrollments__student=u)
+            a = get_object_or_404(Assignment.objects.select_related('batch', 'created_by'), pk=int(a_id), experiment=exp, batch__enrollments__student=u)
+            setter = a.created_by
             mine = Attempt.objects.filter(assignment=a, student=u)
             att = mine.filter(status=Attempt.STARTED).first()
             if att and att.deadline and timezone.now() > att.deadline + timezone.timedelta(minutes=2):
@@ -315,6 +318,8 @@ def experiment_page(request, slug):
                 ctx['examMode'] = True
     page = path.read_text(encoding='utf-8')
     page = FACULTY_BLOCK.sub(lambda m: _user_block(request), page, count=1)
+    brand = branding.header_html(branding.resolve(u, setter))
+    page = REPORT_TOP.sub(lambda m: m[0] + brand, page, count=1)
     loc = (u.college.location_text if u.is_authenticated and u.college and u.college.location_text else settings.SITE_DEFAULT_LOCATION)
     page = page.replace('Aaron Innovations • Experimental Pharmacology Research &amp; Interactive Student Module', f'{html.escape(loc)} • {html.escape(settings.SITE_TAGLINE)}')
     page = page.replace('href="../index.html"', f'href="{reverse("modules")}"')

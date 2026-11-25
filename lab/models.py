@@ -492,3 +492,36 @@ class MailMessage(models.Model):
     @property
     def snippet(self):
         return ' '.join(line for line in self.body.split() if line)[:140]
+
+
+class ReportBranding(models.Model):
+    """What a college or a faculty member puts at the top of printed reports, beside the AltVivo and XPRISM marks.
+
+    A college's branding applies to everyone in it. A faculty member's own branding sits on top of it, field by
+    field, on their reports and on the reports of students doing their assignments. Users with no college set
+    everything themselves.
+    """
+    LOGO_TYPES = ('image/png', 'image/jpeg', 'image/webp')
+    MAX_LOGO_BYTES = 300 * 1024
+
+    college = models.OneToOneField(College, null=True, blank=True, on_delete=models.CASCADE, related_name='report_branding')
+    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE, related_name='report_branding')
+    institute_name = models.CharField('Institute name', max_length=200, blank=True)
+    department = models.CharField('Department', max_length=200, blank=True)
+    address_line = models.CharField('Address / affiliation line', max_length=250, blank=True)
+    logo = models.BinaryField(blank=True, null=True, editable=False)
+    logo_type = models.CharField(max_length=20, blank=True, editable=False)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [models.CheckConstraint(condition=models.Q(college__isnull=False) ^ models.Q(user__isnull=False), name='report_branding_one_owner')]
+
+    def __str__(self):
+        return f'Report branding of {self.college or self.user}'
+
+    @property
+    def logo_data_uri(self):
+        if not self.logo or self.logo_type not in self.LOGO_TYPES:
+            return ''
+        import base64
+        return f'data:{self.logo_type};base64,{base64.b64encode(bytes(self.logo)).decode()}'

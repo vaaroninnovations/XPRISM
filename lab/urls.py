@@ -45,6 +45,7 @@ urlpatterns = [
     path('accounts/password/reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='registration/reset_confirm.html'), name='password_reset_confirm'),
     path('accounts/password/reset/complete/', auth_views.PasswordResetCompleteView.as_view(template_name='registration/reset_complete.html'), name='password_reset_complete'),
     path('me/data/', au.my_data, name='my_data'),
+    path('me/branding/', adm.my_branding, name='my_branding'),
 
     # student
     path('student/', stu.dashboard, name='student_dashboard'),
@@ -77,6 +78,7 @@ urlpatterns = [
     path('college/users/<int:user_id>/<str:action>/', adm.user_action, name='user_action'),
     path('college/experiments/', adm.college_experiments, name='college_experiments'),
     path('college/settings/', adm.college_settings, name='college_settings'),
+    path('college/branding/', adm.college_branding, name='college_branding'),
     path('college/audit/', adm.audit_log, name='audit_log'),
     path('college/requests/', adm.data_requests, name='data_requests'),
 

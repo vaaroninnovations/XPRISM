@@ -1954,3 +1954,94 @@ class SiteTagTests(Base):
     def test_policy_denies_analytics_while_it_is_off(self):
         self.assertContains(self.client.get('/privacy/'), 'We do not use analytics')
 
+
+
+PNG_1PX = bytes.fromhex('89504e470d0a1a0a0000000d4948445200000001000000010806000000'
+                        '1f15c4890000000d49444154789c6360000002000154a24f5d0000000049454e44ae426082')
+
+
+class ReportBrandingTests(Base):
+    def upload(self, url, **fields):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        data = dict(fields)
+        if 'logo' in data:
+            name, content = data.pop('logo')
+            data['logo_file'] = SimpleUploadedFile(name, content)
+        return self.client.post(url, data)
+
+    def report(self, u, query=''):
+        self.login(u)
+        r = self.client.get(self.e18.url + query)
+        self.assertEqual(r.status_code, 200)
+        html_ = r.content.decode()
+        start = html_.index('id="reportBranding"')
+        return html_[start:html_.index('<h2', start)]
+
+    def test_report_always_carries_altvivo_and_xprism_and_the_college_name(self):
+        head = self.report(self.st)
+        self.assertIn('alt="AltVivo"', head)
+        self.assertIn('alt="XPRISM"', head)
+        self.assertIn('College One', head)
+        self.assertNotIn('Institute logo', head)
+
+    def test_college_admin_sets_branding_for_everyone_in_the_college(self):
+        self.login(self.ca)
+        self.assertEqual(self.client.get('/college/branding/').status_code, 200)
+        r = self.upload('/college/branding/', institute_name='One Institute of Pharmacy', department='Department of Pharmacology',
+                        address_line='Affiliated to State University', logo=('logo.png', PNG_1PX))
+        self.assertEqual(r.status_code, 302)
+        b = College.objects.get(pk=self.c1.pk).report_branding
+        self.assertEqual(b.logo_type, 'image/png')
+        self.assertTrue(AuditLog.objects.filter(action='report_branding_college').exists())
+        for u in (self.st, self.fac, self.la):
+            head = self.report(u)
+            self.assertIn('One Institute of Pharmacy', head)
+            self.assertIn('Department of Pharmacology', head)
+            self.assertIn('Affiliated to State University', head)
+            self.assertIn('src="data:image/png;base64,', head)
+        self.assertNotIn('One Institute of Pharmacy', self.report(self.ca2))       # another college keeps its own
+
+    def test_faculty_branding_overrides_the_college_on_their_reports_and_their_assignments(self):
+        from .models import ReportBranding
+        ReportBranding.objects.create(college=self.c1, institute_name='One Institute', department='Pharmacy')
+        self.login(self.fac)
+        self.assertNotContains(self.client.get('/me/branding/'), 'name="institute_name"')   # the institute name is the college's
+        self.upload('/me/branding/', department='Dept. of Clinical Pharmacology', institute_name='Hijacked')
+        head = self.report(self.fac)
+        self.assertIn('One Institute', head)
+        self.assertNotIn('Hijacked', head)
+        self.assertIn('Dept. of Clinical Pharmacology', head)
+        self.assertIn('Dept. of Clinical Pharmacology', self.report(self.st, f'?a={self.a.pk}'))   # the setter's branding
+        self.assertNotIn('Clinical', self.report(self.st))                                         # practice: the college's
+        self.assertIn('>Pharmacy<', self.report(self.fac_other))
+
+    def test_individual_users_brand_their_own_reports(self):
+        solo = mkuser('solo@example.com', Role.STUDENT, is_trial_account=True, institution='Solo College', subscribed_until=timezone.localdate() + timezone.timedelta(days=30))
+        self.assertIn('Solo College', self.report(solo))
+        self.upload('/me/branding/', institute_name='Solo Institute', department='Pharmacology', logo=('l.jpg', b'\xff\xd8\xff\xe0' + b'0' * 40))
+        head = self.report(solo)
+        self.assertIn('Solo Institute', head)
+        self.assertIn('data:image/jpeg;base64,', head)
+
+    def test_college_students_cannot_brand_and_bad_logos_are_refused(self):
+        self.login(self.st)
+        self.assertEqual(self.client.get('/me/branding/').status_code, 403)
+        self.assertEqual(self.client.get('/college/branding/').status_code, 403)
+        self.login(self.ca)
+        r = self.upload('/college/branding/', department='X', logo=('evil.png', b'<svg onload=alert(1)>'))
+        self.assertContains(r, 'Upload a PNG, JPEG or WebP image.')
+        r = self.upload('/college/branding/', department='X', logo=('big.png', PNG_1PX + b'0' * (301 * 1024)))
+        self.assertContains(r, 'larger than 300 KB')
+        self.upload('/college/branding/', department='<script>x</script>')
+        self.assertIn('&lt;script&gt;x&lt;/script&gt;', self.report(self.st))
+
+    def test_logo_can_be_removed(self):
+        self.login(self.ca)
+        self.upload('/college/branding/', department='D', logo=('logo.png', PNG_1PX))
+        self.upload('/college/branding/', department='D', remove_logo='on')
+        self.assertNotIn('Institute logo', self.report(self.st))
+
+    def test_every_experiment_page_has_the_report_header(self):
+        self.login(self.sa)
+        for e in Experiment.objects.filter(is_active=True):
+            self.assertContains(self.client.get(e.url), 'id="reportBranding"', count=1, msg_prefix=e.slug)

@@ -3,6 +3,7 @@ import json
 from django.conf import settings
 from django.utils.safestring import mark_safe
 
+from .branding import can_brand_self
 from .models import ContactRequest, DataRequest, FreeYearApplication, MailMessage, Role
 
 # the pages search engines may list and analytics may measure; everything else is private to its user
@@ -57,6 +58,7 @@ def site(request):
         'UNREAD_MAIL': u.is_authenticated and u.is_platform_admin and MailMessage.objects.filter(direction=MailMessage.IN, is_read=False, archived=False, trashed_at__isnull=True).count(),
         'PENDING_CONTACT': u.is_authenticated and u.is_platform_admin and ContactRequest.objects.filter(status=ContactRequest.NEW).count(),
         'SEO': _seo(request), 'ANALYTICS': _analytics(request), 'ANALYTICS_CONFIGURED': bool(settings.GOOGLE_ANALYTICS_ID or settings.GOOGLE_TAG_MANAGER_ID),
+        'CAN_BRAND': u.is_authenticated and can_brand_self(u),
         'SITE_NAME': settings.SITE_NAME, 'SITE_TAGLINE': settings.SITE_TAGLINE,
         'SITE_FULL_NAME': settings.SITE_FULL_NAME, 'SITE_CREATOR': settings.SITE_CREATOR,
         'SITE_CREATOR_EMAIL': settings.SITE_CREATOR_EMAIL, 'SITE_INSTITUTION': settings.SITE_INSTITUTION,
